@@ -15,4 +15,3 @@ try {
   console.error("Asset generation pipeline encountered an error:", error);
   process.exit(1);
 }
-

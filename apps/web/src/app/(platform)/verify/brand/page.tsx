@@ -17,6 +17,7 @@ import {
   LogoMark,
   LogoWordmark,
   AnimatedLogo,
+  AppIcon,
   BRAND_CONSTANTS,
   WORDMARK_TYPOGRAPHY,
   type LogoVariant,
@@ -64,15 +65,43 @@ export default function BrandReviewGatePage() {
       name: "favicon.ico",
       type: "ICO (16/32 multi-res)",
       path: "/branding/icons/favicon.ico",
-      size: "1,042 B",
+      size: "1,601 B",
       role: "Browser tab icon",
     },
     {
       name: "favicon.svg",
       type: "SVG Vector",
       path: "/branding/icons/favicon.svg",
-      size: "1,196 B",
+      size: "4,116 B",
       role: "Scalable modern browser favicon",
+    },
+    {
+      name: "app-icon-hero.png",
+      type: "PNG 512×512",
+      path: "/branding/icons/app-icon-hero.png",
+      size: "55,319 B",
+      role: "Hero app icon with atmospheric ambient rings",
+    },
+    {
+      name: "app-icon-black.png",
+      type: "PNG 256×256",
+      path: "/branding/icons/app-icon-black.png",
+      size: "16,194 B",
+      role: "Signature dark squircle app icon tile",
+    },
+    {
+      name: "app-icon-white.png",
+      type: "PNG 256×256",
+      path: "/branding/icons/app-icon-white.png",
+      size: "14,415 B",
+      role: "Inverse white squircle app icon tile",
+    },
+    {
+      name: "app-icon-red.png",
+      type: "PNG 256×256",
+      path: "/branding/icons/app-icon-red.png",
+      size: "13,506 B",
+      role: "Accent colored squircle app icon tile",
     },
     {
       name: "icon-16.png",
@@ -332,6 +361,64 @@ export default function BrandReviewGatePage() {
                   animationMode="entrance"
                 />
               )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Reference App Icon System Showcase */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Reference App Icon System Showcase</CardTitle>
+          <CardDescription>
+            Faithfully recreated 3D liquid chrome ribbon N monogram, precision corner brackets, and
+            horizontal laser beam with specular optical flare.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            {/* Hero Tile Preview */}
+            <div className="flex flex-col items-center justify-center p-6 bg-black border border-border rounded-md shadow-level-1">
+              <span className="font-mono text-xs text-muted-foreground mb-4">
+                Hero Atmospheric Tile (512×512)
+              </span>
+              <div className="relative flex items-center justify-center">
+                <AppIcon type="hero" size={220} />
+              </div>
+              <span className="font-mono text-[10px] text-muted-foreground/70 mt-4">
+                Concentric ambient glow rings · Specular laser flare
+              </span>
+            </div>
+
+            {/* Triad Tile Grid */}
+            <div className="space-y-4">
+              <div className="text-xs font-medium text-foreground">
+                App Icon Variations & Dynamic Accent
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="flex flex-col items-center p-3 bg-surface border border-border rounded-md shadow-level-1">
+                  <AppIcon type="black" size={96} />
+                  <span className="font-mono text-[10px] text-muted-foreground mt-2">
+                    Dark Tile
+                  </span>
+                </div>
+                <div className="flex flex-col items-center p-3 bg-surface border border-border rounded-md shadow-level-1">
+                  <AppIcon type="white" size={96} />
+                  <span className="font-mono text-[10px] text-muted-foreground mt-2">
+                    Inverse White
+                  </span>
+                </div>
+                <div className="flex flex-col items-center p-3 bg-surface border border-border rounded-md shadow-level-1">
+                  <AppIcon type="red" size={96} accentColor={testAccent} />
+                  <span className="font-mono text-[10px] text-muted-foreground mt-2">
+                    {testAccents.find((a) => a.hex === testAccent)?.name ?? "Accent"} Tile
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                App icons adapt dynamically to the user's selected accent color while maintaining
+                exact specular reflections, metallic ribbon folds, and optical alignment.
+              </p>
             </div>
           </div>
         </CardContent>

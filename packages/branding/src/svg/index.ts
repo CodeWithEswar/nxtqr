@@ -5,4 +5,3 @@ export const SVG_FILES = [
   "logo-inverse.svg",
   "logo-monochrome.svg",
 ] as const;
-
