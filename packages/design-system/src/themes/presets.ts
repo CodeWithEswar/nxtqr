@@ -10,43 +10,60 @@ export const ACCENT_PRESETS: Record<AccentPresetId, AccentPresetDefinition> = {
   monochrome: {
     id: "monochrome",
     label: "Monochrome",
-    hex: "#FAFAFA",
+    hex: "#FFFFFF",
   },
   red: {
     id: "red",
-    label: "Red",
-    hex: "#E5484D",
+    label: "Pure Red",
+    hex: "#FF0000",
   },
   orange: {
     id: "orange",
-    label: "Orange",
-    hex: "#F28C52",
+    label: "Pure Orange",
+    hex: "#FF6600",
+  },
+  yellow: {
+    id: "yellow",
+    label: "Pure Yellow",
+    hex: "#FFD600",
   },
   amber: {
     id: "amber",
-    label: "Amber",
-    hex: "#E9AD46",
+    label: "Pure Yellow",
+    hex: "#FFD600",
   },
   green: {
     id: "green",
-    label: "Green",
-    hex: "#48B98A",
+    label: "Pure Green",
+    hex: "#00CC66",
   },
   blue: {
     id: "blue",
-    label: "Blue",
-    hex: "#579DFF",
+    label: "Pure Blue",
+    hex: "#0066FF",
   },
   violet: {
     id: "violet",
-    label: "Violet",
-    hex: "#A78BFA",
+    label: "Pure Violet",
+    hex: "#8000FF",
   },
   pink: {
     id: "pink",
-    label: "Pink",
-    hex: "#E879B9",
+    label: "Pure Pink",
+    hex: "#FF0099",
   },
 };
 
-export const ACCENT_PRESET_LIST: AccentPresetDefinition[] = Object.values(ACCENT_PRESETS);
+/**
+ * Filtered preset list ensuring Amber alias is deduplicated in UI palettes.
+ */
+export const ACCENT_PRESET_LIST: AccentPresetDefinition[] = [
+  ACCENT_PRESETS.monochrome,
+  ACCENT_PRESETS.red,
+  ACCENT_PRESETS.orange,
+  ACCENT_PRESETS.yellow,
+  ACCENT_PRESETS.green,
+  ACCENT_PRESETS.blue,
+  ACCENT_PRESETS.violet,
+  ACCENT_PRESETS.pink,
+];

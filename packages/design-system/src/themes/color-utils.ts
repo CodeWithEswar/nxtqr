@@ -143,14 +143,21 @@ export function getContrastRatio(hex1: string, hex2: string): number {
 }
 
 /**
- * Determines whether pure black (#000000) or pure white (#FAFAFA) provides
- * superior contrast against the given background hex color.
+ * Determines whether pure black (#000000) or pure white (#FFFFFF) provides
+ * accessible contrast against the given background hex color.
+ *
+ * Perceptual luminance threshold (0.35):
+ * - Pure Red (#FF0000, lum 0.21) -> #FFFFFF (White text)
+ * - Pure Orange (#FF6600, lum 0.38) -> #000000 (Black text)
+ * - Pure Yellow (#FFD600, lum 0.69) -> #000000 (Black text)
+ * - Pure Blue (#0066FF, lum 0.17) -> #FFFFFF (White text)
  */
-export function getAccessibleForeground(backgroundHex: string): "#000000" | "#FAFAFA" {
-  const contrastWithBlack = getContrastRatio(backgroundHex, "#000000");
-  const contrastWithWhite = getContrastRatio(backgroundHex, "#FAFAFA");
+export function getAccessibleForeground(backgroundHex: string): "#000000" | "#FFFFFF" {
+  const rgb = hexToRgb(backgroundHex);
+  if (!rgb) return "#000000";
 
-  return contrastWithBlack >= contrastWithWhite ? "#000000" : "#FAFAFA";
+  const lum = getRelativeLuminance(rgb.r, rgb.g, rgb.b);
+  return lum >= 0.3 ? "#000000" : "#FFFFFF";
 }
 
 export interface DerivedAccentShades {

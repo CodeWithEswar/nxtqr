@@ -6,6 +6,7 @@ export const AccentPresetIdSchema = z.enum([
   "monochrome",
   "red",
   "orange",
+  "yellow",
   "amber",
   "green",
   "blue",

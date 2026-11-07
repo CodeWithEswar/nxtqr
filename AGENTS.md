@@ -34,20 +34,42 @@ Strictly respect monorepo package boundaries:
 
 ## 3. Design System & Theming Rules
 
-1. **Pure Black Monochrome Base**:
+1. **Pure Monochrome Base**:
    - The default theme is pure black (`#000000`).
-   - Surfaces use neutral dark grayscale (`#080808`, `#111111`, `#171717`).
-   - Borders use `#262626` and `#1C1C1C`.
+   - Foreground is pure white (`#FFFFFF`).
+   - Surfaces use neutral grayscale hierarchy:
+     - Surface: `#0A0A0A`
+     - Elevated Surface: `#141414`
+     - Secondary Surface: `#1A1A1A`
+     - Border: `#262626`
+     - Subtle Border: `#1C1C1C`
+     - Muted Text: `#A3A3A3`
+     - Disabled Text: `#737373`
    - **Never** introduce dark blue, purple, or gradient AI dashboard backgrounds.
-2. **User-Selected Accent**:
-   - **Never hardcode accent colors** in React components (no fixed orange, red, blue, or purple).
+2. **Solid Neumorphism (Restrained Depth)**:
+   - **Level 0 — Base**: `#000000` (main canvas and full-page background).
+   - **Level 1 — Raised**: Solid surface with subtle border (`#262626`) and restrained directional shadow (`--shadow-level-1`). Used for buttons, toolbars, compact cards.
+   - **Level 2 — Elevated**: Stronger elevation (`--shadow-level-2`). Used for popovers, dropdown menus, dialogs, floating inspectors.
+   - **Level 3 — Pressed**: Inset treatment indicating active or pressed state (`--shadow-level-3`). Used for active toolbar buttons, selected controls.
+   - **No glassmorphism, no backdrop blur**, and no transparent floating cards.
+3. **Pure Saturated Accent Color System**:
+   - Calibrated pure presets:
+     - Monochrome: `#FFFFFF`
+     - Pure Red: `#FF0000`
+     - Pure Orange: `#FF6600`
+     - Pure Yellow: `#FFD600`
+     - Pure Green: `#00CC66`
+     - Pure Blue: `#0066FF`
+     - Pure Violet: `#8000FF`
+     - Pure Pink: `#FF0099`
+   - **Never hardcode accent colors** in React components.
    - Always reference semantic CSS classes: `bg-accent`, `text-accent`, `text-accent-foreground`, `border-accent`, `ring-accent`.
-   - Contrast must always satisfy WCAG 2.1 AA/AAA. Foreground text on accent surfaces is automatically derived via `@nxtqr/design-system`.
-3. **Global Border Radius Standard**:
+   - Contrast must always satisfy WCAG 2.1 AA/AAA. Foreground text on accent surfaces is automatically derived via `@nxtqr/design-system` (e.g. Pure Red gets `#FFFFFF`, Pure Orange gets `#000000`).
+4. **Global Border Radius Standard**:
    - Every rectangular control and card **must use `rounded-md`** (`--radius: 0.375rem / 6px`).
-   - **Never** use `rounded-xl`, `rounded-2xl`, or `rounded-full` on rectangular surfaces.
+   - **Never** use `rounded-sm`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, or `rounded-full` on rectangular surfaces.
    - Permitted circular exceptions: Avatars, Radio button indicators, Loading spinners (`rounded-full`).
-4. **Iconography**:
+5. **Iconography**:
    - Hugeicons is the primary iconography library.
    - Standard stroke width: `1.5`. Default size: `16px`.
    - **Never use emoji** as functional icons in UI controls.
@@ -60,6 +82,8 @@ Strictly respect monorepo package boundaries:
 ### Prohibited Design Patterns:
 
 - **No** random decorative gradients or glassmorphism blurs.
+- **No** decorative badges (badges permitted _only_ for meaningful status, version, severity, permission, or counts).
+- **No** duplicate action buttons (e.g. repeated "Create Project" or redundant Save/Refresh in the same view).
 - **No** generic 3-card SaaS dashboard mockups.
 - **No** decorative charts with fake telemetry.
 - **No** floating blobs, particle effects, or continuous decorative keyframe loops.

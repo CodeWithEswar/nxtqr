@@ -1,15 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Button,
-  Badge,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@nxtqr/ui";
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from "@nxtqr/ui";
 import { useThemeStore } from "@nxtqr/state";
 import { SettingsIcon, CheckCircleIcon } from "@nxtqr/icons";
 
@@ -23,7 +15,7 @@ export default function RootVerificationPage() {
       {/* Header bar */}
       <header className="flex items-center justify-between border-b border-border pb-4">
         <div className="flex items-center gap-3">
-          <div className="h-7 w-7 rounded-md bg-accent flex items-center justify-center text-accent-foreground font-mono font-bold text-xs">
+          <div className="h-7 w-7 rounded-md bg-surface border border-border shadow-level-1 flex items-center justify-center text-accent font-mono font-bold text-xs">
             N
           </div>
           <div>
@@ -31,18 +23,18 @@ export default function RootVerificationPage() {
               NXTQR — Engineering Foundation
             </h1>
             <p className="text-[11px] text-muted-foreground font-mono">
-              Phase 01: Core Monorepo, Infrastructure & Pure Black Theme
+              Pure Monochrome · Solid Neumorphism · Developer-Crafted Interface
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="font-mono text-[11px]">
-            <span className="h-1.5 w-1.5 rounded-full bg-success mr-1.5 inline-block" />
-            Foundation Active
-          </Badge>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-success inline-block" />
+            <span>Ready</span>
+          </div>
           <Link href="/settings/theme">
-            <Button variant="outline" size="sm">
+            <Button variant="secondary" size="sm">
               <SettingsIcon className="h-3.5 w-3.5 mr-1.5" />
               Accent Settings
             </Button>
@@ -56,9 +48,9 @@ export default function RootVerificationPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Theme & Accent</CardTitle>
-              <Badge variant="outline" className="font-mono text-[10px] capitalize">
+              <span className="font-mono text-[11px] text-muted-foreground capitalize">
                 {themeMode}
-              </Badge>
+              </span>
             </div>
             <CardDescription>Pure Black Monochrome foundation</CardDescription>
           </CardHeader>
@@ -73,13 +65,9 @@ export default function RootVerificationPage() {
               <span className="text-muted-foreground">Radius Token</span>
               <span className="font-mono text-muted-foreground">rounded-md (6px)</span>
             </div>
-            <div className="pt-2">
-              <Link
-                href="/settings/theme"
-                className="text-accent text-[11px] hover:underline flex items-center gap-1"
-              >
-                Customize Accent & Preview →
-              </Link>
+            <div className="flex justify-between items-center py-1">
+              <span className="text-muted-foreground">Surface System</span>
+              <span className="font-mono text-muted-foreground">Solid Neumorphic</span>
             </div>
           </CardContent>
         </Card>
@@ -88,9 +76,7 @@ export default function RootVerificationPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Platform Packages</CardTitle>
-              <Badge variant="secondary" className="font-mono text-[10px]">
-                18 Packages
-              </Badge>
+              <span className="font-mono text-[11px] text-muted-foreground">18 packages</span>
             </div>
             <CardDescription>Modular Turborepo architecture</CardDescription>
           </CardHeader>
@@ -114,9 +100,7 @@ export default function RootVerificationPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Infrastructure</CardTitle>
-              <Badge variant="outline" className="font-mono text-[10px]">
-                Supabase & CF
-              </Badge>
+              <span className="font-mono text-[11px] text-muted-foreground">Supabase & CF</span>
             </div>
             <CardDescription>Auth, Relational DB & Queues</CardDescription>
           </CardHeader>
@@ -126,15 +110,15 @@ export default function RootVerificationPage() {
               <span className="font-mono text-success">Configured</span>
             </div>
             <div className="flex justify-between items-center py-1 border-b border-subtle-border">
-              <span className="text-muted-foreground">Workers & Queues</span>
-              <span className="font-mono text-muted-foreground">Wrangler Ready</span>
+              <span className="text-muted-foreground">Cloudflare Queues & R2</span>
+              <span className="font-mono text-success">Provisioned</span>
             </div>
             <div className="pt-2">
               <Link
                 href="/verify"
                 className="text-accent text-[11px] hover:underline flex items-center gap-1"
               >
-                Run Environment Diagnostics →
+                Environment Diagnostics →
               </Link>
             </div>
           </CardContent>
@@ -142,13 +126,13 @@ export default function RootVerificationPage() {
       </div>
 
       {/* Component System Verification Bar */}
-      <section className="rounded-md border border-border bg-surface p-4 space-y-3">
+      <section className="rounded-md border border-border bg-surface shadow-level-1 p-4 space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Interactive Component System Verification
+            Solid-Neumorphic Component System Verification
           </h2>
           <span className="text-[10px] text-muted-foreground font-mono">
-            Pure Black Monochrome + Dynamic Accent
+            Pure Monochrome · Levels 0–3 · rounded-md
           </span>
         </div>
 
@@ -157,10 +141,7 @@ export default function RootVerificationPage() {
           <Button variant="secondary">Secondary Button</Button>
           <Button variant="outline">Outline Button</Button>
           <Button variant="destructive">Destructive</Button>
-          <Button variant="ghost">Ghost</Button>
-          <Badge variant="default">Accent Badge</Badge>
-          <Badge variant="secondary">Secondary Badge</Badge>
-          <Badge variant="outline">Outline</Badge>
+          <Button variant="ghost">Ghost Button</Button>
         </div>
       </section>
 

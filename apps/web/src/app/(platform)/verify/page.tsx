@@ -26,7 +26,7 @@ export default function DiagnosticsPage() {
     {
       name: "Pure Black Palette & Tokens",
       status: "Active",
-      detail: "#000000 base, #FAFAFA fg, #080808 surface",
+      detail: "#000000 base, #FFFFFF fg, #0A0A0A surface, #141414 elevated",
     },
     {
       name: "Global Radius Standard",
@@ -131,19 +131,19 @@ export default function DiagnosticsPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-            <div className="p-2.5 rounded-md border border-border bg-elevated-surface">
+            <div className="p-2.5 rounded-md border border-border bg-surface shadow-level-1">
               <span className="text-muted-foreground text-[10px] block">Tool Mode</span>
               <span className="text-accent">{toolMode}</span>
             </div>
-            <div className="p-2.5 rounded-md border border-border bg-elevated-surface">
+            <div className="p-2.5 rounded-md border border-border bg-surface shadow-level-1">
               <span className="text-muted-foreground text-[10px] block">Zoom Level</span>
               <span>{(zoomLevel * 100).toFixed(0)}%</span>
             </div>
-            <div className="p-2.5 rounded-md border border-border bg-elevated-surface">
+            <div className="p-2.5 rounded-md border border-border bg-surface shadow-level-1">
               <span className="text-muted-foreground text-[10px] block">Grid Display</span>
               <span>{isGridVisible ? "Visible" : "Hidden"}</span>
             </div>
-            <div className="p-2.5 rounded-md border border-border bg-elevated-surface">
+            <div className="p-2.5 rounded-md border border-border bg-surface shadow-level-1">
               <span className="text-muted-foreground text-[10px] block">Sidebar Collapsed</span>
               <span>{sidebarCollapsed ? "True" : "False"}</span>
             </div>

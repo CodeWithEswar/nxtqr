@@ -47,12 +47,15 @@ describe("Theme Engine — Color Utilities & Perceptual Math", () => {
   });
 
   it("determines accessible foreground (WCAG compliant) for accent backgrounds", () => {
-    // Very light accent should select black text for high contrast
-    expect(getAccessibleForeground("#FAFAFA")).toBe("#000000");
-    expect(getAccessibleForeground("#E9AD46")).toBe("#000000");
+    // Pure Orange & Pure Yellow select black text for high contrast
+    expect(getAccessibleForeground("#FF6600")).toBe("#000000");
+    expect(getAccessibleForeground("#FFD600")).toBe("#000000");
+    expect(getAccessibleForeground("#FFFFFF")).toBe("#000000");
 
-    // Very dark accent should select white text
-    expect(getAccessibleForeground("#111111")).toBe("#FAFAFA");
+    // Pure Red & Pure Blue select white text
+    expect(getAccessibleForeground("#FF0000")).toBe("#FFFFFF");
+    expect(getAccessibleForeground("#0066FF")).toBe("#FFFFFF");
+    expect(getAccessibleForeground("#111111")).toBe("#FFFFFF");
   });
 
   it("derives perceptual hover, active, and muted shades", () => {

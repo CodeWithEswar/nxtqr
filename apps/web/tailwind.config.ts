@@ -22,11 +22,13 @@ const config: Config = {
         foreground: "var(--foreground)",
         surface: "var(--surface)",
         "elevated-surface": "var(--elevated-surface)",
+        "secondary-surface": "var(--secondary-surface)",
         "muted-surface": "var(--muted-surface)",
         border: "var(--border)",
         "subtle-border": "var(--subtle-border)",
         "muted-foreground": "var(--muted-foreground)",
         "secondary-foreground": "var(--secondary-foreground)",
+        "disabled-foreground": "var(--disabled-foreground)",
         ring: "var(--ring)",
         accent: {
           DEFAULT: "var(--accent)",
@@ -49,6 +51,12 @@ const config: Config = {
           DEFAULT: "var(--warning)",
           foreground: "var(--warning-foreground)",
         },
+      },
+      boxShadow: {
+        "level-0": "var(--shadow-level-0)",
+        "level-1": "var(--shadow-level-1)",
+        "level-2": "var(--shadow-level-2)",
+        "level-3": "var(--shadow-level-3)",
       },
       borderRadius: {
         DEFAULT: "var(--radius)",

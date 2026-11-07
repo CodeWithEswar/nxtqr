@@ -5,7 +5,7 @@
 The theme engine is implemented in `@nxtqr/design-system` and consumed by `@nxtqr/state`.
 
 ```
-User Action (Select preset or enter Hex)
+User Action (Select pure preset or enter Hex)
   │
   ▼
 Validation (Zod HexColorSchema)
@@ -14,7 +14,7 @@ Validation (Zod HexColorSchema)
 Perceptual Math (RGB <-> HSL <-> Relative Luminance)
   │
   ▼
-WCAG Contrast Check (getAccessibleForeground)
+WCAG Contrast Derivation (Threshold: 0.30 -> #FFFFFF or #000000)
   │
   ▼
 CSS Variable Generation (--accent, --accent-foreground, --ring)
@@ -23,18 +23,18 @@ CSS Variable Generation (--accent, --accent-foreground, --ring)
 Zero-Reload DOM Application (document.documentElement.style.setProperty)
   │
   ▼
-Storage Sync (localStorage for anon, Supabase for auth user)
+Storage Sync (localStorage for anon, Supabase user_preferences for auth)
 ```
 
-## Presets
+## Pure Saturated Accent Presets
 
-| Preset ID    | Label      | Hex Code                             |
-| ------------ | ---------- | ------------------------------------ |
-| `monochrome` | Monochrome | `#FAFAFA` (dark) / `#18181B` (light) |
-| `red`        | Red        | `#E5484D`                            |
-| `orange`     | Orange     | `#F28C52`                            |
-| `amber`      | Amber      | `#E9AD46`                            |
-| `green`      | Green      | `#48B98A`                            |
-| `blue`       | Blue       | `#579DFF`                            |
-| `violet`     | Violet     | `#A78BFA`                            |
-| `pink`       | Pink       | `#E879B9`                            |
+| Preset ID    | Label       | Hex Code  | Accessible Text Color |
+| :----------- | :---------- | :-------- | :-------------------- |
+| `monochrome` | Monochrome  | `#FFFFFF` | `#000000`             |
+| `red`        | Pure Red    | `#FF0000` | `#FFFFFF`             |
+| `orange`     | Pure Orange | `#FF6600` | `#000000`             |
+| `yellow`     | Pure Yellow | `#FFD600` | `#000000`             |
+| `green`      | Pure Green  | `#00CC66` | `#000000`             |
+| `blue`       | Pure Blue   | `#0066FF` | `#FFFFFF`             |
+| `violet`     | Pure Violet | `#8000FF` | `#FFFFFF`             |
+| `pink`       | Pure Pink   | `#FF0099` | `#FFFFFF`             |

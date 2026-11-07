@@ -6,63 +6,101 @@
   :root {
     /* Pure Black Monochrome Dark Default */
     --background: #000000;
-    --foreground: #fafafa;
-    --surface: #080808;
-    --elevated-surface: #111111;
-    --muted-surface: #171717;
+    --foreground: #ffffff;
+    --surface: #0a0a0a;
+    --elevated-surface: #141414;
+    --secondary-surface: #1a1a1a;
+    --muted-surface: #1a1a1a;
     --border: #262626;
     --subtle-border: #1c1c1c;
     --muted-foreground: #a3a3a3;
     --secondary-foreground: #737373;
+    --disabled-foreground: #737373;
 
-    /* Global Border Radius Standard: rounded-md (0.375rem) */
+    /* Global Border Radius Standard: rounded-md (0.375rem / 6px) */
     --radius: 0.375rem;
 
-    /* User-Customizable Accent Tokens (default: Monochrome / Neutral) */
-    --accent: #fafafa;
+    /* Solid Neumorphism Shadow Tokens (Dark) */
+    --shadow-level-0: none;
+    --shadow-level-1: 0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
+    --shadow-level-2: 0 4px 12px 0 rgba(0, 0, 0, 0.7), 0 1px 0 0 rgba(255, 255, 255, 0.05) inset;
+    --shadow-level-3: inset 0 1px 3px 0 rgba(0, 0, 0, 0.6), inset 0 0 1px 0 rgba(0, 0, 0, 0.4);
+
+    /* User-Customizable Accent Tokens (default: Monochrome Pure White) */
+    --accent: #ffffff;
     --accent-foreground: #000000;
-    --accent-hover: #ffffff;
+    --accent-hover: #f0f0f0;
     --accent-active: #e4e4e7;
-    --accent-muted: #18181b;
+    --accent-muted: #1a1a1a;
     --accent-muted-foreground: #d4d4d8;
-    --accent-ring: #fafafa;
+    --accent-ring: #ffffff;
     --ring: #262626;
 
     /* Semantic Status Tokens (independent from user accent) */
-    --destructive: #ef4444;
-    --destructive-foreground: #fafafa;
-    --success: #10b981;
-    --success-foreground: #fafafa;
-    --warning: #f59e0b;
+    --destructive: #ff0000;
+    --destructive-foreground: #ffffff;
+    --success: #00cc66;
+    --success-foreground: #000000;
+    --warning: #ffd600;
     --warning-foreground: #000000;
   }
 
   .light {
     --background: #ffffff;
-    --foreground: #0a0a0a;
-    --surface: #fbfbfb;
+    --foreground: #000000;
+    --surface: #f5f5f5;
     --elevated-surface: #ffffff;
-    --muted-surface: #f4f4f5;
-    --border: #e4e4e7;
-    --subtle-border: #f0f0f2;
-    --muted-foreground: #71717a;
-    --secondary-foreground: #a1a1aa;
+    --secondary-surface: #ebebeb;
+    --muted-surface: #f0f0f0;
+    --border: #e5e5e5;
+    --subtle-border: #f0f0f0;
+    --muted-foreground: #737373;
+    --secondary-foreground: #a3a3a3;
+    --disabled-foreground: #a3a3a3;
 
-    --accent: #18181b;
+    /* Solid Neumorphism Shadow Tokens (Light) */
+    --shadow-level-0: none;
+    --shadow-level-1: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 0 0 rgba(255, 255, 255, 0.8) inset;
+    --shadow-level-2: 0 4px 12px 0 rgba(0, 0, 0, 0.1), 0 1px 0 0 rgba(255, 255, 255, 0.9) inset;
+    --shadow-level-3: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08), inset 0 0 1px 0 rgba(0, 0, 0, 0.04);
+
+    --accent: #000000;
     --accent-foreground: #ffffff;
-    --accent-hover: #27272a;
+    --accent-hover: #1a1a1a;
     --accent-active: #09090b;
-    --accent-muted: #f4f4f5;
-    --accent-muted-foreground: #18181b;
-    --accent-ring: #18181b;
-    --ring: #e4e4e7;
+    --accent-muted: #f0f0f0;
+    --accent-muted-foreground: #000000;
+    --accent-ring: #000000;
+    --ring: #e5e5e5;
 
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
     --success: #059669;
     --success-foreground: #ffffff;
     --warning: #d97706;
-    --warning-foreground: #ffffff;
+    --warning-foreground: #000000;
+  }
+}
+
+@layer utilities {
+  .surface-base {
+    background-color: var(--background);
+    box-shadow: var(--shadow-level-0);
+  }
+  .surface-raised {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-level-1);
+  }
+  .surface-elevated {
+    background-color: var(--elevated-surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-level-2);
+  }
+  .surface-pressed {
+    background-color: var(--secondary-surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-level-3);
   }
 }
 
@@ -71,7 +109,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased font-sans selection:bg-muted-surface selection:text-foreground;
+    @apply bg-background text-foreground antialiased font-sans selection:bg-secondary-surface selection:text-foreground;
     font-feature-settings:
       "rlig" 1,
       "calt" 1;

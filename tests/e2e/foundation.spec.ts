@@ -25,11 +25,16 @@ test.describe("NXTQR Foundation & Design System", () => {
     const redPresetBtn = page.getByRole("button", { name: /Red/i });
     await redPresetBtn.click();
 
-    // Verify CSS variable was updated on root document
+    // Verify CSS variable was updated on root document (Pure Red: #FF0000 with white foreground)
     const rootStyle = await page.evaluate(() => {
       return document.documentElement.style.getPropertyValue("--accent");
     });
-    expect(rootStyle).toBe("#E5484D");
+    expect(rootStyle).toBe("#FF0000");
+
+    const fgStyle = await page.evaluate(() => {
+      return document.documentElement.style.getPropertyValue("--accent-foreground");
+    });
+    expect(fgStyle).toBe("#FFFFFF");
   });
 
   test("health check API returns 200 OK", async ({ request }) => {

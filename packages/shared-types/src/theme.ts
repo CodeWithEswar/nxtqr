@@ -1,7 +1,7 @@
 export type ThemeMode = "dark" | "light" | "system";
 
 export type AccentPresetId =
-  "monochrome" | "red" | "orange" | "amber" | "green" | "blue" | "violet" | "pink";
+  "monochrome" | "red" | "orange" | "yellow" | "amber" | "green" | "blue" | "violet" | "pink";
 
 export interface AccentColorConfig {
   preset: AccentPresetId;

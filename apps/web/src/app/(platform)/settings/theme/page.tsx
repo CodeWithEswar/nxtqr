@@ -140,8 +140,8 @@ export default function ThemeSettingsPage() {
                   }}
                   className={`flex items-center gap-2.5 p-2 rounded-md border text-left text-xs transition-all ${
                     isSelected
-                      ? "border-accent bg-elevated-surface shadow-xs"
-                      : "border-border bg-surface hover:bg-muted-surface"
+                      ? "border-accent bg-secondary-surface shadow-level-3 font-medium"
+                      : "border-border bg-surface shadow-level-1 hover:bg-elevated-surface"
                   }`}
                 >
                   <span
