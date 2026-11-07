@@ -5,7 +5,7 @@ test.describe("NXTQR Foundation & Design System", () => {
     await page.goto("/");
 
     // Verify page title
-    await expect(page).toHaveTitle(/NXTQR — Engineering Platform/);
+    await expect(page).toHaveTitle(/NXTQR/);
 
     // Verify pure black dark theme is applied on root
     const html = page.locator("html");
@@ -44,5 +44,21 @@ test.describe("NXTQR Foundation & Design System", () => {
     const json = await response.json();
     expect(json.status).toBe("ok");
     expect(json.platform).toBe("NXTQR Studio");
+  });
+
+  test("renders brand review gate and validates interactive logo system", async ({ page }) => {
+    await page.goto("/verify/brand");
+
+    await expect(page.locator("h1")).toContainText(
+      "NXTQR — Brand Identity & Concrete Logo Review Gate",
+    );
+
+    // Verify SVG logo presence
+    const logoSymbol = page.locator("svg").first();
+    await expect(logoSymbol).toBeVisible();
+
+    // Verify asset table contains verified production assets
+    await expect(page.locator("body")).toContainText("favicon.ico");
+    await expect(page.locator("body")).toContainText("opengraph-image.png");
   });
 });

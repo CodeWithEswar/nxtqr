@@ -54,6 +54,11 @@ export default function DiagnosticsPage() {
       detail: "QueryClient factory with deduplication & retry",
     },
     {
+      name: "Brand Identity & Vector System",
+      status: "Active",
+      detail: "Geometric N monogram, animated SVG, favicons & social assets",
+    },
+    {
       name: "Zustand State Stores",
       status: "Initialized",
       detail: "Decoupled canvas interaction & workspace UI stores",
@@ -84,9 +89,16 @@ export default function DiagnosticsPage() {
           </div>
         </div>
 
-        <Badge variant="secondary" className="font-mono text-xs">
-          All Checks Passed
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Link href="/verify/brand">
+            <Button variant="outline" size="sm" className="font-mono text-xs">
+              Brand Review Gate →
+            </Button>
+          </Link>
+          <Badge variant="secondary" className="font-mono text-xs">
+            All Checks Passed
+          </Badge>
+        </div>
       </div>
 
       {/* Diagnostics List */}

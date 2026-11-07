@@ -29,6 +29,7 @@ Strictly respect monorepo package boundaries:
 | `@nxtqr/database`      | Supabase clients, generated DB types, SSR helpers       | UI components                                 |
 | `@nxtqr/security`      | Input sanitization, size guards, rate limiters, masking | Presentation logic                            |
 | `@nxtqr/validation`    | Source-of-truth Zod validation schemas                  | Complex runtime side-effects                  |
+| `@nxtqr/branding`      | Official brand vectors, AppLogo, AnimatedLogo, wordmark | Functional UI icons, domain logic, DB calls   |
 
 ---
 
@@ -124,3 +125,14 @@ Strictly respect monorepo package boundaries:
 - Unit tests (`vitest run`) must pass with zero errors.
 - TypeScript checks (`tsc --noEmit`) must report zero diagnostics across all workspaces.
 - All schema migrations must be reproducible and tested via `supabase/tests/rls_test.sql`.
+
+---
+
+## 8. Brand Identity & Vector Geometry Standards
+
+- **Interactive Visual Engineering Studio**: NXTQR is an engineering studio, NOT a QR-code generator. QR codes, finder patterns, and QR terminology are strictly prohibited.
+- **Brand Assets**: Always import official logos and wordmarks from `@nxtqr/branding` (`AppLogo`, `LogoMark`, `LogoWordmark`, `AnimatedLogo`).
+- **Typography Fallback**: The wordmark uses Geist Sans with tracking `-0.04em` and strict system fallback chain (`Geist Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`).
+- **Corner Brackets**: 4 symmetric corner brackets with `rounded-md` (6px) radius, stroke 3.5, and round joins.
+- **Animated Logo**: Pure CSS/SVG keyframe animations; mandatory support for `prefers-reduced-motion: reduce`.
+- **Review Gate**: Verify branding changes via `/verify/brand`.

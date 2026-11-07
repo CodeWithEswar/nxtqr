@@ -1,0 +1,9 @@
+{
+  "extends": "@nxtqr/typescript-config/react-library.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*", "scripts/**/*"]
+}
+

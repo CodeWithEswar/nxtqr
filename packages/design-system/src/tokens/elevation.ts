@@ -31,4 +31,3 @@ export const elevationTokens = {
 } as const;
 
 export type ElevationLevel = keyof typeof elevationTokens;
-

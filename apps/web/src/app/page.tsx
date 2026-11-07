@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from "@nxtqr/ui";
 import { useThemeStore } from "@nxtqr/state";
 import { SettingsIcon, CheckCircleIcon } from "@nxtqr/icons";
+import { AppLogo } from "@nxtqr/branding";
 
 export default function RootVerificationPage() {
   const { themeMode, accentPreset, customHex } = useThemeStore();
@@ -15,9 +16,7 @@ export default function RootVerificationPage() {
       {/* Header bar */}
       <header className="flex items-center justify-between border-b border-border pb-4">
         <div className="flex items-center gap-3">
-          <div className="h-7 w-7 rounded-md bg-surface border border-border shadow-level-1 flex items-center justify-center text-accent font-mono font-bold text-xs">
-            N
-          </div>
+          <AppLogo variant="symbol" size={32} />
           <div>
             <h1 className="text-sm font-semibold tracking-tight text-foreground">
               NXTQR — Engineering Foundation
@@ -28,11 +27,12 @@ export default function RootVerificationPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-success inline-block" />
-            <span>Ready</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <Link href="/verify/brand">
+            <Button variant="outline" size="sm" className="font-mono text-xs">
+              Brand Review Gate →
+            </Button>
+          </Link>
           <Link href="/settings/theme">
             <Button variant="secondary" size="sm">
               <SettingsIcon className="h-3.5 w-3.5 mr-1.5" />
