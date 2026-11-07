@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nxtqr-worker-analytics",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "ENVIRONMENT": "development"
+  },
+  "queues": {
+    "consumers": [
+      {
+        "queue": "nxtqr-analytics-events",
+        "max_batch_size": 100,
+        "max_batch_timeout": 60,
+        "max_retries": 3,
+        "dead_letter_queue": "nxtqr-dead-letter"
+      }
+    ]
+  }
+}

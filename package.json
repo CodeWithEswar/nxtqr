@@ -8,7 +8,10 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=@nxtqr/web",
+    "dev:all": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@nxtqr/web",
+    "dev:workers": "turbo run dev --filter=\"@nxtqr/worker-*\"",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",

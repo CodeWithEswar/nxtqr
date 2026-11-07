@@ -17,13 +17,16 @@ export interface LogEntry {
 }
 
 class StructuredLogger {
-  private correlationId: string = generateCorrelationId();
+  private correlationId?: string;
 
   public setCorrelationId(id: string): void {
     this.correlationId = id;
   }
 
   public getCorrelationId(): string {
+    if (!this.correlationId) {
+      this.correlationId = generateCorrelationId();
+    }
     return this.correlationId;
   }
 
@@ -37,7 +40,7 @@ class StructuredLogger {
       level,
       message,
       timestamp: new Date().toISOString(),
-      correlationId: this.correlationId,
+      correlationId: this.correlationId ?? this.getCorrelationId(),
       context: context ? (maskSensitiveData(context) as Record<string, unknown>) : undefined,
       error: err
         ? {
