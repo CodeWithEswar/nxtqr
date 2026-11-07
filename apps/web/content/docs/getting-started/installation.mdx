@@ -1,0 +1,67 @@
+---
+title: Installation
+description: How to consume and configure @nxtqr/ui, @nxtqr/design-system, and icons in your application.
+category: Getting Started
+order: 2
+---
+
+This guide walks you through consuming the NXTQR shared design system packages within your monorepo features.
+
+## Package Dependencies
+
+NXTQR packages are published locally within the Turborepo workspace. To add `@nxtqr/ui` to a feature or application, add it to your `package.json`:
+
+<InstallationCommand packageName="@nxtqr/ui" command="pnpm add @nxtqr/ui" />
+
+You can also install the supporting token and icon packages:
+
+```bash
+pnpm add @nxtqr/design-system @nxtqr/icons @nxtqr/utils
+```
+
+## Tailwind CSS Configuration
+
+In your `tailwind.config.ts`, include the shared UI package within the Tailwind content scanner:
+
+```ts
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  darkMode: ["class"],
+  content: ["./src/**/*.{ts,tsx}", "../../packages/ui/src/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        surface: "var(--surface)",
+        "elevated-surface": "var(--elevated-surface)",
+        "secondary-surface": "var(--secondary-surface)",
+        border: "var(--border)",
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+      },
+      borderRadius: {
+        md: "var(--radius)",
+      },
+    },
+  },
+};
+
+export default config;
+```
+
+## Global Stylesheet Integration
+
+Import the global design system tokens, Tailwind directives, and the Precision Rail scrollbar styles in your application entry point:
+
+```css
+@import "@nxtqr/design-system/styles/scrollbar.css";
+@import "@nxtqr/ui/styles/scroll-area.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```

@@ -1,0 +1,35 @@
+---
+title: Introduction
+description: An overview of the NXTQR design system, architectural principles, and developer-crafted philosophy.
+category: Getting Started
+order: 1
+---
+
+Welcome to the **NXTQR Interactive Visual Engineering Studio** design system documentation platform.
+
+NXTQR is built upon a strict architectural directive: **"One platform, multiple visualizers, shared engineering infrastructure."** Rather than fracturing features across separate disjointed apps, NXTQR consolidates its engineering capabilities within a single unified web application shell powered by high-performance shared packages.
+
+## Core Architectural Directives
+
+1. **Pure Black Monochrome Foundation**: The default application appearance is pure black (`#000000`) with neutral grayscale surfaces. No dark blue, purple, or decorative gradient dashboard backgrounds.
+2. **User-Selectable Pure Accent**: Users freely choose their accent color (e.g. Pure Red `#FF0000`, Pure Orange `#FF6600`, Pure Green `#00CC66`, Pure Blue `#0066FF`), which applies dynamically without page reload.
+3. **Solid Neumorphism**: Restrained tactile depth without blurry glassmorphism, glowing halos, or floating cards.
+4. **Global `rounded-md` Standard**: Every rectangular control and card strictly adheres to `rounded-md` (`0.375rem / 6px`).
+5. **High Information Density**: Built for engineers, prioritizing compact typography (Geist Sans / Geist Mono), explicit contrast, and visible keyboard focus rings.
+
+## Monorepo Package Boundaries
+
+The design system enforces strict monorepo package boundaries:
+
+- `@nxtqr/ui`: Headless primitives and composite components based on shadcn/ui and Radix UI. Zero direct database or API calls.
+- `@nxtqr/design-system`: Tokens, color math, WCAG contrast verification, typography, and elevation definitions.
+- `@nxtqr/icons`: Standardized Hugeicons wrappers with 1.5px stroke width and 16px default size.
+- `@nxtqr/branding`: Brand assets, geometric N monogram, animated SVG logo, and app icon system.
+
+## Navigation Architecture
+
+The documentation platform utilizes a responsive three-column desktop layout:
+
+- **Left Column**: Fixed navigation tree with collapsible groups and quick `⌘K` command palette search.
+- **Center Column**: Primary independently scrolling documentation document with interactive previews, live playgrounds, and props specifications.
+- **Right Column**: Fixed On This Page table of contents with `IntersectionObserver` active heading tracking.

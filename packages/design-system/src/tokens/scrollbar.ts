@@ -62,4 +62,3 @@ export const scrollbarTokens = {
 } as const;
 
 export type ScrollbarVariant = (typeof scrollbarTokens.variants)[number];
-

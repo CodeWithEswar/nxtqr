@@ -1,0 +1,46 @@
+---
+title: Theming & Accents
+description: Dynamic user-customizable accent colors, pure black monochrome foundations, and WCAG contrast rules.
+category: Getting Started
+order: 5
+---
+
+NXTQR departs from fixed brand accents in favor of a **Pure Monochrome Foundation with User-Selected Pure Accents**.
+
+## Pure Monochrome Base
+
+The application default theme is pure black (`#000000`). Foreground text is pure white (`#FFFFFF`). All surfaces, panels, cards, and toolbars exist within a calibrated neutral grayscale hierarchy:
+
+| Surface Level         | Hex Color | Role                                                      |
+| :-------------------- | :-------- | :-------------------------------------------------------- |
+| **Canvas / Base**     | `#000000` | Main application background and infinite canvas viewport. |
+| **Surface**           | `#0A0A0A` | Primary container surfaces, cards, and sidebars.          |
+| **Elevated Surface**  | `#141414` | Dialogs, floating inspectors, dropdowns, popovers.        |
+| **Secondary Surface** | `#1A1A1A` | Inset wells, active toolbar items, selected list rows.    |
+| **Border**            | `#262626` | Structural dividers and container outlines.               |
+| **Subtle Border**     | `#1C1C1C` | Internal row separators and table borders.                |
+
+## Calibrated Pure Accent Presets
+
+Users can choose from calibrated pure saturated accent presets:
+
+- **Monochrome**: `#FFFFFF` (foreground `#000000`)
+- **Pure Red**: `#FF0000` (foreground `#FFFFFF`)
+- **Pure Orange**: `#FF6600` (foreground `#000000`)
+- **Pure Yellow**: `#FFD600` (foreground `#000000`)
+- **Pure Green**: `#00CC66` (foreground `#000000`)
+- **Pure Blue**: `#0066FF` (foreground `#FFFFFF`)
+- **Pure Violet**: `#8000FF` (foreground `#FFFFFF`)
+- **Pure Pink**: `#FF0099` (foreground `#FFFFFF`)
+
+## Dynamic Contrast Mathematics
+
+Accent colors are dynamically checked using WCAG 2.1 relative luminance math in `@nxtqr/design-system`. High-luminance colors (Orange, Yellow, Green) automatically derive `#000000` foreground text, while lower-luminance colors (Red, Blue, Violet) derive `#FFFFFF` text.
+
+```tsx
+import { getAccessibleForeground, deriveAccentShades } from "@nxtqr/design-system";
+
+// Computes accessible foreground and shades with zero page reload
+const shades = deriveAccentShades("#FF6600", true);
+console.log(shades.foreground); // "#000000"
+```

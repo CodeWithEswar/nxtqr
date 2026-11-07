@@ -1,0 +1,42 @@
+---
+title: Border Radius
+description: Strict rounded-md (0.375rem / 6px) standard across all rectangular engineering surfaces.
+category: Foundations
+order: 13
+---
+
+NXTQR enforces an unyielding geometric standard across all rectangular surfaces: **`rounded-md` (`0.375rem` / `6px`)**.
+
+## Mandatory Standard
+
+Every rectangular surface, container, and interactive control must use `rounded-md`:
+
+- Buttons, Inputs, Textareas
+- Cards, Dialogs, Popovers
+- Dropdown Menus, Context Menus, Tooltips
+- Graph Canvas Nodes, Properties Inspectors
+- Tabs, Badges, Table Containers
+- Code Blocks, Command Palettes
+
+## Prohibited Radii
+
+Never use the following classes on rectangular surfaces:
+
+- ❌ `rounded-sm` (Too sharp, inconsistent)
+- ❌ `rounded-lg`, `rounded-xl`, `rounded-2xl` (Excessively round, consumes technical density)
+- ❌ `rounded-full` on rectangular buttons or cards
+
+## Permitted Circular Exceptions
+
+The only elements allowed to use `rounded-full` are intrinsically circular objects:
+
+1. **User Avatars** (`<Avatar className="rounded-full" />`)
+2. **Radio Button Indicators** (`<RadioGroupItem />`)
+3. **Loading Spinners** (`<SpinnerIcon />`)
+
+```tsx
+import { radiusTokens } from "@nxtqr/design-system";
+
+console.log(radiusTokens.radiusRem); // "0.375rem"
+console.log(radiusTokens.radiusPx); // 6
+```

@@ -41,4 +41,3 @@ describe("Design System — Precision Rail Scrollbar Tokens", () => {
     expect(scrollbarTokens.variants).toEqual(["default", "compact", "canvas", "dense", "none"]);
   });
 });
-

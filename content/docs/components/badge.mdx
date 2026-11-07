@@ -1,0 +1,64 @@
+---
+title: Badge
+description: Compact status indicators used strictly for meaningful state, version, severity, or counts. Never purely decorative.
+category: Components
+order: 31
+---
+
+Badges communicate discrete status, counts, versions, and security clearance levels.
+
+## Overview
+
+Per NXTQR engineering standards, **badges must never be used for purely decorative branding**. Every badge must convey actionable telemetry: execution status (`SUCCESS`, `FAILED`), package versions (`v1.4.2`), or membership roles (`OWNER`, `MEMBER`).
+
+## Interactive Preview
+
+<ComponentPreview name="Badge" code={`import { Badge } from "@nxtqr/ui";
+
+export function Demo() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Badge variant="default">Accent Active</Badge>
+      <Badge variant="secondary">Secondary</Badge>
+      <Badge variant="outline">v0.1.0-alpha</Badge>
+      <Badge variant="success">Online</Badge>
+      <Badge variant="destructive">Critical Error</Badge>
+      <Badge variant="warning">Syncing</Badge>
+    </div>
+  );
+}`}>
+  <div className="flex flex-wrap gap-2">
+    <Badge variant="default">Accent Active</Badge>
+    <Badge variant="secondary">Secondary</Badge>
+    <Badge variant="outline">v0.1.0-alpha</Badge>
+    <Badge variant="success">Online</Badge>
+    <Badge variant="destructive">Critical Error</Badge>
+    <Badge variant="warning">Syncing</Badge>
+  </div>
+</ComponentPreview>
+
+## Installation
+
+<InstallationCommand packageName="@nxtqr/ui" command="pnpm add @nxtqr/ui" />
+
+## Usage
+
+```tsx
+import { Badge } from "@nxtqr/ui";
+
+export function WorkerStatusBadge({ isOnline }: { isOnline: boolean }) {
+  return (
+    <Badge variant={isOnline ? "success" : "destructive"}>
+      {isOnline ? "OPERATIONAL" : "DISCONNECTED"}
+    </Badge>
+  );
+}
+```
+
+## Props and Attributes
+
+<PropsTable />
+
+## Accessibility
+
+Badges use semantic spans and provide high contrast text against their respective background surfaces.

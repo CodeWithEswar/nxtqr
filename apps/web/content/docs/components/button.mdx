@@ -1,0 +1,86 @@
+---
+title: Button
+description: Tactile action controls with restrained elevation, solid pressed states, and dynamic accent styling.
+category: Components
+order: 30
+---
+
+Buttons allow users to trigger actions, execute commands, and submit workflows.
+
+## Overview
+
+The `Button` component in NXTQR is designed for tactile clarity. Rather than generic flat rectangles, buttons utilize Level 1 Raised elevation with a 1px specular top highlight, transforming into Level 3 Pressed inset depth upon activation.
+
+## Interactive Preview
+
+<ComponentPreview name="Button" code={`import { Button } from "@nxtqr/ui";
+
+export function Demo() {
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Button variant="default">Primary Action</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="outline">Outline</Button>
+      <Button variant="destructive">Destructive</Button>
+    </div>
+  );
+}`}>
+  <div className="flex flex-wrap gap-3">
+    <Button variant="default">Primary Action</Button>
+    <Button variant="secondary">Secondary</Button>
+    <Button variant="outline">Outline</Button>
+    <Button variant="destructive">Destructive</Button>
+  </div>
+</ComponentPreview>
+
+## Interactive Playground
+
+Test different variant combinations, sizes, loading states, and labels interactively:
+
+<ButtonPlayground />
+
+## Installation
+
+Import the button from the shared `@nxtqr/ui` package:
+
+<InstallationCommand packageName="@nxtqr/ui" command="pnpm add @nxtqr/ui" />
+
+## Usage
+
+```tsx
+import { Button } from "@nxtqr/ui";
+
+export function WorkflowToolbar() {
+  return (
+    <div className="flex items-center gap-2">
+      <Button variant="default" size="sm">
+        Deploy Pipeline
+      </Button>
+      <Button variant="outline" size="sm">
+        Cancel
+      </Button>
+    </div>
+  );
+}
+```
+
+## Variants
+
+Buttons support six distinct functional variants:
+
+- **`default`**: High-emphasis action surface inheriting the user's selected accent (`bg-accent text-accent-foreground`).
+- **`secondary`**: Solid raised neutral surface (`#0A0A0A` with `#262626` border).
+- **`outline`**: Transparent surface with subtle border, ideal for secondary toolbar commands.
+- **`ghost`**: Flush background becoming raised on hover, ideal for dense icon actions.
+- **`destructive`**: Pure red (`#FF0000`) alert treatment for permanent deletion or teardown operations.
+- **`link`**: Text-only button for inline navigation.
+
+## Props and Attributes
+
+<PropsTable />
+
+## Accessibility
+
+- **Keyboard Focus**: Distinct visible focus ring (`focus-visible:ring-1 focus-visible:ring-ring`).
+- **Disabled State**: Pointer events disabled and opacity reduced to 50% via `aria-disabled`.
+- **Loading State**: Automatic aria-busy communication and interactive throttling when `isLoading={true}`.

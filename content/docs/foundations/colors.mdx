@@ -1,0 +1,45 @@
+---
+title: Colors
+description: Pure monochrome grayscale hierarchy, calibrated pure saturated presets, and accessible contrast math.
+category: Foundations
+order: 10
+---
+
+The NXTQR color system is divided into two strict layers: **Structural Grayscale Hierarchy** and **Dynamic User Accents**.
+
+## Grayscale Hierarchy
+
+The dark theme baseline uses pure black (`#000000`) without any navy, slate, or AI-dashboard gradients:
+
+```css
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --surface: #0a0a0a;
+  --elevated-surface: #141414;
+  --secondary-surface: #1a1a1a;
+  --border: #262626;
+  --subtle-border: #1c1c1c;
+  --muted-foreground: #a3a3a3;
+  --disabled-foreground: #737373;
+}
+```
+
+## Semantic Status Tokens
+
+Status colors are strictly functional and independent from the user's selected accent:
+
+| Status          | Value     | Purpose                                                |
+| :-------------- | :-------- | :----------------------------------------------------- |
+| **Destructive** | `#FF0000` | Critical errors, destructive actions, failed builds    |
+| **Success**     | `#00CC66` | Successful completions, verified tests, online workers |
+| **Warning**     | `#FFD600` | Non-blocking warnings, degraded simulation performance |
+
+## CSS Semantic Classes
+
+Always reference semantic Tailwind CSS classes rather than hardcoded hex values:
+
+- `bg-background` and `text-foreground`
+- `bg-surface` and `border-border`
+- `bg-accent` and `text-accent-foreground`
+- `border-accent` and `ring-accent`

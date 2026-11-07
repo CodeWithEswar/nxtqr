@@ -1,0 +1,26 @@
+---
+title: Precision Rail Scrollbars
+description: NXTQR Precision Rail custom scrollbar system with compact 7px/6px tracks and dynamic accent drag feedback.
+category: Foundations
+order: 20
+---
+
+The **NXTQR Precision Rail** is a custom scrollbar architecture engineered for high-performance visual developer tooling. It provides tactile, restrained solid-neumorphic depth without soft decorative artifacts or layout reflows.
+
+## Scrollbar Variants
+
+| Variant           | Class / Selector     | Dimensions                         | Target Contexts                                                      |
+| :---------------- | :------------------- | :--------------------------------- | :------------------------------------------------------------------- |
+| **Default**       | `.scrollbar-default` | `10px` width/height · `6px` radius | Document body, main content panels, full-page views.                 |
+| **Compact**       | `.scrollbar-compact` | `7px` width/height · `4px` radius  | Sidebars, inspectors, file trees, nested menus.                      |
+| **Canvas Panel**  | `.scrollbar-canvas`  | `7px` width/height · `4px` radius  | Node palettes, property inspectors (`overscroll-behavior: contain`). |
+| **Data Dense**    | `.scrollbar-dense`   | `6px` width/height · `3px` radius  | High-frequency telemetry streams, debug logs, technical data tables. |
+| **Hidden Visual** | `.scrollbar-none`    | `0px` width/height                 | Technical controls with alternative scroll mechanisms.               |
+
+## Dynamic User Accent Integration
+
+During active dragging, the scrollbar thumb border dynamically lights up with the user's selected accent color (`var(--accent)`). This gives immediate tactile confirmation of the drag interaction without polluting the resting UI state.
+
+## Mobile and Touch Behavior
+
+On touch viewports (`@media (hover: none) and (pointer: coarse)`), the browser's native fading overlay scrollbar physics and momentum scrolling (`-webkit-overflow-scrolling: touch`) are preserved. Desktop-style custom tracks are not forced onto mobile viewports.

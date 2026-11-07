@@ -1,0 +1,54 @@
+---
+title: Scroll Area
+description: Custom scrolling viewport with NXTQR Precision Rail tracks (10px, 7px compact, 7px canvas, 6px dense).
+category: Components
+order: 40
+---
+
+Augments native scrolling with custom cross-browser Precision Rail scrollbars without sacrificing native accessibility.
+
+## Overview
+
+The `ScrollArea` component wraps `@radix-ui/react-scroll-area` with NXTQR's tactile solid-neumorphic tracks and thumbs. It supports single-axis and dual-axis navigation, four thickness variants, and dynamic user accent integration.
+
+## Interactive Preview
+
+<ComponentPreview name="ScrollArea" code={`import { ScrollArea } from "@nxtqr/ui";
+
+export function Demo() {
+  return (
+    <ScrollArea variant="compact" orientation="vertical" className="h-44 w-72 rounded-md border border-border bg-surface p-3">
+      <div className="space-y-2">
+        <h4 className="font-mono text-xs text-foreground font-semibold">Workspace Execution Log</h4>
+        {Array.from({ length: 10 }, (_, i) => (
+          <div key={i} className="text-[11px] font-mono text-muted-foreground p-1.5 rounded bg-black/40 border border-subtle-border">
+            [Step #{i + 1}] Dispatched graph node payload delta
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
+  );
+}`}>
+  <ScrollArea variant="compact" orientation="vertical" className="h-44 w-72 rounded-md border border-border bg-surface p-3">
+    <div className="space-y-2">
+      <h4 className="font-mono text-xs text-foreground font-semibold">Workspace Execution Log</h4>
+      {Array.from({ length: 10 }, (_, i) => (
+        <div key={i} className="text-[11px] font-mono text-muted-foreground p-1.5 rounded bg-black/40 border border-subtle-border">
+          [Step #{i + 1}] Dispatched graph node payload delta
+        </div>
+      ))}
+    </div>
+  </ScrollArea>
+</ComponentPreview>
+
+## Installation
+
+<InstallationCommand packageName="@nxtqr/ui" command="pnpm add @nxtqr/ui" />
+
+## Props and Attributes
+
+<PropsTable />
+
+## Canvas Isolation Note
+
+When using `variant="canvas"`, the underlying viewport automatically receives `overscroll-behavior: contain`. This guarantees that scrolling a properties inspector or node palette to the top/bottom boundary will not zoom or pan the background graph canvas.

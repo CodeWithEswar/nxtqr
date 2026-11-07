@@ -1,0 +1,37 @@
+---
+title: Elevation & Shadows
+description: Solid neumorphic depth without blurry glassmorphism: Level 0 Base, Level 1 Raised, Level 2 Elevated, Level 3 Pressed.
+category: Foundations
+order: 14
+---
+
+NXTQR employs a **Solid Neumorphism** elevation model. Depth is communicated through crisp solid boundaries, restrained directional shadows, and tactile inset pressed treatments.
+
+## Elevation Levels
+
+| Level       | Name     | Shadow CSS Token   | Intended Surfaces                                         |
+| :---------- | :------- | :----------------- | :-------------------------------------------------------- |
+| **Level 0** | Base     | `none`             | Pure black `#000000` canvas and full-page backdrop.       |
+| **Level 1** | Raised   | `--shadow-level-1` | Buttons, toolbars, compact cards, input controls.         |
+| **Level 2** | Elevated | `--shadow-level-2` | Popovers, dropdown menus, dialogs, floating inspectors.   |
+| **Level 3** | Pressed  | `--shadow-level-3` | Active toolbar buttons, selected controls, pressed state. |
+
+## Solid Neumorphism vs Glassmorphism
+
+Glassmorphism and backdrop blurs are strictly prohibited in NXTQR:
+
+- ❌ **No `backdrop-blur`**: Blurs degrade 60 FPS graph rendering performance and look like generic consumer templates.
+- ❌ **No transparent cards**: Semi-transparent floating surfaces degrade contrast against complex node graph networks.
+- ✅ **Solid surfaces**: High contrast solid backgrounds (`#0A0A0A`, `#141414`) with subtle borders (`#262626`) guarantee legibility and performance.
+
+```css
+/* Level 1 Raised */
+box-shadow:
+  0 1px 2px 0 rgba(0, 0, 0, 0.5),
+  0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
+
+/* Level 3 Pressed */
+box-shadow:
+  inset 0 1px 3px 0 rgba(0, 0, 0, 0.6),
+  inset 0 0 1px 0 rgba(0, 0, 0, 0.4);
+```

@@ -29,6 +29,8 @@ export * from "./components/ui/toggle";
 export * from "./components/ui/toggle-group";
 export * from "./components/ui/kbd";
 export * from "./components/ui/sonner";
+export * from "./components/ui/command";
+export * from "./components/ui/calendar";
 
 // Composite Components
 export * from "./components/composite/data-table";
