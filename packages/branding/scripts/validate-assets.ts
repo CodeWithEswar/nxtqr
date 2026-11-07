@@ -95,10 +95,34 @@ const ASSETS_TO_VALIDATE: AssetSpec[] = [
     expectedFormat: "png",
     minSize: 5000,
   },
-  { filepath: path.join(webPublicDir, "branding/icons/app-icon-hero.png"), expectedWidth: 512, expectedHeight: 512, expectedFormat: "png", minSize: 10000 },
-  { filepath: path.join(webPublicDir, "branding/icons/app-icon-black.png"), expectedWidth: 256, expectedHeight: 256, expectedFormat: "png", minSize: 5000 },
-  { filepath: path.join(webPublicDir, "branding/icons/app-icon-white.png"), expectedWidth: 256, expectedHeight: 256, expectedFormat: "png", minSize: 5000 },
-  { filepath: path.join(webPublicDir, "branding/icons/app-icon-red.png"), expectedWidth: 256, expectedHeight: 256, expectedFormat: "png", minSize: 5000 },
+  {
+    filepath: path.join(webPublicDir, "branding/icons/app-icon-hero.png"),
+    expectedWidth: 512,
+    expectedHeight: 512,
+    expectedFormat: "png",
+    minSize: 10000,
+  },
+  {
+    filepath: path.join(webPublicDir, "branding/icons/app-icon-black.png"),
+    expectedWidth: 256,
+    expectedHeight: 256,
+    expectedFormat: "png",
+    minSize: 5000,
+  },
+  {
+    filepath: path.join(webPublicDir, "branding/icons/app-icon-white.png"),
+    expectedWidth: 256,
+    expectedHeight: 256,
+    expectedFormat: "png",
+    minSize: 5000,
+  },
+  {
+    filepath: path.join(webPublicDir, "branding/icons/app-icon-red.png"),
+    expectedWidth: 256,
+    expectedHeight: 256,
+    expectedFormat: "png",
+    minSize: 5000,
+  },
 
   // Next.js App Router Root Assets
   { filepath: path.join(webAppDir, "icon.svg"), minSize: 200 },

@@ -61,4 +61,25 @@ test.describe("NXTQR Foundation & Design System", () => {
     await expect(page.locator("body")).toContainText("favicon.ico");
     await expect(page.locator("body")).toContainText("opengraph-image.png");
   });
+
+  test("renders scrollbar review gate and validates precision rail system", async ({ page }) => {
+    await page.goto("/verify/scrollbar");
+
+    await expect(page.locator("h1")).toContainText(
+      "NXTQR — Precision Rail Custom Scrollbar System Review Gate",
+    );
+
+    // Verify all 4 variants exist on the page
+    await expect(page.locator(".scrollbar-default")).toBeVisible();
+    await expect(page.locator(".scrollbar-compact").first()).toBeVisible();
+    await expect(page.locator(".scrollbar-canvas")).toBeVisible();
+    await expect(page.locator(".scrollbar-dense").first()).toBeVisible();
+
+    // Verify dynamic accent switching updates container style
+    const orangeBtn = page.getByRole("button", { name: /Pure Orange/i });
+    await orangeBtn.click();
+
+    const mainStyle = await page.locator("main").getAttribute("style");
+    expect(mainStyle).toContain("--accent: #FF6600");
+  });
 });

@@ -64,6 +64,11 @@ export default function DiagnosticsPage() {
       detail: "Decoupled canvas interaction & workspace UI stores",
     },
     {
+      name: "Precision Rail Custom Scrollbar",
+      status: "Active",
+      detail: "Solid neumorphic 10px/7px/6px tracks with dynamic accent drag & Radix parity",
+    },
+    {
       name: "Shared Graph Schemas",
       status: "Contract Ready",
       detail: "Zod GraphDocument, nodes, edges, migrations",
@@ -90,6 +95,11 @@ export default function DiagnosticsPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link href="/verify/scrollbar">
+            <Button variant="outline" size="sm" className="font-mono text-xs">
+              Scrollbar Review Gate →
+            </Button>
+          </Link>
           <Link href="/verify/brand">
             <Button variant="outline" size="sm" className="font-mono text-xs">
               Brand Review Gate →

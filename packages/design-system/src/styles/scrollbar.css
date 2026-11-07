@@ -1,0 +1,224 @@
+/**
+ * NXTQR Precision Rail Scrollbar Styles
+ * Solid Neumorphism · Pure Monochrome Foundation · Dynamic User Accent
+ */
+
+:root {
+  /* Scrollbar Dimension Tokens */
+  --scrollbar-size: 10px;
+  --scrollbar-size-compact: 7px;
+  --scrollbar-size-canvas: 7px;
+  --scrollbar-size-dense: 6px;
+
+  /* Scrollbar Radius Tokens */
+  --scrollbar-radius: var(--radius, 0.375rem);
+  --scrollbar-radius-compact: 4px;
+  --scrollbar-radius-dense: 3px;
+
+  /* Pure Monochrome Dark Palette */
+  --scrollbar-track: #080808;
+  --scrollbar-track-border: #141414;
+  --scrollbar-thumb: #303030;
+  --scrollbar-thumb-hover: #505050;
+  --scrollbar-thumb-active: #666666;
+  --scrollbar-border: #1f1f1f;
+  --scrollbar-highlight: #626262;
+
+  /* Dynamic Accent Integration */
+  --scrollbar-accent: var(--accent, #ffffff);
+}
+
+.light {
+  --scrollbar-track: #f5f5f5;
+  --scrollbar-track-border: #e5e5e5;
+  --scrollbar-thumb: #cccccc;
+  --scrollbar-thumb-hover: #a3a3a3;
+  --scrollbar-thumb-active: #737373;
+  --scrollbar-border: #e0e0e0;
+  --scrollbar-highlight: #ffffff;
+}
+
+/* ==========================================================================
+   Standards-Based Firefox Fallback
+   ========================================================================== */
+* {
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+}
+
+/* ==========================================================================
+   WebKit & Chromium Precision Rail Global Implementation
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track);
+  border: 1px solid var(--scrollbar-track-border);
+  box-shadow: inset 0 0 2px 0 rgba(0, 0, 0, 0.8);
+}
+
+.light ::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border: 1px solid var(--scrollbar-border);
+  border-radius: var(--scrollbar-radius);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+  border-color: var(--scrollbar-highlight);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--scrollbar-thumb-active);
+  border-color: var(--scrollbar-accent);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.7);
+}
+
+.light ::-webkit-scrollbar-thumb:active {
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--scrollbar-track);
+}
+
+/* ==========================================================================
+   Scrollbar Variants (Scoped Classes & Data Attributes)
+   ========================================================================== */
+
+/* 1. Default (10px Precision Rail) */
+.scrollbar-default,
+[data-scrollbar="default"] {
+  scrollbar-width: auto;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.scrollbar-default::-webkit-scrollbar,
+[data-scrollbar="default"]::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+.scrollbar-default::-webkit-scrollbar-thumb,
+[data-scrollbar="default"]::-webkit-scrollbar-thumb {
+  border-radius: var(--scrollbar-radius);
+}
+
+/* 2. Compact (7px Precision Rail for sidebars, inspectors, file lists) */
+.scrollbar-compact,
+[data-scrollbar="compact"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.scrollbar-compact::-webkit-scrollbar,
+[data-scrollbar="compact"]::-webkit-scrollbar {
+  width: var(--scrollbar-size-compact);
+  height: var(--scrollbar-size-compact);
+}
+
+.scrollbar-compact::-webkit-scrollbar-thumb,
+[data-scrollbar="compact"]::-webkit-scrollbar-thumb {
+  border-radius: var(--scrollbar-radius-compact);
+}
+
+/* 3. Canvas Panel (7px with overscroll-behavior: contain to prevent canvas zoom bleeding) */
+.scrollbar-canvas,
+[data-scrollbar="canvas"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  overscroll-behavior: contain;
+}
+
+.scrollbar-canvas::-webkit-scrollbar,
+[data-scrollbar="canvas"]::-webkit-scrollbar {
+  width: var(--scrollbar-size-canvas);
+  height: var(--scrollbar-size-canvas);
+}
+
+.scrollbar-canvas::-webkit-scrollbar-thumb,
+[data-scrollbar="canvas"]::-webkit-scrollbar-thumb {
+  border-radius: var(--scrollbar-radius-compact);
+}
+
+/* 4. Data Dense (6px Precision Rail for tables, logs, execution traces) */
+.scrollbar-dense,
+[data-scrollbar="dense"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.scrollbar-dense::-webkit-scrollbar,
+[data-scrollbar="dense"]::-webkit-scrollbar {
+  width: var(--scrollbar-size-dense);
+  height: var(--scrollbar-size-dense);
+}
+
+.scrollbar-dense::-webkit-scrollbar-thumb,
+[data-scrollbar="dense"]::-webkit-scrollbar-thumb {
+  border-radius: var(--scrollbar-radius-dense);
+}
+
+/* 5. Hidden Visual (Preserves keyboard and touch scrolling, hides desktop track) */
+.scrollbar-none,
+.no-scrollbar,
+[data-scrollbar="none"] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.scrollbar-none::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar,
+[data-scrollbar="none"]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* ==========================================================================
+   Mobile & Touch Responsive Behavior
+   ========================================================================== */
+@media (hover: none) and (pointer: coarse) {
+  /* On touch viewports, preserve platform-native overlay scrollbar physics */
+  ::-webkit-scrollbar {
+    width: auto;
+    height: auto;
+  }
+
+  .scrollbar-default::-webkit-scrollbar,
+  .scrollbar-compact::-webkit-scrollbar,
+  .scrollbar-canvas::-webkit-scrollbar,
+  .scrollbar-dense::-webkit-scrollbar {
+    width: auto;
+    height: auto;
+  }
+
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ==========================================================================
+   Accessibility: Reduced Motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  ::-webkit-scrollbar-thumb {
+    transition: none !important;
+  }
+}
+

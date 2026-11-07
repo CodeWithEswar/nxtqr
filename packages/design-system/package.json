@@ -10,7 +10,8 @@
     "./themes": "./src/themes/index.ts",
     "./typography": "./src/typography/index.ts",
     "./motion": "./src/motion/index.ts",
-    "./accessibility": "./src/accessibility/index.ts"
+    "./accessibility": "./src/accessibility/index.ts",
+    "./styles/*": "./src/styles/*"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
