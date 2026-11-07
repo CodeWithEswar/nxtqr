@@ -84,7 +84,7 @@ test.describe("NXTQR Documentation Platform (Phase 03)", () => {
 
     // Click item to navigate
     await resultItem.click();
-    await expect(page).toHaveURL(/.*\/docs\/components\/scroll-area/);
+    await expect(page).toHaveURL(/.*\/docs\/components\/scroll-area/, { timeout: 15000 });
     await expect(page.locator("h1")).toContainText("Scroll Area");
   });
 

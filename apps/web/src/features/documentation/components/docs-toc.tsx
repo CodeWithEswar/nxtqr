@@ -65,11 +65,11 @@ export function DocsToc({ headings = [] }: DocsTocProps) {
                 href={`#${heading.id}`}
                 onClick={(e) => handleClick(e, heading.id)}
                 className={cn(
-                  "block py-1 transition-colors leading-snug truncate",
-                  heading.level === 3 ? "pl-3 text-[11px]" : "pl-0 font-medium",
+                  "block py-1 transition-colors duration-140 ease-standard leading-snug truncate relative pl-2.5 border-l-2",
+                  heading.level === 3 ? "ml-2 text-[11px]" : "font-medium",
                   isActive
-                    ? "text-accent font-semibold"
-                    : "text-muted-foreground hover:text-foreground",
+                    ? "border-accent text-accent font-semibold"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
                 )}
               >
                 {heading.title}

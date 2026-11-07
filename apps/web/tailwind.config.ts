@@ -68,6 +68,20 @@ const config: Config = {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
       },
+      transitionDuration: {
+        "80": "80ms",
+        "140": "140ms",
+        "200": "200ms",
+        "280": "280ms",
+        "340": "340ms",
+        "420": "420ms",
+      },
+      transitionTimingFunction: {
+        standard: "cubic-bezier(0.2, 0, 0, 1)",
+        enter: "cubic-bezier(0, 0, 0.2, 1)",
+        exit: "cubic-bezier(0.4, 0, 1, 1)",
+        emphasized: "cubic-bezier(0.2, 0, 0, 1)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -77,10 +91,32 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "dialog-in": {
+          from: {
+            opacity: "0",
+            transform: "translate(-50%, -50%) scale(0.985) translateY(8px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translate(-50%, -50%) scale(1) translateY(0)",
+          },
+        },
+        "dialog-out": {
+          from: {
+            opacity: "1",
+            transform: "translate(-50%, -50%) scale(1) translateY(0)",
+          },
+          to: {
+            opacity: "0",
+            transform: "translate(-50%, -50%) scale(0.99) translateY(4px)",
+          },
+        },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        "accordion-down": "accordion-down 200ms cubic-bezier(0, 0, 0.2, 1)",
+        "accordion-up": "accordion-up 200ms cubic-bezier(0.4, 0, 1, 1)",
+        "dialog-in": "dialog-in 200ms cubic-bezier(0, 0, 0.2, 1)",
+        "dialog-out": "dialog-out 140ms cubic-bezier(0.4, 0, 1, 1)",
       },
     },
   },

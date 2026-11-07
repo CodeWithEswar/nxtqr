@@ -7,20 +7,20 @@ import { cn } from "@nxtqr/utils";
 import { SpinnerIcon } from "@nxtqr/icons";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 select-none",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium transition-all duration-140 ease-standard focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 select-none motion-reduce:transition-none motion-reduce:active:transform-none",
   {
     variants: {
       variant: {
         default:
-          "bg-accent text-accent-foreground shadow-level-1 hover:opacity-95 active:shadow-level-3 active:translate-y-[0.5px]",
+          "bg-accent text-accent-foreground shadow-level-1 hover:opacity-95 active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
         secondary:
-          "bg-surface text-foreground border border-border shadow-level-1 hover:bg-elevated-surface active:bg-secondary-surface active:shadow-level-3 active:translate-y-[0.5px]",
+          "bg-surface text-foreground border border-border shadow-level-1 hover:bg-elevated-surface active:bg-secondary-surface active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
         outline:
-          "border border-border bg-transparent shadow-level-1 hover:bg-surface hover:text-foreground active:shadow-level-3 active:translate-y-[0.5px]",
+          "border border-border bg-transparent shadow-level-1 hover:bg-surface hover:text-foreground active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
         ghost:
-          "hover:bg-surface hover:text-foreground active:bg-secondary-surface active:shadow-level-3",
+          "hover:bg-surface hover:text-foreground active:bg-secondary-surface active:shadow-level-3 active:scale-[0.985]",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-level-1 hover:bg-destructive/90 active:shadow-level-3 active:translate-y-[0.5px]",
+          "bg-destructive text-destructive-foreground shadow-level-1 hover:bg-destructive/90 active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
         link: "text-accent underline-offset-4 hover:underline",
       },
       size: {

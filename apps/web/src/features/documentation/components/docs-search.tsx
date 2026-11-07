@@ -57,6 +57,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                   key={doc.slug}
                   value={`${doc.title} ${doc.description} ${doc.category}`}
                   onSelect={() => handleSelect(doc.slug)}
+                  onClick={() => handleSelect(doc.slug)}
                   className="flex items-center justify-between"
                 >
                   <div className="flex flex-col">
