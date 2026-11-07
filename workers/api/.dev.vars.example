@@ -1,0 +1,5 @@
+ENVIRONMENT=development
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+SUPABASE_URL=http://127.0.0.1:54321
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+

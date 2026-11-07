@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nxtqr-worker-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "ENVIRONMENT": "development",
+    "CORS_ALLOWED_ORIGINS": "*"
+  },
+  "queues": {
+    "producers": [
+      {
+        "binding": "SIMULATION_QUEUE",
+        "queue": "nxtqr-simulation-jobs"
+      },
+      {
+        "binding": "ANALYTICS_QUEUE",
+        "queue": "nxtqr-analytics-events"
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,25 @@
+{
+  "name": "@nxtqr/icons",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@hugeicons/react": "^0.3.0",
+    "@nxtqr/utils": "workspace:*",
+    "clsx": "^2.1.1",
+    "react": "^19.0.0 || ^18.3.1"
+  },
+  "devDependencies": {
+    "@nxtqr/typescript-config": "workspace:*",
+    "@types/react": "^19.0.0 || ^18.3.12",
+    "typescript": "^5.7.3"
+  }
+}
