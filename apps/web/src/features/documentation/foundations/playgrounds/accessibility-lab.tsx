@@ -248,26 +248,26 @@ export function AccessibilityLab() {
 
       {activeTab === "contrast" && (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <ContrastMeter
               foreground="#FFFFFF"
               background="#000000"
-              sampleText="Foreground White on Canvas Black"
+              sampleText="White / Canvas"
             />
             <ContrastMeter
               foreground="#A3A3A3"
               background="#000000"
-              sampleText="Muted Text on Canvas Black"
+              sampleText="Muted / Canvas"
             />
             <ContrastMeter
               foreground="#FFFFFF"
               background="#FF0000"
-              sampleText="White on Pure Red Accent"
+              sampleText="White / Red"
             />
             <ContrastMeter
               foreground="#000000"
               background="#FF6600"
-              sampleText="Black on Pure Orange Accent"
+              sampleText="Black / Orange"
             />
           </div>
         </div>

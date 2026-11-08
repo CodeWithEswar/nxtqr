@@ -217,6 +217,7 @@ export function ColorPlayground() {
         <ContrastMeter
           foreground={resolvedForeground}
           background={selectedHex}
+          sampleText="Accent Text"
         />
       </div>
 

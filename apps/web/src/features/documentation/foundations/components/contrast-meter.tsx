@@ -38,12 +38,12 @@ export function ContrastMeter({ foreground, background, sampleText, className }:
       )}
     >
       {/* Top Ratio Display */}
-      <div className="flex items-center justify-between border-b border-subtle-border pb-3">
-        <div>
-          <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
-            WCAG 2.1 Contrast Ratio
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-subtle-border pb-3">
+        <div className="space-y-0.5">
+          <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block whitespace-nowrap">
+            WCAG 2.1 Ratio
           </span>
-          <span className="text-2xl font-mono font-bold text-foreground">
+          <span className="text-2xl font-mono font-bold text-foreground tabular-nums">
             {formattedRatio}
             <span className="text-sm font-normal text-muted-foreground font-sans ml-1">: 1</span>
           </span>
@@ -51,7 +51,7 @@ export function ContrastMeter({ foreground, background, sampleText, className }:
 
         {/* Live Swatch Preview */}
         <div
-          className="h-10 px-3 rounded-md border border-border flex items-center justify-center font-mono text-xs font-semibold select-none shadow-level-1 text-center truncate max-w-[160px]"
+          className="h-8 px-3 rounded-md border border-border flex items-center justify-center font-mono text-xs font-semibold select-none shadow-level-1 text-center whitespace-nowrap shrink-0"
           style={{ backgroundColor: background, color: foreground }}
         >
           {sampleText || "Sample"}
@@ -59,20 +59,20 @@ export function ContrastMeter({ foreground, background, sampleText, className }:
       </div>
 
       {/* Compliance Badges Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs font-mono">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-mono">
         {/* Normal Text AA */}
-        <div className="p-2 rounded bg-black/40 border border-subtle-border space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-[10px]">Normal AA (4.5:1)</span>
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-muted-foreground text-[10px] whitespace-nowrap">Normal AA (4.5:1)</span>
             {passesNormalAA ? (
-              <CheckCircleIcon className="h-3.5 w-3.5 text-success" />
+              <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
-              <CloseIcon className="h-3.5 w-3.5 text-destructive" />
+              <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
           <span
             className={cn(
-              "text-[11px] font-semibold",
+              "text-[11px] font-semibold block",
               passesNormalAA ? "text-success" : "text-destructive",
             )}
           >
@@ -81,18 +81,18 @@ export function ContrastMeter({ foreground, background, sampleText, className }:
         </div>
 
         {/* Normal Text AAA */}
-        <div className="p-2 rounded bg-black/40 border border-subtle-border space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-[10px]">Normal AAA (7:1)</span>
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-muted-foreground text-[10px] whitespace-nowrap">Normal AAA (7:1)</span>
             {passesNormalAAA ? (
-              <CheckCircleIcon className="h-3.5 w-3.5 text-success" />
+              <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
-              <CloseIcon className="h-3.5 w-3.5 text-destructive" />
+              <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
           <span
             className={cn(
-              "text-[11px] font-semibold",
+              "text-[11px] font-semibold block",
               passesNormalAAA ? "text-success" : "text-destructive",
             )}
           >
@@ -101,18 +101,18 @@ export function ContrastMeter({ foreground, background, sampleText, className }:
         </div>
 
         {/* Large Text AA */}
-        <div className="p-2 rounded bg-black/40 border border-subtle-border space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-[10px]">Large Text (3:1)</span>
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-muted-foreground text-[10px] whitespace-nowrap">Large AA (3:1)</span>
             {passesLargeAA ? (
-              <CheckCircleIcon className="h-3.5 w-3.5 text-success" />
+              <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
-              <CloseIcon className="h-3.5 w-3.5 text-destructive" />
+              <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
           <span
             className={cn(
-              "text-[11px] font-semibold",
+              "text-[11px] font-semibold block",
               passesLargeAA ? "text-success" : "text-destructive",
             )}
           >
@@ -121,18 +121,18 @@ export function ContrastMeter({ foreground, background, sampleText, className }:
         </div>
 
         {/* Large Text AAA */}
-        <div className="p-2 rounded bg-black/40 border border-subtle-border space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-[10px]">Large AAA (4.5:1)</span>
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-muted-foreground text-[10px] whitespace-nowrap">Large AAA (4.5:1)</span>
             {passesLargeAAA ? (
-              <CheckCircleIcon className="h-3.5 w-3.5 text-success" />
+              <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
-              <CloseIcon className="h-3.5 w-3.5 text-destructive" />
+              <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
           <span
             className={cn(
-              "text-[11px] font-semibold",
+              "text-[11px] font-semibold block",
               passesLargeAAA ? "text-success" : "text-destructive",
             )}
           >
@@ -141,18 +141,18 @@ export function ContrastMeter({ foreground, background, sampleText, className }:
         </div>
 
         {/* Graphical Objects & UI */}
-        <div className="p-2 rounded bg-black/40 border border-subtle-border space-y-1 col-span-2 sm:col-span-1">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-[10px]">UI Controls (3:1)</span>
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1 col-span-2 sm:col-span-1">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-muted-foreground text-[10px] whitespace-nowrap">UI Controls (3:1)</span>
             {passesUi ? (
-              <CheckCircleIcon className="h-3.5 w-3.5 text-success" />
+              <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
-              <CloseIcon className="h-3.5 w-3.5 text-destructive" />
+              <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
           <span
             className={cn(
-              "text-[11px] font-semibold",
+              "text-[11px] font-semibold block",
               passesUi ? "text-success" : "text-destructive",
             )}
           >
