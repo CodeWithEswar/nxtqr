@@ -183,5 +183,18 @@ test.describe("NXTQR Documentation Platform (Phase 03)", () => {
     await page.goto("/docs/components/switch", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1")).toContainText("Switch");
     await expect(page.locator("text=Component Ready")).toBeHidden();
+
+    // Test Card documentation: verify real source code under Code tab and InstallationCommand syntax highlighting
+    await page.goto("/docs/components/card", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("h1")).toContainText("Card");
+    const codeTab = page.getByRole("tab", { name: "Code" }).first();
+    await codeTab.click();
+    await expect(page.getByText("No source code provided")).toBeHidden();
+    await expect(page.locator("code").filter({ hasText: "CardHeader" }).first()).toBeVisible();
+
+    // Verify syntax highlighting on InstallationCommand
+    const installBlock = page.locator("code").filter({ hasText: "pnpm" }).first();
+    await expect(installBlock).toBeVisible();
+    await expect(installBlock.locator("span").first()).toContainText("pnpm");
   });
 });

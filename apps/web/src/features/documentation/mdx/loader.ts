@@ -88,15 +88,13 @@ function generateDocumentationForEntry(entry: DocEntry): string {
   const demo = getDemoDefinition(slugNormalized);
 
   if (isComponent && demo) {
-    const escapedCode = demo.code.replace(/`/g, "\\`").replace(/\${/g, "\\${");
-
     return `## Overview
 
 The \`${entry.title}\` component is built upon standardized headless primitives, styled with NXTQR's pure black monochrome foundation, restrained solid neumorphic elevation, and user-selected pure accent color inheritance.
 
 ## Interactive Preview
 
-<ComponentPreview name="${demo.name}" code={\`${escapedCode}\`}>
+<ComponentPreview name="${demo.name}" slug="${demo.slug}">
   <ComponentDemoView slug="${demo.slug}" />
 </ComponentPreview>
 

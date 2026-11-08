@@ -7,9 +7,11 @@ import { cn } from "@nxtqr/utils";
 import { CodeBlock } from "../code-block";
 import { CodeCopyButton } from "../code-block/code-copy-button";
 import { PreviewErrorBoundary } from "./preview-error-boundary";
+import { getDemoDefinition } from "../../registry/demo-definitions";
 
 export interface ComponentPreviewProps {
   name: string;
+  slug?: string;
   code?: string;
   children: React.ReactNode;
   className?: string;
@@ -19,6 +21,7 @@ export interface ComponentPreviewProps {
 
 export function ComponentPreview({
   name,
+  slug,
   code,
   children,
   className,
@@ -27,6 +30,13 @@ export function ComponentPreview({
 }: ComponentPreviewProps) {
   const [activeTab, setActiveTab] = React.useState<"preview" | "code">("preview");
   const [viewport, setViewport] = React.useState<"desktop" | "tablet" | "mobile">("desktop");
+
+  const resolvedSlug =
+    slug ??
+    (name ? name.toLowerCase().replace(/\s+/g, "-") : undefined);
+  const demoDef = resolvedSlug ? getDemoDefinition(resolvedSlug) : undefined;
+  const sourceCode = code || demoDef?.code || "// No source code provided";
+  const resolvedFilename = filename ?? `${resolvedSlug ?? "component"}.tsx`;
 
   const viewportWidths = {
     desktop: "w-full",
@@ -98,7 +108,7 @@ export function ComponentPreview({
               </div>
             )}
 
-            {code && <CodeCopyButton code={code} />}
+            <CodeCopyButton code={sourceCode} />
           </div>
         </div>
 
@@ -127,8 +137,8 @@ export function ComponentPreview({
           <div className="p-4 bg-[#0A0A0A]">
             <CodeBlock
               language="tsx"
-              filename={filename ?? `${name.toLowerCase().replace(/\s+/g, "-")}.tsx`}
-              code={code ?? "// No source code provided"}
+              filename={resolvedFilename}
+              code={sourceCode}
               className="my-0"
             />
           </div>
