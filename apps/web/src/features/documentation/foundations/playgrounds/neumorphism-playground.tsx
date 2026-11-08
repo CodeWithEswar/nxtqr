@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@nxtqr/ui";
+import { Button, Slider } from "@nxtqr/ui";
 import { RefreshIcon, CheckIcon, CloseIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -71,7 +71,7 @@ export function NeumorphismPlayground() {
       </div>
 
       {/* Interactive Hardware Surface Stage */}
-      <div className="p-8 bg-black border border-subtle-border rounded-md flex flex-col items-center justify-center min-h-[280px]">
+      <div className="p-4 sm:p-6 md:p-8 bg-black border border-subtle-border rounded-md flex flex-col items-center justify-center min-h-[280px]">
         {activeTab === "raised" && (
           <div className="w-full max-w-sm space-y-4">
             <div
@@ -79,16 +79,22 @@ export function NeumorphismPlayground() {
               onMouseUp={() => setIsPressed(false)}
               onMouseLeave={() => setIsPressed(false)}
               className={cn(
-                "p-6 rounded-md border transition-all cursor-pointer select-none",
+                "p-4 sm:p-6 rounded-md border transition-all cursor-pointer select-none",
                 isPressed
                   ? "bg-secondary-surface border-border shadow-[inset_0_1px_3px_0_rgba(0,0,0,0.8),inset_0_0_1px_0_rgba(0,0,0,0.5)] translate-y-[1px]"
                   : "bg-elevated-surface border-border shadow-[0_2px_4px_0_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.06)] hover:border-muted-border"
               )}
             >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-mono text-muted-foreground">PRESSABLE_BUTTON</span>
-                <span className="text-[10px] font-mono text-accent">
-                  {isPressed ? "STATE: PRESSED" : "STATE: RAISED (RESTING)"}
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <span className="text-xs font-mono text-muted-foreground shrink-0">PRESSABLE_BUTTON</span>
+                <span className="text-[10px] font-mono text-accent shrink-0 text-right">
+                  <span className="hidden sm:inline">STATE: </span>
+                  {isPressed ? "PRESSED" : (
+                    <>
+                      <span className="hidden sm:inline">RAISED (RESTING)</span>
+                      <span className="sm:hidden">RESTING</span>
+                    </>
+                  )}
                 </span>
               </div>
               <h4 className="text-sm font-semibold text-foreground mb-1">Tactile Push Element</h4>
@@ -96,18 +102,19 @@ export function NeumorphismPlayground() {
                 Click and hold to feel the transition from Level 1 raised surface to Level 3 inset depth.
               </p>
             </div>
-            <div className="text-center text-[10px] font-mono text-muted-foreground">
-              Inset Rim Highlight: <code className="text-foreground">inset 0 1px 0 0 rgba(255, 255, 255, 0.06)</code>
+            <div className="text-center text-[10px] font-mono text-muted-foreground break-all sm:break-normal">
+              <span className="hidden sm:inline">Inset Rim Highlight: </span>
+              <code className="text-foreground">inset 0 1px 0 0 rgba(255, 255, 255, 0.06)</code>
             </div>
           </div>
         )}
 
         {activeTab === "inset" && (
           <div className="w-full max-w-sm space-y-4">
-            <div className="p-6 rounded-md border border-border bg-secondary-surface shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.8),inset_0_0_2px_0_rgba(0,0,0,0.5)]">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-mono text-muted-foreground">INSTRUMENT_WELL</span>
-                <span className="text-[10px] font-mono text-accent">INSET LEVEL-3</span>
+            <div className="p-4 sm:p-6 rounded-md border border-border bg-secondary-surface shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.8),inset_0_0_2px_0_rgba(0,0,0,0.5)]">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <span className="text-xs font-mono text-muted-foreground shrink-0">INSTRUMENT_WELL</span>
+                <span className="text-[10px] font-mono text-accent shrink-0">INSET LEVEL-3</span>
               </div>
               <div className="p-3 bg-black/60 rounded-md border border-border/50 font-mono text-xs text-foreground space-y-1">
                 <div className="text-muted-foreground">// Telemetry Recess</div>
@@ -123,11 +130,11 @@ export function NeumorphismPlayground() {
 
         {activeTab === "accent-edge" && (
           <div className="w-full max-w-sm space-y-4">
-            <div className="p-6 rounded-md border border-accent bg-elevated-surface shadow-[0_2px_8px_0_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.08)] relative overflow-hidden">
+            <div className="p-4 sm:p-6 rounded-md border border-accent bg-elevated-surface shadow-[0_2px_8px_0_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.08)] relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
-              <div className="flex items-center justify-between mb-3 mt-1">
-                <span className="text-xs font-mono text-accent font-semibold">ACTIVE_CIRCUIT</span>
-                <span className="text-[10px] font-mono text-muted-foreground">SOLID ACCENT</span>
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3 mt-1">
+                <span className="text-xs font-mono text-accent font-semibold shrink-0">ACTIVE_CIRCUIT</span>
+                <span className="text-[10px] font-mono text-muted-foreground shrink-0">SOLID ACCENT</span>
               </div>
               <h4 className="text-sm font-semibold text-foreground mb-1">Calibrated Edge Illumination</h4>
               <p className="text-xs text-muted-foreground">
@@ -143,7 +150,7 @@ export function NeumorphismPlayground() {
         {activeTab === "hardware-switch" && (
           <div className="w-full max-w-md space-y-6">
             {/* Rocker Switch & Toggle */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {/* Hardware Rocker */}
               <div className="p-4 rounded-md border border-border bg-elevated-surface shadow-level-1">
                 <div className="text-[11px] font-mono text-muted-foreground mb-2">ROCKER_SWITCH</div>
@@ -198,17 +205,16 @@ export function NeumorphismPlayground() {
 
             {/* Precision Slider Potentiometer */}
             <div className="p-4 rounded-md border border-border bg-elevated-surface shadow-level-1 space-y-2">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-muted-foreground">GAIN_POTENTIOMETER</span>
+              <div className="flex flex-wrap items-center justify-between gap-1 text-xs font-mono">
+                <span className="text-muted-foreground shrink-0">GAIN_POTENTIOMETER</span>
                 <span className="text-accent font-semibold">{potentiometerValue}%</span>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={potentiometerValue}
-                onChange={(e) => setPotentiometerValue(Number(e.target.value))}
-                className="w-full accent-accent h-1.5 bg-secondary-surface rounded-none cursor-pointer"
+              <Slider
+                min={0}
+                max={100}
+                step={1}
+                value={[potentiometerValue]}
+                onValueChange={([val]) => setPotentiometerValue(val)}
               />
             </div>
           </div>
