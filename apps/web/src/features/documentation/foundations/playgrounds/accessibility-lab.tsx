@@ -47,20 +47,14 @@ export function AccessibilityLab() {
         </div>
 
         {/* Responsive Tab Navigation & Three-Dots Dropdown Menu */}
-        <div className="flex items-center gap-1.5 p-1 bg-secondary-surface border border-border rounded-md self-start sm:self-auto shrink-0 flex-nowrap">
-          {/* Mobile Single Tab Pill (< sm) */}
-          <div className="flex sm:hidden items-center gap-1">
-            <span className="px-2.5 py-1 text-xs font-mono font-semibold bg-surface border border-subtle-border rounded text-foreground capitalize">
-              {activeTab}
-            </span>
-          </div>
-
-          {/* Primary View Tabs (Visible on >= sm) */}
+        <div className="flex items-center gap-1.5 sm:p-1 sm:bg-secondary-surface sm:border sm:border-border rounded-md self-start sm:self-auto shrink-0 flex-nowrap">
+          {/* Desktop & Tablet: Segmented tabs (Visible on >= sm) */}
           <div className="hidden sm:flex items-center gap-1">
             {[
               { id: "focus" as const, label: "Focus" },
               { id: "touch" as const, label: "Touch" },
               { id: "keyboard" as const, label: "Keyboard" },
+              { id: "contrast" as const, label: "Contrast" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -76,40 +70,17 @@ export function AccessibilityLab() {
                 {tab.label}
               </button>
             ))}
-
-            {/* Contrast Tab (Only visible on wide desktop >= lg to prevent tablet header collision) */}
-            <button
-              type="button"
-              onClick={() => setActiveTab("contrast")}
-              className={cn(
-                "hidden lg:inline-block px-2.5 py-1 text-xs font-mono rounded whitespace-nowrap transition-colors",
-                activeTab === "contrast"
-                  ? "bg-surface text-foreground font-semibold border border-subtle-border shadow-level-1"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              Contrast
-            </button>
           </div>
 
-          {/* Three-Dots Dropdown Menu (Always accessible for compact overflow & quick lab actions) */}
+          {/* Three-Dots Dropdown Menu: On mobile it is the ONLY control; on desktop it provides extra actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className={cn(
-                  "px-2 py-1 text-xs font-mono rounded whitespace-nowrap transition-colors flex items-center gap-1 cursor-pointer",
-                  activeTab === "contrast"
-                    ? "bg-surface text-foreground font-semibold border border-subtle-border shadow-level-1"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface/50",
-                )}
-                aria-label="More laboratory options"
+                className="h-7 w-7 rounded border border-border bg-surface text-foreground flex items-center justify-center hover:bg-secondary-surface shadow-level-1 transition-colors cursor-pointer"
+                aria-label="Laboratory menu"
               >
-                {/* On tablet where Contrast is hidden from main row, show its label when selected */}
-                {activeTab === "contrast" && (
-                  <span className="lg:hidden text-foreground font-semibold">Contrast</span>
-                )}
-                <MoreHorizontalIcon className="h-3.5 w-3.5" />
+                <MoreHorizontalIcon className="h-4 w-4" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 font-mono text-xs">

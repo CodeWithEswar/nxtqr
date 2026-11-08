@@ -59,105 +59,120 @@ export function ContrastMeter({ foreground, background, sampleText, className }:
       </div>
 
       {/* Compliance Badges Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-mono">
+      <div className="grid grid-cols-2 gap-2 text-xs font-mono">
         {/* Normal Text AA */}
-        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1">
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-muted-foreground text-[10px] whitespace-nowrap">Normal AA (4.5:1)</span>
+            <span className="text-[11px] font-medium text-foreground">Normal AA</span>
             {passesNormalAA ? (
               <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
               <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
-          <span
-            className={cn(
-              "text-[11px] font-semibold block",
-              passesNormalAA ? "text-success" : "text-destructive",
-            )}
-          >
-            {passesNormalAA ? "PASS" : "FAIL"}
-          </span>
+          <div className="flex items-center justify-between text-[10px] pt-1 mt-0.5 border-t border-subtle-border/50">
+            <span className="text-muted-foreground font-mono">4.5:1</span>
+            <span
+              className={cn(
+                "font-bold",
+                passesNormalAA ? "text-success" : "text-destructive",
+              )}
+            >
+              {passesNormalAA ? "PASS" : "FAIL"}
+            </span>
+          </div>
         </div>
 
         {/* Normal Text AAA */}
-        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1">
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-muted-foreground text-[10px] whitespace-nowrap">Normal AAA (7:1)</span>
+            <span className="text-[11px] font-medium text-foreground">Normal AAA</span>
             {passesNormalAAA ? (
               <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
               <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
-          <span
-            className={cn(
-              "text-[11px] font-semibold block",
-              passesNormalAAA ? "text-success" : "text-destructive",
-            )}
-          >
-            {passesNormalAAA ? "PASS" : "FAIL"}
-          </span>
+          <div className="flex items-center justify-between text-[10px] pt-1 mt-0.5 border-t border-subtle-border/50">
+            <span className="text-muted-foreground font-mono">7.0:1</span>
+            <span
+              className={cn(
+                "font-bold",
+                passesNormalAAA ? "text-success" : "text-destructive",
+              )}
+            >
+              {passesNormalAAA ? "PASS" : "FAIL"}
+            </span>
+          </div>
         </div>
 
         {/* Large Text AA */}
-        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1">
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-muted-foreground text-[10px] whitespace-nowrap">Large AA (3:1)</span>
+            <span className="text-[11px] font-medium text-foreground">Large AA</span>
             {passesLargeAA ? (
               <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
               <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
-          <span
-            className={cn(
-              "text-[11px] font-semibold block",
-              passesLargeAA ? "text-success" : "text-destructive",
-            )}
-          >
-            {passesLargeAA ? "PASS" : "FAIL"}
-          </span>
+          <div className="flex items-center justify-between text-[10px] pt-1 mt-0.5 border-t border-subtle-border/50">
+            <span className="text-muted-foreground font-mono">3.0:1</span>
+            <span
+              className={cn(
+                "font-bold",
+                passesLargeAA ? "text-success" : "text-destructive",
+              )}
+            >
+              {passesLargeAA ? "PASS" : "FAIL"}
+            </span>
+          </div>
         </div>
 
         {/* Large Text AAA */}
-        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1">
+        <div className="p-2 rounded-md bg-black/40 border border-subtle-border">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-muted-foreground text-[10px] whitespace-nowrap">Large AAA (4.5:1)</span>
+            <span className="text-[11px] font-medium text-foreground">Large AAA</span>
             {passesLargeAAA ? (
               <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
               <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
-          <span
-            className={cn(
-              "text-[11px] font-semibold block",
-              passesLargeAAA ? "text-success" : "text-destructive",
-            )}
-          >
-            {passesLargeAAA ? "PASS" : "FAIL"}
-          </span>
+          <div className="flex items-center justify-between text-[10px] pt-1 mt-0.5 border-t border-subtle-border/50">
+            <span className="text-muted-foreground font-mono">4.5:1</span>
+            <span
+              className={cn(
+                "font-bold",
+                passesLargeAAA ? "text-success" : "text-destructive",
+              )}
+            >
+              {passesLargeAAA ? "PASS" : "FAIL"}
+            </span>
+          </div>
         </div>
 
         {/* Graphical Objects & UI */}
-        <div className="p-2 rounded-md bg-black/40 border border-subtle-border space-y-1 col-span-2 sm:col-span-1">
+        <div className="col-span-2 p-2 rounded-md bg-black/40 border border-subtle-border">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-muted-foreground text-[10px] whitespace-nowrap">UI Controls (3:1)</span>
+            <span className="text-[11px] font-medium text-foreground">UI Controls</span>
             {passesUi ? (
               <CheckCircleIcon className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
               <CloseIcon className="h-3.5 w-3.5 text-destructive shrink-0" />
             )}
           </div>
-          <span
-            className={cn(
-              "text-[11px] font-semibold block",
-              passesUi ? "text-success" : "text-destructive",
-            )}
-          >
-            {passesUi ? "PASS" : "FAIL"}
-          </span>
+          <div className="flex items-center justify-between text-[10px] pt-1 mt-0.5 border-t border-subtle-border/50">
+            <span className="text-muted-foreground font-mono">3.0:1 Target</span>
+            <span
+              className={cn(
+                "font-bold",
+                passesUi ? "text-success" : "text-destructive",
+              )}
+            >
+              {passesUi ? "PASS" : "FAIL"}
+            </span>
+          </div>
         </div>
       </div>
     </div>
