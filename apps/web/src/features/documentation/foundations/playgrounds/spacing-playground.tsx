@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { spacingTokens, type DensityMode } from "@nxtqr/design-system";
-import { Slider, Button, Badge } from "@nxtqr/ui";
+import { Slider, Button, Badge, Checkbox } from "@nxtqr/ui";
 import { RefreshIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -58,15 +58,19 @@ export function SpacingPlayground() {
           <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
             1. Standard Density Tiers
           </span>
-          <label className="flex items-center gap-2 text-xs font-mono text-muted-foreground cursor-pointer">
-            <input
-              type="checkbox"
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="show-spatial-guides"
               checked={showGuides}
-              onChange={(e) => setShowGuides(e.target.checked)}
-              className="rounded"
+              onCheckedChange={(checked) => setShowGuides(checked === true)}
             />
-            <span>Show Spatial Overlay Guides</span>
-          </label>
+            <label
+              htmlFor="show-spatial-guides"
+              className="text-xs font-mono text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors"
+            >
+              Show Spatial Overlay Guides
+            </label>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
