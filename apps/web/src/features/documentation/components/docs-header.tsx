@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AppLogo } from "@nxtqr/branding";
 import { Button, Sheet, SheetContent, SheetTrigger } from "@nxtqr/ui";
-import { SearchIcon, LayersIcon, SettingsIcon } from "@nxtqr/icons";
+import { SearchIcon, MenuIcon, SettingsIcon, TerminalIcon } from "@nxtqr/icons";
 import { cn } from "@nxtqr/utils";
 import { DocsSidebar } from "./docs-sidebar";
 
@@ -42,28 +42,31 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 h-14 w-full border-b border-border bg-black px-4 sm:px-6 flex items-center justify-between shrink-0 select-none">
-      {/* Left: Brand Identity & Top Navigation */}
-      <div className="flex items-center gap-6">
+    <header className="sticky top-0 z-50 h-14 w-full border-b border-border bg-black/95 backdrop-blur px-3 sm:px-6 flex items-center justify-between shrink-0 select-none">
+      {/* Left: Mobile Trigger, Brand Identity & Desktop Top Navigation */}
+      <div className="flex items-center gap-2 sm:gap-6 min-w-0">
         {/* Mobile Sidebar Sheet Trigger */}
-        <div className="md:hidden">
+        <div className="md:hidden shrink-0">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="outline"
                 size="icon-sm"
                 aria-label="Open documentation navigation"
-                className="h-8 w-8 border-border bg-surface text-muted-foreground hover:text-foreground"
+                className="h-8 w-8 border-border bg-surface text-muted-foreground hover:text-foreground active:bg-secondary-surface active:shadow-level-3 shrink-0"
               >
-                <LayersIcon className="h-4 w-4" />
+                <MenuIcon className="h-4 w-4" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-72 bg-black border-border flex flex-col">
-              <div className="p-4 border-b border-border flex items-center gap-2.5">
-                <AppLogo variant="symbol" size={24} />
-                <span className="font-semibold text-xs tracking-tight text-foreground">
-                  NXTQR Documentation
-                </span>
+            <SheetContent side="left" className="p-0 w-80 bg-black border-border flex flex-col">
+              {/* Drawer Header */}
+              <div className="p-4 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <AppLogo variant="symbol" size={24} />
+                  <span className="font-semibold text-xs tracking-tight text-foreground font-sans">
+                    NXTQR Documentation
+                  </span>
+                </div>
               </div>
 
               {/* Mobile Quick Section Switcher */}
@@ -85,6 +88,7 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
                 ))}
               </div>
 
+              {/* Drawer Scrollable Navigation Links */}
               <div className="flex-1 overflow-y-auto">
                 <DocsSidebar
                   onSearchClick={() => {
@@ -94,6 +98,26 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
                   className="w-full border-r-0 h-auto"
                 />
               </div>
+
+              {/* Drawer Footer Actions */}
+              <div className="p-3 border-t border-border bg-surface/40 flex items-center justify-between text-xs font-mono">
+                <Link
+                  href="/verify"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground px-2 py-1 rounded-md transition-colors"
+                >
+                  <TerminalIcon className="h-3.5 w-3.5" />
+                  <span>Diagnostics</span>
+                </Link>
+                <Link
+                  href="/settings/theme"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground px-2 py-1 rounded-md transition-colors"
+                >
+                  <SettingsIcon className="h-3.5 w-3.5" />
+                  <span>Theme</span>
+                </Link>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
@@ -101,14 +125,14 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
         {/* Brand Link */}
         <Link
           href="/docs"
-          className="flex items-center gap-2.5 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-md"
+          className="flex items-center gap-2 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-md shrink-0"
         >
-          <AppLogo variant="symbol" size={26} />
-          <div className="flex items-baseline gap-2">
+          <AppLogo variant="symbol" size={24} className="shrink-0" />
+          <div className="flex items-baseline gap-1.5 whitespace-nowrap">
             <span className="font-bold text-sm tracking-tight text-foreground font-sans">
               NXTQR
             </span>
-            <span className="font-mono text-[11px] text-muted-foreground uppercase tracking-wider">
+            <span className="hidden sm:inline font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
               / Design System
             </span>
           </div>
@@ -134,13 +158,13 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
       </div>
 
       {/* Right: Quick Search, Diagnostics & Theme Actions */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
         {/* Search Trigger Button (Desktop) */}
         <Button
           variant="outline"
           size="sm"
           onClick={onSearchClick}
-          className="hidden sm:flex items-center gap-2 h-8 px-3 text-xs text-muted-foreground bg-surface/70 border-border hover:bg-surface hover:text-foreground transition-all duration-140"
+          className="hidden sm:flex items-center gap-2 h-8 px-3 text-xs text-muted-foreground bg-surface/70 border-border hover:bg-surface hover:text-foreground transition-all duration-140 shadow-level-1"
         >
           <SearchIcon className="h-3.5 w-3.5" />
           <span>Quick search</span>
@@ -155,30 +179,31 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
           size="icon-sm"
           onClick={onSearchClick}
           aria-label="Quick search"
-          className="flex sm:hidden h-8 w-8 text-muted-foreground bg-surface/70 border-border hover:text-foreground"
+          className="flex sm:hidden h-8 w-8 text-muted-foreground bg-surface/70 border-border hover:text-foreground active:bg-secondary-surface active:shadow-level-3 shrink-0"
         >
           <SearchIcon className="h-3.5 w-3.5" />
         </Button>
 
-        {/* Diagnostics Review Gate */}
-        <Link href="/verify">
+        {/* Diagnostics Review Gate (Desktop & Tablet) */}
+        <Link href="/verify" className="hidden md:inline-flex">
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border"
+            className="h-8 px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border shadow-level-1"
           >
             Diagnostics
           </Button>
         </Link>
 
         {/* Theme Settings */}
-        <Link href="/settings/theme">
+        <Link href="/settings/theme" className="shrink-0">
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border flex items-center gap-1.5"
+            aria-label="Theme settings"
+            className="h-8 px-2 sm:px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border flex items-center gap-1.5 shadow-level-1"
           >
-            <SettingsIcon className="h-3 w-3" />
+            <SettingsIcon className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Theme</span>
           </Button>
         </Link>
