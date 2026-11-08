@@ -64,7 +64,7 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
                 type="button"
                 onClick={() => toggleGroup(group.category)}
                 aria-expanded={!isCollapsed}
-                className="w-full flex items-center justify-between py-1 px-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors duration-140"
+                className="w-full flex items-center justify-between py-1 px-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors duration-140 rounded-md outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 <span>{group.category}</span>
                 <ChevronDownIcon
@@ -97,7 +97,7 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
                           key={item.slug}
                           href={itemHref}
                           className={cn(
-                            "flex items-center justify-between py-1.5 px-2.5 rounded-md text-xs transition-colors duration-140 ease-standard",
+                            "flex items-center justify-between py-1.5 px-2.5 rounded-md text-xs transition-colors duration-140 ease-standard outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                             isActive
                               ? "bg-secondary-surface text-foreground font-semibold shadow-level-1 border border-subtle-border"
                               : "text-muted-foreground hover:text-foreground hover:bg-surface/50",

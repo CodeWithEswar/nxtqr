@@ -36,7 +36,7 @@ export function FilterBar({ filters, onRemove, onClearAll, children }: FilterBar
           <button
             type="button"
             onClick={() => onRemove(filter.id)}
-            className="hover:text-foreground ml-0.5 rounded-md"
+            className="ml-1 h-4 w-4 rounded-md inline-flex items-center justify-center border border-transparent hover:border-border hover:bg-black/40 text-muted-foreground hover:text-foreground outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition-colors duration-140"
             aria-label={`Remove filter ${filter.label}`}
           >
             <CloseIcon className="h-3 w-3" />

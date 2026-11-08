@@ -55,7 +55,7 @@ export function DateRangePicker({
             <label className="text-[11px] text-muted-foreground mb-1 block">Start Date</label>
             <input
               type="date"
-              className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs text-foreground outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               value={value.from ? value.from.toISOString().split("T")[0] : ""}
               onChange={(e) => {
                 const newFrom = e.target.value ? new Date(e.target.value) : null;
@@ -67,7 +67,7 @@ export function DateRangePicker({
             <label className="text-[11px] text-muted-foreground mb-1 block">End Date</label>
             <input
               type="date"
-              className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs text-foreground outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               value={value.to ? value.to.toISOString().split("T")[0] : ""}
               onChange={(e) => {
                 const newTo = e.target.value ? new Date(e.target.value) : null;

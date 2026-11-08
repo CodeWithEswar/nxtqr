@@ -52,7 +52,7 @@ export function DatePicker({
           {/* Calendar Picker surface */}
           <input
             type="date"
-            className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs text-foreground outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             value={value ? value.toISOString().split("T")[0] : ""}
             onChange={(e) => {
               if (e.target.value) {
