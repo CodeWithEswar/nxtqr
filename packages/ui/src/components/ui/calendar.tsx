@@ -12,38 +12,39 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3 bg-surface border border-border rounded-md shadow-level-1", className)}
+      className={cn("p-3 bg-surface border border-border rounded-md shadow-level-1 inline-block select-none", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-        month: "space-y-4",
-        caption: "flex justify-between pt-1 relative items-center px-1",
-        caption_label: "text-xs font-mono font-semibold text-foreground",
-        nav: "space-x-1 flex items-center",
-        nav_button: cn(
-          buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100",
+        months: "relative flex flex-col sm:flex-row gap-4",
+        month: "space-y-3",
+        month_caption: "relative flex justify-center items-center h-8",
+        caption_label: "text-xs font-mono font-semibold text-foreground tracking-tight",
+        nav: "flex items-center justify-between absolute inset-x-0 top-0 h-8 px-1 pointer-events-none z-10",
+        button_previous: cn(
+          buttonVariants({ variant: "outline", size: "icon-sm" }),
+          "pointer-events-auto h-7 w-7 rounded-md inline-flex items-center justify-center border border-border bg-surface text-muted-foreground hover:text-foreground active:bg-secondary-surface active:shadow-level-3 transition-colors shadow-level-1 outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
         ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
-        table: "w-full border-collapse space-y-1 font-mono",
-        head_row: "flex",
-        head_cell:
-          "text-muted-foreground rounded-md w-8 font-normal text-[10px] uppercase tracking-wider text-center",
-        row: "flex w-full mt-2",
-        cell: "relative p-0 text-center text-xs focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-secondary-surface [&:has([aria-selected].day-outside)]:bg-secondary-surface/50 [&:has([aria-selected].day-range-end)]:rounded-r-md rounded-md",
-        day: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-8 w-8 p-0 font-normal aria-selected:opacity-100 rounded-md hover:bg-secondary-surface",
+        button_next: cn(
+          buttonVariants({ variant: "outline", size: "icon-sm" }),
+          "pointer-events-auto h-7 w-7 rounded-md inline-flex items-center justify-center border border-border bg-surface text-muted-foreground hover:text-foreground active:bg-secondary-surface active:shadow-level-3 transition-colors shadow-level-1 outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
         ),
-        day_range_end: "day-range-end",
-        day_selected:
-          "bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground font-semibold shadow-level-1",
-        day_today: "bg-surface text-foreground font-bold border border-border",
-        day_outside:
-          "day-outside text-muted-foreground opacity-40 aria-selected:bg-secondary-surface/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
-        day_disabled: "text-muted-foreground opacity-30 cursor-not-allowed",
-        day_range_middle: "aria-selected:bg-secondary-surface aria-selected:text-foreground",
-        day_hidden: "invisible",
+        month_grid: "w-full border-collapse font-mono",
+        weekdays: "border-b border-subtle-border",
+        weekday:
+          "w-8 h-8 p-0 text-center font-normal text-[10px] text-muted-foreground uppercase tracking-wider",
+        weeks: "",
+        week: "mt-1",
+        day: "group/day p-0.5 text-center text-xs relative rounded-md",
+        day_button: cn(
+          "h-7 w-7 p-0 font-mono text-xs font-normal rounded-md inline-flex items-center justify-center transition-colors text-foreground hover:bg-secondary-surface outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+          "group-data-[selected=true]/day:!bg-accent group-data-[selected=true]/day:!text-accent-foreground group-data-[selected=true]/day:font-semibold group-data-[selected=true]/day:shadow-level-1 group-data-[selected=true]/day:hover:!bg-accent group-data-[selected=true]/day:hover:!text-accent-foreground",
+          "group-data-[today=true]/day:border group-data-[today=true]/day:border-border group-data-[today=true]/day:font-bold",
+          "group-data-[outside=true]/day:text-muted-foreground/35 group-data-[outside=true]/day:hover:text-muted-foreground/60",
+          "group-data-[disabled=true]/day:text-muted-foreground/20 group-data-[disabled=true]/day:cursor-not-allowed group-data-[disabled=true]/day:hover:bg-transparent",
+        ),
+        range_start: "rounded-l-md !bg-accent !text-accent-foreground font-semibold",
+        range_end: "rounded-r-md !bg-accent !text-accent-foreground font-semibold",
+        range_middle: "!bg-secondary-surface !text-foreground rounded-none",
+        hidden: "invisible",
         ...classNames,
       }}
       components={{

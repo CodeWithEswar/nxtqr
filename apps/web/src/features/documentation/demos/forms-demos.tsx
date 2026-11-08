@@ -15,6 +15,7 @@ import {
   SelectContent,
   SelectItem,
   Calendar,
+  DatePicker,
 } from "@nxtqr/ui";
 
 // ==========================================
@@ -302,38 +303,69 @@ export function CalendarDemo() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div className="rounded-md border border-border bg-surface p-2 shadow-level-1">
+    <div className="flex flex-col items-center gap-5 w-full max-w-sm">
+      {/* 1. Standalone Inline Calendar */}
+      <div className="w-full space-y-2">
+        <div className="flex items-center justify-between text-xs font-mono text-muted-foreground px-0.5">
+          <span>Inline Calendar Surface</span>
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Single Mode</span>
+        </div>
         <Calendar
           mode="single"
           selected={date}
           onSelect={setDate}
-          className="rounded-md"
+          className="w-full flex justify-center"
         />
       </div>
-      <span className="text-xs font-mono text-muted-foreground">
-        Selected Audit Date:{" "}
+
+      {/* 2. Floating Popover Date Picker */}
+      <div className="w-full space-y-2 p-3 rounded-md border border-border bg-surface/50 shadow-level-1">
+        <div className="flex items-center justify-between text-xs font-mono text-muted-foreground">
+          <span>Popover DatePicker</span>
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Dropdown</span>
+        </div>
+        <DatePicker
+          value={date ?? null}
+          onChange={(d) => setDate(d ?? undefined)}
+          placeholder="Pick audit timestamp"
+          className="w-full"
+        />
+      </div>
+
+      {/* Synchronized Telemetry State */}
+      <div className="w-full py-2 px-3 rounded-md border border-subtle-border bg-black text-xs font-mono text-muted-foreground flex items-center justify-between shadow-level-1">
+        <span>Selected Audit Date:</span>
         <span className="text-foreground font-semibold">
-          {date ? date.toLocaleDateString() : "None"}
+          {date ? date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "None"}
         </span>
-      </span>
+      </div>
     </div>
   );
 }
 
 export const calendarDemoCode = `import * as React from "react";
-import { Calendar } from "@nxtqr/ui";
+import { Calendar, DatePicker } from "@nxtqr/ui";
 
 export function CalendarDemo() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
-    <Calendar
-      mode="single"
-      selected={date}
-      onSelect={setDate}
-      className="rounded-md border border-border"
-    />
+    <div className="space-y-4 max-w-sm">
+      {/* 1. Standalone Precision Calendar */}
+      <Calendar
+        mode="single"
+        selected={date}
+        onSelect={setDate}
+        className="rounded-md border border-border"
+      />
+
+      {/* 2. Floating Popover Date Picker */}
+      <DatePicker
+        value={date ?? null}
+        onChange={(d) => setDate(d ?? undefined)}
+        placeholder="Pick audit date"
+      />
+    </div>
   );
 }`;
 

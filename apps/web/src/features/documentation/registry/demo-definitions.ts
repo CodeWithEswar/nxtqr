@@ -195,10 +195,30 @@ export function SelectDemo() {
     slug: "calendar",
     name: "Calendar",
     description: "Date picker calendar surface with single, multiple, and range selection modes.",
-    code: `import { Calendar } from "@nxtqr/ui";
+    code: `import * as React from "react";
+import { Calendar, DatePicker } from "@nxtqr/ui";
 
 export function CalendarDemo() {
-  return <Calendar mode="single" className="rounded-md border border-border" />;
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
+
+  return (
+    <div className="space-y-4 max-w-sm">
+      {/* Standalone Precision Calendar */}
+      <Calendar
+        mode="single"
+        selected={date}
+        onSelect={setDate}
+        className="rounded-md border border-border"
+      />
+
+      {/* Floating Popover Date Picker */}
+      <DatePicker
+        value={date ?? null}
+        onChange={(d) => setDate(d ?? undefined)}
+        placeholder="Pick audit date"
+      />
+    </div>
+  );
 }`,
     category: "Forms",
   },
