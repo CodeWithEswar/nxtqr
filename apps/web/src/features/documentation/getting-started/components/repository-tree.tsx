@@ -371,7 +371,8 @@ export function RepositoryTree() {
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
             <h3 className="text-sm font-semibold font-sans text-foreground truncate sm:whitespace-normal">
-              NXTQR Monorepo Architecture Explorer
+              <span className="hidden sm:inline">NXTQR Monorepo Architecture Explorer</span>
+              <span className="sm:hidden">Repository Explorer</span>
             </h3>
             <Badge
               variant="outline"

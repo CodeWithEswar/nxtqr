@@ -83,28 +83,30 @@ export function ElevationPlayground() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Interactive Elevation & Shadow Laboratory
+            <span className="hidden sm:inline">Interactive Elevation & Shadow Laboratory</span>
+            <span className="sm:hidden">Elevation & Shadow</span>
           </h3>
 
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             <Button
               variant={viewMode === "interactive" ? "default" : "outline"}
               size="sm"
               onClick={() => setViewMode("interactive")}
-              className="h-7 text-xs font-mono whitespace-nowrap"
+              className="h-7 text-xs font-mono px-2 sm:px-3 whitespace-nowrap"
             >
-              Inspector
+              <span className="hidden sm:inline">Inspector</span>
+              <span className="sm:hidden">Inspect</span>
             </Button>
             <Button
               variant={viewMode === "isometric" ? "default" : "outline"}
               size="sm"
               onClick={() => setViewMode("isometric")}
-              className="h-7 text-xs font-mono gap-1 whitespace-nowrap"
+              className="h-7 text-xs font-mono px-2 sm:px-3 gap-1 whitespace-nowrap"
             >
               <LayersIcon className="h-3 w-3" />
-              Layers
+              <span>Layers</span>
             </Button>
           </div>
         </div>

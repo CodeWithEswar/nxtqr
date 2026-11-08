@@ -32,29 +32,32 @@ export function EdgesPlayground() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Graph Edges Connection Laboratory
+            <span className="hidden sm:inline">Graph Edges Connection Laboratory</span>
+            <span className="sm:hidden">Graph Edges</span>
           </h3>
 
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             <button
               onClick={() => setIsActive(!isActive)}
               className={cn(
-                "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
+                "px-2 sm:px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
                 isActive ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
               )}
             >
-              Pulse: {isActive ? "ON" : "OFF"}
+              <span className="hidden sm:inline">Pulse: </span>
+              <span>{isActive ? "ON" : "OFF"}</span>
             </button>
             <button
               onClick={() => setIsSelected(!isSelected)}
               className={cn(
-                "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
+                "px-2 sm:px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
                 isSelected ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
               )}
             >
-              Selected: {isSelected ? "ON" : "OFF"}
+              <span className="hidden sm:inline">Selected: </span>
+              <span>{isSelected ? "ON" : "OFF"}</span>
             </button>
           </div>
         </div>

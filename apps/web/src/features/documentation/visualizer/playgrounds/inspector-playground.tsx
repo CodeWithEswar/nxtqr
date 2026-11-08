@@ -15,9 +15,10 @@ export function InspectorPlayground() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Node Inspector Laboratory
+            <span className="hidden sm:inline">Node Inspector Laboratory</span>
+            <span className="sm:hidden">Node Inspector</span>
           </h3>
 
           <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">

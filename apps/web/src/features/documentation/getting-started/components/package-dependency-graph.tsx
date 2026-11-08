@@ -73,7 +73,8 @@ export function PackageDependencyGraph() {
       <div className="border-b border-subtle-border pb-4 space-y-1">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Monorepo Layered Dependency Architecture
+            <span className="hidden sm:inline">Monorepo Layered Dependency Architecture</span>
+            <span className="sm:hidden">Dependency Hierarchy</span>
           </h3>
 
           <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">

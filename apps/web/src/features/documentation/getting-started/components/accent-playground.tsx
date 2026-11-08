@@ -55,7 +55,8 @@ export function AccentPlayground() {
       <div className="border-b border-subtle-border pb-4 space-y-1">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Dynamic User Accent & Contrast Laboratory
+            <span className="hidden sm:inline">Dynamic User Accent & Contrast Laboratory</span>
+            <span className="sm:hidden">Accent Laboratory</span>
           </h3>
 
           <div className="flex items-center gap-1.5 shrink-0">

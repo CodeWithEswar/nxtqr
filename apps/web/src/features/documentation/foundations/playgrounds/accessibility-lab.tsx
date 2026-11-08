@@ -37,9 +37,10 @@ export function AccessibilityLab() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Accessibility & WCAG 2.1 Laboratory
+            <span className="hidden sm:inline">Accessibility & WCAG 2.1 Laboratory</span>
+            <span className="sm:hidden">Accessibility & WCAG</span>
           </h3>
 
           {/* Responsive Tab Navigation & Three-Dots Dropdown Menu */}

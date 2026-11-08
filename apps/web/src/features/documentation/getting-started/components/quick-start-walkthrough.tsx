@@ -74,7 +74,8 @@ export function QuickStartWalkthrough() {
       <div className="border-b border-subtle-border pb-4 space-y-1">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Interactive Quick Start Studio
+            <span className="hidden sm:inline">Interactive Quick Start Studio</span>
+            <span className="sm:hidden">Quick Start Studio</span>
           </h3>
 
           <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">

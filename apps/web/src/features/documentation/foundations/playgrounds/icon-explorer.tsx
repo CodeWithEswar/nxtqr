@@ -102,13 +102,16 @@ export function IconExplorer() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Hugeicons Iconography System
+            <span className="hidden sm:inline">Hugeicons Iconography System</span>
+            <span className="sm:hidden">Hugeicons</span>
           </h3>
 
           <Badge variant="outline" className="text-xs font-mono shrink-0 whitespace-nowrap">
-            {filteredIcons.length} of {ICON_REGISTRY.length} Icons
+            <span>{filteredIcons.length}</span>
+            <span className="hidden sm:inline"> of {ICON_REGISTRY.length} Icons</span>
+            <span className="sm:hidden"> Icons</span>
           </Badge>
         </div>
         <p className="text-xs text-muted-foreground">

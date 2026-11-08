@@ -32,9 +32,10 @@ export function SpacingPlayground() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            Interactive Spacing & Density Laboratory
+            <span className="hidden sm:inline">Interactive Spacing & Density Laboratory</span>
+            <span className="sm:hidden">Spacing & Density</span>
           </h3>
 
           <Button

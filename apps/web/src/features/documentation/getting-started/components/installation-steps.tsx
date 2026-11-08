@@ -114,14 +114,16 @@ export function InstallationSteps() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-5 p-4 sm:p-6">
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            NXTQR Installation & Environment Orchestration
+            <span className="hidden sm:inline">NXTQR Installation & Environment Orchestration</span>
+            <span className="sm:hidden">Monorepo Installation</span>
           </h3>
 
           <Link href="/verify" className="shrink-0">
             <Button variant="outline" size="sm" className="h-7 text-xs font-mono gap-1.5 whitespace-nowrap">
-              <span>Open /verify</span>
+              <span className="hidden sm:inline">Open /verify</span>
+              <span className="sm:hidden">/verify</span>
               <ExternalLinkIcon className="h-3 w-3 text-muted-foreground" />
             </Button>
           </Link>

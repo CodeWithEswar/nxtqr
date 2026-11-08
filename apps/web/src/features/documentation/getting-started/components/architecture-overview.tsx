@@ -154,7 +154,8 @@ export function ArchitectureOverview() {
       <div className="border-b border-subtle-border pb-4 space-y-1">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
-            NXTQR Platform Architecture Lifecycle
+            <span className="hidden sm:inline">NXTQR Platform Architecture Lifecycle</span>
+            <span className="sm:hidden">Architecture Lifecycle</span>
           </h3>
 
           <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
