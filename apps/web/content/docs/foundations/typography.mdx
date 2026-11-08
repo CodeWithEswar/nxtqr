@@ -1,0 +1,68 @@
+---
+title: Typography
+description: High-density technical typography utilizing Geist Sans for UI structures and Geist Mono for code and metrics.
+category: Foundations
+order: 20
+---
+
+Typography in NXTQR is designed for high information density, structural clarity, and technical legibility. The platform exclusively pairs **Geist Sans** for UI controls, navigation, and structural headings with **Geist Mono** for code blocks, telemetry metrics, and tabular data.
+
+## Interactive Typography Laboratory
+
+Adjust font family, size, weight, line-height, and container width in real time with live readability telemetry:
+
+<TypographyPlayground />
+
+## Font Family Architecture
+
+Per NXTQR Constitution §4, font loading is strictly standardized:
+
+- **Geist Sans**: Primary interface typeface. Clean geometric grotesque with subtle optical ink traps that maximize legibility at small sizes (11px-13px).
+- **Geist Mono**: Monospaced typeface for all numbers, coordinates, timestamps, memory addresses, and code listings. Uses tabular figures (`tnum`) by default.
+- **Strict Fallback Chain**: `Geist Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`.
+
+## Standard Type Scale
+
+| Level | Size (rem / px) | Weight | Line Height | Tracking | Application |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Display** | `2.25rem / 36px` | Bold (700) | 1.15 | `-0.03em` | Primary studio hero headers and title screens |
+| **Heading 1** | `1.75rem / 28px` | Bold (700) | 1.2 | `-0.025em` | Major module titles and document headers |
+| **Heading 2** | `1.25rem / 20px` | Semibold (600) | 1.25 | `-0.02em` | Section headers and inspector panel titles |
+| **Heading 3** | `1.00rem / 16px` | Semibold (600) | 1.3 | `-0.015em` | Sub-section headings and modal titles |
+| **Body (Default)** | `0.875rem / 14px` | Regular (400) | 1.5 | `-0.01em` | Standard documentation prose, dialog bodies |
+| **Small / UI** | `0.75rem / 12px` | Medium (500) | 1.4 | `0` | Buttons, tab labels, input labels, tooltips |
+| **Caption / Meta** | `0.6875rem / 11px` | Regular (400) | 1.35 | `+0.01em` | Telemetry sub-labels, timestamps, badges |
+| **Code / Monospace** | `0.75rem / 12px` | Regular (400) | 1.6 | `0` | Syntax highlighted code, graph coordinates |
+
+## Typographic Best Practices
+
+1. **Information Density**: Default to `text-xs` (12px) and `text-sm` (14px) for controls and panels. Avoid oversized marketing typography inside working engineering visualizers.
+2. **Tabular Numerics**: Always apply monospaced figures to values that update frequently (e.g. FPS counters, simulation steps) to prevent jitter:
+   ```tsx
+   <span className="font-mono tabular-nums text-xs text-foreground">
+     60.0 FPS
+   </span>
+   ```
+3. **Restrained Line Length**: Optimal reading line length for documentation prose is 65-75 characters (max width `max-w-prose` / `65ch`).
+4. **Letter Spacing**: Use negative tracking (`-0.02em` to `-0.04em`) on large display headings to preserve tightness; never apply negative tracking to small monospaced labels.
+
+## Implementation Reference
+
+```tsx
+// Document Heading
+<h1 className="text-2xl font-bold font-sans tracking-tight text-foreground">
+  Transformation Matrix Schema
+</h1>
+
+// Telemetry Metric Row
+<div className="flex items-center justify-between font-mono text-xs">
+  <span className="text-muted-foreground">LATENCY_P99</span>
+  <span className="text-foreground font-semibold tabular-nums">1.24 ms</span>
+</div>
+
+// Inline Code Identifier
+<code className="px-1.5 py-0.5 rounded bg-black/60 border border-subtle-border font-mono text-[11px] text-foreground">
+  viewport.toScreenSpace(x, y)
+</code>
+```
+

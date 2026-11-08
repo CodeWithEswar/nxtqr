@@ -1,0 +1,67 @@
+---
+title: Iconography
+description: Standardized Hugeicons wrappers with uniform 1.5px stroke width, semantic color inheritance, and strict prohibition of emoji in controls.
+category: Foundations
+order: 70
+---
+
+The NXTQR iconography system provides clean visual signifiers built exclusively from **Hugeicons**. All icons are packaged and exported through `@nxtqr/icons` with a uniform **1.5px stroke width**, ensuring optical alignment with Geist Sans and our technical design system.
+
+## Interactive Icon Explorer
+
+Search the catalog, test size scales (12px to 24px), preview color tints, and copy import statements with one click:
+
+<IconExplorer />
+
+## Iconography Rules & Principles
+
+Per NXTQR Constitution §3.5, the following standards are mandatory:
+
+1. **Single Icon Family**: Hugeicons is the exclusive iconography system. Mixing Lucide, Heroicons, FontAwesome, or ad-hoc SVGs is strictly prohibited.
+2. **Uniform 1.5px Stroke Width**: Every icon renders with `strokeWidth={1.5}`. Bold 2px strokes or hairline 1px strokes are forbidden.
+3. **Strictly No Emoji in UI Controls**: Never use emoji (e.g. ⚙️, 🚀, ❌) as functional UI icons or button labels.
+4. **Color Inheritance**: All icons use `stroke="currentColor"` and `fill="none"`, inheriting text color dynamically from their parent element.
+
+## Standardized Sizing Scale
+
+| Size Token | Dimensions | Application |
+| :--- | :--- | :--- |
+| **Dense / Micro** | `12×12px` (`h-3 w-3`) | Small inline status badges, table row actions |
+| **Standard (Default)** | `16×16px` (`h-4 w-4`) | Standard buttons, input adornments, dropdown items |
+| **Toolbar / Header** | `20×20px` (`h-5 w-5`) | Primary application header, studio toolbars |
+| **Hero / Empty State** | `24×24px` (`h-6 w-6`) | Empty state illustrations, modal callouts |
+
+## Implementation Reference
+
+Import icons directly from `@nxtqr/icons`:
+
+```tsx
+import { SearchIcon, RefreshIcon, CheckIcon, ChevronRightIcon } from "@nxtqr/icons";
+
+// Standard button with icon
+<button className="flex items-center gap-2 px-3 py-1.5 text-xs font-sans rounded-md bg-accent text-accent-foreground">
+  <CheckIcon className="h-4 w-4" />
+  <span>Commit Schema</span>
+</button>
+
+// Input with leading search icon
+<div className="relative">
+  <SearchIcon className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+  <input
+    type="text"
+    placeholder="Search nodes..."
+    className="pl-9 pr-3 py-1.5 text-xs font-mono rounded-md border border-border bg-black text-foreground"
+  />
+</div>
+```
+
+## Accessibility & Screen Readers
+
+- **Interactive Buttons**: Icon-only buttons must provide an accessible text label using `aria-label` or `sr-only`:
+  ```tsx
+  <button aria-label="Refresh telemetry data" className="p-1.5 rounded-md border border-border">
+    <RefreshIcon className="h-4 w-4 text-foreground" />
+  </button>
+  ```
+- **Decorative Icons**: When an icon accompanies visible text, hide it from assistive tech using `aria-hidden="true"` (configured automatically by `@nxtqr/icons`).
+

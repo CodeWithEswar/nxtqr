@@ -16,8 +16,9 @@ export interface LoadedDoc {
 async function resolveDocFilePath(slug: string): Promise<string | null> {
   const candidates = [
     path.resolve(process.cwd(), "content", "docs", `${slug}.mdx`),
-    path.resolve(process.cwd(), "../../content", "docs", `${slug}.mdx`),
+    path.resolve(process.cwd(), "..", "content", "docs", `${slug}.mdx`),
     path.resolve(process.cwd(), "../..", "content", "docs", `${slug}.mdx`),
+    path.resolve(process.cwd(), "../../content", "docs", `${slug}.mdx`),
   ];
 
   for (const candidate of candidates) {

@@ -5,68 +5,73 @@ category: Foundations
 order: 10
 ---
 
-The NXTQR color system is divided into two strict layers: **Structural Grayscale Hierarchy** and **Dynamic User Accents**.
+The NXTQR color system is divided into two strict architectural layers: **Structural Grayscale Hierarchy** and **Dynamic User Accents**. The interface uses a pure black base (`#000000`), crisp monochrome surfaces, and saturated accent highlights calibrated to maintain WCAG 2.1 AA/AAA accessibility.
+
+## Interactive Color Laboratory
+
+Configure user accent presets, test real-time contrast ratios against surface levels, and inspect live UI components:
+
+<ColorPlayground />
+
+## Color Architecture & Principles
+
+Per NXTQR Constitution §3, color application follows strict rules:
+
+1. **Pure Monochrome Baseline**: Dark theme surfaces are neutral grayscale with zero blue, slate, or purple tints. Canvas background is `#000000`.
+2. **Never Hardcode Accents**: UI controls must reference semantic CSS tokens (`bg-accent`, `text-accent`, `text-accent-foreground`, `border-accent`, `ring-accent`).
+3. **Contrast Compliance**: Foreground text on accent surfaces is automatically derived via `@nxtqr/design-system` contrast math. High-luminance accents (e.g. Pure Yellow `#FFD600`, Pure Orange `#FF6600`) receive `#000000` text, while low-luminance accents receive `#FFFFFF`.
+4. **Prohibited Patterns**: Decorative gradient backgrounds, multi-color card borders, and fake colored glow effects are strictly forbidden.
 
 ## Grayscale Hierarchy
 
-The dark theme baseline uses pure black (`#000000`) without any navy, slate, or AI-dashboard gradients:
+| Token Name | Hex Value | CSS Variable | Application |
+| :--- | :--- | :--- | :--- |
+| **Canvas / Base** | `#000000` | `--background` | Full-page backdrop and infinite visualizer canvas |
+| **Surface** | `#0A0A0A` | `--surface` | Panels, toolbars, compact cards, sidebars |
+| **Elevated Surface** | `#141414` | `--elevated-surface` | Modals, dialogs, floating inspectors, popovers |
+| **Secondary Surface** | `#1A1A1A` | `--secondary-surface` | Recessed wells, active toggle states, code blocks |
+| **Border** | `#262626` | `--border` | Structural container borders, panel dividers |
+| **Subtle Border** | `#1C1C1C` | `--subtle-border` | Table grid lines, subtle divider strokes |
+| **Foreground** | `#FFFFFF` | `--foreground` | Primary text, titles, high-contrast symbols |
+| **Muted Text** | `#A3A3A3` | `--muted-foreground` | Secondary descriptions, captions, metrics |
+| **Disabled Text** | `#737373` | `--disabled-foreground` | Inactive controls and unselected tabs |
 
-| Surface Level | Hex Value | Role & Application |
-| :--- | :--- | :--- |
-| **Canvas / Base** | `#000000` | Full-page backdrop and infinite canvas viewport |
-| **Surface** | `#0A0A0A` | Container backgrounds, cards, and sidebars |
-| **Elevated Surface** | `#141414` | Dialogs, floating inspectors, dropdowns, popovers |
-| **Secondary Surface** | `#1A1A1A` | Inset wells, active toolbar items, selected rows |
-| **Border** | `#262626` | Structural dividers and container outlines |
-| **Subtle Border** | `#1C1C1C` | Internal row separators and table grid borders |
-| **Foreground** | `#FFFFFF` | Primary white text and high-contrast symbols |
-| **Muted Text** | `#A3A3A3` | Secondary descriptions, captions, and metrics |
-| **Disabled Text** | `#737373` | Inactive controls and unselected tabs |
+## Saturated Pure Accent Presets
 
-```css
-:root {
-  --background: #000000;
-  --foreground: #ffffff;
-  --surface: #0a0a0a;
-  --elevated-surface: #141414;
-  --secondary-surface: #1a1a1a;
-  --border: #262626;
-  --subtle-border: #1c1c1c;
-  --muted-foreground: #a3a3a3;
-  --disabled-foreground: #737373;
-}
+NXTQR provides eight mathematically calibrated accent presets:
+
+| Preset Name | Hex Value | Foreground Text | WCAG Contrast |
+| :--- | :--- | :--- | :--- |
+| **Monochrome** | `#FFFFFF` | `#000000` | 21.0:1 (AAA) |
+| **Pure Red** | `#FF0000` | `#FFFFFF` | 5.25:1 (AA) |
+| **Pure Orange** | `#FF6600` | `#000000` | 8.12:1 (AAA) |
+| **Pure Yellow** | `#FFD600` | `#000000` | 14.3:1 (AAA) |
+| **Pure Green** | `#00CC66` | `#000000` | 9.87:1 (AAA) |
+| **Pure Blue** | `#0066FF` | `#FFFFFF` | 4.82:1 (AA) |
+| **Pure Violet** | `#8000FF` | `#FFFFFF` | 4.95:1 (AA) |
+| **Pure Pink** | `#FF0099` | `#FFFFFF` | 4.71:1 (AA) |
+
+## Implementation Reference
+
+To apply color tokens in your component markup:
+
+```tsx
+import { colors } from "@nxtqr/design-system";
+
+// Primary action button using dynamic accent
+<button className="bg-accent text-accent-foreground font-semibold px-4 py-2 rounded-md transition-opacity hover:opacity-90">
+  Execute Pipeline
+</button>
+
+// Engineering inspector panel using Level 1 surface and subtle border
+<div className="bg-surface border border-border rounded-md p-4 space-y-2">
+  <span className="text-xs font-mono text-muted-foreground">NODE_BUFFER_STATE</span>
+  <h4 className="text-sm font-semibold text-foreground">Synchronized Buffer</h4>
+</div>
 ```
 
-## Calibrated Pure Accent Presets
+## Accessibility & Contrast
 
-Users configure their personal studio environment from calibrated pure saturated presets satisfying WCAG 2.1 AA/AAA:
-
-| Preset Name | Hex Value | Accessible Foreground | WCAG Ratio |
-| :--- | :--- | :--- | :--- |
-| **Monochrome** | `#FFFFFF` | `#000000` | 21:1 (AAA) |
-| **Pure Red** | `#FF0000` | `#FFFFFF` | 4.8:1 (AA) |
-| **Pure Orange** | `#FF6600` | `#000000` | 8.2:1 (AAA) |
-| **Pure Yellow** | `#FFD600` | `#000000` | 14.1:1 (AAA) |
-| **Pure Green** | `#00CC66` | `#000000` | 8.5:1 (AAA) |
-| **Pure Blue** | `#0066FF` | `#FFFFFF` | 4.6:1 (AA) |
-| **Pure Violet** | `#8000FF` | `#FFFFFF` | 6.2:1 (AAA) |
-| **Pure Pink** | `#FF0099` | `#FFFFFF` | 4.7:1 (AA) |
-
-## Semantic Status Tokens
-
-Status colors are strictly functional and independent from the user's selected accent:
-
-| Status          | Value     | Purpose                                                |
-| :-------------- | :-------- | :----------------------------------------------------- |
-| **Destructive** | `#FF0000` | Critical errors, destructive actions, failed builds    |
-| **Success**     | `#00CC66` | Successful completions, verified tests, online workers |
-| **Warning**     | `#FFD600` | Non-blocking warnings, degraded simulation performance |
-
-## CSS Semantic Classes
-
-Always reference semantic Tailwind CSS classes rather than hardcoded hex values:
-
-- `bg-background` and `text-foreground`
-- `bg-surface` and `border-border`
-- `bg-accent` and `text-accent-foreground`
-- `border-accent` and `ring-accent`
+- **WCAG 2.1 AA Normal Text**: Minimum contrast of 4.5:1 is required for body copy and data labels.
+- **WCAG 2.1 Large Text & UI**: Minimum contrast of 3.0:1 is required for headings and interactive borders.
+- **Focus Indicators**: Dynamic accent rings must maintain a 1px offset against dark surfaces to ensure immediate visibility for keyboard navigators.

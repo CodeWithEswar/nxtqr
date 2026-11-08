@@ -1,0 +1,61 @@
+---
+title: Responsive Design
+description: Multi-device engineering layouts, container queries for resizable visualizer panes, and mobile drawer conversions.
+category: Foundations
+order: 100
+---
+
+Engineering visualizers must function seamlessly across diverse hardware: from high-resolution multi-monitor desktop workstations to field tablets and mobile triage screens. NXTQR couples standard **Tailwind CSS breakpoints** with **CSS Container Queries** (`@container`) so internal inspector panes adapt dynamically to resizable canvas splits.
+
+## Interactive Responsive Laboratory
+
+Test layout reflows, column collapse, and mobile navigation drawer conversions inside a bounded viewport simulator:
+
+<ResponsivePlayground />
+
+## Standardized Breakpoints
+
+| Breakpoint | Minimum Width | Target Devices | Layout Behavior |
+| :--- | :--- | :--- | :--- |
+| **`base` (xs)** | `< 640px` | Phones, mobile viewports | Single-column stack, mobile sheet/drawer navigation |
+| **`sm`** | `640px` | Large phones, small tablets | 1-2 column grid, collapsed inspector panels |
+| **`md`** | `768px` | Tablets, narrow split-screens | Dual-column layouts, compact secondary toolbars |
+| **`lg`** | `1024px` | Laptops, desktop monitors | Persistent left sidebar, 3-column telemetry grids |
+| **`xl`** | `1280px` | Workstation displays | Dedicated right-hand inspector panel and TOC |
+| **`2xl`** | `1536px` | Ultra-wide displays | High-density canvas view with expanded sidepanes |
+
+## Visualizer Responsive Standards
+
+Per NXTQR Constitution §4:
+
+1. **Mobile Drawer Conversion**: Desktop persistent sidebars must collapse to an accessible `Sheet` / `Drawer` on mobile screens (`< 1024px`). Never leave a 260px fixed sidebar covering mobile content.
+2. **Container Queries for Resizable Panes**: Visualizer toolbars and node inspectors inside split containers use container queries rather than viewport queries:
+   ```html
+   <div class="@container">
+     <div class="grid grid-cols-1 @md:grid-cols-2 @lg:grid-cols-3 gap-2">
+       <!-- Cards reflow based on pane width, not window width -->
+     </div>
+   </div>
+   ```
+3. **No Horizontal Window Scroll**: The root window must never exhibit horizontal scrolling (`overflow-x: hidden`). Internal 2D panning is restricted to canvas viewports.
+
+## Implementation Reference
+
+```tsx
+// Responsive Visualizer Layout Pattern
+<div className="flex h-screen w-full overflow-hidden bg-background">
+  {/* Desktop Sidebar (hidden on mobile) */}
+  <aside className="hidden lg:flex w-60 border-r border-border bg-surface flex-col">
+    <StudioNavigation />
+  </aside>
+
+  {/* Main Studio Viewport */}
+  <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <StudioHeader />
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+      <CanvasViewport />
+    </div>
+  </main>
+</div>
+```
+

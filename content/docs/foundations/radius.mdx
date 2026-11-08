@@ -1,42 +1,70 @@
 ---
 title: Border Radius
-description: Strict rounded-md (0.375rem / 6px) standard across all rectangular engineering surfaces.
+description: Strict 6px (rounded-md) rectangular surface standard, concentric nested curvature math, and permitted circular exceptions.
 category: Foundations
-order: 13
+order: 40
 ---
 
-NXTQR enforces an unyielding geometric standard across all rectangular surfaces: **`rounded-md` (`0.375rem` / `6px`)**.
+Per NXTQR Constitution §3.4, the platform enforces a **strict border radius standard** of `rounded-md` (`0.375rem / 6px`) across all rectangular components. Arbitrary corner rounding reduces architectural discipline and visual coherence in technical tooling.
 
-## Mandatory Standard
+## Interactive Border Radius Laboratory
 
-Every rectangular surface, container, and interactive control must use `rounded-md`:
+Compare corner geometries, test concentric nested container formulas, and inspect permitted exceptions:
 
-- Buttons, Inputs, Textareas
-- Cards, Dialogs, Popovers
-- Dropdown Menus, Context Menus, Tooltips
-- Graph Canvas Nodes, Properties Inspectors
-- Tabs, Badges, Table Containers
-- Code Blocks, Command Palettes
+<RadiusPlayground />
 
-## Prohibited Radii
+## The Primary Architectural Rule
 
-Never use the following classes on rectangular surfaces:
+Every rectangular surface—including **Buttons**, **Inputs**, **Cards**, **Dialogs**, **Sheets**, **Popovers**, **Tabs**, **Toolbars**, and **Canvas Nodes**—must strictly use `rounded-md`:
 
-- ❌ `rounded-sm` (Too sharp, inconsistent)
-- ❌ `rounded-lg`, `rounded-xl`, `rounded-2xl` (Excessively round, consumes technical density)
-- ❌ `rounded-full` on rectangular buttons or cards
+```tsx
+// Mandatory standard for all rectangular controls
+<button className="rounded-md border border-border bg-surface px-4 py-2">
+  Engineering Button
+</button>
+```
+
+### Prohibited Classes
+
+The following Tailwind border radius utilities are strictly prohibited on rectangular UI elements:
+- `rounded-none` (except for full-bleed viewport canvas or segmented group interiors)
+- `rounded-sm` (2px - too sharp for modern sub-pixel anti-aliasing)
+- `rounded-lg` (8px - excessive rounding softens engineering aesthetic)
+- `rounded-xl` / `rounded-2xl` (12px / 16px - consumer mobile app aesthetic, prohibited)
+- `rounded-full` on rectangular buttons (pill buttons are forbidden)
 
 ## Permitted Circular Exceptions
 
-The only elements allowed to use `rounded-full` are intrinsically circular objects:
+Circular geometry (`rounded-full`) is permitted **only** on intrinsically circular elements:
 
-1. **User Avatars** (`<Avatar className="rounded-full" />`)
-2. **Radio Button Indicators** (`<RadioGroupItem />`)
-3. **Loading Spinners** (`<SpinnerIcon />`)
+1. **User Avatars**: Circular profile pictures (`rounded-full h-8 w-8`).
+2. **Radio Button Indicators**: Circular selection dots.
+3. **Loading Spinners**: Circular SVG spinners (`rounded-full animate-spin`).
+4. **Status Dot Badges**: 6px status pips indicating operational telemetry.
+
+## Concentric Nested Radius Math
+
+When nesting containers (such as an inner code block inside an elevated card), maintaining optical coherence requires adjusting the inner radius according to the formula:
+
+`R_inner = Math.max(0, R_outer - Padding)`
+
+Where `R_outer` is the outer corner radius (6px) and `Padding` is the interior inset:
+- If outer radius is **6px** and padding is **4px**, inner radius should be **2px** (`rounded-xs`).
+- If outer radius is **6px** and padding is **8px**, inner radius should be **0px** (sharp square).
+
+Failing to deduct padding creates optical "corner clashing" where nested curves appear pinched or distorted.
+
+## Implementation Reference
 
 ```tsx
 import { radiusTokens } from "@nxtqr/design-system";
 
-console.log(radiusTokens.radiusRem); // "0.375rem"
-console.log(radiusTokens.radiusPx); // 6
+// Card container with rounded-md
+<div className="rounded-md border border-border bg-surface p-4 shadow-level-1">
+  <h3 className="text-sm font-semibold text-foreground">Pipeline Settings</h3>
+  <input
+    type="text"
+    className="rounded-md border border-border bg-black px-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-accent"
+  />
+</div>
 ```

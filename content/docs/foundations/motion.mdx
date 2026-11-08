@@ -1,125 +1,91 @@
 ---
-title: "Motion & Keyframes"
-description: "Centralized motion architecture, duration tokens, calibrated springs, easing curves, and strict prefers-reduced-motion compliance."
-category: "Foundations"
-order: 17
+title: Motion & Keyframes
+description: Strict engineering timing scales, cubic-bezier easing curves, and instant zero-latency accessibility overrides.
+category: Foundations
+order: 80
 ---
 
-## Overview
+Motion in NXTQR communicates state transitions and spatial continuity with mechanical precision. Transitions avoid bouncy or cartoonish physics; instead, they employ **controlled deceleration curves** that resolve quickly to keep developer interactions snappy.
 
-The NXTQR motion design system is engineered for responsiveness, tactile precision, and continuity. It avoids gratuitous animations, continuous ambient movement, and decorative flourishes in favor of snappy state feedback that accelerates user workflows.
+## Interactive Motion Laboratory
 
-Every animation across dialogs, sheets, menus, tooltips, accordions, and interactive controls shares a single source of truth defined in `@nxtqr/design-system/motion`.
+Experiment with duration tokens, cubic-bezier curves, speed multipliers, and test the `prefers-reduced-motion` simulator:
 
-## Duration Scale
+<MotionPlayground />
 
-NXTQR defines an ordered duration hierarchy calibrated for developer ergonomics:
+## Timing Scale & Duration Tokens
 
-| Token | Duration | Milliseconds | Primary Purpose |
+NXTQR defines six standardized duration tokens:
+
+| Token Name | Duration | Milliseconds | Application |
 | :--- | :--- | :--- | :--- |
-| `instant` | `0.08s` | 80ms | Small state feedback, checkbox indicators, shortcut hints |
-| `fast` | `0.14s` | 140ms | Tactile hover, active press states, dropdown dismissals |
-| `normal` | `0.20s` | 200ms | Menu popovers, tooltips, accordion expansion |
-| `smooth` | `0.28s` | 280ms | Modal dialogs, confirmation prompts |
-| `panel` | `0.34s` | 340ms | Left navigation sidebar, right inspection sheets |
-| `emphasis` | `0.42s` | 420ms | Coordinated visualizer transitions |
-
-```typescript
-import { motionDuration, motionDurationMs } from "@nxtqr/design-system/motion";
-
-// Use in Framer Motion / Motion for React
-const transition = {
-  duration: motionDuration.normal, // 0.2s
-  ease: [0.2, 0, 0, 1],
-};
-```
+| **`instant`** | `0.08s` | `80ms` | Micro-clicks, radio toggles, checkbox checkmarks |
+| **`fast`** | `0.14s` | `140ms` | Hover states, button press depth, tooltip fades |
+| **`normal`** | `0.20s` | `200ms` | Dropdown menus, popovers, select item highlights |
+| **`smooth`** | `0.28s` | `280ms` | Modal dialogs, confirmation alerts, toast entries |
+| **`panel`** | `0.34s` | `340ms` | Slide-out sheets, resizable sidebars, drawers |
+| **`emphasis`** | `0.42s` | `420ms` | Major layout reflows, view mode transitions |
 
 ## Easing Curves
 
-NXTQR uses cubic-bezier curves tuned to prevent elastic bounce while maintaining crisp settling:
-
-- **Standard** `[0.2, 0, 0, 1]` (`cubic-bezier(0.2, 0, 0, 1)`): General transitions and layout updates.
-- **Enter** `[0, 0, 0.2, 1]` (`cubic-bezier(0, 0, 0.2, 1)`): Deceleration curve for opening dialogs, sheets, and menus.
-- **Exit** `[0.4, 0, 1, 1]` (`cubic-bezier(0.4, 0, 1, 1)`): Accelerated exit curve for rapid dismissals (always faster than entry).
-- **Linear** `[0, 0, 1, 1]`: Progress indicators and continuous telemetry.
-
-## Calibrated Spring Physics
-
-When physical realism enhances spatial understanding, NXTQR employs critically damped springs without distracting bounce:
-
-```typescript
-import { motionSprings } from "@nxtqr/design-system/motion";
-
-// Available Spring Presets:
-// motionSprings.gentle    -> { stiffness: 120, damping: 20, mass: 1 }
-// motionSprings.snappy    -> { stiffness: 300, damping: 30, mass: 0.8 }
-// motionSprings.panel     -> { stiffness: 220, damping: 28, mass: 1 }
-// motionSprings.selection -> { stiffness: 400, damping: 35, mass: 0.8 }
+```css
+:root {
+  --ease-standard: cubic-bezier(0.2, 0.0, 0.0, 1.0);  /* Standard snappy curve */
+  --ease-enter:    cubic-bezier(0.0, 0.0, 0.2, 1.0);  /* Decelerating entrance */
+  --ease-exit:     cubic-bezier(0.4, 0.0, 1.0, 1.0);  /* Accelerating exit */
+  --ease-linear:   linear;                            /* Spinners & progress */
+}
 ```
 
-## Component Transitions
+## Motion for React Implementation
 
-### Dialogs & Overlays
-
-Dialog surfaces utilize a restrained scale (`0.985` to `1.0`) and subtle vertical drift (`8px` to `0px`) on entrance, with an accelerated exit (`4px`, scale `0.99` over 140ms):
+NXTQR visualizers use Motion for React (`framer-motion`) with pre-configured variants:
 
 ```tsx
-<Dialog>
-  <DialogTrigger asChild>
-    <Button variant="default">Open Dialog Demo</Button>
-  </DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Calibrated Dialog Transition</DialogTitle>
-      <DialogDescription>
-        Smooth 200ms entry with 0.985 scale settling and 140ms accelerated dismiss.
-      </DialogDescription>
-    </DialogHeader>
-  </DialogContent>
-</Dialog>
+import { motion } from "framer-motion";
+import { motionDuration, motionEasing } from "@nxtqr/design-system";
+
+export const modalVariants = {
+  hidden: { opacity: 0, scale: 0.96, y: 8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: motionDuration.smooth, // 0.28s
+      ease: motionEasing.enter,        // [0, 0, 0.2, 1]
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.98,
+    transition: {
+      duration: motionDuration.fast,   // 0.14s
+      ease: motionEasing.exit,         // [0.4, 0, 1, 1]
+    },
+  },
+};
 ```
 
-### Tactile Button Micro-Interactions
+## Accessibility: `prefers-reduced-motion`
 
-Buttons incorporate the solid neumorphic Level 3 pressed state (`active:scale-[0.985] active:shadow-level-3`) with a 140ms standard duration:
+Per WCAG 2.1 Criterion 2.3.3, NXTQR respects user preferences for reduced motion. When enabled, all non-essential spatial movements collapse into simple instant opacity fades or zero-duration swaps:
 
-```tsx
-<div className="flex items-center gap-3">
-  <Button variant="default">Primary Action</Button>
-  <Button variant="secondary">Secondary Action</Button>
-  <Button variant="outline">Tactile Outline</Button>
-</div>
+```css
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 ```
 
-### Accordion & Collapsible Expansion
+## Prohibited Motion Patterns
 
-Accordions calculate dynamic content heights cleanly through `@radix-ui/react-accordion` and CSS keyframes, preventing layout jumps:
-
-```tsx
-<Accordion type="single" collapsible className="w-full">
-  <AccordionItem value="motion-1">
-    <AccordionTrigger>Why avoid decorative particle loops?</AccordionTrigger>
-    <AccordionContent>
-      Decorative animation wastes CPU/GPU cycles and distracts engineers from critical graph telemetry and node debugging.
-    </AccordionContent>
-  </AccordionItem>
-  <AccordionItem value="motion-2">
-    <AccordionTrigger>How does NXTQR handle prefers-reduced-motion?</AccordionTrigger>
-    <AccordionContent>
-      All spatial transforms (scale, translation) are stripped, collapsing animations to instantaneous or gentle opacity fades.
-    </AccordionContent>
-  </AccordionItem>
-</Accordion>
-```
-
-## Reduced Motion Compliance
-
-Under WCAG 2.1 Criterion 2.3.3, animations that are not essential to functionality must respect the user's `prefers-reduced-motion` operating system setting.
-
-NXTQR implements multi-layer reduced motion enforcement:
-
-1. **`NxtqrMotionProvider`**: Wraps `<MotionConfig reducedMotion="user">` at the application root.
-2. **`useNxtqrReducedMotion()`**: Hook tracking media query state safely during SSR and client hydration.
-3. **Tailwind CSS Utility**: `motion-reduce:animate-none` and `motion-reduce:transition-none` applied to all shared primitives.
-4. **`getAccessibleVariants()`**: Strips spatial offsets from Motion variant objects.
-
+- **No Continuous Floating Blobs**: Never add animated glowing orbs or continuous floating particles behind dashboards.
+- **No Bouncy Overshoot in UI Controls**: Menus, tooltips, and dialogs must not bounce past their target bounding box.
+- **No Infinite Keyframe Spinners on Inactive Elements**: Keyframe loops are reserved exclusively for active background operations.

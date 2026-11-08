@@ -1,26 +1,76 @@
 ---
 title: Precision Rail Scrollbars
-description: NXTQR Precision Rail custom scrollbar system with compact 7px/6px tracks and dynamic accent drag feedback.
+description: Hardware-inspired custom scroll rails with tactile groove depth, user-accent drag feedback, and cross-browser consistency.
 category: Foundations
-order: 20
+order: 110
 ---
 
-The **NXTQR Precision Rail** is a custom scrollbar architecture engineered for high-performance visual developer tooling. It provides tactile, restrained solid-neumorphic depth without soft decorative artifacts or layout reflows.
+Default operating system scrollbars vary wildly across platforms and clash with high-density engineering environments. NXTQR replaces them with **Precision Rail Scrollbars**—tactile hardware tracks featuring inset groove depth, micro-radius thumbs, and dynamic accent feedback during drag interactions.
 
-## Scrollbar Variants
+## Interactive Precision Rail Laboratory
 
-| Variant           | Class / Selector     | Dimensions                         | Target Contexts                                                      |
-| :---------------- | :------------------- | :--------------------------------- | :------------------------------------------------------------------- |
-| **Default**       | `.scrollbar-default` | `10px` width/height · `6px` radius | Document body, main content panels, full-page views.                 |
-| **Compact**       | `.scrollbar-compact` | `7px` width/height · `4px` radius  | Sidebars, inspectors, file trees, nested menus.                      |
-| **Canvas Panel**  | `.scrollbar-canvas`  | `7px` width/height · `4px` radius  | Node palettes, property inspectors (`overscroll-behavior: contain`). |
-| **Data Dense**    | `.scrollbar-dense`   | `6px` width/height · `3px` radius  | High-frequency telemetry streams, debug logs, technical data tables. |
-| **Hidden Visual** | `.scrollbar-none`    | `0px` width/height                 | Technical controls with alternative scroll mechanisms.               |
+Select scroll rail thickness tiers, toggle dynamic user-accent drag feedback, and test vertical and horizontal bidirectional scrolling:
 
-## Dynamic User Accent Integration
+<ScrollbarPlayground />
 
-During active dragging, the scrollbar thumb border dynamically lights up with the user's selected accent color (`var(--accent)`). This gives immediate tactile confirmation of the drag interaction without polluting the resting UI state.
+## Precision Rail Variants
 
-## Mobile and Touch Behavior
+| Variant | Thickness (px / rem) | Thumb Radius | Application |
+| :--- | :--- | :--- | :--- |
+| **`default`** | `10px / 0.625rem` | `6px` (`rounded-md`) | Main documentation views, primary code blocks |
+| **`compact`** | `7px / 0.4375rem` | `4px` | Left sidebar navigation, dropdown menus, popovers |
+| **`canvas`** | `7px / 0.4375rem` | `4px` | Node graph editors, infinite 2D canvas viewports |
+| **`dense`** | `6px / 0.375rem` | `3px` | Telemetry logs, dense data tables, terminal views |
 
-On touch viewports (`@media (hover: none) and (pointer: coarse)`), the browser's native fading overlay scrollbar physics and momentum scrolling (`-webkit-overflow-scrolling: touch`) are preserved. Desktop-style custom tracks are not forced onto mobile viewports.
+## Material & Color Architecture
+
+- **Track (Groove)**: `#080808` with a 1px border (`#141414`) and subtle inset shadow (`inset 0 0 2px 0 rgba(0,0,0,0.8)`), creating physical recessed depth.
+- **Thumb (Resting)**: `#303030` with a 1px top highlight (`inset 0 1px 0 0 rgba(255,255,255,0.08)`).
+- **Thumb (Hover)**: `#505050` with crisp transition.
+- **Thumb (Active / Drag)**: Saturated user-selected accent color (`var(--accent)`), giving engineers immediate tactile feedback when dragging.
+
+## Cross-Browser Implementation
+
+NXTQR delivers consistent scrollbar behavior across all major rendering engines:
+
+```css
+/* WebKit / Chromium / Edge */
+::-webkit-scrollbar {
+  width: var(--scrollbar-size, 10px);
+  height: var(--scrollbar-size, 10px);
+}
+
+::-webkit-scrollbar-track {
+  background: #080808;
+  border-left: 1px solid #141414;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #303030;
+  border: 2px solid #080808;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--accent);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #303030 #080808;
+}
+```
+
+## Utility Classes
+
+Apply rail classes directly in your markup:
+- `scrollbar-default`: Standard 10px rail.
+- `scrollbar-compact`: 7px compact rail for sidebars.
+- `scrollbar-canvas`: 7px canvas rail for diagram viewports.
+- `scrollbar-dense`: 6px dense rail for logs.
+- `scrollbar-none`: Hides the scrollbar while preserving scrollability.

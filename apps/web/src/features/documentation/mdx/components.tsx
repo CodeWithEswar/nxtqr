@@ -18,6 +18,22 @@ import {
 } from "../components/preview/component-demo-view";
 import { slugifyHeading } from "./headings";
 
+// Design System Foundations Playgrounds & Reference Components
+import {
+  ColorPlayground,
+  TypographyPlayground,
+  SpacingPlayground,
+  RadiusPlayground,
+  ElevationPlayground,
+  NeumorphismPlayground,
+  IconExplorer,
+  MotionPlayground,
+  AccessibilityLab,
+  ResponsivePlayground,
+  ScrollbarPlayground,
+} from "../foundations/playgrounds";
+import { TokenTable, ContrastMeter } from "../foundations/components";
+
 // Re-export shared UI components for direct MDX embedded usage
 import {
   Button,
@@ -395,6 +411,21 @@ export const mdxComponents = {
   PropsTable,
   InstallationCommand,
   CodeBlock,
+
+  // Design System Foundations Playgrounds & Primitives
+  ColorPlayground,
+  TypographyPlayground,
+  SpacingPlayground,
+  RadiusPlayground,
+  ElevationPlayground,
+  NeumorphismPlayground,
+  IconExplorer,
+  MotionPlayground,
+  AccessibilityLab,
+  ResponsivePlayground,
+  ScrollbarPlayground,
+  TokenTable,
+  ContrastMeter,
 
   // UI Primitives
   Button,

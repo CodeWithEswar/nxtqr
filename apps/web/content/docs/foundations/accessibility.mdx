@@ -1,0 +1,73 @@
+---
+title: Accessibility
+description: WCAG 2.1 AA/AAA compliance benchmarks, high-contrast focus rings, roving tabindex keyboard traversal, and 44px touch targets.
+category: Foundations
+order: 90
+---
+
+Accessibility is an architectural foundation in NXTQR, not an afterthought. Every visualizer, toolbar, and data surface satisfies **WCAG 2.1 Level AA** standards with multiple Level AAA extensions, ensuring that keyboard navigators, screen reader users, and motion-sensitive engineers have an equivalent high-density experience.
+
+## Interactive Accessibility Laboratory
+
+Inspect live WCAG contrast scores, test high-contrast focus rings, practice roving tabindex traversal, and verify 44px touch target bounds:
+
+<AccessibilityLab />
+
+## Core Accessibility Standards
+
+### 1. High-Contrast Focus Rings (WCAG 2.4.7)
+
+Focus indicators must never be removed (`outline-none` without replacement is strictly prohibited). NXTQR provides a calibrated high-contrast focus ring with a 1px offset:
+
+```tsx
+import { focusRingClasses } from "@nxtqr/design-system";
+
+// Standard accessible interactive element
+<button className={cn("rounded-md border border-border bg-surface px-4 py-2", focusRingClasses)}>
+  Graph Node Action
+</button>
+```
+
+The underlying utility is:
+```css
+focus-visible:outline-none 
+focus-visible:ring-1 
+focus-visible:ring-ring 
+focus-visible:ring-offset-1 
+focus-visible:ring-offset-background
+```
+
+### 2. Contrast Ratios (WCAG 1.4.3 & 1.4.11)
+
+- **Normal Text (< 18pt / 24px)**: Minimum contrast ratio of **4.5:1** (AA) or **7.0:1** (AAA).
+- **Large Text (≥ 18pt or 14pt bold)**: Minimum contrast ratio of **3.0:1** (AA) or **4.5:1** (AAA).
+- **UI Components & Graphical Objects**: Minimum contrast ratio of **3.0:1** against adjacent dark surfaces.
+
+### 3. Pointer Target Size (WCAG 2.5.5 / 2.5.8)
+
+Touch and pointer targets have an interactive hit area of at least **44×44px** (or 24×24px with sufficient margin). For compact desktop icon buttons (e.g. 28×28px), an invisible padding pseudo-element or container preserves the 44px touch envelope on mobile devices.
+
+### 4. Keyboard Traversal & Roving Tabindex
+
+Engineering visualizers and toolbars implement the **Roving Tabindex** pattern:
+- Pressing `Tab` focuses the active toolbar button.
+- Arrow keys (`Left`, `Right`, `Up`, `Down`) navigate between controls without introducing separate tab stops for every button.
+- `Home` and `End` jump to the first and last controls.
+- `Escape` closes menus, popovers, and sheets, returning focus to the trigger.
+
+## Implementation Reference
+
+```tsx
+// Accessible icon-only toolbar button with proper ARIA and focus ring
+<button
+  type="button"
+  aria-label="Refresh telemetry stream"
+  className={cn(
+    "p-2 rounded-md border border-border bg-surface text-foreground hover:bg-secondary-surface",
+    focusRingClasses
+  )}
+>
+  <RefreshIcon className="h-4 w-4" aria-hidden="true" />
+</button>
+```
+

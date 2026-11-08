@@ -1,0 +1,68 @@
+---
+title: Spacing & Density
+description: Mathematical 8px base spatial grid with 4px sub-increments and three standardized density tiers.
+category: Foundations
+order: 30
+---
+
+The NXTQR spatial system is built upon a mathematical **8px base grid** with **4px sub-grid increments** for compact controls. Every margin, padding, gap, and layout offset derives strictly from this scale, ensuring consistent visual cadence across complex visualizer panes.
+
+## Interactive Spacing & Density Laboratory
+
+Switch between standardized density tiers, adjust manual padding and gap values, and inspect live measurement overlay guides:
+
+<SpacingPlayground />
+
+## Core Principles
+
+1. **8px Geometric Base**: Primary structural containers, dialogs, cards, and canvas panels align to 8px multiples (`8px`, `16px`, `24px`, `32px`, `48px`, `64px`).
+2. **4px Sub-Grid**: Micro-alignments, icon gaps, badge padding, and button insets use 4px increments (`4px`, `12px`, `20px`).
+3. **No Arbitrary Padding**: Never use arbitrary pixel values like `p-[13px]` or `gap-[7px]`.
+4. **Information Density over Whitespace**: Restrained, intentional spacing gives engineering workspaces high density without clutter.
+
+## Standardized Spacing Scale
+
+| Token | Pixels | Rem Value | Tailwind Utility | Application |
+| :--- | :--- | :--- | :--- | :--- |
+| **0** | `0px` | `0` | `p-0`, `gap-0` | Reset offsets |
+| **0.5** | `2px` | `0.125rem` | `p-0.5`, `gap-0.5` | Micro indicators, border offsets |
+| **1** | `4px` | `0.25rem` | `p-1`, `gap-1` | Badge insets, compact icon spacing |
+| **1.5** | `6px` | `0.375rem` | `p-1.5`, `gap-1.5` | Dense table cells, toolbar item gaps |
+| **2** | `8px` | `0.5rem` | `p-2`, `gap-2` | Button horizontal padding, menu gaps |
+| **2.5** | `10px` | `0.625rem` | `p-2.5`, `gap-2.5` | Compact input vertical padding |
+| **3** | `12px` | `0.75rem` | `p-3`, `gap-3` | Standard button padding, card interior gap |
+| **4** | `16px` | `1.0rem` | `p-4`, `gap-4` | Standard card padding, toolbar height offset |
+| **5** | `20px` | `1.25rem` | `p-5`, `gap-5` | Panel interior spacing |
+| **6** | `24px` | `1.5rem` | `p-6`, `gap-6` | Modal dialog insets, section margins |
+| **8** | `32px` | `2.0rem` | `p-8`, `gap-8` | Major section vertical separation |
+| **12** | `48px` | `3.0rem` | `p-12`, `gap-12` | Empty state canvas hero sections |
+| **16** | `64px` | `4.0rem` | `p-16`, `gap-16` | Studio landing page containers |
+
+## Three Standardized Density Tiers
+
+NXTQR supports three calibrated density modes across UI components:
+
+```tsx
+import { spacingTokens, type DensityMode } from "@nxtqr/design-system";
+
+// Compact Tier: Ideal for telemetry logs and dense node tables
+<div className="p-2 gap-1.5 text-xs">
+  <DenseDataTable />
+</div>
+
+// Default Tier: Standard workspace layout
+<div className="p-4 gap-3 text-sm">
+  <PropertiesPanel />
+</div>
+
+// Comfortable Tier: Reading documentation and form flows
+<div className="p-6 gap-4 text-sm">
+  <SettingsForm />
+</div>
+```
+
+## Responsive Spacing Guidance
+
+- **Mobile Viewports (< 640px)**: Reduce container padding from `p-6` to `p-4` or `p-3` to conserve horizontal screen space.
+- **Desktop Viewports (≥ 1024px)**: Maintain comfortable `p-6` insets for main documentation prose while keeping toolbars and visualizer inspectors at `p-2` or `p-3` for maximum operational density.
+

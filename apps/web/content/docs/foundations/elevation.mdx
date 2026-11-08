@@ -1,37 +1,58 @@
 ---
 title: Elevation & Shadows
-description: Solid neumorphic depth without blurry glassmorphism: Level 0 Base, Level 1 Raised, Level 2 Elevated, Level 3 Pressed.
+description: Tactile depth hierarchy utilizing solid surfaces, subtle borders, and directional inset highlights.
 category: Foundations
-order: 14
+order: 50
 ---
 
-NXTQR employs a **Solid Neumorphism** elevation model. Depth is communicated through crisp solid boundaries, restrained directional shadows, and tactile inset pressed treatments.
+NXTQR replaces fuzzy, diffuse drop shadows with a **tactile solid elevation hierarchy**. Each layer uses calibrated grayscale surface tints, crisp directional lighting, and subtle 1px inset highlights that communicate functional depth without blurry glassmorphism.
 
-## Elevation Levels
+## Interactive Elevation Laboratory
 
-| Level       | Name     | Shadow CSS Token   | Intended Surfaces                                         |
-| :---------- | :------- | :----------------- | :-------------------------------------------------------- |
-| **Level 0** | Base     | `none`             | Pure black `#000000` canvas and full-page backdrop.       |
-| **Level 1** | Raised   | `--shadow-level-1` | Buttons, toolbars, compact cards, input controls.         |
-| **Level 2** | Elevated | `--shadow-level-2` | Popovers, dropdown menus, dialogs, floating inspectors.   |
-| **Level 3** | Pressed  | `--shadow-level-3` | Active toolbar buttons, selected controls, pressed state. |
+Inspect individual elevation levels, test the isometric layer stack, and copy exact box-shadow formulas:
 
-## Solid Neumorphism vs Glassmorphism
+<ElevationPlayground />
 
-Glassmorphism and backdrop blurs are strictly prohibited in NXTQR:
+## The Four Tactile Levels
 
-- ❌ **No `backdrop-blur`**: Blurs degrade 60 FPS graph rendering performance and look like generic consumer templates.
-- ❌ **No transparent cards**: Semi-transparent floating surfaces degrade contrast against complex node graph networks.
-- ✅ **Solid surfaces**: High contrast solid backgrounds (`#0A0A0A`, `#141414`) with subtle borders (`#262626`) guarantee legibility and performance.
+| Level | Name | Surface | Box Shadow Formula | Application |
+| :--- | :--- | :--- | :--- | :--- |
+| **Level 0** | Base / Ground | `#000000` | `none` | Full-page background and infinite node canvas |
+| **Level 1** | Raised | `#0A0A0A` | `0 1px 2px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.03)` | Buttons, toolbars, compact panels, canvas nodes |
+| **Level 2** | Elevated | `#141414` | `0 4px 12px 0 rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)` | Modals, dialogs, dropdowns, floating inspectors |
+| **Level 3** | Pressed / Inset | `#1A1A1A` | `inset 0 1px 3px 0 rgba(0, 0, 0, 0.6), inset 0 0 1px 0 rgba(0, 0, 0, 0.4)` | Active toolbar toggles, pressed states, sunken wells |
 
-```css
-/* Level 1 Raised */
-box-shadow:
-  0 1px 2px 0 rgba(0, 0, 0, 0.5),
-  0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
+## Stacking Context & Z-Index Standard
 
-/* Level 3 Pressed */
-box-shadow:
-  inset 0 1px 3px 0 rgba(0, 0, 0, 0.6),
-  inset 0 0 1px 0 rgba(0, 0, 0, 0.4);
+To prevent layering conflicts across overlapping visualizer panels, the z-index hierarchy is strictly tiered:
+
+| Layer Tier | Z-Index Token | Component Class |
+| :--- | :--- | :--- |
+| **Canvas** | `z-0` | Infinite grid, background SVG connections |
+| **Content** | `z-10` | Canvas nodes, table rows, resting panels |
+| **Sticky Toolbars** | `z-20` | Sticky navigation headers, viewport action bars |
+| **Floating Panels** | `z-30` | Resizable node inspectors, minimap, floating controls |
+| **Drawers & Sheets** | `z-40` | Mobile navigation drawer, slide-out inspector sheet |
+| **Modals & Overlays** | `z-50` | Command palette, alert dialogs, full-screen blockers |
+| **Popovers & Tooltips** | `z-50+` | Context menus, hover tooltips, dropdown lists |
+
+## Implementation Reference
+
+```tsx
+import { elevationTokens } from "@nxtqr/design-system";
+
+// Resting Card (Level 1)
+<div className="bg-surface border border-border shadow-level-1 rounded-md p-4">
+  <span className="text-xs font-mono text-muted-foreground">NODE_PROPERTIES</span>
+</div>
+
+// Modal Dialog (Level 2)
+<div className="bg-elevated-surface border border-border shadow-level-2 rounded-md p-6">
+  <h2 className="text-base font-semibold text-foreground">Export Schematic</h2>
+</div>
+
+// Inset Active Control (Level 3)
+<button className="bg-secondary-surface border border-border shadow-level-3 rounded-md px-3 py-1.5 text-xs font-mono text-accent">
+  TOOL_ACTIVE
+</button>
 ```
