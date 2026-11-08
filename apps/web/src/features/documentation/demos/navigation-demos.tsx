@@ -40,7 +40,7 @@ import {
   CommandGroup,
   CommandItem,
 } from "@nxtqr/ui";
-import { SearchIcon, TerminalIcon, SettingsIcon } from "@nxtqr/icons";
+import { TerminalIcon, SettingsIcon } from "@nxtqr/icons";
 
 // ==========================================
 // TABS DEMO
@@ -401,10 +401,7 @@ export function CommandDemo() {
   return (
     <div className="w-full max-w-sm rounded-md border border-border bg-surface shadow-level-1 overflow-hidden">
       <Command>
-        <div className="flex items-center border-b border-border px-3">
-          <SearchIcon className="h-4 w-4 mr-2 text-muted-foreground shrink-0" />
-          <CommandInput placeholder="Type a command or filter nodes..." className="h-9" />
-        </div>
+        <CommandInput placeholder="Type a command or filter nodes..." />
         <CommandList className="max-h-[160px] p-2">
           <CommandEmpty>No matching engineering nodes.</CommandEmpty>
           <CommandGroup heading="Graph Nodes">
