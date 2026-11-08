@@ -1,34 +1,61 @@
 ---
 title: Installation
-description: How to consume and configure @nxtqr/ui, @nxtqr/design-system, and icons in your application.
+description: Complete developer installation guide, monorepo workspace setup, environment variables, and verification.
 category: Getting Started
 order: 2
 ---
 
-This guide walks you through consuming the NXTQR shared design system packages within your monorepo features.
+This guide walks you through setting up the NXTQR development environment, configuring workspace packages, establishing environment variables, and verifying system diagnostics.
 
-## Package Dependencies
+---
 
-NXTQR packages are published locally within the Turborepo workspace. To add `@nxtqr/ui` to a feature or application, add it to your `package.json`:
+## Interactive Installation Workflow
 
-<InstallationCommand packageName="@nxtqr/ui" command="pnpm add @nxtqr/ui" />
+Use the step-by-step orchestrator below to inspect prerequisites, clone the monorepo, configure `.env.local`, and resolve common setup scenarios:
 
-You can also install the supporting token and icon packages:
+<InstallationSteps />
+
+---
+
+## Monorepo Workspace Consumption
+
+NXTQR packages are configured under a **Turborepo monorepo** with **pnpm workspaces**. To consume shared packages inside feature modules or new visualizers, reference them using the workspace protocol:
 
 ```bash
-pnpm add @nxtqr/design-system @nxtqr/icons @nxtqr/utils
+# Add shared UI primitives to a workspace feature
+pnpm --filter @nxtqr/web add @nxtqr/ui @nxtqr/icons @nxtqr/design-system
 ```
+
+In your workspace `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@nxtqr/ui": "workspace:*",
+    "@nxtqr/design-system": "workspace:*",
+    "@nxtqr/icons": "workspace:*",
+    "@nxtqr/graph-schema": "workspace:*",
+    "@nxtqr/canvas-core": "workspace:*",
+    "@nxtqr/state": "workspace:*"
+  }
+}
+```
+
+---
 
 ## Tailwind CSS Configuration
 
-In your `tailwind.config.ts`, include the shared UI package within the Tailwind content scanner:
+In your feature's `tailwind.config.ts`, include the shared UI package in the Tailwind content scanner and configure the pure monochrome variables:
 
 ```ts
 import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: ["class"],
-  content: ["./src/**/*.{ts,tsx}", "../../packages/ui/src/**/*.{ts,tsx}"],
+  content: [
+    "./src/**/*.{ts,tsx}",
+    "../../packages/ui/src/**/*.{ts,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -38,13 +65,19 @@ const config: Config = {
         "elevated-surface": "var(--elevated-surface)",
         "secondary-surface": "var(--secondary-surface)",
         border: "var(--border)",
+        "subtle-border": "var(--subtle-border)",
         accent: {
           DEFAULT: "var(--accent)",
           foreground: "var(--accent-foreground)",
         },
       },
       borderRadius: {
-        md: "var(--radius)",
+        md: "var(--radius)", // 0.375rem / 6px global standard
+      },
+      boxShadow: {
+        "level-1": "var(--shadow-level-1)",
+        "level-2": "var(--shadow-level-2)",
+        "level-3": "var(--shadow-level-3)",
       },
     },
   },
@@ -53,9 +86,11 @@ const config: Config = {
 export default config;
 ```
 
+---
+
 ## Global Stylesheet Integration
 
-Import the global design system tokens, Tailwind directives, and the Precision Rail scrollbar styles in your application entry point:
+Import the global design system tokens, Tailwind directives, and the Precision Rail scrollbar styles in your application entry point (`apps/web/src/app/globals.css`):
 
 ```css
 @import "@nxtqr/design-system/styles/scrollbar.css";
@@ -64,4 +99,60 @@ Import the global design system tokens, Tailwind directives, and the Precision R
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #000000;
+    --foreground: #FFFFFF;
+    --surface: #0A0A0A;
+    --elevated-surface: #141414;
+    --secondary-surface: #1A1A1A;
+    --border: #262626;
+    --subtle-border: #1C1C1C;
+    --radius: 0.375rem;
+  }
+}
 ```
+
+---
+
+## Environment Variables Reference
+
+NXTQR isolates client-safe variables from privileged server credentials. Never expose service role keys to client bundles:
+
+| Variable Name | Required | Target | Purpose |
+| :--- | :--- | :--- | :--- |
+| `NEXT_PUBLIC_SITE_URL` | No | Client | Canonical URL for OpenGraph and OAuth redirects (default: `http://localhost:3000`) |
+| `NEXT_PUBLIC_SUPABASE_URL` | No | Client | Supabase endpoint URL for client authentication and real-time sockets |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | No | Client | Public anonymous JWT key for browser client authentication |
+| `SUPABASE_SERVICE_ROLE_KEY` | No | Server | Privileged server-side key for background jobs and admin migrations |
+| `NODE_ENV` | No | Server | Node runtime mode (`development` / `production`) |
+
+---
+
+## Core Development Scripts
+
+NXTQR provides top-level pnpm scripts to manage the full monorepo lifecycle:
+
+```bash
+# Start all development servers with Turborepo caching
+pnpm dev
+
+# Execute strict TypeScript typecheck across all 27 workspaces
+pnpm typecheck
+
+# Run unit tests across all packages (15 test suites, 87 tests)
+pnpm test:unit
+
+# Run Playwright E2E browser tests
+pnpm test:e2e
+
+# Build all packages and the Next.js web application for production
+pnpm build
+```
+
+---
+
+## Diagnostics & Verification
+
+After installing dependencies, navigate to the **[Architecture & Infrastructure Diagnostics Console](/verify)** at `http://localhost:3000/verify`. The console evaluates 18 foundational checks across monorepo boundaries, pure black CSS tokens, live database connectivity, and Zustand store isolation.

@@ -1,35 +1,96 @@
 ---
 title: Introduction
-description: An overview of the NXTQR design system, architectural principles, and developer-crafted philosophy.
+description: Technical architecture, foundational principles, and core concepts of the NXTQR Interactive Visual Engineering Studio.
 category: Getting Started
 order: 1
 ---
 
-Welcome to the **NXTQR Interactive Visual Engineering Studio** design system documentation platform.
+Welcome to the **NXTQR Interactive Visual Engineering Studio** technical documentation platform.
 
-NXTQR is built upon a strict architectural directive: **"One platform, multiple visualizers, shared engineering infrastructure."** Rather than fracturing features across separate disjointed apps, NXTQR consolidates its engineering capabilities within a single unified web application shell powered by high-performance shared packages.
+NXTQR is an engineering-first platform designed for modeling, visualizing, simulating, and understanding complex distributed systems, AI agent workflows, and reactive pipelines. It departs from static architecture diagrams by pairing **strict formal schemas** with a **deterministic topological execution engine** and **live telemetry inspection**.
 
-## Core Architectural Directives
+> [!NOTE]
+> **Engineering Studio Directive**: NXTQR is an Interactive Visual Engineering Studio. It is **not** a QR-code generator. The studio strictly prohibits QR codes, finder patterns, and QR terminology across all schemas and user interfaces.
 
-1. **Pure Black Monochrome Foundation**: The default application appearance is pure black (`#000000`) with neutral grayscale surfaces. No dark blue, purple, or decorative gradient dashboard backgrounds.
-2. **User-Selectable Pure Accent**: Users freely choose their accent color (e.g. Pure Red `#FF0000`, Pure Orange `#FF6600`, Pure Green `#00CC66`, Pure Blue `#0066FF`), which applies dynamically without page reload.
-3. **Solid Neumorphism**: Restrained tactile depth without blurry glassmorphism, glowing halos, or floating cards.
-4. **Global `rounded-md` Standard**: Every rectangular control and card strictly adheres to `rounded-md` (`0.375rem / 6px`).
-5. **High Information Density**: Built for engineers, prioritizing compact typography (Geist Sans / Geist Mono), explicit contrast, and visible keyboard focus rings.
+---
 
-## Monorepo Package Boundaries
+## Core Architectural Philosophy
 
-The design system enforces strict monorepo package boundaries:
+NXTQR operates under a single architectural directive: **"One platform, multiple visualizers, shared engineering infrastructure."** Rather than fracturing visualizer tools across disparate apps, NXTQR consolidates its capabilities within a unified Next.js application shell backed by high-performance monorepo packages.
 
-- `@nxtqr/ui`: Headless primitives and composite components based on shadcn/ui and Radix UI. Zero direct database or API calls.
-- `@nxtqr/design-system`: Tokens, color math, WCAG contrast verification, typography, and elevation definitions.
-- `@nxtqr/icons`: Standardized Hugeicons wrappers with 1.5px stroke width and 16px default size.
-- `@nxtqr/branding`: Brand assets, geometric N monogram, animated SVG logo, and app icon system.
+1. **Pure Black Monochrome Foundation**: The default theme is pure black (`#000000`) canvas with neutral grayscale surfaces (`#0A0A0A`, `#141414`, `#1A1A1A`) and fine structural borders (`#262626`). No dark blue, purple, or decorative gradient dashboard backgrounds.
+2. **User-Selectable Pure Accent**: Developers choose their accent color (e.g. Pure Red `#FF0000`, Pure Orange `#FF6600`, Pure Green `#00CC66`, Pure Blue `#0066FF`), applied dynamically via CSS variables with zero page reloads.
+3. **Solid Neumorphism**: Restrained tactile depth with directional highlights and fine borders. Glassmorphism, backdrop blur, and floating decorative cards are strictly prohibited.
+4. **Global `rounded-md` Standard**: Every rectangular control, node, dialog, and card uses `rounded-md` (`0.375rem / 6px`).
+5. **High Information Density**: Built for engineers, prioritizing compact typography (Geist Sans for UI, Geist Mono for code and metrics), strict contrast (WCAG 2.1 AA/AAA), and visible focus rings.
 
-## Navigation Architecture
+---
 
-The documentation platform utilizes a responsive three-column desktop layout:
+## End-to-End Platform Lifecycle
 
-- **Left Column**: Fixed navigation tree with collapsible groups and quick `⌘K` command palette search.
-- **Center Column**: Primary independently scrolling documentation document with interactive previews, live playgrounds, and props specifications.
-- **Right Column**: Fixed On This Page table of contents with `IntersectionObserver` active heading tracking.
+Explore how a graph document flows through the NXTQR platform from initial schema definition to canvas rendering and telemetry execution:
+
+<ArchitectureOverview />
+
+---
+
+## Foundational Engineering Concepts
+
+NXTQR decomposes visual engineering into six decoupled primitives:
+
+### 1. Graph Canvas
+An infinite pan-and-zoom visual engineering surface powered by `@xyflow/react` and `@nxtqr/canvas-core`. Features sub-pixel dot/line grids, 20px grid snapping, zoom clamping (`0.2x` to `2.5x`), minimap, and automated hierarchical auto-layout via `ELK.js`.
+
+### 2. Standard Nodes & Typed Ports
+Discrete architectural primitives managed by `@nxtqr/node-registry`. Each node features physical micro-bevel elevation (`#141414`), directional inset borders, and typed input/output connection ports:
+- **`input`**: Ingress Gateway, Webhook receiver, Client entrypoint.
+- **`process`**: Compute Worker, Transformation Lambda, CPU task.
+- **`decision`**: Routing Branch, Policy Filter, Conditional evaluation.
+- **`service`**: Microservice worker, RPC client, internal API.
+- **`database`**: State storage, PostgreSQL database, key-value table.
+- **`queue`**: Message buffer, Kafka topic, Cloudflare Queue.
+- **`output`**: Response dispatcher, Client response, Sink terminal.
+
+### 3. Signal Routing Edges
+Typed connections with Cubic Bezier, SmoothStep, and Straight line curves. Edges feature directional arrowheads, keyframe pulse animations for active transactions, and connection validators to prevent illegal self-loops.
+
+### 4. Node Inspector
+A contextual floating property workspace that synchronizes bidirectional state with the central Zustand editor store. Features Zod-validated input forms across General metadata, Archetype configuration, and Port connection topology.
+
+### 5. Deterministic Simulation Engine
+A topological runner (`@nxtqr/simulation-core`) that traverses graph dependencies. Provides hardware transport controls (`Start`, `Pause`, `Step →`, `Reset`) and dynamic playback speed multipliers (`0.5x` to `4.0x`).
+
+### 6. Execution Trace Viewer
+A sub-millisecond chronological event stream with keyword search filtering, relative timestamp calculations (`+45.2ms`, `+1.25s`), and structured JSON telemetry inspection.
+
+---
+
+## Monorepo Package Matrix
+
+NXTQR enforces strict boundaries between its monorepo packages:
+
+| Package | Responsibility | Prohibited Content |
+| :--- | :--- | :--- |
+| **`@nxtqr/ui`** | Headless primitives & composite components (shadcn/ui based) | Business logic, direct DB calls, API requests |
+| **`@nxtqr/design-system`** | Tokens, contrast math, typography, scrollbar, motion physics | React state management, DOM event listeners |
+| **`@nxtqr/icons`** | Standardized Hugeicons wrappers with 1.5px stroke width | Lucide icons, raw emoji, ad-hoc SVGs |
+| **`@nxtqr/graph-schema`** | Discriminated union Zod schemas for nodes, edges, docs | React Flow internal instance types |
+| **`@nxtqr/canvas-core`** | Coordinate conversion, zoom bounds, bounding box math | UI presentation logic, CSS styles |
+| **`@nxtqr/node-registry`** | Standard node archetype definitions | State management stores, DB queries |
+| **`@nxtqr/simulation-core`**| Deterministic runner, topological dependency stepping | React hooks, direct canvas DOM mutation |
+| **`@nxtqr/execution-trace`**| Telemetry selectors, query filtering, timestamp formatters | Direct canvas node mutation |
+| **`@nxtqr/state`** | Zustand stores for client-only reactive UI state | Server datasets, database cache |
+| **`@nxtqr/database`** | Supabase clients, generated DB types, SSR helpers | UI components, raw SQL in browser |
+| **`@nxtqr/validation`** | Source-of-truth Zod schemas & payload size guards | Complex runtime side-effects |
+| **`@nxtqr/branding`** | Official brand vectors, AppLogo, AnimatedLogo | Functional UI icons, domain logic, DB calls |
+
+---
+
+## Developer Onboarding Path
+
+Continue your journey with the following guides:
+
+- [**Installation**](/docs/getting-started/installation): Prerequisites, package consumption, and environment configuration.
+- [**Quick Start**](/docs/getting-started/quick-start): Build your first interactive graph pipeline in under 5 minutes.
+- [**Project Structure**](/docs/getting-started/project-structure): Interactive repository tree explorer and package boundary guide.
+- [**Theming & Accents**](/docs/getting-started/theming): Dynamic user accents, pure black monochrome, and WCAG contrast rules.

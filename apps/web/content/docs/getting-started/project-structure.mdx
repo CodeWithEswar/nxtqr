@@ -1,0 +1,92 @@
+---
+title: Project Structure
+description: Monorepo workspace hierarchy, package ownership standards, unidirectional dependency layers, and strict boundary rules.
+category: Getting Started
+order: 4
+---
+
+NXTQR is organized as a high-performance **pnpm monorepo** managed with **Turborepo**. The codebase enforces strict package boundaries to ensure that domain math, design tokens, headless UI primitives, and database schemas remain completely decoupled.
+
+> [!IMPORTANT]
+> **Core Architectural Principle (AGENTS.md)**: "One platform, multiple visualizers, shared engineering infrastructure."
+> - **Do NOT** create separate Next.js applications for each visualizer.
+> - Use the unified `apps/web` application shell with domain-specific feature modules under `apps/web/src/features/visualizers/*`.
+> - Shared code, contracts, UI components, and state belong in `packages/*`.
+
+---
+
+## Interactive Monorepo Explorer
+
+Explore the real repository hierarchy, folder responsibilities, and constitutionally prohibited contents below:
+
+<RepositoryTree />
+
+---
+
+## Layered Dependency Architecture
+
+NXTQR enforces a strict unidirectional dependency hierarchy. Higher layers may import lower layers, but lower layers never import upward:
+
+<PackageDependencyGraph />
+
+---
+
+## Detailed Directory Breakdown
+
+### 1. `apps/web` — Unified Web Application Shell
+The central Next.js 15 App Router web application that hosts the engineering studio workspace, the documentation platform, and feature visualizers:
+- **`src/app/`**: Route definitions, layouts, and API routes (`/docs`, `/verify`, `/settings`).
+- **`src/features/visualizers/shared/`**: Reusable graph canvas, nodes, edges, inspector, simulation controls, and execution trace viewer.
+- **`src/features/documentation/`**: MDX documentation platform, interactive playgrounds, and doc registry.
+- **`content/docs/`**: MDX technical documentation sources.
+
+### 2. `packages/*` — Shared Engineering Packages
+
+| Package | Purpose & Responsibility | Prohibited Contents |
+| :--- | :--- | :--- |
+| **`@nxtqr/ui`** | Headless primitives & composite components (shadcn/ui + Radix UI) | Business logic, direct DB calls, API requests |
+| **`@nxtqr/design-system`** | Tokens, color calculations (WCAG 2.1 AA/AAA), typography, scrollbars | React state management, DOM event listeners |
+| **`@nxtqr/icons`** | Standardized Hugeicons wrappers (1.5px stroke width, 16px default) | Lucide icons, raw emoji, ad-hoc SVGs |
+| **`@nxtqr/graph-schema`** | Discriminated union Zod schemas for nodes, edges, and documents | React Flow internal instance types |
+| **`@nxtqr/canvas-core`** | Coordinate conversions, zoom bounds (0.2x–2.5x), bounding box math | UI presentation logic, CSS styles |
+| **`@nxtqr/node-registry`** | Standard node archetype definitions (7 archetypes) | State stores, database queries |
+| **`@nxtqr/simulation-core`**| Deterministic simulation runner, topological dependency stepping | React hooks, direct canvas DOM mutation |
+| **`@nxtqr/execution-trace`**| Telemetry selectors, keyword queries, relative timestamp formatters | Direct canvas node mutation |
+| **`@nxtqr/state`** | Zustand stores for client-only reactive UI and studio interaction | Server datasets, database cache |
+| **`@nxtqr/database`** | Supabase SSR clients, generated DB types, and membership helpers | UI components, raw SQL in browser |
+| **`@nxtqr/validation`** | Source-of-truth Zod schemas and payload size guards | Complex runtime side-effects |
+| **`@nxtqr/branding`** | Official brand vectors, AppLogo, AnimatedLogo, wordmark | Functional UI icons, domain logic, DB calls |
+| **`@nxtqr/utils`** | Shared utilities (`cn` class merger, string formatting) | Heavy external dependencies |
+
+### 3. `workers/*` — Cloudflare Edge Workers
+Edge functions powered by Cloudflare Workers and Queues for high-throughput background processing:
+- **`workers/api`**: Public Edge API gateway and rate limiting.
+- **`workers/simulation`**: Asynchronous background simulation worker for long-running graph jobs.
+- **`workers/dispatcher`**: Event streaming and webhook dispatcher.
+- **`workers/analytics`**: Telemetry event ingestion and aggregation.
+- **`workers/notifications`**: User notification dispatch.
+
+### 4. `supabase/*` — Database & Security Migrations
+PostgreSQL database schemas with strict Row Level Security (RLS):
+- **`migrations/20261107000001_initial_schema.sql`**: Tables for `workspaces`, `workspace_members`, `audit_events`, and `visualizer_documents`.
+- **`tests/rls_test.sql`**: Automated pgTAP verification tests ensuring multi-tenant isolation.
+
+---
+
+## Guidelines for Adding a New Module
+
+When adding new capabilities to NXTQR, follow these architectural conventions:
+
+1. **Evaluate Package vs Feature**:
+   - If the code is specific to a visualizer domain (e.g. System Design, RAG Pipeline, Database Schema), place it in `apps/web/src/features/visualizers/<domain>/`.
+   - If the code provides reusable schemas, math, or UI primitives shared across visualizers, create or expand a `packages/*` package.
+2. **Strict Zod Contract**: Always define incoming and outgoing data contracts using Zod in `@nxtqr/graph-schema` or `@nxtqr/validation`.
+3. **Respect Prohibitions**: Never import `@nxtqr/database` into `@nxtqr/ui`, and never leak React Flow instance types into storage schemas.
+4. **Naming Conventions**:
+   - Files and folders: `kebab-case` (`graph-canvas.tsx`, `connection-validator.ts`).
+   - React components: `PascalCase` (`GraphCanvas`, `EngineeringNode`).
+   - Test files: Co-located `*.test.ts` or in `tests/e2e/*.spec.ts`.
+5. **Verify with Quality Gates**:
+   - Run `pnpm typecheck` to confirm zero compiler errors.
+   - Run `pnpm test:unit` to verify unit test coverage.
+   - Run `pnpm test:e2e` to verify responsive browser rendering.

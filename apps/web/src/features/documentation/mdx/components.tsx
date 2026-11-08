@@ -56,6 +56,16 @@ import {
   ConnectedGraphWorkspace,
 } from "../../visualizers/shared";
 
+// Getting Started Interactive Components
+import {
+  ArchitectureOverview,
+  InstallationSteps,
+  QuickStartWalkthrough,
+  RepositoryTree,
+  PackageDependencyGraph,
+  AccentPlayground,
+} from "../getting-started/components";
+
 // Re-export shared UI components for direct MDX embedded usage
 import {
   Button,
@@ -466,6 +476,14 @@ export const mdxComponents = {
   SimulationControls,
   ExecutionTraceViewer,
   ConnectedGraphWorkspace,
+
+  // Getting Started Interactive Components
+  ArchitectureOverview,
+  InstallationSteps,
+  QuickStartWalkthrough,
+  RepositoryTree,
+  PackageDependencyGraph,
+  AccentPlayground,
 
   // UI Primitives
   Button,

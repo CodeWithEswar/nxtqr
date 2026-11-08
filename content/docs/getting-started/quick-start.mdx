@@ -1,0 +1,190 @@
+---
+title: Quick Start
+description: Build your first interactive graph pipeline, validate schemas, and run topological simulations in under 5 minutes.
+category: Getting Started
+order: 3
+---
+
+This guide gets you up and running with your first **NXTQR interactive graph engineering pipeline**. You will create a typed graph document, connect three standard node archetypes, validate schema constraints, and execute a deterministic simulation.
+
+---
+
+## Interactive Quick Start Studio
+
+Use the live studio walkthrough below to step through pipeline construction, node state transitions, and real-time telemetry streaming:
+
+<QuickStartWalkthrough />
+
+---
+
+## 5-Minute Developer Workflow
+
+Follow these step-by-step instructions in your TypeScript code to construct an automated telemetry pipeline:
+
+### Step 1: Define Your Graph Document
+
+NXTQR graphs are represented by a typed `GraphDocument` adhering to `@nxtqr/graph-schema`. Define your entrypoint, processing, and persistence nodes:
+
+```tsx
+import type { GraphDocument, BaseNode, BaseEdge } from "@nxtqr/graph-schema";
+
+const nodes: BaseNode[] = [
+  {
+    id: "node_ingress",
+    type: "input",
+    status: "idle",
+    position: { x: 100, y: 150 },
+    label: "Edge Gateway",
+    description: "Cloudflare Ingress & Rate Limiter",
+    ports: [{ id: "out", name: "Out", type: "output", dataType: "RequestPayload" }],
+    data: { protocol: "HTTPS/3", rateLimitRps: 2500 },
+  },
+  {
+    id: "node_worker",
+    type: "process",
+    status: "idle",
+    position: { x: 380, y: 150 },
+    label: "Compute Worker",
+    description: "Transformation Lambda",
+    ports: [
+      { id: "in", name: "In", type: "input", dataType: "RequestPayload" },
+      { id: "out", name: "Out", type: "output", dataType: "ProcessedData" },
+    ],
+    data: { runtime: "NodeJS 20 LTS", memoryMb: 1024, timeoutMs: 3000 },
+  },
+  {
+    id: "node_database",
+    type: "database",
+    status: "idle",
+    position: { x: 660, y: 150 },
+    label: "PostgreSQL Primary",
+    description: "Transactional Storage",
+    ports: [{ id: "query", name: "Query", type: "input", dataType: "SQLQuery" }],
+    data: { engine: "PostgreSQL 16", connectionPool: 24 },
+  },
+];
+```
+
+### Step 2: Route Signal Connections
+
+Connect the output port of the ingress gateway to the input port of the compute worker, and route the worker's output to the database:
+
+```tsx
+const edges: BaseEdge[] = [
+  {
+    id: "edge_ingress_worker",
+    source: "node_ingress",
+    target: "node_worker",
+    sourceHandle: "out",
+    targetHandle: "in",
+    type: "bezier",
+    status: "idle",
+    label: "HTTP/2 [1.2ms]",
+    data: { protocol: "gRPC", latencyMs: 1.2 },
+  },
+  {
+    id: "edge_worker_db",
+    source: "node_worker",
+    target: "node_database",
+    sourceHandle: "out",
+    targetHandle: "query",
+    type: "bezier",
+    status: "idle",
+    label: "SQL Write [3.4ms]",
+    data: { pool: "primary", timeoutMs: 500 },
+  },
+];
+
+export const pipelineDocument: GraphDocument = {
+  id: "doc_telemetry_pipeline",
+  schemaVersion: 1,
+  visualizerType: "system-design",
+  title: "Production Telemetry Pipeline",
+  nodes,
+  edges,
+  viewport: { x: 0, y: 0, zoom: 1.0 },
+  metadata: { environment: "production", author: "Platform Engineering" },
+};
+```
+
+### Step 3: Validate Schemas & Guard Payload Size
+
+Use `@nxtqr/validation` and `@nxtqr/security` to ensure zero illegal cycles, valid handle types, and bounded payload sizes:
+
+```tsx
+import { GraphDocumentSchema } from "@nxtqr/graph-schema";
+import { assertPayloadSize } from "@nxtqr/security";
+
+export function validatePipeline(doc: unknown) {
+  // Guard against oversized graph payloads (5MB limit)
+  assertPayloadSize(doc, 5 * 1024 * 1024);
+
+  const result = GraphDocumentSchema.safeParse(doc);
+  if (!result.success) {
+    console.error("Schema validation error:", result.error.format());
+    throw new Error("Invalid graph document schema");
+  }
+  return result.data;
+}
+```
+
+### Step 4: Run Deterministic Simulation
+
+Instantiate the `DeterministicSimulationEngine` from `@nxtqr/simulation-core` to traverse nodes in topological dependency order:
+
+```tsx
+import { DeterministicSimulationEngine } from "@nxtqr/simulation-core";
+
+const engine = new DeterministicSimulationEngine({
+  speed: 1.0, // 1.0x playback multiplier
+  onEvent: (event) => {
+    console.log(`[Step #${event.step}] ${event.type} -> Node: ${event.targetNodeId}`);
+  },
+  onStatusChange: (status) => {
+    console.log("Simulation status changed:", status);
+  },
+});
+
+// Initialize with validated document
+await engine.initialize(pipelineDocument);
+
+// Advance single step or run full pipeline
+const step1 = await engine.step();
+console.log("Step 1 emitted:", step1?.payload);
+
+// Or run full execution loop
+const result = await engine.run();
+console.log(`Simulation finished in ${result.durationMs}ms across ${result.totalSteps} steps`);
+```
+
+### Step 5: Query Execution Traces
+
+Use `@nxtqr/execution-trace` to filter telemetry events and compute relative timing offsets:
+
+```tsx
+import { filterTraceEvents, formatRelativeTimestamp } from "@nxtqr/execution-trace";
+
+const allEvents = engine.getEvents();
+
+// Filter for database writes only
+const dbEvents = filterTraceEvents(allEvents, {
+  searchQuery: "PostgreSQL",
+  status: "success",
+});
+
+dbEvents.forEach((evt) => {
+  console.log(`${formatRelativeTimestamp(evt.timestamp)}: ${evt.type}`);
+  // Output: "+45.2ms: DATABASE_WRITE"
+});
+```
+
+---
+
+## What's Next?
+
+Now that you've constructed your first interactive graph pipeline, explore the core visualizer documentation:
+
+- [**Graph Canvas**](/docs/visualizer/canvas): Deep-dive into `@xyflow/react` integration, pan/zoom bounds, and ELK.js layouts.
+- [**Graph Nodes**](/docs/visualizer/nodes): Inspect all 7 standard node archetypes and custom ports.
+- [**Simulation Controls**](/docs/visualizer/simulation-controls): Transport playback controls, pause/resume, and speed multipliers.
+- [**Execution Trace Viewer**](/docs/visualizer/trace-viewer): Sub-millisecond stream inspector with bidirectional canvas synchronization.
