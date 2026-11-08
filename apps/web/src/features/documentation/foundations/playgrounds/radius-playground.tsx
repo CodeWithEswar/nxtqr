@@ -102,13 +102,15 @@ export function RadiusPlayground() {
 
       {/* Live Component Sandbox */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-            Live Component Sandbox with Selected Radius: <span className="text-foreground font-semibold">{selectedPreset.tailwind} ({selectedPreset.value})</span>
+            <span className="hidden sm:inline">Live Component Sandbox with Selected Radius: </span>
+            <span className="sm:hidden">Sandbox: </span>
+            <span className="text-foreground font-semibold">{selectedPreset.tailwind} ({selectedPreset.value})</span>
           </label>
           <button
             onClick={copyCode}
-            className="text-[11px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+            className="text-[11px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors shrink-0"
           >
             {copied ? <CheckIcon className="h-3 w-3 text-accent" /> : <CopyIcon className="h-3 w-3" />}
             {copied ? "Copied" : "Copy class"}

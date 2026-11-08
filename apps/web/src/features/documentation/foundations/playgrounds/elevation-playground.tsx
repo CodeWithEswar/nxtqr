@@ -149,13 +149,13 @@ export function ElevationPlayground() {
 
       {/* Main Interactive Stage */}
       {viewMode === "interactive" ? (
-        <div className="p-8 bg-black border border-subtle-border rounded-md flex flex-col items-center justify-center min-h-[260px] relative">
+        <div className="p-4 sm:p-6 md:p-8 bg-black border border-subtle-border rounded-md flex flex-col items-center justify-center min-h-[260px] relative">
           <div className="absolute top-3 left-3 text-[10px] font-mono text-muted-foreground">
             STAGE: BASE CANVAS (#000000)
           </div>
 
           <div
-            className="w-full max-w-md p-6 rounded-md transition-all duration-200 border border-border"
+            className="w-full max-w-md p-4 sm:p-6 rounded-md transition-all duration-200 border border-border"
             style={{
               backgroundColor: current.surface,
               boxShadow: current.shadow,
@@ -177,7 +177,7 @@ export function ElevationPlayground() {
               {current.usage}
             </p>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <button
                 className="px-3 py-1.5 text-xs font-sans font-medium rounded-md bg-accent text-accent-foreground shadow-sm hover:opacity-90 transition-opacity"
               >
@@ -191,7 +191,7 @@ export function ElevationPlayground() {
         </div>
       ) : (
         /* Isometric Layer Stack View */
-        <div className="p-8 bg-black border border-subtle-border rounded-md flex flex-col items-center justify-center min-h-[300px]">
+        <div className="p-4 sm:p-6 md:p-8 bg-black border border-subtle-border rounded-md flex flex-col items-center justify-center min-h-[300px]">
           <div className="w-full max-w-lg space-y-3">
             {ELEVATION_LEVELS.slice().reverse().map((level) => (
               <div
