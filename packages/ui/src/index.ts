@@ -33,6 +33,8 @@ export * from "./components/ui/command";
 export * from "./components/ui/calendar";
 export * from "./components/ui/breadcrumb";
 export * from "./components/ui/navigation-menu";
+export * from "./components/ui/menubar";
+export * from "./components/ui/pagination";
 
 // Composite Components
 export * from "./components/composite/data-table";

@@ -38,6 +38,30 @@ test.describe("NXTQR Documentation Platform (Phase 03)", () => {
     await expect(toc).toContainText("On This Page");
   });
 
+  test("header remains pinned to top of viewport when scrolling central content", async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 900 });
+    await page.goto("/docs/components/button");
+
+    const header = page.locator("header").first();
+    await expect(header).toBeVisible();
+
+    // Verify initial y-offset is 0
+    const initialBox = await header.boundingBox();
+    expect(initialBox?.y).toBe(0);
+
+    // Scroll the main content container down by 800px
+    const mainContent = page.locator("#docs-content");
+    await mainContent.evaluate((el) => el.scrollTo(0, 800));
+
+    // Wait for scroll stabilization
+    await page.waitForTimeout(100);
+
+    // Verify header remains pinned at y=0
+    const scrolledBox = await header.boundingBox();
+    expect(scrolledBox?.y).toBe(0);
+    await expect(header).toBeVisible();
+  });
+
   test("navigates to Button documentation and validates interactive preview and playground", async ({
     page,
   }) => {

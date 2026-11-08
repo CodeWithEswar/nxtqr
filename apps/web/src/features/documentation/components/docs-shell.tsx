@@ -16,12 +16,12 @@ export function DocsShell({ children, headings = [] }: DocsShellProps) {
   const [searchOpen, setSearchOpen] = React.useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col overflow-hidden">
-      {/* 1. Fixed Top Header */}
+    <div className="h-screen max-h-screen w-full bg-background text-foreground flex flex-col overflow-hidden">
+      {/* 1. Fixed / Sticky Top Header */}
       <DocsHeader onSearchClick={() => setSearchOpen(true)} />
 
       {/* 2. Below Header Three-Column Viewport Shell */}
-      <div className="flex-1 flex w-full h-[calc(100vh-3.5rem)] overflow-hidden">
+      <div className="flex-1 flex w-full min-h-0 overflow-hidden">
         {/* Column 1: Left Navigation Sidebar (Desktop/Laptop) */}
         <DocsSidebar onSearchClick={() => setSearchOpen(true)} className="hidden md:flex" />
 
