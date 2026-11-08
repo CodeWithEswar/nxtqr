@@ -5,11 +5,23 @@ import * as MenubarPrimitive from "@radix-ui/react-menubar";
 import { CheckIcon, ChevronRightIcon } from "@nxtqr/icons";
 import { cn } from "@nxtqr/utils";
 
-const MenubarMenu = MenubarPrimitive.Menu;
-const MenubarGroup = MenubarPrimitive.Group;
-const MenubarPortal = MenubarPrimitive.Portal;
-const MenubarSub = MenubarPrimitive.Sub;
-const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
+const MenubarMenu = ({ ...props }: MenubarPrimitive.MenubarMenuProps) => (
+  <MenubarPrimitive.Menu {...props} />
+);
+const MenubarGroup = ({ ...props }: MenubarPrimitive.MenubarGroupProps) => (
+  <MenubarPrimitive.Group {...props} />
+);
+const MenubarPortal = ({ ...props }: MenubarPrimitive.MenubarPortalProps) => (
+  <MenubarPrimitive.Portal {...props} />
+);
+const MenubarSub = ({ ...props }: MenubarPrimitive.MenubarSubProps) => (
+  <MenubarPrimitive.Sub {...props} />
+);
+const MenubarRadioGroup = ({
+  ...props
+}: MenubarPrimitive.MenubarRadioGroupProps) => (
+  <MenubarPrimitive.RadioGroup {...props} />
+);
 
 const Menubar = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Root>,
@@ -229,3 +241,4 @@ export {
   MenubarSub,
   MenubarShortcut,
 };
+

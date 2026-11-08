@@ -54,6 +54,14 @@
   height: var(--scrollbar-size);
 }
 
+/* Hide scrollbar buttons (arrows) across all browsers and elements */
+::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 ::-webkit-scrollbar-track {
   background-color: var(--scrollbar-track);
   border: 1px solid var(--scrollbar-track-border);
@@ -114,6 +122,13 @@
   height: var(--scrollbar-size);
 }
 
+.scrollbar-default::-webkit-scrollbar-button,
+[data-scrollbar="default"]::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 .scrollbar-default::-webkit-scrollbar-thumb,
 [data-scrollbar="default"]::-webkit-scrollbar-thumb {
   border-radius: var(--scrollbar-radius);
@@ -130,6 +145,13 @@
 [data-scrollbar="compact"]::-webkit-scrollbar {
   width: var(--scrollbar-size-compact);
   height: var(--scrollbar-size-compact);
+}
+
+.scrollbar-compact::-webkit-scrollbar-button,
+[data-scrollbar="compact"]::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .scrollbar-compact::-webkit-scrollbar-thumb,
@@ -151,6 +173,13 @@
   height: var(--scrollbar-size-canvas);
 }
 
+.scrollbar-canvas::-webkit-scrollbar-button,
+[data-scrollbar="canvas"]::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 .scrollbar-canvas::-webkit-scrollbar-thumb,
 [data-scrollbar="canvas"]::-webkit-scrollbar-thumb {
   border-radius: var(--scrollbar-radius-compact);
@@ -169,6 +198,13 @@
   height: var(--scrollbar-size-dense);
 }
 
+.scrollbar-dense::-webkit-scrollbar-button,
+[data-scrollbar="dense"]::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 .scrollbar-dense::-webkit-scrollbar-thumb,
 [data-scrollbar="dense"]::-webkit-scrollbar-thumb {
   border-radius: var(--scrollbar-radius-dense);
@@ -185,6 +221,14 @@
 .scrollbar-none::-webkit-scrollbar,
 .no-scrollbar::-webkit-scrollbar,
 [data-scrollbar="none"]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.scrollbar-none::-webkit-scrollbar-button,
+.no-scrollbar::-webkit-scrollbar-button,
+[data-scrollbar="none"]::-webkit-scrollbar-button {
   display: none !important;
   width: 0 !important;
   height: 0 !important;

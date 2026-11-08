@@ -25,11 +25,11 @@ export function DocsShell({ children, headings = [] }: DocsShellProps) {
         {/* Column 1: Left Navigation Sidebar (Desktop/Laptop) */}
         <DocsSidebar onSearchClick={() => setSearchOpen(true)} className="hidden md:flex" />
 
-        {/* Column 2: Central Primary Documentation Scroll Area */}
+        {/* Column 2: Central Primary Documentation Scroll Area (Hidden Scrollbar) */}
         <main
           id="docs-content"
           tabIndex={-1}
-          className="flex-1 min-w-0 h-full overflow-y-auto scrollbar-default px-6 sm:px-10 py-10"
+          className="flex-1 min-w-0 h-full overflow-y-auto scrollbar-none px-6 sm:px-10 py-10"
         >
           <div className="max-w-3xl mx-auto space-y-10">{children}</div>
         </main>
