@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Button, Badge } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { CheckIcon, RefreshIcon, CopyIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -42,19 +42,11 @@ export function RadiusPlayground() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Interactive Border Radius Laboratory
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Standard: rounded-md (6px)
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
+        <div>
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Interactive Border Radius Laboratory
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
             Evaluate rectangular surface coherence, compare non-standard corner curves, and verify concentric nested geometry.
           </p>
         </div>

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { scrollbarTokens } from "@nxtqr/design-system";
-import { Badge } from "@nxtqr/ui";
 import { CheckIcon, CopyIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -33,19 +32,11 @@ export function ScrollbarPlayground() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Precision Rail Scrollbar Laboratory
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Tactile Solid Rail
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
+        <div>
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Precision Rail Scrollbar Laboratory
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
             Engineered hardware scroll rails. 10px / 7px / 6px precision scales, inset groove lighting, and dynamic user-accent drag feedback.
           </p>
         </div>
