@@ -93,7 +93,73 @@ import {
   PaginationPrevious,
 } from "@nxtqr/ui";
 
+function extractText(node: React.ReactNode): string {
+  if (typeof node === "string") return node;
+  if (typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (React.isValidElement(node) && node.props && (node.props as any).children) {
+    return extractText((node.props as any).children);
+  }
+  return "";
+}
+
+export function parseColorValue(text: string): string | null {
+  const trimmed = text.trim().replace(/[;,]$/, "");
+  // Matches 3, 4, 6, or 8 hex digits (e.g. #000, #000f, #000000, #000000ff)
+  if (/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(trimmed)) {
+    return trimmed;
+  }
+  // Matches rgb(...) or hsl(...)
+  if (
+    /^(?:rgb|hsl)a?\(\s*[\d.]+\s*,\s*[\d.]+%?\s*,\s*[\d.]+%?(?:\s*[,/]\s*[\d.]+%?)?\s*\)$/i.test(
+      trimmed,
+    )
+  ) {
+    return trimmed;
+  }
+  return null;
+}
+
+export interface ColorPreviewProps extends React.HTMLAttributes<HTMLSpanElement> {
+  color: string;
+  name?: string;
+  showCode?: boolean;
+}
+
+export function ColorPreview({
+  color,
+  name,
+  showCode = true,
+  className,
+  ...props
+}: ColorPreviewProps) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 font-mono text-[11px] px-2 py-0.5 rounded-md bg-surface border border-border shadow-level-1 text-foreground select-all align-middle group",
+        className,
+      )}
+      {...props}
+    >
+      {name && <span className="font-sans font-medium text-foreground mr-1">{name}</span>}
+      {showCode && <span className="text-muted-foreground">{color}</span>}
+      <span
+        className="relative h-2.5 w-2.5 rounded-[2px] border border-white/25 shadow-[0_0_0_1px_rgba(0,0,0,0.5)] shrink-0 inline-block overflow-hidden select-none group-hover:scale-110 transition-transform"
+        aria-hidden="true"
+        title={`Color preview: ${color}`}
+      >
+        <span
+          className="absolute inset-0"
+          style={{ backgroundColor: color }}
+        />
+      </span>
+    </span>
+  );
+}
+
 export const mdxComponents = {
+  ColorPreview,
+  ColorSwatch: ColorPreview,
   h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h1
       className={cn(
@@ -171,15 +237,50 @@ export const mdxComponents = {
     <li className={cn("leading-relaxed", className)} {...props} />
   ),
 
-  code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
-    <code
-      className={cn(
-        "font-mono text-[11px] px-1.5 py-0.5 rounded bg-black/60 border border-subtle-border text-foreground font-normal",
-        className,
-      )}
-      {...props}
-    />
-  ),
+  code: ({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) => {
+    const isBlockCode = typeof className === "string" && className.includes("language-");
+
+    if (!isBlockCode) {
+      const rawText = extractText(children);
+      const colorValue = parseColorValue(rawText);
+
+      if (colorValue) {
+        return (
+          <code
+            className={cn(
+              "font-mono text-[11px] px-1.5 py-0.5 rounded bg-black/60 border border-subtle-border text-foreground font-normal inline-flex items-center gap-1.5 align-middle select-all group",
+              className,
+            )}
+            {...props}
+          >
+            <span>{children}</span>
+            <span
+              className="relative h-2.5 w-2.5 rounded-[2px] border border-white/25 shadow-[0_0_0_1px_rgba(0,0,0,0.5)] shrink-0 inline-block overflow-hidden select-none group-hover:scale-110 transition-transform"
+              aria-hidden="true"
+              title={`Color preview: ${colorValue}`}
+            >
+              <span
+                className="absolute inset-0"
+                style={{ backgroundColor: colorValue }}
+              />
+            </span>
+          </code>
+        );
+      }
+    }
+
+    return (
+      <code
+        className={cn(
+          "font-mono text-[11px] px-1.5 py-0.5 rounded bg-black/60 border border-subtle-border text-foreground font-normal",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </code>
+    );
+  },
 
   pre: ({ children }: React.HTMLAttributes<HTMLPreElement>) => {
     let codeContent = "";

@@ -1,10 +1,12 @@
 import { describe, it, expect } from "vitest";
+import * as React from "react";
 import { TextWrapIcon, TextUnwrapIcon } from "@nxtqr/icons";
 import { nxtqrDarkTheme, nxtqrLightTheme } from "../../mdx/shiki-theme";
 import {
   tokenizeClientCode,
   highlightCodeServer,
 } from "../../mdx/syntax-highlighting";
+import { parseColorValue, mdxComponents } from "../../mdx/components";
 
 describe("NXTQR Code Block & Syntax Highlighting System", () => {
   it("defines WCAG compliant dark syntax theme tokens", () => {
@@ -77,5 +79,70 @@ const removed = false; // [!code --]
     expect(sanitized).toContain('const foo = "bar";');
     expect(sanitized).toContain("const added = true;");
     expect(sanitized).toContain("const removed = false;");
+  });
+
+  it("parses valid color tokens and rejects non-color inline code", () => {
+    // Valid hex colors (3, 4, 6, 8 hex digits)
+    expect(parseColorValue("#000000")).toBe("#000000");
+    expect(parseColorValue("#0A0A0A")).toBe("#0A0A0A");
+    expect(parseColorValue("#141414")).toBe("#141414");
+    expect(parseColorValue("#1A1A1A")).toBe("#1A1A1A");
+    expect(parseColorValue("#FFFFFF")).toBe("#FFFFFF");
+    expect(parseColorValue("#FF0000")).toBe("#FF0000");
+    expect(parseColorValue("#00CC66")).toBe("#00CC66");
+    expect(parseColorValue("#fff")).toBe("#fff");
+    expect(parseColorValue("#000f")).toBe("#000f");
+    expect(parseColorValue("#000000ff")).toBe("#000000ff");
+
+    // Trailing punctuation tolerance
+    expect(parseColorValue("#000000;")).toBe("#000000");
+    expect(parseColorValue("#FF0000,")).toBe("#FF0000");
+
+    // Valid rgb and hsl
+    expect(parseColorValue("rgb(255, 0, 0)")).toBe("rgb(255, 0, 0)");
+    expect(parseColorValue("rgba(0, 0, 0, 0.5)")).toBe("rgba(0, 0, 0, 0.5)");
+
+    // Non-color inline code strings
+    expect(parseColorValue("rounded-md")).toBeNull();
+    expect(parseColorValue("0.375rem / 6px")).toBeNull();
+    expect(parseColorValue("focus-visible:ring-1")).toBeNull();
+    expect(parseColorValue("#header")).toBeNull();
+    expect(parseColorValue("#button")).toBeNull();
+    expect(parseColorValue("#12345")).toBeNull();
+  });
+
+  it("renders color preview swatch on the right side of inline color code", () => {
+    const rendered = mdxComponents.code({
+      children: "#000000",
+    }) as React.ReactElement<any>;
+
+    expect(rendered).toBeDefined();
+    expect(rendered.type).toBe("code");
+
+    // Children of the code element should be: [<span>#000000</span>, <span className="... swatch ..." />]
+    const childrenArray = React.Children.toArray(rendered.props.children);
+    expect(childrenArray.length).toBe(2);
+
+    // Left child is the text wrapper
+    const textChild = childrenArray[0] as React.ReactElement<any>;
+    expect(textChild.props.children).toBe("#000000");
+
+    // Right child is the color preview swatch
+    const swatchChild = childrenArray[1] as React.ReactElement<any>;
+    expect(swatchChild.props["aria-hidden"]).toBe("true");
+    expect(swatchChild.props.title).toContain("#000000");
+
+    // Verify swatch fill has the exact backgroundColor
+    const fillChild = React.Children.toArray(swatchChild.props.children)[0] as React.ReactElement<any>;
+    expect(fillChild.props.style?.backgroundColor).toBe("#000000");
+  });
+
+  it("renders normal inline code without swatch for non-color strings", () => {
+    const rendered = mdxComponents.code({
+      children: "rounded-md",
+    }) as React.ReactElement<any>;
+
+    expect(rendered).toBeDefined();
+    expect(rendered.props.children).toBe("rounded-md");
   });
 });
