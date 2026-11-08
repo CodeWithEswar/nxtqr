@@ -112,19 +112,12 @@ export const mdxComponents = {
       <h2
         id={id}
         className={cn(
-          "font-semibold text-lg sm:text-xl tracking-tight text-foreground font-sans mt-10 mb-3 border-b border-border pb-2 group flex items-center justify-between",
+          "font-semibold text-lg sm:text-xl tracking-tight text-foreground font-sans mt-10 mb-3 border-b border-border pb-2",
           className,
         )}
         {...props}
       >
-        <span>{children}</span>
-        <a
-          href={`#${id}`}
-          aria-label={`Link to ${text}`}
-          className="opacity-0 group-hover:opacity-60 text-muted-foreground font-mono text-xs hover:opacity-100"
-        >
-          #
-        </a>
+        {children}
       </h2>
     );
   },
@@ -137,19 +130,12 @@ export const mdxComponents = {
       <h3
         id={id}
         className={cn(
-          "font-semibold text-sm sm:text-base tracking-tight text-foreground font-sans mt-6 mb-2 group flex items-center justify-between",
+          "font-semibold text-sm sm:text-base tracking-tight text-foreground font-sans mt-6 mb-2",
           className,
         )}
         {...props}
       >
-        <span>{children}</span>
-        <a
-          href={`#${id}`}
-          aria-label={`Link to ${text}`}
-          className="opacity-0 group-hover:opacity-60 text-muted-foreground font-mono text-xs hover:opacity-100"
-        >
-          #
-        </a>
+        {children}
       </h3>
     );
   },
