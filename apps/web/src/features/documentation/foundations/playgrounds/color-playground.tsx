@@ -45,11 +45,19 @@ export function ColorPlayground() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* 1. Header & Description */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
-          <h3 className="text-sm font-semibold font-sans text-foreground">
-            Interactive Color & Accent Laboratory
-          </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-sm font-semibold font-sans text-foreground">
+              Interactive Color & Accent Laboratory
+            </h3>
+            <Badge
+              variant="outline"
+              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
+            >
+              WCAG AA / AAA Engine
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">
             Test calibrated saturated presets, derive accessible foreground text, and inspect WCAG 2.1 contrast math.
           </p>
         </div>

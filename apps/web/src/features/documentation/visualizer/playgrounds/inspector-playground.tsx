@@ -16,14 +16,19 @@ export function InspectorPlayground() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
-          <h3 className="text-sm font-semibold font-sans text-foreground flex items-center gap-2">
-            Node Inspector Laboratory
-            <Badge variant="outline" className="border-accent text-accent font-mono text-[10px] uppercase">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-sm font-semibold font-sans text-foreground">
+              Node Inspector Laboratory
+            </h3>
+            <Badge
+              variant="outline"
+              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
+            >
               Zod Validated Forms
             </Badge>
-          </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          </div>
+          <p className="text-xs text-muted-foreground">
             Contextual floating properties inspector with real-time state synchronization, port connections, and container query adaptation.
           </p>
         </div>

@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@nxtqr/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium transition-colors outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+  "inline-flex items-center justify-center whitespace-nowrap shrink-0 rounded-md border px-2 py-0.5 text-[11px] font-medium transition-colors outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring select-none",
   {
     variants: {
       variant: {
@@ -14,6 +14,9 @@ const badgeVariants = cva(
         destructive: "border-transparent bg-destructive text-destructive-foreground shadow-level-1",
         outline: "border-border text-foreground bg-transparent",
         muted: "border-subtle-border bg-secondary-surface text-muted-foreground",
+        accent: "border-accent/40 bg-accent/10 text-accent shadow-level-1",
+        success: "border-transparent bg-success text-success-foreground shadow-level-1",
+        warning: "border-transparent bg-warning text-warning-foreground shadow-level-1",
       },
     },
     defaultVariants: {
