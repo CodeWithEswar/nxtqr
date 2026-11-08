@@ -135,7 +135,7 @@ test.describe("NXTQR Documentation Platform (Phase 03)", () => {
     await expect(drawer).toContainText("Button");
   });
 
-  test("validates syntax-highlighted code block, language indicator, and copy feedback", async ({
+  test("validates syntax-highlighted code block, language indicator, copy feedback, and word wrap toggle", async ({
     page,
     context,
   }) => {
@@ -150,6 +150,17 @@ test.describe("NXTQR Documentation Platform (Phase 03)", () => {
     // Click copy and verify brief "Copied" feedback
     await copyBtn.click();
     await expect(page.locator("text=Copied").first()).toBeVisible();
+
+    // Locate and toggle word wrap button
+    const wrapBtn = page.getByRole("button", { name: /word wrap/i }).first();
+    await expect(wrapBtn).toBeVisible();
+    await expect(wrapBtn).toHaveAttribute("aria-pressed", "false");
+
+    await wrapBtn.click();
+    await expect(wrapBtn).toHaveAttribute("aria-pressed", "true");
+
+    await wrapBtn.click();
+    await expect(wrapBtn).toHaveAttribute("aria-pressed", "false");
   });
 
   test("renders real component previews without placeholder text across catalog", async ({

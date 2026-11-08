@@ -352,3 +352,35 @@ export const SpinnerIcon = createIcon("SpinnerIcon", (props) => (
     <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
   </svg>
 ));
+
+export const TextWrapIcon = createIcon("TextWrapIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <path d="M3 12h14a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h-5" />
+    <polyline points="15 15 12 18 15 21" />
+    <line x1="3" y1="18" x2="8" y2="18" />
+  </svg>
+));
+
+export const TextUnwrapIcon = createIcon("TextUnwrapIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="18" x2="15" y2="18" />
+  </svg>
+));
+

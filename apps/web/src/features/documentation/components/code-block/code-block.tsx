@@ -16,6 +16,10 @@ export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   highlightLines?: number[];
   collapsible?: boolean;
   maxCollapsedLines?: number;
+  wrap?: boolean;
+  defaultWrap?: boolean;
+  allowWrap?: boolean;
+  onWrapChange?: (wrapped: boolean) => void;
 }
 
 export function CodeBlock({
@@ -28,10 +32,29 @@ export function CodeBlock({
   highlightLines = [],
   collapsible,
   maxCollapsedLines = 22,
+  wrap,
+  defaultWrap,
+  allowWrap = true,
+  onWrapChange,
   children,
   ...props
 }: CodeBlockProps) {
   const [expanded, setExpanded] = React.useState(false);
+  const [isWrapped, setIsWrapped] = React.useState(defaultWrap ?? wrap ?? false);
+
+  React.useEffect(() => {
+    if (wrap !== undefined) {
+      setIsWrapped(wrap);
+    }
+  }, [wrap]);
+
+  const handleToggleWrap = React.useCallback(() => {
+    setIsWrapped((prev) => {
+      const next = !prev;
+      onWrapChange?.(next);
+      return next;
+    });
+  }, [onWrapChange]);
 
   // Extract raw text code
   const rawCode =
@@ -60,14 +83,19 @@ export function CodeBlock({
     <div
       className={cn(
         "relative group my-4 rounded-md border border-border bg-[#0A0A0A] overflow-hidden shadow-level-1",
+        isWrapped && "nxtqr-code-wrapped",
         className,
       )}
+      data-word-wrap={isWrapped ? "true" : "false"}
       {...props}
     >
       <CodeBlockHeader
         filename={filename}
         language={language}
         code={rawCode}
+        isWrapped={isWrapped}
+        onToggleWrap={handleToggleWrap}
+        allowWrap={allowWrap}
       />
 
       <div
@@ -78,14 +106,26 @@ export function CodeBlock({
       >
         {html ? (
           <div
-            className="overflow-x-auto scrollbar-dense text-xs leading-relaxed"
+            className={cn(
+              "text-xs leading-relaxed transition-all",
+              isWrapped
+                ? "overflow-x-hidden [word-break:break-word] [overflow-wrap:anywhere]"
+                : "overflow-x-auto scrollbar-dense",
+            )}
             data-line-numbers={isLineNumbersEnabled ? "" : undefined}
+            data-word-wrap={isWrapped ? "true" : undefined}
             dangerouslySetInnerHTML={{ __html: html }}
           />
         ) : tokenizedLines ? (
           <pre
-            className="p-4 overflow-x-auto scrollbar-dense font-mono text-xs text-foreground/90 leading-relaxed bg-[#000000]"
+            className={cn(
+              "p-4 font-mono text-xs text-foreground/90 leading-relaxed bg-[#000000] transition-all",
+              isWrapped
+                ? "overflow-x-hidden whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
+                : "overflow-x-auto scrollbar-dense whitespace-pre",
+            )}
             data-line-numbers={isLineNumbersEnabled ? "" : undefined}
+            data-word-wrap={isWrapped ? "true" : undefined}
           >
             <code className="block">
               {tokenizedLines.map((lineTokens, lineIdx) => {
@@ -95,16 +135,27 @@ export function CodeBlock({
                   <span
                     key={lineIdx}
                     className={cn(
-                      "code-block-line flex items-center min-h-[1.25rem] px-2",
+                      "code-block-line relative block min-h-[1.25rem] py-0.5",
+                      isLineNumbersEnabled ? "pl-14 pr-2" : "px-2",
                       isHighlighted && "highlighted",
                     )}
                   >
                     {isLineNumbersEnabled && (
-                      <span className="inline-block w-6 mr-4 text-right text-[#525252] select-none text-[11px]">
+                      <span
+                        className="absolute left-2 top-0.5 w-8 text-right text-[#525252] select-none text-[11px] font-mono"
+                        aria-hidden="true"
+                      >
                         {lineNum}
                       </span>
                     )}
-                    <span className="flex-1">
+                    <span
+                      className={cn(
+                        "block",
+                        isWrapped
+                          ? "break-words whitespace-pre-wrap [overflow-wrap:anywhere]"
+                          : "whitespace-pre",
+                      )}
+                    >
                       {lineTokens.map((token, tokenIdx) => (
                         <TokenSpan key={tokenIdx} token={token} />
                       ))}
@@ -115,7 +166,15 @@ export function CodeBlock({
             </code>
           </pre>
         ) : (
-          <pre className="p-4 overflow-x-auto scrollbar-dense font-mono text-xs text-foreground/90 leading-relaxed bg-[#000000]">
+          <pre
+            className={cn(
+              "p-4 font-mono text-xs text-foreground/90 leading-relaxed bg-[#000000] transition-all",
+              isWrapped
+                ? "overflow-x-hidden whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
+                : "overflow-x-auto scrollbar-dense whitespace-pre",
+            )}
+            data-word-wrap={isWrapped ? "true" : undefined}
+          >
             <code>{children ?? rawCode}</code>
           </pre>
         )}

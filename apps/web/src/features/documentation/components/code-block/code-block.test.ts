@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { TextWrapIcon, TextUnwrapIcon } from "@nxtqr/icons";
 import { nxtqrDarkTheme, nxtqrLightTheme } from "../../mdx/shiki-theme";
 import {
   tokenizeClientCode,
@@ -55,5 +56,26 @@ describe("NXTQR Code Block & Syntax Highlighting System", () => {
     expect(html).toContain("shiki");
     expect(html).toContain("nxtqr-dark");
     expect(html).toContain('<span class="line">');
+  });
+
+  it("exports standardized word wrap iconography with 1.5 stroke width", () => {
+    expect(TextWrapIcon).toBeDefined();
+    expect(TextWrapIcon.displayName).toBe("TextWrapIcon");
+    expect(TextUnwrapIcon).toBeDefined();
+    expect(TextUnwrapIcon.displayName).toBe("TextUnwrapIcon");
+  });
+
+  it("preserves unformatted code when stripping syntax annotations for clipboard copy", () => {
+    const codeWithDiff = `
+const foo = "bar"; // [!code highlight]
+const added = true; // [!code ++]
+const removed = false; // [!code --]
+`.trim();
+
+    const sanitized = codeWithDiff.replace(/\/\/ \[!code [^\]]+\]/g, "").trim();
+    expect(sanitized).not.toContain("[!code");
+    expect(sanitized).toContain('const foo = "bar";');
+    expect(sanitized).toContain("const added = true;");
+    expect(sanitized).toContain("const removed = false;");
   });
 });

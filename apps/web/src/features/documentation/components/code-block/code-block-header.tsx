@@ -1,11 +1,15 @@
 import * as React from "react";
 import { cn } from "@nxtqr/utils";
 import { CodeCopyButton } from "./code-copy-button";
+import { CodeWrapButton } from "./code-wrap-button";
 
 export interface CodeBlockHeaderProps {
   filename?: string;
   language?: string;
   code: string;
+  isWrapped?: boolean;
+  onToggleWrap?: () => void;
+  allowWrap?: boolean;
   className?: string;
 }
 
@@ -13,11 +17,20 @@ export function CodeBlockHeader({
   filename,
   language,
   code,
+  isWrapped = false,
+  onToggleWrap,
+  allowWrap = true,
   className,
 }: CodeBlockHeaderProps) {
   if (!filename && !language) {
     return (
-      <div className="absolute right-3 top-3 z-10 opacity-70 group-hover:opacity-100 transition-opacity">
+      <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5 opacity-70 group-hover:opacity-100 transition-opacity">
+        {allowWrap && onToggleWrap && (
+          <CodeWrapButton
+            isWrapped={isWrapped}
+            onToggle={onToggleWrap}
+          />
+        )}
         <CodeCopyButton code={code} />
       </div>
     );
@@ -41,7 +54,15 @@ export function CodeBlockHeader({
         )}
       </div>
 
-      <CodeCopyButton code={code} />
+      <div className="flex items-center gap-1.5">
+        {allowWrap && onToggleWrap && (
+          <CodeWrapButton
+            isWrapped={isWrapped}
+            onToggle={onToggleWrap}
+          />
+        )}
+        <CodeCopyButton code={code} />
+      </div>
     </div>
   );
 }

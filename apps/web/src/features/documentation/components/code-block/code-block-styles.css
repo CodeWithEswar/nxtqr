@@ -17,6 +17,29 @@ pre.shiki {
   word-spacing: normal !important;
 }
 
+/* ==========================================================================
+   Professional Word Wrap Logic
+   Seamlessly handles soft line breaks, hanging indents, and gutter stability
+   ========================================================================== */
+[data-word-wrap="true"] pre.shiki,
+pre.shiki[data-word-wrap="true"],
+.nxtqr-code-wrapped pre.shiki,
+[data-word-wrap="true"] pre,
+pre[data-word-wrap="true"],
+.nxtqr-code-wrapped pre {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  overflow-x: hidden !important;
+}
+
+[data-word-wrap="true"] code,
+.nxtqr-code-wrapped code {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
 /* Individual line rendering */
 pre.shiki .line,
 .code-block-line {
@@ -24,25 +47,35 @@ pre.shiki .line,
   min-height: 1.25rem;
   padding: 0 0.5rem;
   border-left: 2px solid transparent;
+  position: relative;
 }
 
-/* Line numbers standard (when enabled) */
+/* Line numbers standard (when enabled) - Hanging indent architecture */
 pre[data-line-numbers] .line,
-code[data-line-numbers] .line {
+code[data-line-numbers] .line,
+[data-line-numbers] pre.shiki .line,
+[data-line-numbers] .code-block-line {
   counter-increment: line;
+  position: relative;
+  padding-left: 3.5rem !important;
+  padding-right: 0.75rem;
 }
 
 pre[data-line-numbers] .line::before,
-code[data-line-numbers] .line::before {
+code[data-line-numbers] .line::before,
+[data-line-numbers] pre.shiki .line::before,
+[data-line-numbers] .code-block-line::before {
   content: counter(line);
-  display: inline-block;
-  width: 1.75rem;
-  margin-right: 1.25rem;
+  position: absolute;
+  left: 0.5rem;
+  top: 0;
+  width: 2rem;
   text-align: right;
   color: #525252;
   user-select: none;
   -webkit-user-select: none;
   font-size: 0.7rem;
+  line-height: inherit;
 }
 
 /* Highlighted line treatment (subtle emphasis, not bright blinding neon) */
@@ -66,11 +99,26 @@ pre.shiki .line.diff.add,
   border-left-color: #34d399;
 }
 
-pre.shiki .line.diff.add::before,
-.code-block-line.diff-add::before {
+pre:not([data-line-numbers]) .line.diff.add::before,
+.code-block-line:not([data-line-numbers]).diff-add::before {
   content: "+ ";
   color: #34d399;
   font-weight: 600;
+  position: absolute;
+  left: 0.5rem;
+  top: 0;
+}
+
+pre[data-line-numbers] .line.diff.add::after,
+.code-block-line[data-line-numbers].diff-add::after {
+  content: "+";
+  position: absolute;
+  left: 2.75rem;
+  top: 0;
+  color: #34d399;
+  font-weight: 600;
+  font-size: 0.7rem;
+  user-select: none;
 }
 
 /* Diff Remove treatment */
@@ -81,11 +129,26 @@ pre.shiki .line.diff.remove,
   opacity: 0.75;
 }
 
-pre.shiki .line.diff.remove::before,
-.code-block-line.diff-remove::before {
+pre:not([data-line-numbers]) .line.diff.remove::before,
+.code-block-line:not([data-line-numbers]).diff-remove::before {
   content: "- ";
   color: #f87171;
   font-weight: 600;
+  position: absolute;
+  left: 0.5rem;
+  top: 0;
+}
+
+pre[data-line-numbers] .line.diff.remove::after,
+.code-block-line[data-line-numbers].diff-remove::after {
+  content: "-";
+  position: absolute;
+  left: 2.75rem;
+  top: 0;
+  color: #f87171;
+  font-weight: 600;
+  font-size: 0.7rem;
+  user-select: none;
 }
 
 /* Collapsible code block expand fade */

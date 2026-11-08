@@ -30,3 +30,4 @@ export function DynamicPlayground({ slug }: { slug: string }) {
   const PlaygroundComponent = demo.playground;
   return <PlaygroundComponent />;
 }
+

@@ -502,3 +502,4 @@ export function getComponentDemo(slug: string): ComponentDemoEntry | undefined {
   const normalized = slug.replace(/^components\//, "").replace(/^\//, "");
   return COMPONENT_DEMO_REGISTRY[normalized];
 }
+
