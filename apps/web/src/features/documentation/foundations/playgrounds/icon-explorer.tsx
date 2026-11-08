@@ -31,7 +31,7 @@ import {
   MenuIcon,
   PanelLeftIcon,
 } from "@nxtqr/icons";
-import { Badge } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
 
@@ -96,6 +96,13 @@ export function IconExplorer() {
     setTimeout(() => setCopiedIcon(null), 2000);
   };
 
+  const resetExplorer = () => {
+    setSearch("");
+    setSelectedCategory("All");
+    setIconSize(16);
+    setColorMode("mono");
+  };
+
   const categories = ["All", "Navigation", "Action", "Interface", "System", "Editor"];
 
   return (
@@ -108,11 +115,21 @@ export function IconExplorer() {
             <span className="sm:hidden">Hugeicons</span>
           </h3>
 
-          <Badge variant="outline" className="text-xs font-mono shrink-0 whitespace-nowrap">
-            <span>{filteredIcons.length}</span>
-            <span className="hidden sm:inline"> of {ICON_REGISTRY.length} Icons</span>
-            <span className="sm:hidden"> Icons</span>
-          </Badge>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[11px] font-mono text-muted-foreground whitespace-nowrap">
+              <span className="text-foreground font-semibold">{filteredIcons.length}</span>
+              <span className="hidden sm:inline"> / {ICON_REGISTRY.length}</span>
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetExplorer}
+              className="h-7 text-xs font-mono gap-1 whitespace-nowrap px-2 sm:px-3"
+            >
+              <RefreshIcon className="h-3 w-3" />
+              <span className="hidden sm:inline">Reset</span>
+            </Button>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground">
           Strict standardized Hugeicons wrappers. Consistent 1.5px optical stroke width, semantic color inheritance, and zero emoji in functional controls.
@@ -127,7 +144,7 @@ export function IconExplorer() {
             <SearchIcon className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search icons by name or tag (e.g. check, refresh, arrow)..."
+              placeholder="Search icons (e.g. check, refresh)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full text-xs font-mono pl-9 pr-3 py-2 bg-black border border-border rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
