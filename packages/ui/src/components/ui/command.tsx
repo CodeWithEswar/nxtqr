@@ -36,10 +36,10 @@ const CommandDialog = ({
   return (
     <Dialog {...props}>
       <DialogContent
-        className={cn("overflow-hidden p-0 shadow-level-2 max-w-xl", contentClassName)}
+        className={cn("overflow-hidden p-0 shadow-level-2 w-[calc(100vw-2rem)] sm:w-full max-w-xl", contentClassName)}
       >
         <Command
-          className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-4 [&_[cmdk-input-wrapper]_svg]:w-4 [&_[cmdk-input]]:h-11 [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2 [&_[cmdk-item]]:text-xs"
+          className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-4 [&_[cmdk-input-wrapper]_svg]:w-4 [&_[cmdk-input]]:h-11 [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]]:text-xs"
           {...commandProps}
         >
           {children}
@@ -53,12 +53,12 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b border-border px-3 bg-black/40" cmdk-input-wrapper="">
+  <div className="flex items-center border-b border-border pl-3 pr-10 bg-black/40 relative" cmdk-input-wrapper="">
     <SearchIcon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        "flex h-10 w-full rounded-md bg-transparent py-2 text-xs outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-foreground font-sans",
+        "flex h-11 w-full rounded-md bg-transparent py-2 text-xs outline-none placeholder:text-muted-foreground placeholder:truncate disabled:cursor-not-allowed disabled:opacity-50 text-foreground font-sans",
         className,
       )}
       {...props}
@@ -74,7 +74,7 @@ const CommandList = React.forwardRef<
   <CommandPrimitive.List
     ref={ref}
     className={cn(
-      "max-h-[320px] overflow-y-auto overflow-x-hidden scrollbar-compact p-1.5",
+      "max-h-[60vh] sm:max-h-[360px] overflow-y-auto overflow-x-hidden scrollbar-compact p-1.5",
       className,
     )}
     {...props}
