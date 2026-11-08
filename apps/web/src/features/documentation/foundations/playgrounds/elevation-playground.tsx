@@ -82,35 +82,35 @@ export function ElevationPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
             Interactive Elevation & Shadow Laboratory
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Restrained physical depth using solid monochrome surfaces, subtle borders, and directional inset highlights. No blurry glassmorphism.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant={viewMode === "interactive" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setViewMode("interactive")}
-            className="h-7 text-xs font-mono whitespace-nowrap"
-          >
-            Inspector
-          </Button>
-          <Button
-            variant={viewMode === "isometric" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setViewMode("isometric")}
-            className="h-7 text-xs font-mono gap-1 whitespace-nowrap"
-          >
-            <LayersIcon className="h-3 w-3" />
-            Layers
-          </Button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              variant={viewMode === "interactive" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("interactive")}
+              className="h-7 text-xs font-mono whitespace-nowrap"
+            >
+              Inspector
+            </Button>
+            <Button
+              variant={viewMode === "isometric" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("isometric")}
+              className="h-7 text-xs font-mono gap-1 whitespace-nowrap"
+            >
+              <LayersIcon className="h-3 w-3" />
+              Layers
+            </Button>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Restrained physical depth using solid monochrome surfaces, subtle borders, and directional inset highlights. No blurry glassmorphism.
+        </p>
       </div>
 
       {/* Level Selectors */}

@@ -37,24 +37,26 @@ export function ResponsivePlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
             Responsive Viewport Simulation Laboratory
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Test layout reflow, mobile drawer conversion, and fluid grid collapses across simulated viewport boundaries.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="font-mono text-xs">
-            Width: <span className="text-accent font-bold ml-1">{frameWidth}px</span>
-          </Badge>
-          <Badge variant="outline" className="font-mono text-xs text-foreground">
-            Breakpoint: <span className="text-accent ml-1">{bp.name}</span>
-          </Badge>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Badge variant="outline" className="font-mono text-xs whitespace-nowrap">
+              <span className="hidden sm:inline">Width: </span>
+              <span className="text-accent font-bold">{frameWidth}px</span>
+            </Badge>
+            <Badge variant="outline" className="font-mono text-xs text-foreground whitespace-nowrap">
+              <span className="hidden sm:inline">BP: </span>
+              <span className="text-accent">{bp.name}</span>
+            </Badge>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Test layout reflow, mobile drawer conversion, and fluid grid collapses across simulated viewport boundaries.
+        </p>
       </div>
 
       {/* Preset Buttons & Width Slider */}

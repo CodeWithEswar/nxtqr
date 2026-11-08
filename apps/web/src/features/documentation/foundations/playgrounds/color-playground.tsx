@@ -44,29 +44,30 @@ export function ColorPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* 1. Header & Description */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
             Interactive Color & Accent Laboratory
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Test calibrated saturated presets, derive accessible foreground text, and inspect WCAG 2.1 contrast math.
-          </p>
-        </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setSelectedHex("#0066FF");
-            setBackgroundHex("#000000");
-            setCustomInput("");
-          }}
-          className="h-7 text-xs font-mono gap-1.5 self-start sm:self-auto"
-        >
-          <RefreshIcon className="h-3 w-3" />
-          <span>Reset Lab</span>
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSelectedHex("#0066FF");
+              setBackgroundHex("#000000");
+              setCustomInput("");
+            }}
+            className="h-7 text-xs font-mono gap-1.5 shrink-0 whitespace-nowrap"
+          >
+            <RefreshIcon className="h-3 w-3" />
+            <span className="hidden sm:inline">Reset Lab</span>
+            <span className="sm:hidden">Reset</span>
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Test calibrated saturated presets, derive accessible foreground text, and inspect WCAG 2.1 contrast math.
+        </p>
       </div>
 
       {/* 2. Preset Selection & Custom Hex */}

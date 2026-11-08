@@ -367,42 +367,44 @@ export function RepositoryTree() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <h3 className="text-sm font-semibold font-sans text-foreground truncate sm:whitespace-normal">
               NXTQR Monorepo Architecture Explorer
             </h3>
             <Badge
               variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
+              className="text-[10px] font-mono shrink-0 hidden sm:inline-flex"
             >
               29 Workspaces
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Interactive repository directory tree. Click any package or folder to inspect its architectural ownership and boundary constraints.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setExpandedIds(new Set(["apps", "packages", "workers", "supabase", "tests", "apps-web"]))}
-            className="h-7 text-xs font-mono"
-          >
-            Expand All
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setExpandedIds(new Set())}
-            className="h-7 text-xs font-mono"
-          >
-            Collapse All
-          </Button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setExpandedIds(new Set(["apps", "packages", "workers", "supabase", "tests", "apps-web"]))}
+              className="h-7 text-xs font-mono whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">Expand All</span>
+              <span className="sm:hidden">Expand</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setExpandedIds(new Set())}
+              className="h-7 text-xs font-mono whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">Collapse All</span>
+              <span className="sm:hidden">Collapse</span>
+            </Button>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Interactive repository directory tree. Click any package or folder to inspect its architectural ownership and boundary constraints.
+        </p>
       </div>
 
       {/* Main Grid: Left Tree Explorer, Right Boundary Spec */}

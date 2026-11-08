@@ -36,20 +36,16 @@ export function AccessibilityLab() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
             Accessibility & WCAG 2.1 Laboratory
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Evaluate high-contrast focus rings, 44×44px touch targets, roving tabindex keyboard traversal, and contrast compliance.
-          </p>
-        </div>
 
-        {/* Responsive Tab Navigation & Three-Dots Dropdown Menu */}
-        <div className="flex items-center gap-1.5 sm:p-1 sm:bg-secondary-surface sm:border sm:border-border rounded-md self-start sm:self-auto shrink-0 flex-nowrap">
-          {/* Desktop & Tablet: Segmented tabs (Visible on >= sm) */}
-          <div className="hidden sm:flex items-center gap-1">
+          {/* Responsive Tab Navigation & Three-Dots Dropdown Menu */}
+          <div className="flex items-center gap-1.5 sm:p-1 sm:bg-secondary-surface sm:border sm:border-border rounded-md shrink-0 flex-nowrap">
+            {/* Desktop & Tablet: Segmented tabs (Visible on >= sm) */}
+            <div className="hidden sm:flex items-center gap-1">
             {[
               { id: "focus" as const, label: "Focus" },
               { id: "touch" as const, label: "Touch" },
@@ -134,6 +130,10 @@ export function AccessibilityLab() {
           </DropdownMenu>
         </div>
       </div>
+      <p className="text-xs text-muted-foreground">
+        Evaluate high-contrast focus rings, 44×44px touch targets, roving tabindex keyboard traversal, and contrast compliance.
+      </p>
+    </div>
 
       {/* Stage */}
       {activeTab === "focus" && (

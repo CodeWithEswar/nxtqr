@@ -38,25 +38,26 @@ export function TypographyPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
             Interactive Typography Laboratory
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Test Geist Sans and Geist Mono across font scales, line heights, kerning tracking, and responsive widths.
-          </p>
-        </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={resetTypography}
-          className="h-7 text-xs font-mono gap-1.5 self-start sm:self-auto"
-        >
-          <RefreshIcon className="h-3 w-3" />
-          <span>Reset Lab</span>
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={resetTypography}
+            className="h-7 text-xs font-mono gap-1.5 shrink-0 whitespace-nowrap"
+          >
+            <RefreshIcon className="h-3 w-3" />
+            <span className="hidden sm:inline">Reset Lab</span>
+            <span className="sm:hidden">Reset</span>
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Test Geist Sans and Geist Mono across font scales, line heights, kerning tracking, and responsive widths.
+        </p>
       </div>
 
       {/* Control Strip */}

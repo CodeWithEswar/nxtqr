@@ -3,7 +3,7 @@
 import * as React from "react";
 import { ExecutionTraceViewer } from "../../../visualizers/shared/trace/execution-trace-viewer";
 import { useGraphEditorStore } from "@nxtqr/state";
-import { Badge, Button } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 
 export function TracePlayground() {
@@ -26,42 +26,35 @@ export function TracePlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Execution Trace Viewer Laboratory
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Sub-Millisecond Stream
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Chronological event stream with search query filtering, relative timestamp formatting, and structured payload inspection.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Execution Trace Viewer Laboratory
+          </h3>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleInjectSampleTraces}
-            className="h-7 text-xs font-mono whitespace-nowrap"
-          >
-            Load Samples
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearTraceEvents}
-            className="h-7 text-xs font-mono whitespace-nowrap"
-          >
-            Clear
-          </Button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleInjectSampleTraces}
+              className="h-7 text-xs font-mono whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">Load Samples</span>
+              <span className="sm:hidden">Samples</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearTraceEvents}
+              className="h-7 text-xs font-mono whitespace-nowrap"
+            >
+              Clear
+            </Button>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Chronological event stream with search query filtering, relative timestamp formatting, and structured payload inspection.
+        </p>
       </div>
 
       {/* Live Execution Trace Viewer Stage */}

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { GraphCanvas } from "../../../visualizers/shared/canvas/graph-canvas";
 import { useGraphEditorStore, type GridType } from "@nxtqr/state";
-import { Badge, Button } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { RefreshIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -21,33 +21,26 @@ export function CanvasPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Graph Canvas Interactive Workspace
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              @xyflow/react + ELK.js
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Infinite pan-and-zoom visual engineering canvas with sub-pixel grid options, automated hierarchical layout, and multi-node selection.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Graph Canvas Interactive Workspace
+          </h3>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={resetToFixture}
-          className="h-7 text-xs font-mono gap-1.5 self-start sm:self-auto"
-        >
-          <RefreshIcon className="h-3 w-3" />
-          Reset Graph
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={resetToFixture}
+            className="h-7 text-xs font-mono gap-1.5 shrink-0 whitespace-nowrap"
+          >
+            <RefreshIcon className="h-3 w-3" />
+            <span className="hidden sm:inline">Reset Graph</span>
+            <span className="sm:hidden">Reset</span>
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Infinite pan-and-zoom visual engineering canvas with sub-pixel grid options, automated hierarchical layout, and multi-node selection.
+        </p>
       </div>
 
       {/* Control Strip */}

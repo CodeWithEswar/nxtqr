@@ -52,43 +52,36 @@ export function AccentPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Dynamic User Accent & Contrast Laboratory
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Isolated Preview
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Evaluate saturated pure accent presets with real-time WCAG contrast calculation. Changes remain isolated until applied.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Dynamic User Accent & Contrast Laboratory
+          </h3>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <Button
-            size="sm"
-            onClick={handleApplyGlobal}
-            className="h-7 text-xs font-mono gap-1"
-          >
-            {isApplied ? <CheckIcon className="h-3 w-3" /> : null}
-            <span>{isApplied ? "Applied to App" : "Apply to App"}</span>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleReset}
-            className="h-7 text-xs font-mono gap-1"
-          >
-            <RefreshIcon className="h-3 w-3" />
-            <span>Reset</span>
-          </Button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              size="sm"
+              onClick={handleApplyGlobal}
+              className="h-7 text-xs font-mono gap-1 whitespace-nowrap"
+            >
+              {isApplied ? <CheckIcon className="h-3 w-3" /> : null}
+              <span className="hidden sm:inline">{isApplied ? "Applied to App" : "Apply to App"}</span>
+              <span className="sm:hidden">{isApplied ? "Applied" : "Apply"}</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              className="h-7 text-xs font-mono gap-1 whitespace-nowrap"
+            >
+              <RefreshIcon className="h-3 w-3" />
+              <span>Reset</span>
+            </Button>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Evaluate saturated pure accent presets with real-time WCAG contrast calculation. Changes remain isolated until applied.
+        </p>
       </div>
 
       {/* Preset Swatches Grid */}
@@ -126,7 +119,7 @@ export function AccentPlayground() {
 
       {/* Live Component Preview Sandbox */}
       <div className="rounded-md border border-subtle-border bg-black p-4 sm:p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-foreground font-sans">
               Sandbox Component Renders:

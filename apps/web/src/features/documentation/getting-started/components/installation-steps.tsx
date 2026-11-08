@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Badge, Button } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
 import {
@@ -113,32 +113,22 @@ export function InstallationSteps() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-5 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              NXTQR Installation & Environment Orchestration
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Production Verified
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Follow the guided steps below to set up the complete monorepo workspace and verify all services.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            NXTQR Installation & Environment Orchestration
+          </h3>
 
-        <div className="flex items-center gap-2">
-          <Link href="/verify">
-            <Button variant="outline" size="sm" className="h-7 text-xs font-mono gap-1.5">
+          <Link href="/verify" className="shrink-0">
+            <Button variant="outline" size="sm" className="h-7 text-xs font-mono gap-1.5 whitespace-nowrap">
               <span>Open /verify</span>
               <ExternalLinkIcon className="h-3 w-3 text-muted-foreground" />
             </Button>
           </Link>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Follow the guided steps below to set up the complete monorepo workspace and verify all services.
+        </p>
       </div>
 
       {/* Step Tabs Strip */}

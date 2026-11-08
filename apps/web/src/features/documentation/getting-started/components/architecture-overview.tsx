@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Badge } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
 import {
@@ -152,27 +151,20 @@ export function ArchitectureOverview() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              NXTQR Platform Architecture Lifecycle
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              End-to-End Flow
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Click any architectural stage below to inspect its data contract, package ownership, and runtime implementation.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            NXTQR Platform Architecture Lifecycle
+          </h3>
 
-        <div className="text-xs font-mono text-muted-foreground self-start sm:self-auto">
-          Selected Stage: <span className="text-accent font-bold">0{stage.step} / 06</span>
+          <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
+            <span className="hidden sm:inline">Selected Stage: </span>
+            <span className="text-accent font-bold">0{stage.step} / 06</span>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Click any architectural stage below to inspect its data contract, package ownership, and runtime implementation.
+        </p>
       </div>
 
       {/* Horizontal Pipeline Steps Strip */}
@@ -210,7 +202,7 @@ export function ArchitectureOverview() {
 
       {/* Selected Stage Detail Console */}
       <div className="rounded-md border border-subtle-border bg-black p-4 sm:p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded bg-surface border border-border flex items-center justify-center text-accent">
               <IconComp className="h-4 w-4" />

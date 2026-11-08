@@ -6,7 +6,6 @@ import "@xyflow/react/dist/style.css";
 import { standardNodeDefinitions } from "@nxtqr/node-registry";
 import { nodeTypes } from "../../../visualizers/shared/nodes/engineering-node";
 import type { BaseNode } from "@nxtqr/graph-schema";
-import { Badge } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
 
@@ -22,33 +21,25 @@ export function NodesPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Graph Nodes Architecture Laboratory
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Discriminated Union Types
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Evaluate standardized node anatomy: typed input/output ports, physical micro-bevel elevation, and live execution states.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Graph Nodes Architecture Laboratory
+          </h3>
 
-        <button
-          onClick={() => setIsSelected(!isSelected)}
-          className={cn(
-            "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors self-start sm:self-auto",
-            isSelected ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
-          )}
-        >
-          Selected: {isSelected ? "TRUE" : "FALSE"}
-        </button>
+          <button
+            onClick={() => setIsSelected(!isSelected)}
+            className={cn(
+              "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors shrink-0",
+              isSelected ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
+            )}
+          >
+            Selected: {isSelected ? "TRUE" : "FALSE"}
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Evaluate standardized node anatomy: typed input/output ports, physical micro-bevel elevation, and live execution states.
+        </p>
       </div>
 
       {/* Type Selector */}

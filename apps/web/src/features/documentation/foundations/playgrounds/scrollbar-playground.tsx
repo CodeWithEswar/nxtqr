@@ -31,30 +31,29 @@ export function ScrollbarPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
             Precision Rail Scrollbar Laboratory
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Engineered hardware scroll rails. 10px / 7px / 6px precision scales, inset groove lighting, and dynamic user-accent drag feedback.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-2">
           <button
             onClick={() => setAccentThumb(!accentThumb)}
             className={cn(
-              "px-2.5 py-1 rounded-md text-xs font-mono border transition-all flex items-center gap-1.5",
+              "px-2.5 py-1 rounded-md text-xs font-mono border transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap",
               accentThumb
                 ? "border-accent bg-accent text-accent-foreground font-semibold"
                 : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
             )}
           >
             {accentThumb && <CheckIcon className="h-3 w-3" />}
-            Accent Thumb: {accentThumb ? "ON" : "OFF"}
+            <span className="hidden sm:inline">Accent Thumb: </span>
+            <span>{accentThumb ? "ON" : "OFF"}</span>
           </button>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Engineered hardware scroll rails. 10px / 7px / 6px precision scales, inset groove lighting, and dynamic user-accent drag feedback.
+        </p>
       </div>
 
       {/* Variant Selector */}

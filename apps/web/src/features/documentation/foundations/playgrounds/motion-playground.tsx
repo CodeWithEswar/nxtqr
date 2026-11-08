@@ -51,27 +51,26 @@ export function MotionPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
             Interactive Motion & Physics Laboratory
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Strict engineering timing scales, cubic-bezier deceleration curves, and instant zero-latency accessibility overrides.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={replay}
-            className="h-7 text-xs font-mono gap-1.5 self-start sm:self-auto"
+            className="h-7 text-xs font-mono gap-1.5 shrink-0 whitespace-nowrap"
           >
             <RefreshIcon className="h-3 w-3" />
-            Replay Motion
+            <span className="hidden sm:inline">Replay Motion</span>
+            <span className="sm:hidden">Replay</span>
           </Button>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Strict engineering timing scales, cubic-bezier deceleration curves, and instant zero-latency accessibility overrides.
+        </p>
       </div>
 
       {/* Control Matrix */}

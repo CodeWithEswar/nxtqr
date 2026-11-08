@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Badge } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
 
@@ -32,44 +31,36 @@ export function EdgesPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Graph Edges Connection Laboratory
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Typed Signal Routing
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Evaluate connection curves, active execution pulse animations, connection validation, and compact metadata labels.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Graph Edges Connection Laboratory
+          </h3>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => setIsActive(!isActive)}
-            className={cn(
-              "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
-              isActive ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
-            )}
-          >
-            Pulse: {isActive ? "ON" : "OFF"}
-          </button>
-          <button
-            onClick={() => setIsSelected(!isSelected)}
-            className={cn(
-              "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
-              isSelected ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
-            )}
-          >
-            Selected: {isSelected ? "ON" : "OFF"}
-          </button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={() => setIsActive(!isActive)}
+              className={cn(
+                "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
+                isActive ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
+              )}
+            >
+              Pulse: {isActive ? "ON" : "OFF"}
+            </button>
+            <button
+              onClick={() => setIsSelected(!isSelected)}
+              className={cn(
+                "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
+                isSelected ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
+              )}
+            >
+              Selected: {isSelected ? "ON" : "OFF"}
+            </button>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Evaluate connection curves, active execution pulse animations, connection validation, and compact metadata labels.
+        </p>
       </div>
 
       {/* Curve Selector */}

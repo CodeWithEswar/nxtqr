@@ -101,19 +101,19 @@ export function IconExplorer() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold font-sans text-foreground">
             Hugeicons Iconography System
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Strict standardized Hugeicons wrappers. Consistent 1.5px optical stroke width, semantic color inheritance, and zero emoji in functional controls.
-          </p>
-        </div>
 
-        <Badge variant="outline" className="text-xs font-mono self-start sm:self-auto">
-          {filteredIcons.length} of {ICON_REGISTRY.length} Icons
-        </Badge>
+          <Badge variant="outline" className="text-xs font-mono shrink-0 whitespace-nowrap">
+            {filteredIcons.length} of {ICON_REGISTRY.length} Icons
+          </Badge>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Strict standardized Hugeicons wrappers. Consistent 1.5px optical stroke width, semantic color inheritance, and zero emoji in functional controls.
+        </p>
       </div>
 
       {/* Filter & Controls Toolbar */}

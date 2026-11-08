@@ -70,27 +70,20 @@ export function PackageDependencyGraph() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Monorepo Layered Dependency Architecture
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Unidirectional Flow
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Strict vertical dependency hierarchy. Higher layers may import lower layers, but lower layers never import upward.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Monorepo Layered Dependency Architecture
+          </h3>
 
-        <div className="text-xs font-mono text-muted-foreground self-start sm:self-auto">
-          Active Tier: <span className="text-accent font-bold">Level {activeLayer.level}</span>
+          <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
+            <span className="hidden sm:inline">Active Tier: </span>
+            <span className="text-accent font-bold">Level {activeLayer.level}</span>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Strict vertical dependency hierarchy. Higher layers may import lower layers, but lower layers never import upward.
+        </p>
       </div>
 
       {/* Layer Stack */}
@@ -108,7 +101,7 @@ export function PackageDependencyGraph() {
                   : "border-border bg-elevated-surface hover:border-muted-border hover:bg-secondary-surface"
               )}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2.5">
                   <span
                     className={cn(

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Badge, Button } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
 import {
@@ -71,27 +71,20 @@ export function QuickStartWalkthrough() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Interactive Quick Start Studio
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Live Walkthrough
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Walk step-by-step through defining your first graph document, executing topological simulation, and inspecting telemetry traces.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Interactive Quick Start Studio
+          </h3>
 
-        <div className="text-xs font-mono text-muted-foreground self-start sm:self-auto">
-          Phase: <span className="text-accent font-bold">0{activeStep} of 05</span>
+          <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
+            <span className="hidden sm:inline">Phase: </span>
+            <span className="text-accent font-bold">0{activeStep} of 05</span>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Walk step-by-step through defining your first graph document, executing topological simulation, and inspecting telemetry traces.
+        </p>
       </div>
 
       {/* Workflow Navigation Strip */}
@@ -154,7 +147,7 @@ export function QuickStartWalkthrough() {
         </div>
 
         {/* Step-by-Step Instructions & Action Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface border border-border rounded-md text-xs font-mono">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-surface border border-border rounded-md text-xs font-mono">
           <div className="space-y-0.5">
             <span className="text-muted-foreground text-[10px] uppercase font-bold">Current Action:</span>
             <div className="text-foreground font-semibold">

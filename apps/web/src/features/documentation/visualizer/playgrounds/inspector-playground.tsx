@@ -3,7 +3,6 @@
 import * as React from "react";
 import { NodeInspector } from "../../../visualizers/shared/inspector/node-inspector";
 import { useGraphEditorStore } from "@nxtqr/state";
-import { Badge } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
 
@@ -15,27 +14,20 @@ export function InspectorPlayground() {
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-subtle-border pb-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold font-sans text-foreground">
-              Node Inspector Laboratory
-            </h3>
-            <Badge
-              variant="outline"
-              className="border-accent/40 bg-accent/10 text-accent font-mono text-[10px] uppercase tracking-wider"
-            >
-              Zod Validated Forms
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Contextual floating properties inspector with real-time state synchronization, port connections, and container query adaptation.
-          </p>
-        </div>
+      <div className="border-b border-subtle-border pb-4 space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold font-sans text-foreground">
+            Node Inspector Laboratory
+          </h3>
 
-        <div className="text-xs font-mono text-muted-foreground self-start sm:self-auto">
-          Active Node: <span className="text-accent font-bold">{selectedNodeId ?? "None"}</span>
+          <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
+            <span className="hidden sm:inline">Active Node: </span>
+            <span className="text-accent font-bold">{selectedNodeId ?? "None"}</span>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Contextual floating properties inspector with real-time state synchronization, port connections, and container query adaptation.
+        </p>
       </div>
 
       {/* Node selector buttons */}
