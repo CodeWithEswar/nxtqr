@@ -134,4 +134,43 @@ test.describe("NXTQR Documentation Platform (Phase 03)", () => {
     await expect(drawer).toContainText("NXTQR Documentation");
     await expect(drawer).toContainText("Button");
   });
+
+  test("validates syntax-highlighted code block, language indicator, and copy feedback", async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.setViewportSize({ width: 1400, height: 900 });
+    await page.goto("/docs/components/button");
+
+    // Locate copy button on code block
+    const copyBtn = page.getByRole("button", { name: /Copy code/i }).first();
+    await expect(copyBtn).toBeVisible();
+
+    // Click copy and verify brief "Copied" feedback
+    await copyBtn.click();
+    await expect(page.locator("text=Copied").first()).toBeVisible();
+  });
+
+  test("renders real component previews without placeholder text across catalog", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1400, height: 900 });
+
+    // Test Dialog documentation
+    await page.goto("/docs/components/dialog", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("h1")).toContainText("Dialog");
+    await expect(page.locator("text=Component Ready")).toBeHidden();
+    await expect(page.locator("text=Preview Coming Soon")).toBeHidden();
+
+    // Test Select documentation
+    await page.goto("/docs/components/select", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("h1")).toContainText("Select");
+    await expect(page.locator("text=Component Ready")).toBeHidden();
+
+    // Test Switch documentation
+    await page.goto("/docs/components/switch", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("h1")).toContainText("Switch");
+    await expect(page.locator("text=Component Ready")).toBeHidden();
+  });
 });

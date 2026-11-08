@@ -55,6 +55,8 @@
   },
   "devDependencies": {
     "@nxtqr/typescript-config": "workspace:*",
+    "@shikijs/rehype": "^4.6.0",
+    "@shikijs/transformers": "^4.6.0",
     "@types/d3": "^7.4.3",
     "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",

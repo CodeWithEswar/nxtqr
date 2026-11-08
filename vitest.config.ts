@@ -8,6 +8,8 @@ export default defineConfig({
     include: [
       "packages/**/src/**/*.test.ts",
       "packages/**/src/**/*.test.tsx",
+      "apps/**/src/**/*.test.ts",
+      "apps/**/src/**/*.test.tsx",
       "tests/**/*.test.ts",
     ],
     coverage: {
@@ -17,6 +19,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "@": path.resolve(__dirname, "./apps/web/src"),
       "@nxtqr/ui": path.resolve(__dirname, "./packages/ui/src"),
       "@nxtqr/design-system": path.resolve(__dirname, "./packages/design-system/src"),
       "@nxtqr/icons": path.resolve(__dirname, "./packages/icons/src"),

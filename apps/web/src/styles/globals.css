@@ -1,5 +1,6 @@
 @import "@nxtqr/design-system/styles/scrollbar.css";
 @import "@nxtqr/ui/styles/scroll-area.css";
+@import "../features/documentation/components/code-block/code-block-styles.css";
 
 @tailwind base;
 @tailwind components;

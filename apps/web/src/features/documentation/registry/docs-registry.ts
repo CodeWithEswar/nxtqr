@@ -162,7 +162,6 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 30,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/button.tsx",
-    relatedSlugs: ["components/toggle", "components/badge"],
     props: [
       {
         name: "variant",
@@ -222,6 +221,15 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 32,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/card.tsx",
+    props: [
+      {
+        name: "className",
+        type: "string",
+        default: '""',
+        required: false,
+        description: "Additional CSS classes for custom padding or border styling.",
+      },
+    ],
   },
   {
     slug: "components/input",
@@ -258,6 +266,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 34,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/textarea.tsx",
+    props: [
+      {
+        name: "rows",
+        type: "number",
+        default: "3",
+        required: false,
+        description: "Visible text rows.",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        default: "false",
+        required: false,
+        description: "Disables interaction.",
+      },
+    ],
   },
   {
     slug: "components/dialog",
@@ -268,6 +292,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 35,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/dialog.tsx",
+    props: [
+      {
+        name: "open",
+        type: "boolean",
+        default: "undefined",
+        required: false,
+        description: "Controlled open state of the dialog.",
+      },
+      {
+        name: "onOpenChange",
+        type: "(open: boolean) => void",
+        default: "undefined",
+        required: false,
+        description: "Callback invoked when open state changes.",
+      },
+    ],
   },
   {
     slug: "components/select",
@@ -278,6 +318,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 36,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/select.tsx",
+    props: [
+      {
+        name: "value",
+        type: "string",
+        default: "undefined",
+        required: false,
+        description: "Controlled selected value.",
+      },
+      {
+        name: "onValueChange",
+        type: "(value: string) => void",
+        default: "undefined",
+        required: false,
+        description: "Callback invoked when value changes.",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        default: "false",
+        required: false,
+        description: "Disables selector trigger.",
+      },
+    ],
   },
   {
     slug: "components/tabs",
@@ -288,6 +351,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 37,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/tabs.tsx",
+    props: [
+      {
+        name: "value",
+        type: "string",
+        default: "undefined",
+        required: false,
+        description: "Controlled active tab key.",
+      },
+      {
+        name: "defaultValue",
+        type: "string",
+        default: "undefined",
+        required: false,
+        description: "Initial active tab in uncontrolled mode.",
+      },
+      {
+        name: "onValueChange",
+        type: "(value: string) => void",
+        default: "undefined",
+        required: false,
+        description: "Callback invoked when tab changes.",
+      },
+    ],
   },
   {
     slug: "components/table",
@@ -298,6 +384,15 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 38,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/table.tsx",
+    props: [
+      {
+        name: "className",
+        type: "string",
+        default: '""',
+        required: false,
+        description: "Table root element styling.",
+      },
+    ],
   },
   {
     slug: "components/data-table",
@@ -308,6 +403,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 39,
     status: "ready",
     sourcePath: "packages/ui/src/components/composite/data-table/data-table.tsx",
+    props: [
+      {
+        name: "columns",
+        type: "ColumnDef<TData, TValue>[]",
+        default: "[]",
+        required: true,
+        description: "TanStack column definitions and formatting schemas.",
+      },
+      {
+        name: "data",
+        type: "TData[]",
+        default: "[]",
+        required: true,
+        description: "Row data array.",
+      },
+      {
+        name: "pageSize",
+        type: "number",
+        default: "10",
+        required: false,
+        description: "Rows per paginated page.",
+      },
+    ],
   },
   {
     slug: "components/scroll-area",
@@ -344,6 +462,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 41,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/command.tsx",
+    props: [
+      {
+        name: "value",
+        type: "string",
+        default: "undefined",
+        required: false,
+        description: "Controlled search filter query.",
+      },
+      {
+        name: "onValueChange",
+        type: "(search: string) => void",
+        default: "undefined",
+        required: false,
+        description: "Callback invoked on input change.",
+      },
+    ],
   },
   {
     slug: "components/accordion",
@@ -353,6 +487,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 42,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/accordion.tsx",
+    props: [
+      {
+        name: "type",
+        type: '"single" | "multiple"',
+        default: '"single"',
+        required: true,
+        description: "Determines whether one or multiple items can be opened simultaneously.",
+      },
+      {
+        name: "collapsible",
+        type: "boolean",
+        default: "false",
+        required: false,
+        description: "When type is 'single', allows closing an active item by clicking again.",
+      },
+    ],
   },
   {
     slug: "components/alert",
@@ -363,6 +513,15 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 43,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/alert.tsx",
+    props: [
+      {
+        name: "variant",
+        type: '"default" | "destructive" | "success" | "warning"',
+        default: '"default"',
+        required: false,
+        description: "Visual status banner intent.",
+      },
+    ],
   },
   {
     slug: "components/alert-dialog",
@@ -373,6 +532,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 44,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/alert-dialog.tsx",
+    props: [
+      {
+        name: "open",
+        type: "boolean",
+        default: "undefined",
+        required: false,
+        description: "Controlled open state.",
+      },
+      {
+        name: "onOpenChange",
+        type: "(open: boolean) => void",
+        default: "undefined",
+        required: false,
+        description: "Callback invoked on modal open toggle.",
+      },
+    ],
   },
   {
     slug: "components/avatar",
@@ -383,6 +558,15 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 45,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/avatar.tsx",
+    props: [
+      {
+        name: "className",
+        type: "string",
+        default: '""',
+        required: false,
+        description: "Avatar dimension and border overrides.",
+      },
+    ],
   },
   {
     slug: "components/checkbox",
@@ -393,6 +577,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 46,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/checkbox.tsx",
+    props: [
+      {
+        name: "checked",
+        type: 'boolean | "indeterminate"',
+        default: "false",
+        required: false,
+        description: "Checked state.",
+      },
+      {
+        name: "onCheckedChange",
+        type: "(checked: boolean | 'indeterminate') => void",
+        default: "undefined",
+        required: false,
+        description: "State change listener.",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        default: "false",
+        required: false,
+        description: "Disables interaction.",
+      },
+    ],
   },
   {
     slug: "components/collapsible",
@@ -403,6 +610,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 47,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/collapsible.tsx",
+    props: [
+      {
+        name: "open",
+        type: "boolean",
+        default: "undefined",
+        required: false,
+        description: "Controlled open state.",
+      },
+      {
+        name: "onOpenChange",
+        type: "(open: boolean) => void",
+        default: "undefined",
+        required: false,
+        description: "Event handler on change.",
+      },
+    ],
   },
   {
     slug: "components/dropdown-menu",
@@ -413,6 +636,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 48,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/dropdown-menu.tsx",
+    props: [
+      {
+        name: "open",
+        type: "boolean",
+        default: "undefined",
+        required: false,
+        description: "Controlled menu open status.",
+      },
+      {
+        name: "onOpenChange",
+        type: "(open: boolean) => void",
+        default: "undefined",
+        required: false,
+        description: "Open status change callback.",
+      },
+    ],
   },
   {
     slug: "components/popover",
@@ -423,6 +662,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 49,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/popover.tsx",
+    props: [
+      {
+        name: "open",
+        type: "boolean",
+        default: "undefined",
+        required: false,
+        description: "Controlled popover open status.",
+      },
+      {
+        name: "onOpenChange",
+        type: "(open: boolean) => void",
+        default: "undefined",
+        required: false,
+        description: "Callback on state change.",
+      },
+    ],
   },
   {
     slug: "components/progress",
@@ -433,6 +688,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 50,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/progress.tsx",
+    props: [
+      {
+        name: "value",
+        type: "number",
+        default: "0",
+        required: false,
+        description: "Current progress value between 0 and 100.",
+      },
+      {
+        name: "max",
+        type: "number",
+        default: "100",
+        required: false,
+        description: "Upper bound scalar.",
+      },
+    ],
   },
   {
     slug: "components/radio-group",
@@ -442,6 +713,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 51,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/radio-group.tsx",
+    props: [
+      {
+        name: "value",
+        type: "string",
+        default: "undefined",
+        required: false,
+        description: "Selected radio value.",
+      },
+      {
+        name: "onValueChange",
+        type: "(value: string) => void",
+        default: "undefined",
+        required: false,
+        description: "Value selection callback.",
+      },
+    ],
   },
   {
     slug: "components/separator",
@@ -452,6 +739,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 52,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/separator.tsx",
+    props: [
+      {
+        name: "orientation",
+        type: '"horizontal" | "vertical"',
+        default: '"horizontal"',
+        required: false,
+        description: "Axis orientation of the rule.",
+      },
+      {
+        name: "decorative",
+        type: "boolean",
+        default: "true",
+        required: false,
+        description: "Whether the element is purely decorative (aria-hidden).",
+      },
+    ],
   },
   {
     slug: "components/sheet",
@@ -462,6 +765,22 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 53,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/sheet.tsx",
+    props: [
+      {
+        name: "side",
+        type: '"top" | "right" | "bottom" | "left"',
+        default: '"right"',
+        required: false,
+        description: "Edge from which the drawer animates.",
+      },
+      {
+        name: "open",
+        type: "boolean",
+        default: "undefined",
+        required: false,
+        description: "Controlled open state.",
+      },
+    ],
   },
   {
     slug: "components/skeleton",
@@ -472,6 +791,15 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 54,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/skeleton.tsx",
+    props: [
+      {
+        name: "className",
+        type: "string",
+        default: '""',
+        required: false,
+        description: "Width, height, and border radius shaping classes.",
+      },
+    ],
   },
   {
     slug: "components/slider",
@@ -482,6 +810,43 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 55,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/slider.tsx",
+    props: [
+      {
+        name: "value",
+        type: "number[]",
+        default: "undefined",
+        required: false,
+        description: "Current slider value array.",
+      },
+      {
+        name: "min",
+        type: "number",
+        default: "0",
+        required: false,
+        description: "Minimum scale value.",
+      },
+      {
+        name: "max",
+        type: "number",
+        default: "100",
+        required: false,
+        description: "Maximum scale value.",
+      },
+      {
+        name: "step",
+        type: "number",
+        default: "1",
+        required: false,
+        description: "Granular step size.",
+      },
+      {
+        name: "onValueChange",
+        type: "(value: number[]) => void",
+        default: "undefined",
+        required: false,
+        description: "Value drag and keydown listener.",
+      },
+    ],
   },
   {
     slug: "components/switch",
@@ -491,6 +856,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 56,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/switch.tsx",
+    props: [
+      {
+        name: "checked",
+        type: "boolean",
+        default: "false",
+        required: false,
+        description: "Boolean checked state.",
+      },
+      {
+        name: "onCheckedChange",
+        type: "(checked: boolean) => void",
+        default: "undefined",
+        required: false,
+        description: "Toggle callback.",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        default: "false",
+        required: false,
+        description: "Disables interaction.",
+      },
+    ],
   },
   {
     slug: "components/toggle",
@@ -501,6 +889,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 57,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/toggle.tsx",
+    props: [
+      {
+        name: "pressed",
+        type: "boolean",
+        default: "false",
+        required: false,
+        description: "Two-state pressed condition.",
+      },
+      {
+        name: "onPressedChange",
+        type: "(pressed: boolean) => void",
+        default: "undefined",
+        required: false,
+        description: "Pressed callback listener.",
+      },
+      {
+        name: "variant",
+        type: '"default" | "outline"',
+        default: '"default"',
+        required: false,
+        description: "Visual surface style.",
+      },
+    ],
   },
   {
     slug: "components/toggle-group",
@@ -511,6 +922,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 58,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/toggle-group.tsx",
+    props: [
+      {
+        name: "type",
+        type: '"single" | "multiple"',
+        default: '"single"',
+        required: true,
+        description: "Whether one or several items can be simultaneously active.",
+      },
+      {
+        name: "value",
+        type: "string | string[]",
+        default: "undefined",
+        required: false,
+        description: "Active toggle values.",
+      },
+      {
+        name: "onValueChange",
+        type: "(value: string | string[]) => void",
+        default: "undefined",
+        required: false,
+        description: "Value change listener.",
+      },
+    ],
   },
   {
     slug: "components/tooltip",
@@ -521,6 +955,15 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 59,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/tooltip.tsx",
+    props: [
+      {
+        name: "delayDuration",
+        type: "number",
+        default: "200",
+        required: false,
+        description: "Hover delay before popping open in milliseconds.",
+      },
+    ],
   },
   {
     slug: "components/kbd",
@@ -531,6 +974,15 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 60,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/kbd.tsx",
+    props: [
+      {
+        name: "className",
+        type: "string",
+        default: '""',
+        required: false,
+        description: "Custom styling or font sizing.",
+      },
+    ],
   },
   {
     slug: "components/calendar",
@@ -540,6 +992,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 61,
     status: "ready",
     sourcePath: "packages/ui/src/components/ui/calendar.tsx",
+    props: [
+      {
+        name: "mode",
+        type: '"single" | "multiple" | "range"',
+        default: '"single"',
+        required: false,
+        description: "Selection mode.",
+      },
+      {
+        name: "selected",
+        type: "Date | Date[] | DateRange | undefined",
+        default: "undefined",
+        required: false,
+        description: "Selected date value.",
+      },
+      {
+        name: "onSelect",
+        type: "(date: any) => void",
+        default: "undefined",
+        required: false,
+        description: "Date selection callback.",
+      },
+    ],
   },
   {
     slug: "components/date-picker",
@@ -550,6 +1025,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 62,
     status: "ready",
     sourcePath: "packages/ui/src/components/composite/date-picker/date-picker.tsx",
+    props: [
+      {
+        name: "value",
+        type: "Date | null",
+        default: "null",
+        required: false,
+        description: "Controlled selected Date object.",
+      },
+      {
+        name: "onChange",
+        type: "(date: Date | null) => void",
+        default: "undefined",
+        required: false,
+        description: "Date update listener.",
+      },
+      {
+        name: "placeholder",
+        type: "string",
+        default: '"Pick a date"',
+        required: false,
+        description: "Trigger placeholder label.",
+      },
+    ],
   },
   {
     slug: "components/empty-state",
@@ -560,6 +1058,36 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 63,
     status: "ready",
     sourcePath: "packages/ui/src/components/composite/empty-state/empty-state.tsx",
+    props: [
+      {
+        name: "title",
+        type: "string",
+        default: '""',
+        required: true,
+        description: "Primary empty heading.",
+      },
+      {
+        name: "description",
+        type: "string",
+        default: '""',
+        required: false,
+        description: "Descriptive context or instructions.",
+      },
+      {
+        name: "icon",
+        type: "React.ComponentType<{ className?: string }>",
+        default: "undefined",
+        required: false,
+        description: "Icon element placed above the title.",
+      },
+      {
+        name: "action",
+        type: "React.ReactNode",
+        default: "undefined",
+        required: false,
+        description: "Action button or CTA trigger.",
+      },
+    ],
   },
   {
     slug: "components/search-field",
@@ -570,6 +1098,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 64,
     status: "ready",
     sourcePath: "packages/ui/src/components/composite/search-field/search-field.tsx",
+    props: [
+      {
+        name: "value",
+        type: "string",
+        default: '""',
+        required: true,
+        description: "Controlled search query string.",
+      },
+      {
+        name: "onChange",
+        type: "(value: string) => void",
+        default: "undefined",
+        required: true,
+        description: "Search input change listener.",
+      },
+      {
+        name: "onClear",
+        type: "() => void",
+        default: "undefined",
+        required: false,
+        description: "Clear button click listener.",
+      },
+    ],
   },
   {
     slug: "components/filter-bar",
@@ -580,6 +1131,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 65,
     status: "ready",
     sourcePath: "packages/ui/src/components/composite/filter-bar/filter-bar.tsx",
+    props: [
+      {
+        name: "filters",
+        type: "ActiveFilter[]",
+        default: "[]",
+        required: true,
+        description: "List of active filter pills to render.",
+      },
+      {
+        name: "onRemove",
+        type: "(id: string) => void",
+        default: "undefined",
+        required: true,
+        description: "Remove individual filter pill listener.",
+      },
+      {
+        name: "onClearAll",
+        type: "() => void",
+        default: "undefined",
+        required: true,
+        description: "Clear all filters callback.",
+      },
+    ],
   },
   {
     slug: "components/confirm-action",
@@ -590,6 +1164,36 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 66,
     status: "ready",
     sourcePath: "packages/ui/src/components/composite/confirm-action/confirm-action.tsx",
+    props: [
+      {
+        name: "trigger",
+        type: "React.ReactNode",
+        default: "undefined",
+        required: true,
+        description: "Trigger element to mount.",
+      },
+      {
+        name: "title",
+        type: "string",
+        default: '""',
+        required: true,
+        description: "Confirmation dialog heading.",
+      },
+      {
+        name: "description",
+        type: "string",
+        default: '""',
+        required: true,
+        description: "Explanation of destructive impact.",
+      },
+      {
+        name: "onConfirm",
+        type: "() => void",
+        default: "undefined",
+        required: true,
+        description: "Action callback on confirmation.",
+      },
+    ],
   },
   {
     slug: "components/settings-field",
@@ -600,6 +1204,29 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 67,
     status: "ready",
     sourcePath: "packages/ui/src/components/composite/settings-field/settings-field.tsx",
+    props: [
+      {
+        name: "label",
+        type: "string",
+        default: '""',
+        required: true,
+        description: "Label text for the control.",
+      },
+      {
+        name: "description",
+        type: "string",
+        default: '""',
+        required: false,
+        description: "Secondary helper text.",
+      },
+      {
+        name: "children",
+        type: "React.ReactNode",
+        default: "undefined",
+        required: true,
+        description: "Control input or switch widget.",
+      },
+    ],
   },
   {
     slug: "components/canvas-shell",
@@ -610,6 +1237,133 @@ export const DOCS_REGISTRY: DocEntry[] = [
     order: 68,
     status: "ready",
     sourcePath: "packages/ui/src/components/visualization/canvas-shell.tsx",
+    props: [
+      {
+        name: "toolbar",
+        type: "React.ReactNode",
+        default: "undefined",
+        required: false,
+        description: "Top floating toolbar slot.",
+      },
+      {
+        name: "sidebar",
+        type: "React.ReactNode",
+        default: "undefined",
+        required: false,
+        description: "Left/right docking inspector slot.",
+      },
+      {
+        name: "children",
+        type: "React.ReactNode",
+        default: "undefined",
+        required: true,
+        description: "Graph canvas viewport.",
+      },
+    ],
+  },
+  {
+    slug: "components/breadcrumb",
+    title: "Breadcrumb",
+    description: "Semantic navigational breadcrumbs adhering to WAI-ARIA breadcrumb design patterns.",
+    category: "Components",
+    order: 69,
+    status: "ready",
+    sourcePath: "packages/ui/src/components/ui/breadcrumb.tsx",
+    props: [
+      {
+        name: "separator",
+        type: "React.ReactNode",
+        default: '"/"',
+        required: false,
+        description: "Custom delimiter icon between hierarchy items.",
+      },
+    ],
+  },
+  {
+    slug: "components/navigation-menu",
+    title: "Navigation Menu",
+    description: "Enterprise top-level navigation hierarchy with interactive dropdown viewport panels.",
+    category: "Components",
+    order: 70,
+    status: "ready",
+    sourcePath: "packages/ui/src/components/ui/navigation-menu.tsx",
+    props: [
+      {
+        name: "value",
+        type: "string",
+        default: "undefined",
+        required: false,
+        description: "Active menu trigger key in controlled mode.",
+      },
+      {
+        name: "onValueChange",
+        type: "(value: string) => void",
+        default: "undefined",
+        required: false,
+        description: "State change listener.",
+      },
+    ],
+  },
+  {
+    slug: "components/menubar",
+    title: "Menubar",
+    description: "Desktop-grade application menubar with keyboard shortcuts and cascading submenus.",
+    category: "Components",
+    order: 71,
+    status: "ready",
+    sourcePath: "packages/ui/src/components/ui/menubar.tsx",
+    props: [
+      {
+        name: "value",
+        type: "string",
+        default: "undefined",
+        required: false,
+        description: "Active menu identifier.",
+      },
+    ],
+  },
+  {
+    slug: "components/pagination",
+    title: "Pagination",
+    description: "Navigation controls for paginating large data streams with accessible previous and next actions.",
+    category: "Components",
+    order: 72,
+    status: "ready",
+    sourcePath: "packages/ui/src/components/ui/pagination.tsx",
+    props: [
+      {
+        name: "className",
+        type: "string",
+        default: '""',
+        required: false,
+        description: "Pagination bar styling.",
+      },
+    ],
+  },
+  {
+    slug: "components/sonner",
+    title: "Sonner",
+    description: "High-performance toast notifications powered by Sonner with custom solid neumorphic styling.",
+    category: "Components",
+    order: 73,
+    status: "ready",
+    sourcePath: "packages/ui/src/components/ui/sonner.tsx",
+    props: [
+      {
+        name: "theme",
+        type: '"dark" | "light" | "system"',
+        default: '"dark"',
+        required: false,
+        description: "Color theme for toast notifications.",
+      },
+      {
+        name: "position",
+        type: '"top-left" | "top-right" | "bottom-left" | "bottom-right"',
+        default: '"bottom-right"',
+        required: false,
+        description: "Screen viewport dock location.",
+      },
+    ],
   },
 
   // ==========================================

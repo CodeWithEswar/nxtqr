@@ -1,0 +1,100 @@
+/* ==========================================================================
+   NXTQR Code Block & Shiki Syntax Highlighting Styles
+   Pure Black Monochrome + Solid Neumorphism + Developer-Crafted Interface
+   ========================================================================== */
+
+/* Shiki pre container reset */
+pre.shiki {
+  margin: 0 !important;
+  padding: 1rem !important;
+  background-color: transparent !important;
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 0.75rem !important;
+  line-height: 1.625 !important;
+  tab-size: 2 !important;
+  white-space: pre !important;
+  word-break: normal !important;
+  word-spacing: normal !important;
+}
+
+/* Individual line rendering */
+pre.shiki .line,
+.code-block-line {
+  display: block;
+  min-height: 1.25rem;
+  padding: 0 0.5rem;
+  border-left: 2px solid transparent;
+}
+
+/* Line numbers standard (when enabled) */
+pre[data-line-numbers] .line,
+code[data-line-numbers] .line {
+  counter-increment: line;
+}
+
+pre[data-line-numbers] .line::before,
+code[data-line-numbers] .line::before {
+  content: counter(line);
+  display: inline-block;
+  width: 1.75rem;
+  margin-right: 1.25rem;
+  text-align: right;
+  color: #525252;
+  user-select: none;
+  -webkit-user-select: none;
+  font-size: 0.7rem;
+}
+
+/* Highlighted line treatment (subtle emphasis, not bright blinding neon) */
+pre.shiki .line.highlighted,
+.code-block-line.highlighted {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left-color: var(--accent, #ffffff);
+}
+
+/* Focus mode treatment */
+pre.shiki.has-focused .line:not(.focused) {
+  opacity: 0.35;
+  filter: blur(0.02rem);
+  transition: opacity 0.15s ease;
+}
+
+/* Diff Add treatment */
+pre.shiki .line.diff.add,
+.code-block-line.diff-add {
+  background-color: rgba(52, 211, 153, 0.1);
+  border-left-color: #34d399;
+}
+
+pre.shiki .line.diff.add::before,
+.code-block-line.diff-add::before {
+  content: "+ ";
+  color: #34d399;
+  font-weight: 600;
+}
+
+/* Diff Remove treatment */
+pre.shiki .line.diff.remove,
+.code-block-line.diff-remove {
+  background-color: rgba(248, 113, 113, 0.1);
+  border-left-color: #f87171;
+  opacity: 0.75;
+}
+
+pre.shiki .line.diff.remove::before,
+.code-block-line.diff-remove::before {
+  content: "- ";
+  color: #f87171;
+  font-weight: 600;
+}
+
+/* Collapsible code block expand fade */
+.code-block-collapsed-mask {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4.5rem;
+  background: linear-gradient(to top, #0a0a0a, transparent);
+  pointer-events: none;
+}

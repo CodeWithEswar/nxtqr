@@ -19,7 +19,8 @@ import { Input } from "../../ui/input";
 import { Skeleton } from "../../ui/skeleton";
 import { ChevronLeftIcon, ChevronRightIcon } from "@nxtqr/icons";
 
-interface DataTableProps<TData, TValue> {
+export type { ColumnDef };
+export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isLoading?: boolean;

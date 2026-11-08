@@ -5,7 +5,17 @@ import { CodeBlock } from "../components/code-block";
 import { InstallationCommand } from "../components/installation-command";
 import { PropsTable } from "../components/props-table";
 import { ComponentPreview } from "../components/component-preview";
-import { ButtonPlayground } from "../components/component-playground";
+import {
+  ButtonPlayground,
+  BadgePlayground,
+  DialogPlayground,
+  SwitchPlayground,
+  SliderPlayground,
+} from "../components/playground/component-playground";
+import {
+  ComponentDemoView,
+  DynamicPlayground,
+} from "../components/preview/component-demo-view";
 import { slugifyHeading } from "./headings";
 
 // Re-export shared UI components for direct MDX embedded usage
@@ -17,6 +27,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
   Input,
   Textarea,
   Tabs,
@@ -185,15 +196,43 @@ export const mdxComponents = {
   ),
 
   pre: ({ children }: React.HTMLAttributes<HTMLPreElement>) => {
-    // If child is a code tag, extract its text content
-    const codeContent =
-      React.isValidElement(children) &&
-      typeof children.props === "object" &&
-      children.props !== null &&
-      "children" in children.props
-        ? String(children.props.children)
-        : String(children);
-    return <CodeBlock code={codeContent}>{codeContent}</CodeBlock>;
+    let codeContent = "";
+    let language = "tsx";
+    let filename: string | undefined = undefined;
+
+    if (React.isValidElement(children)) {
+      const childProps = children.props as Record<string, any>;
+      if (typeof childProps.children === "string") {
+        codeContent = childProps.children;
+      } else if (Array.isArray(childProps.children)) {
+        codeContent = childProps.children
+          .map((c) => (typeof c === "string" ? c : ""))
+          .join("");
+      } else {
+        codeContent = String(childProps.children ?? "");
+      }
+
+      if (typeof childProps.className === "string") {
+        const match = childProps.className.match(/language-([a-zA-Z0-9_-]+)/);
+        if (match) {
+          language = match[1];
+        }
+      }
+
+      if (childProps["data-filename"]) {
+        filename = String(childProps["data-filename"]);
+      }
+    } else {
+      codeContent = typeof children === "string" ? children : "";
+    }
+
+    return (
+      <CodeBlock
+        code={codeContent}
+        language={language}
+        filename={filename}
+      />
+    );
   },
 
   blockquote: ({ className, ...props }: React.HTMLAttributes<HTMLQuoteElement>) => (
@@ -258,8 +297,14 @@ export const mdxComponents = {
 
   // Interactive documentation platform components
   ComponentPreview,
+  ComponentDemoView,
+  DynamicPlayground,
   ComponentPlayground: ButtonPlayground,
   ButtonPlayground,
+  BadgePlayground,
+  DialogPlayground,
+  SwitchPlayground,
+  SliderPlayground,
   PropsTable,
   InstallationCommand,
   CodeBlock,
@@ -272,6 +317,7 @@ export const mdxComponents = {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
   Input,
   Textarea,
   Tabs,

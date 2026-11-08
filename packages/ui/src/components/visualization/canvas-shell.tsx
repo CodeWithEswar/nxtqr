@@ -7,12 +7,30 @@ import { LayersIcon } from "@nxtqr/icons";
 export interface CanvasShellPlaceholderProps {
   title?: string;
   className?: string;
+  toolbar?: React.ReactNode;
+  sidebar?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export function CanvasShellPlaceholder({
   title = "Visualizer Canvas Boundary",
   className,
+  toolbar,
+  sidebar,
+  children,
 }: CanvasShellPlaceholderProps) {
+  if (children) {
+    return (
+      <div className={cn("relative flex h-full w-full overflow-hidden rounded-md border border-border bg-black", className)}>
+        {sidebar}
+        <div className="relative flex-1 flex flex-col min-w-0">
+          {toolbar && <div className="absolute top-2 right-2 z-10">{toolbar}</div>}
+          <div className="flex-1 w-full h-full">{children}</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
@@ -50,3 +68,5 @@ export function CanvasLoadingSkeleton() {
     </div>
   );
 }
+
+export const CanvasShell = CanvasShellPlaceholder;

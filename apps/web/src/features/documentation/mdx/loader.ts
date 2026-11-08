@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import { getDocEntryBySlug } from "../registry/docs-registry";
+import { getDemoDefinition } from "../registry/demo-definitions";
 import { extractHeadingsFromMarkdown } from "./headings";
 import type { DocEntry, DocHeading, DocFrontmatter } from "../schemas/docs-schema";
 
@@ -38,7 +39,7 @@ export async function getDocBySlug(slugArray: string[]): Promise<LoadedDoc | nul
     return null;
   }
 
-  // 1. Check if custom MDX file exists on disk
+  // 1. Check if custom hand-crafted MDX file exists on disk
   const filePath = await resolveDocFilePath(slug);
 
   let rawContent = "";
@@ -64,11 +65,11 @@ export async function getDocBySlug(slugArray: string[]): Promise<LoadedDoc | nul
         description: parsed.data.description ?? entry.description,
       };
     } catch {
-      rawContent = generateFallbackMdxForEntry(entry);
+      rawContent = generateDocumentationForEntry(entry);
     }
   } else {
-    // 2. Synthesize structured documentation from registry entry
-    rawContent = generateFallbackMdxForEntry(entry);
+    // 2. Synthesize complete, professional documentation backed by real demos
+    rawContent = generateDocumentationForEntry(entry);
   }
 
   const headings = extractHeadingsFromMarkdown(rawContent);
@@ -81,34 +82,37 @@ export async function getDocBySlug(slugArray: string[]): Promise<LoadedDoc | nul
   };
 }
 
-function generateFallbackMdxForEntry(entry: DocEntry): string {
+function generateDocumentationForEntry(entry: DocEntry): string {
   const isComponent = entry.category === "Components";
-  const importName = entry.title.replace(/\s+/g, "");
+  const slugNormalized = entry.slug.replace(/^components\//, "");
+  const demo = getDemoDefinition(slugNormalized);
 
-  if (isComponent) {
+  if (isComponent && demo) {
+    const escapedCode = demo.code.replace(/`/g, "\\`").replace(/\${/g, "\\${");
+
     return `## Overview
 
 The \`${entry.title}\` component is built upon standardized headless primitives, styled with NXTQR's pure black monochrome foundation, restrained solid neumorphic elevation, and user-selected pure accent color inheritance.
 
 ## Interactive Preview
 
-<ComponentPreview name="${entry.title}" code={\`import { ${importName} } from "@nxtqr/ui";
-
-export function Demo() {
-  return (
-    <div className="p-4 bg-surface rounded-md border border-border text-xs font-mono">
-      \${entry.title} Component
-    </div>
-  );
-}\`}>
-  <div className="p-4 bg-surface rounded-md border border-border text-xs font-mono text-foreground">
-    ${entry.title} Component Ready
-  </div>
+<ComponentPreview name="${demo.name}" code={\`${escapedCode}\`}>
+  <ComponentDemoView slug="${demo.slug}" />
 </ComponentPreview>
+
+${
+  demo.hasPlayground
+    ? `## Interactive Playground
+
+Test different variant combinations, sizes, and states interactively:
+
+<DynamicPlayground slug="${demo.slug}" />`
+    : ""
+}
 
 ## Installation
 
-Install or import the component from the shared UI package:
+Import the component from the shared \`@nxtqr/ui\` package:
 
 <InstallationCommand packageName="@nxtqr/ui" command="pnpm add @nxtqr/ui" />
 
@@ -117,15 +121,7 @@ Install or import the component from the shared UI package:
 Import and render the component in your Next.js application:
 
 \`\`\`tsx
-import { ${importName} } from "@nxtqr/ui";
-
-export function Example() {
-  return (
-    <div className="p-4 bg-surface rounded-md border border-border">
-      <${importName}>${entry.title} Action</${importName}>
-    </div>
-  );
-}
+${demo.code}
 \`\`\`
 
 ## Props and Attributes
@@ -144,6 +140,21 @@ The \`${entry.title}\` component adheres to WCAG 2.1 AA/AAA accessibility standa
 
 - **Desktop**: Full interactive presentation within engineering panels and canvas shells.
 - **Mobile**: Preserves touch targets (minimum 44×44px interactive area) and wraps cleanly within mobile sheets.
+`;
+  }
+
+  if (isComponent) {
+    return `## Overview
+
+The \`${entry.title}\` component is part of the NXTQR shared engineering system.
+
+## Installation
+
+<InstallationCommand packageName="@nxtqr/ui" command="pnpm add @nxtqr/ui" />
+
+## Props and Attributes
+
+<PropsTable />
 `;
   }
 
