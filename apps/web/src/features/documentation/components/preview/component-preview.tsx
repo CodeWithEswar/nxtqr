@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent, Button } from "@nxtqr/ui";
-import { MonitorIcon } from "@nxtqr/icons";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
 import { CodeBlock } from "../code-block";
 import { CodeCopyButton } from "../code-block/code-copy-button";
@@ -29,7 +28,6 @@ export function ComponentPreview({
   filename,
 }: ComponentPreviewProps) {
   const [activeTab, setActiveTab] = React.useState<"preview" | "code">("preview");
-  const [viewport, setViewport] = React.useState<"desktop" | "tablet" | "mobile">("desktop");
 
   const resolvedSlug =
     slug ??
@@ -37,12 +35,6 @@ export function ComponentPreview({
   const demoDef = resolvedSlug ? getDemoDefinition(resolvedSlug) : undefined;
   const sourceCode = code || demoDef?.code || "// No source code provided";
   const resolvedFilename = filename ?? `${resolvedSlug ?? "component"}.tsx`;
-
-  const viewportWidths = {
-    desktop: "w-full",
-    tablet: "max-w-[640px]",
-    mobile: "max-w-[360px]",
-  };
 
   return (
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1">
@@ -76,38 +68,6 @@ export function ComponentPreview({
           </div>
 
           <div className="flex items-center gap-2">
-            {activeTab === "preview" && (
-              <div className="hidden sm:flex items-center gap-1 border border-border rounded-md p-0.5 bg-black/40">
-                <Button
-                  variant={viewport === "desktop" ? "secondary" : "ghost"}
-                  size="icon-sm"
-                  onClick={() => setViewport("desktop")}
-                  aria-label="Desktop preview width"
-                  className="h-6 w-6"
-                >
-                  <MonitorIcon className="h-3 w-3" />
-                </Button>
-                <Button
-                  variant={viewport === "tablet" ? "secondary" : "ghost"}
-                  size="icon-sm"
-                  onClick={() => setViewport("tablet")}
-                  aria-label="Tablet preview width"
-                  className="h-6 w-6 font-mono text-[9px]"
-                >
-                  TAB
-                </Button>
-                <Button
-                  variant={viewport === "mobile" ? "secondary" : "ghost"}
-                  size="icon-sm"
-                  onClick={() => setViewport("mobile")}
-                  aria-label="Mobile preview width"
-                  className="h-6 w-6 font-mono text-[9px]"
-                >
-                  MOB
-                </Button>
-              </div>
-            )}
-
             <CodeCopyButton code={sourceCode} />
           </div>
         </div>
@@ -122,7 +82,6 @@ export function ComponentPreview({
                   align === "center" && "justify-center",
                   align === "start" && "justify-start",
                   align === "end" && "justify-end",
-                  viewportWidths[viewport],
                   className,
                 )}
               >
