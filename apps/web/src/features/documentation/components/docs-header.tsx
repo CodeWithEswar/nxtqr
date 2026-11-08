@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AppLogo } from "@nxtqr/branding";
 import { Button, Sheet, SheetContent, SheetTrigger } from "@nxtqr/ui";
-import { SearchIcon, MenuIcon, SettingsIcon, TerminalIcon } from "@nxtqr/icons";
+import { SearchIcon, MenuIcon, SettingsIcon, TerminalIcon, ActivityIcon } from "@nxtqr/icons";
 import { cn } from "@nxtqr/utils";
 import { DocsSidebar } from "./docs-sidebar";
 
@@ -212,14 +212,16 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
           <SearchIcon className="h-3.5 w-3.5" />
         </Button>
 
-        {/* Diagnostics Review Gate (Desktop & Tablet) */}
-        <Link href="/verify" className="hidden md:inline-flex">
+        {/* Diagnostics Review Gate */}
+        <Link href="/verify" className="shrink-0">
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border shadow-level-1"
+            aria-label="System Diagnostics"
+            className="h-8 px-2 sm:px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border flex items-center gap-1.5 shadow-level-1"
           >
-            Diagnostics
+            <ActivityIcon className="h-3.5 w-3.5 text-accent shrink-0" />
+            <span className="hidden sm:inline">Diagnostics</span>
           </Button>
         </Link>
 

@@ -16,6 +16,7 @@ interface PipelineStage {
   id: string;
   step: number;
   title: string;
+  shortTitle: string;
   subtitle: string;
   packages: string[];
   icon: React.ComponentType<{ className?: string }>;
@@ -30,6 +31,7 @@ const STAGES: PipelineStage[] = [
     id: "definition",
     step: 1,
     title: "Graph Definition",
+    shortTitle: "Definition",
     subtitle: "Discriminated union schemas",
     packages: ["@nxtqr/graph-schema", "@nxtqr/node-registry"],
     icon: LayersIcon,
@@ -38,7 +40,7 @@ const STAGES: PipelineStage[] = [
     inputContract: "Raw JSON / Database record",
     outputContract: "GraphDocument { id, nodes, edges, viewport }",
     codeSnippet: `import type { GraphDocument, BaseNode } from "@nxtqr/graph-schema";
-
+ 
 export const ingressNode: BaseNode = {
   id: "node_ingress",
   type: "input",
@@ -53,6 +55,7 @@ export const ingressNode: BaseNode = {
     id: "validation",
     step: 2,
     title: "Schema & Size Guards",
+    shortTitle: "Validation",
     subtitle: "Zod runtime parsing",
     packages: ["@nxtqr/validation", "@nxtqr/security"],
     icon: CheckCircleIcon,
@@ -62,7 +65,7 @@ export const ingressNode: BaseNode = {
     outputContract: "SafeParseReturnType<GraphDocument>",
     codeSnippet: `import { GraphDocumentSchema } from "@nxtqr/graph-schema";
 import { assertPayloadSize } from "@nxtqr/security";
-
+ 
 export function validateGraph(payload: unknown) {
   assertPayloadSize(payload, 5 * 1024 * 1024); // 5MB guard
   return GraphDocumentSchema.safeParse(payload);
@@ -72,6 +75,7 @@ export function validateGraph(payload: unknown) {
     id: "rendering",
     step: 3,
     title: "Canvas & ELK Layout",
+    shortTitle: "Layout",
     subtitle: "Sub-pixel grid & layout",
     packages: ["@nxtqr/canvas-core", "@xyflow/react", "elkjs"],
     icon: SettingsIcon,
@@ -81,7 +85,7 @@ export function validateGraph(payload: unknown) {
     outputContract: "Rendered interactive SVG/DOM Canvas",
     codeSnippet: `import { calculateElkLayout } from "@nxtqr/web/features/visualizers";
 import { clampZoom } from "@nxtqr/canvas-core";
-
+ 
 const layouted = await calculateElkLayout(nodes, edges, "LR");
 const validZoom = clampZoom(currentZoom);`,
   },
@@ -89,6 +93,7 @@ const validZoom = clampZoom(currentZoom);`,
     id: "simulation",
     step: 4,
     title: "Deterministic Engine",
+    shortTitle: "Simulation",
     subtitle: "Topological stepping",
     packages: ["@nxtqr/simulation-core"],
     icon: CpuIcon,
@@ -97,7 +102,7 @@ const validZoom = clampZoom(currentZoom);`,
     inputContract: "GraphDocument & SimulationOptions",
     outputContract: "Async generator of step transitions",
     codeSnippet: `import { DeterministicSimulationEngine } from "@nxtqr/simulation-core";
-
+ 
 const engine = new DeterministicSimulationEngine({
   speed: 1.0,
   onEvent: (evt) => store.addTraceEvent(evt),
@@ -109,6 +114,7 @@ await engine.run();`,
     id: "telemetry",
     step: 5,
     title: "Execution Events",
+    shortTitle: "Telemetry",
     subtitle: "Structured telemetry",
     packages: ["@nxtqr/simulation-core", "@nxtqr/observability"],
     icon: ActivityIcon,
@@ -129,6 +135,7 @@ await engine.run();`,
     id: "trace",
     step: 6,
     title: "Execution Trace Stream",
+    shortTitle: "Trace Stream",
     subtitle: "Chronological inspection",
     packages: ["@nxtqr/execution-trace", "@nxtqr/state"],
     icon: TerminalIcon,
@@ -137,7 +144,7 @@ await engine.run();`,
     inputContract: "Array of SimulationEvent",
     outputContract: "Bidirectional synchronized studio UI",
     codeSnippet: `import { filterTraceEvents, formatRelativeTimestamp } from "@nxtqr/execution-trace";
-
+ 
 const events = filterTraceEvents(stream, { searchQuery: "Database", status: "success" });
 const timeStr = formatRelativeTimestamp(event.timestamp); // "+45.2ms"`,
   },
@@ -191,7 +198,8 @@ export function ArchitectureOverview() {
                 <SIcon className={cn("h-3.5 w-3.5", isActive ? "text-accent" : "text-muted-foreground")} />
               </div>
               <div className="text-xs font-semibold font-sans text-foreground truncate">
-                {s.title}
+                <span className="hidden sm:inline">{s.title}</span>
+                <span className="sm:hidden">{s.shortTitle}</span>
               </div>
               <div className="text-[10px] text-muted-foreground truncate font-mono">
                 {s.packages[0].replace("@nxtqr/", "")}
@@ -203,23 +211,29 @@ export function ArchitectureOverview() {
 
       {/* Selected Stage Detail Console */}
       <div className="rounded-md border border-subtle-border bg-black p-4 sm:p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded bg-surface border border-border flex items-center justify-center text-accent">
+        <div className="space-y-3 border-b border-border/60 pb-3">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-md bg-surface border border-border flex items-center justify-center text-accent shrink-0 mt-0.5">
               <IconComp className="h-4 w-4" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-foreground font-sans">{stage.title}</span>
-                <span className="text-border">·</span>
-                <span className="text-[11px] text-muted-foreground font-mono">{stage.subtitle}</span>
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="flex flex-wrap items-center justify-between gap-1.5">
+                <h4 className="text-sm font-bold text-foreground font-sans">
+                  {stage.title}
+                </h4>
+                <span className="text-[10px] font-mono text-muted-foreground border border-subtle-border px-1.5 py-0.5 rounded bg-black/40 shrink-0">
+                  {stage.subtitle}
+                </span>
               </div>
-              <p className="text-xs text-muted-foreground font-sans mt-0.5">{stage.description}</p>
+              <p className="text-xs text-muted-foreground font-sans leading-relaxed">
+                {stage.description}
+              </p>
             </div>
           </div>
 
           {/* Package Badges */}
-          <div className="flex flex-wrap gap-1.5 shrink-0">
+          <div className="flex flex-wrap items-center gap-1.5 pt-1 sm:pl-11">
+            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mr-1">Packages:</span>
             {stage.packages.map((pkg) => (
               <span
                 key={pkg}
