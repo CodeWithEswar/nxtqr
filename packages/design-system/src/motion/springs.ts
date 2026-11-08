@@ -46,3 +46,4 @@ export const motionSprings = {
 } as const;
 
 export type MotionSpringToken = keyof typeof motionSprings;
+

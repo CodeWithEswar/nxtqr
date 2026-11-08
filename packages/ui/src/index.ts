@@ -31,6 +31,8 @@ export * from "./components/ui/kbd";
 export * from "./components/ui/sonner";
 export * from "./components/ui/command";
 export * from "./components/ui/calendar";
+export * from "./components/ui/breadcrumb";
+export * from "./components/ui/navigation-menu";
 
 // Composite Components
 export * from "./components/composite/data-table";

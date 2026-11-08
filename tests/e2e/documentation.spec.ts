@@ -94,7 +94,7 @@ test.describe("NXTQR Documentation Platform (Phase 03)", () => {
     await page.goto("/docs/getting-started/introduction");
 
     // On mobile, desktop sidebars are hidden
-    const desktopSidebar = page.locator(".hidden.md\\:flex");
+    const desktopSidebar = page.locator("aside.hidden.md\\:flex");
     await expect(desktopSidebar).toBeHidden();
 
     // Mobile trigger button is visible

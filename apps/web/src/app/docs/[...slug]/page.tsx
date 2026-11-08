@@ -3,7 +3,16 @@ import Link from "next/link";
 import { type Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import { Badge, Button } from "@nxtqr/ui";
+import {
+  Badge,
+  Button,
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@nxtqr/ui";
 import { ChevronLeftIcon, ChevronRightIcon } from "@nxtqr/icons";
 import { DocsShell } from "@/features/documentation/components/docs-shell";
 import { mdxComponents } from "@/features/documentation/mdx/components";
@@ -52,20 +61,32 @@ export default async function DocPage({ params }: PageProps) {
   return (
     <DocsShell headings={doc.headings}>
       <article className="space-y-8">
-        {/* Breadcrumb Hierarchy */}
-        <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground uppercase tracking-wider">
-          <span>{doc.entry.category}</span>
-          <span>/</span>
-          <span className="text-foreground font-semibold">{doc.meta.title}</span>
-          {doc.entry.status === "draft" && (
-            <Badge
-              variant="outline"
-              className="ml-2 font-mono text-[9px] py-0 text-yellow-400 border-yellow-500/30"
-            >
-              Draft / In Progress
-            </Badge>
-          )}
-        </div>
+        {/* Semantic Breadcrumb Hierarchy */}
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/docs">Docs</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <span className="font-mono text-muted-foreground uppercase tracking-wider text-[11px]">
+                {doc.entry.category}
+              </span>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{doc.meta.title}</BreadcrumbPage>
+            </BreadcrumbItem>
+            {doc.entry.status === "draft" && (
+              <Badge
+                variant="outline"
+                className="ml-2 font-mono text-[9px] py-0 text-yellow-400 border-yellow-500/30"
+              >
+                Draft / In Progress
+              </Badge>
+            )}
+          </BreadcrumbList>
+        </Breadcrumb>
 
         {/* Page Header */}
         <header className="space-y-3 border-b border-border pb-6">

@@ -62,3 +62,4 @@ export const panelSpringTransition: Transition = {
 export const selectionSpringTransition: Transition = {
   ...motionSprings.selection,
 };
+
