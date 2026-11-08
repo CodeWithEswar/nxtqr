@@ -534,5 +534,37 @@ export const HelpCircleIcon = createIcon("HelpCircleIcon", (props) => (
   </svg>
 ));
 
+export const EyedropperIcon = createIcon("EyedropperIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M14 4.5 19.5 10l-2 2-5.5-5.5 2-2Z" />
+    <path d="M12 6.5 4 14.5v5h5l8-8" />
+    <path d="m2 22 3-1" />
+  </svg>
+));
+
+export const ColorPickerIcon = createIcon("ColorPickerIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="7.5" r="1.5" fill="currentColor" />
+    <circle cx="16.5" cy="12" r="1.5" fill="currentColor" />
+    <circle cx="12" cy="16.5" r="1.5" fill="currentColor" />
+    <circle cx="7.5" cy="12" r="1.5" fill="currentColor" />
+  </svg>
+));
+
 
 

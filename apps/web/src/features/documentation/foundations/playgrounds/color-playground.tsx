@@ -8,26 +8,18 @@ import {
 import { Button, Input, Badge, Switch } from "@nxtqr/ui";
 import { CheckIcon, RefreshIcon } from "@nxtqr/icons";
 import { ContrastMeter } from "../components/contrast-meter";
+import { DeveloperColorPicker } from "../components/developer-color-picker";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
 
 export function ColorPlayground() {
   const [selectedHex, setSelectedHex] = React.useState<string>("#0066FF");
-  const [customInput, setCustomInput] = React.useState<string>("");
   const [backgroundHex, setBackgroundHex] = React.useState<string>("#000000");
 
   const resolvedForeground = React.useMemo(
     () => getAccessibleForeground(selectedHex),
     [selectedHex],
   );
-
-  const handleCustomSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const clean = customInput.trim();
-    if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(clean)) {
-      setSelectedHex(clean.toUpperCase());
-    }
-  };
 
   const codeExample = `/* Resolved NXTQR Accent Tokens */
 :root {
@@ -56,7 +48,6 @@ export function ColorPlayground() {
             onClick={() => {
               setSelectedHex("#0066FF");
               setBackgroundHex("#000000");
-              setCustomInput("");
             }}
             className="h-7 text-xs font-mono gap-1.5 shrink-0 whitespace-nowrap"
           >
@@ -70,12 +61,18 @@ export function ColorPlayground() {
         </p>
       </div>
 
-      {/* 2. Preset Selection & Custom Hex */}
-      <div className="space-y-3">
-        <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">
-          1. Select Calibrated Accent Preset
-        </span>
+      {/* 2. Preset Selection & Custom Color Engine */}
+      <div className="space-y-4">
+        <div>
+          <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">
+            1. Calibrated Preset Accents & Developer Color Engine
+          </span>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Select a pure calibrated preset, sample any pixel with the eyedropper, or fine-tune exact hex, rgb, and hsl spectrums.
+          </p>
+        </div>
 
+        {/* 8 Pure Calibrated Presets */}
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2">
           {ACCENT_PRESET_LIST.map((preset) => {
             const isSelected = selectedHex.toLowerCase() === preset.hex.toLowerCase();
@@ -87,9 +84,9 @@ export function ColorPlayground() {
                 type="button"
                 onClick={() => setSelectedHex(preset.hex)}
                 className={cn(
-                  "flex items-center gap-2 p-2 rounded-md border text-left transition-all duration-140 outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                  "flex items-center gap-2 p-2 rounded-md border text-left transition-all duration-140 outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer select-none",
                   isSelected
-                    ? "border-accent bg-secondary-surface shadow-level-3 font-semibold"
+                    ? "border-accent bg-secondary-surface shadow-level-3 font-semibold ring-1 ring-accent/60"
                     : "border-border bg-black/60 shadow-level-1 hover:bg-secondary-surface/70",
                 )}
               >
@@ -107,18 +104,12 @@ export function ColorPlayground() {
           })}
         </div>
 
-        {/* Custom Hex Form */}
-        <form onSubmit={handleCustomSubmit} className="flex items-center gap-2 max-w-xs pt-1">
-          <Input
-            value={customInput}
-            onChange={(e) => setCustomInput(e.target.value)}
-            placeholder="#0066FF (Custom Hex)"
-            className="h-8 font-mono text-xs uppercase"
-          />
-          <Button type="submit" variant="outline" size="sm" className="h-8 shrink-0 text-xs">
-            Apply
-          </Button>
-        </form>
+        {/* Developer Custom Color Studio Component */}
+        <DeveloperColorPicker
+          color={selectedHex}
+          onChange={(newHex) => setSelectedHex(newHex)}
+          onReset={() => setSelectedHex("#0066FF")}
+        />
       </div>
 
       {/* 3. Live Component Sandbox */}
