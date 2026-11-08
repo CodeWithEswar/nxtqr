@@ -2,8 +2,16 @@
 
 import * as React from "react";
 import { focusRingClasses } from "@nxtqr/design-system";
-import { Badge } from "@nxtqr/ui";
-import { CheckIcon, CloseIcon, RefreshIcon } from "@nxtqr/icons";
+import {
+  Badge,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@nxtqr/ui";
+import { CheckIcon, CloseIcon, RefreshIcon, MoreHorizontalIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { ContrastMeter } from "../components/contrast-meter";
 import { cn } from "@nxtqr/utils";
@@ -38,26 +46,121 @@ export function AccessibilityLab() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-secondary-surface border border-border rounded-md self-start sm:self-auto">
-          {[
-            { id: "focus" as const, label: "Focus" },
-            { id: "touch" as const, label: "Touch" },
-            { id: "keyboard" as const, label: "Keyboard" },
-            { id: "contrast" as const, label: "Contrast" },
-          ].map((tab) => (
+        {/* Responsive Tab Navigation & Three-Dots Dropdown Menu */}
+        <div className="flex items-center gap-1.5 p-1 bg-secondary-surface border border-border rounded-md self-start sm:self-auto shrink-0 flex-nowrap">
+          {/* Mobile Single Tab Pill (< sm) */}
+          <div className="flex sm:hidden items-center gap-1">
+            <span className="px-2.5 py-1 text-xs font-mono font-semibold bg-surface border border-subtle-border rounded text-foreground capitalize">
+              {activeTab}
+            </span>
+          </div>
+
+          {/* Primary View Tabs (Visible on >= sm) */}
+          <div className="hidden sm:flex items-center gap-1">
+            {[
+              { id: "focus" as const, label: "Focus" },
+              { id: "touch" as const, label: "Touch" },
+              { id: "keyboard" as const, label: "Keyboard" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "px-2.5 py-1 text-xs font-mono rounded whitespace-nowrap transition-colors",
+                  activeTab === tab.id
+                    ? "bg-surface text-foreground font-semibold border border-subtle-border shadow-level-1"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+
+            {/* Contrast Tab (Only visible on wide desktop >= lg to prevent tablet header collision) */}
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              type="button"
+              onClick={() => setActiveTab("contrast")}
               className={cn(
-                "px-2.5 py-1 text-xs font-mono rounded whitespace-nowrap transition-colors",
-                activeTab === tab.id
+                "hidden lg:inline-block px-2.5 py-1 text-xs font-mono rounded whitespace-nowrap transition-colors",
+                activeTab === "contrast"
                   ? "bg-surface text-foreground font-semibold border border-subtle-border shadow-level-1"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
-              {tab.label}
+              Contrast
             </button>
-          ))}
+          </div>
+
+          {/* Three-Dots Dropdown Menu (Always accessible for compact overflow & quick lab actions) */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  "px-2 py-1 text-xs font-mono rounded whitespace-nowrap transition-colors flex items-center gap-1 cursor-pointer",
+                  activeTab === "contrast"
+                    ? "bg-surface text-foreground font-semibold border border-subtle-border shadow-level-1"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface/50",
+                )}
+                aria-label="More laboratory options"
+              >
+                {/* On tablet where Contrast is hidden from main row, show its label when selected */}
+                {activeTab === "contrast" && (
+                  <span className="lg:hidden text-foreground font-semibold">Contrast</span>
+                )}
+                <MoreHorizontalIcon className="h-3.5 w-3.5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 font-mono text-xs">
+              <DropdownMenuLabel className="text-[10px] uppercase text-muted-foreground tracking-wider">
+                Laboratory Views
+              </DropdownMenuLabel>
+              {[
+                { id: "focus" as const, label: "Focus Rings" },
+                { id: "touch" as const, label: "Touch Targets" },
+                { id: "keyboard" as const, label: "Keyboard Matrix" },
+                { id: "contrast" as const, label: "Contrast Inspector" },
+              ].map((tab) => (
+                <DropdownMenuItem
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <span className={cn(activeTab === tab.id && "text-accent font-semibold")}>
+                    {tab.label}
+                  </span>
+                  {activeTab === tab.id && <CheckIcon className="h-3.5 w-3.5 text-accent" />}
+                </DropdownMenuItem>
+              ))}
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuLabel className="text-[10px] uppercase text-muted-foreground tracking-wider">
+                Laboratory Actions
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => setShowTouchTargets((prev) => !prev)}
+                className="cursor-pointer flex items-center justify-between"
+              >
+                <span>44px Bounds Overlay</span>
+                <span className="text-[10px] font-mono text-accent">
+                  {showTouchTargets ? "ON" : "OFF"}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setActiveTab("focus");
+                  setShowTouchTargets(true);
+                  setRovingIndex(0);
+                }}
+                className="cursor-pointer flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
+              >
+                <RefreshIcon className="h-3 w-3" />
+                <span>Reset Laboratory</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
