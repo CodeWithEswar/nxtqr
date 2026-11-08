@@ -51,6 +51,13 @@ pre.shiki .line,
 }
 
 /* Line numbers standard (when enabled) - Hanging indent architecture */
+pre[data-line-numbers],
+code[data-line-numbers],
+div[data-line-numbers],
+[data-line-numbers] pre.shiki {
+  counter-reset: line;
+}
+
 pre[data-line-numbers] .line,
 code[data-line-numbers] .line,
 [data-line-numbers] pre.shiki .line,
@@ -74,7 +81,8 @@ code[data-line-numbers] .line::before,
   color: #525252;
   user-select: none;
   -webkit-user-select: none;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
   line-height: inherit;
 }
 

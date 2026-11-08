@@ -135,19 +135,11 @@ export function CodeBlock({
                   <span
                     key={lineIdx}
                     className={cn(
-                      "code-block-line relative block min-h-[1.25rem] py-0.5",
-                      isLineNumbersEnabled ? "pl-14 pr-2" : "px-2",
+                      "code-block-line relative block min-h-[1.25rem]",
+                      !isLineNumbersEnabled && "px-2",
                       isHighlighted && "highlighted",
                     )}
                   >
-                    {isLineNumbersEnabled && (
-                      <span
-                        className="absolute left-2 top-0.5 w-8 text-right text-[#525252] select-none text-[11px] font-mono"
-                        aria-hidden="true"
-                      >
-                        {lineNum}
-                      </span>
-                    )}
                     <span
                       className={cn(
                         "block",
