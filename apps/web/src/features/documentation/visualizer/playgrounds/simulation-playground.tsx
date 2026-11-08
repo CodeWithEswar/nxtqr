@@ -48,15 +48,15 @@ export function SimulationPlayground() {
       {/* Telemetry Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-3 rounded-md border border-border bg-elevated-surface space-y-1">
-          <div className="text-[10px] font-mono text-muted-foreground uppercase">Simulation State</div>
+          <div className="text-[10px] font-mono text-muted-foreground uppercase whitespace-nowrap">State</div>
           <div className="text-sm font-mono font-bold text-accent uppercase">{simulationStatus}</div>
         </div>
         <div className="p-3 rounded-md border border-border bg-elevated-surface space-y-1">
-          <div className="text-[10px] font-mono text-muted-foreground uppercase">Total Executed Steps</div>
+          <div className="text-[10px] font-mono text-muted-foreground uppercase whitespace-nowrap">Executed Steps</div>
           <div className="text-sm font-mono font-bold text-foreground tabular-nums">{currentStep}</div>
         </div>
         <div className="p-3 rounded-md border border-border bg-elevated-surface space-y-1">
-          <div className="text-[10px] font-mono text-muted-foreground uppercase">Emitted Trace Events</div>
+          <div className="text-[10px] font-mono text-muted-foreground uppercase whitespace-nowrap">Trace Events</div>
           <div className="text-sm font-mono font-bold text-foreground tabular-nums">{traceEvents.length}</div>
         </div>
       </div>

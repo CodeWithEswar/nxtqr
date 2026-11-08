@@ -22,10 +22,10 @@ export function ScrollbarPlayground() {
   };
 
   const variants: { id: "default" | "compact" | "canvas" | "dense"; label: string; px: number; use: string }[] = [
-    { id: "default", label: "Default (10px)", px: 10, use: "Main page documents, primary code views" },
-    { id: "compact", label: "Compact (7px)", px: 7, use: "Sidebars, popovers, dropdowns" },
-    { id: "canvas", label: "Canvas (7px)", px: 7, use: "Node editor viewport, infinite canvas" },
-    { id: "dense", label: "Dense (6px)", px: 6, use: "Telemetry logs, tight data tables" },
+    { id: "default", label: "Default", px: 10, use: "Main page & documents" },
+    { id: "compact", label: "Compact", px: 7, use: "Sidebars & popovers" },
+    { id: "canvas", label: "Canvas", px: 7, use: "Node editor viewport" },
+    { id: "dense", label: "Dense", px: 6, use: "Telemetry logs & tables" },
   ];
 
   return (
@@ -71,8 +71,8 @@ export function ScrollbarPlayground() {
             )}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-semibold text-foreground">{v.label}</span>
-              <span className="text-[10px] font-mono text-accent">{v.px}px</span>
+              <span className="text-xs font-semibold text-foreground whitespace-nowrap">{v.label}</span>
+              <span className="text-[10px] font-mono text-accent whitespace-nowrap">{v.px}px</span>
             </div>
             <div className="text-[10px] font-mono text-muted-foreground truncate">{v.use}</div>
           </button>

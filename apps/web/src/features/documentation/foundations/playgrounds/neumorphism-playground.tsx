@@ -47,10 +47,10 @@ export function NeumorphismPlayground() {
       {/* Mode Navigation */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
-          { id: "raised" as const, label: "Raised Extrusion", sub: "Resting level-1 elevation" },
-          { id: "inset" as const, label: "Engraved Well", sub: "Recessed wells & inputs" },
-          { id: "accent-edge" as const, label: "Accent Edge", sub: "Active circuit highlight" },
-          { id: "hardware-switch" as const, label: "Tactile Controls", sub: "Interactive hardware toggles" },
+          { id: "raised" as const, label: "Raised", sub: "Level 1 Surface" },
+          { id: "inset" as const, label: "Engraved", sub: "Level 3 Inset" },
+          { id: "accent-edge" as const, label: "Accent Edge", sub: "Circuit Edge" },
+          { id: "hardware-switch" as const, label: "Switches", sub: "Hardware Toggles" },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -62,8 +62,8 @@ export function NeumorphismPlayground() {
                 : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
             )}
           >
-            <div className="text-xs font-semibold text-foreground">{tab.label}</div>
-            <div className="text-[10px] font-mono text-muted-foreground mt-0.5">{tab.sub}</div>
+            <div className="text-xs font-semibold text-foreground whitespace-nowrap truncate">{tab.label}</div>
+            <div className="text-[10px] font-mono text-muted-foreground mt-0.5 whitespace-nowrap truncate">{tab.sub}</div>
           </button>
         ))}
       </div>

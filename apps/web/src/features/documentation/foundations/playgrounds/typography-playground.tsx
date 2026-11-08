@@ -71,25 +71,27 @@ export function TypographyPlayground() {
               type="button"
               onClick={() => setFontFamily("sans")}
               className={cn(
-                "py-1.5 px-2 rounded-md border text-center transition-colors",
+                "py-1.5 px-2 rounded-md border text-center transition-colors whitespace-nowrap",
                 fontFamily === "sans"
                   ? "border-accent bg-secondary-surface text-foreground font-semibold"
                   : "border-subtle-border bg-surface text-muted-foreground hover:text-foreground",
               )}
             >
-              Geist Sans
+              <span className="hidden sm:inline">Geist Sans</span>
+              <span className="sm:hidden">Sans</span>
             </button>
             <button
               type="button"
               onClick={() => setFontFamily("mono")}
               className={cn(
-                "py-1.5 px-2 rounded-md border text-center transition-colors",
+                "py-1.5 px-2 rounded-md border text-center transition-colors whitespace-nowrap",
                 fontFamily === "mono"
                   ? "border-accent bg-secondary-surface text-foreground font-semibold"
                   : "border-subtle-border bg-surface text-muted-foreground hover:text-foreground",
               )}
             >
-              Geist Mono
+              <span className="hidden sm:inline">Geist Mono</span>
+              <span className="sm:hidden">Mono</span>
             </button>
           </div>
         </div>

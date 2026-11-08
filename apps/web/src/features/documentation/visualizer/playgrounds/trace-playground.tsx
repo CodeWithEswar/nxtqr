@@ -44,20 +44,20 @@ export function TracePlayground() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={handleInjectSampleTraces}
-            className="h-7 text-xs font-mono"
+            className="h-7 text-xs font-mono whitespace-nowrap"
           >
-            Load Sample Stream
+            Load Samples
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={clearTraceEvents}
-            className="h-7 text-xs font-mono"
+            className="h-7 text-xs font-mono whitespace-nowrap"
           >
             Clear
           </Button>

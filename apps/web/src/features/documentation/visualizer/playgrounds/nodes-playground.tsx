@@ -43,7 +43,7 @@ export function NodesPlayground() {
         <button
           onClick={() => setIsSelected(!isSelected)}
           className={cn(
-            "px-2.5 py-1 text-xs font-mono rounded border transition-colors self-start sm:self-auto",
+            "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors self-start sm:self-auto",
             isSelected ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
           )}
         >

@@ -75,13 +75,14 @@ export function CanvasPlayground() {
         <button
           onClick={() => setSnapToGrid(!snapToGrid)}
           className={cn(
-            "px-2.5 py-1 text-xs font-mono rounded border transition-colors",
+            "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
             snapToGrid
               ? "border-accent bg-accent/10 text-accent font-semibold"
               : "border-border text-muted-foreground hover:text-foreground"
           )}
         >
-          Snap to 20px Grid: {snapToGrid ? "ON" : "OFF"}
+          <span className="hidden sm:inline">Snap to 20px Grid</span>
+          <span className="sm:hidden">Snap 20px</span>: {snapToGrid ? "ON" : "OFF"}
         </button>
 
         {/* Telemetry badge */}

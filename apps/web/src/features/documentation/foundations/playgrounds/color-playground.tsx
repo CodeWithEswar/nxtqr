@@ -98,8 +98,8 @@ export function ColorPlayground() {
                 >
                   {isSelected && <CheckIcon className="h-2 w-2" style={{ color: fg }} />}
                 </span>
-                <span className="font-mono text-[10px] text-foreground truncate">
-                  {preset.label}
+                <span className="font-mono text-[10px] text-foreground truncate whitespace-nowrap">
+                  {preset.label.replace(/^Pure\s+/, "").replace("Monochrome", "Mono")}
                 </span>
               </button>
             );

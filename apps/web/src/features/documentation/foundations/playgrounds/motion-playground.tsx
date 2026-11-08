@@ -128,22 +128,27 @@ export function MotionPlayground() {
       {/* Simulation Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-secondary-surface border border-border rounded-md">
         {/* Transition Component Selector */}
-        <div className="flex items-center gap-1">
-          {(["dialog", "sheet", "dropdown", "node-select"] as TransitionType[]).map((t) => (
+        <div className="flex flex-wrap items-center gap-1">
+          {[
+            { id: "dialog" as const, label: "Dialog" },
+            { id: "sheet" as const, label: "Sheet" },
+            { id: "dropdown" as const, label: "Menu" },
+            { id: "node-select" as const, label: "Node" },
+          ].map((t) => (
             <button
-              key={t}
+              key={t.id}
               onClick={() => {
-                setActiveTransition(t);
+                setActiveTransition(t.id);
                 replay();
               }}
               className={cn(
-                "px-2.5 py-1 text-xs font-mono rounded transition-colors uppercase",
-                activeTransition === t
-                  ? "bg-surface text-foreground font-semibold border border-subtle-border"
+                "px-2.5 py-1 text-xs font-mono rounded whitespace-nowrap transition-colors uppercase",
+                activeTransition === t.id
+                  ? "bg-surface text-foreground font-semibold border border-subtle-border shadow-level-1"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              {t}
+              {t.label}
             </button>
           ))}
         </div>

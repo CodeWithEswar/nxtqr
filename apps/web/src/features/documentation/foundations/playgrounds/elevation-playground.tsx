@@ -23,7 +23,7 @@ const ELEVATION_LEVELS: LevelDetail[] = [
   {
     id: "level0",
     levelNum: 0,
-    name: "Base / Ground",
+    name: "Base",
     role: "Full page & infinite canvas backdrop",
     surface: "#000000",
     shadow: "none",
@@ -34,7 +34,7 @@ const ELEVATION_LEVELS: LevelDetail[] = [
   {
     id: "level1",
     levelNum: 1,
-    name: "Level 1 — Raised",
+    name: "Raised",
     role: "Buttons, toolbars, compact panels",
     surface: "#0A0A0A",
     shadow: "0 1px 2px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.03)",
@@ -45,7 +45,7 @@ const ELEVATION_LEVELS: LevelDetail[] = [
   {
     id: "level2",
     levelNum: 2,
-    name: "Level 2 — Elevated",
+    name: "Elevated",
     role: "Popovers, dialogs, floating inspectors",
     surface: "#141414",
     shadow: "0 4px 12px 0 rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)",
@@ -56,7 +56,7 @@ const ELEVATION_LEVELS: LevelDetail[] = [
   {
     id: "level3",
     levelNum: 3,
-    name: "Level 3 — Pressed / Inset",
+    name: "Pressed",
     role: "Active buttons, toggle states, pressed inputs",
     surface: "#1A1A1A",
     shadow: "inset 0 1px 3px 0 rgba(0, 0, 0, 0.6), inset 0 0 1px 0 rgba(0, 0, 0, 0.4)",
@@ -97,18 +97,18 @@ export function ElevationPlayground() {
             variant={viewMode === "interactive" ? "default" : "outline"}
             size="sm"
             onClick={() => setViewMode("interactive")}
-            className="h-7 text-xs font-mono"
+            className="h-7 text-xs font-mono whitespace-nowrap"
           >
-            Tactile Inspector
+            Inspector
           </Button>
           <Button
             variant={viewMode === "isometric" ? "default" : "outline"}
             size="sm"
             onClick={() => setViewMode("isometric")}
-            className="h-7 text-xs font-mono gap-1"
+            className="h-7 text-xs font-mono gap-1 whitespace-nowrap"
           >
             <LayersIcon className="h-3 w-3" />
-            Layer Stack
+            Layers
           </Button>
         </div>
       </div>

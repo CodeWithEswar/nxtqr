@@ -16,11 +16,11 @@ interface RadiusPreset {
 }
 
 const RADIUS_PRESETS: RadiusPreset[] = [
-  { id: "square", name: "Sharp / Square", value: "0px", px: 0, tailwind: "rounded-none" },
-  { id: "subtle", name: "Subtle (2px)", value: "2px", px: 2, tailwind: "rounded-xs" },
-  { id: "standard", name: "Standard (6px)", value: "6px", px: 6, tailwind: "rounded-md", isStandard: true },
-  { id: "oversized", name: "Oversized (12px)", value: "12px", px: 12, tailwind: "rounded-lg" },
-  { id: "full", name: "Circular / Pill", value: "9999px", px: 9999, tailwind: "rounded-full" },
+  { id: "square", name: "Square", value: "0px", px: 0, tailwind: "rounded-none" },
+  { id: "subtle", name: "Subtle", value: "2px", px: 2, tailwind: "rounded-xs" },
+  { id: "standard", name: "Standard", value: "6px", px: 6, tailwind: "rounded-md", isStandard: true },
+  { id: "oversized", name: "Oversized", value: "12px", px: 12, tailwind: "rounded-lg" },
+  { id: "full", name: "Pill", value: "9999px", px: 9999, tailwind: "rounded-full" },
 ];
 
 export function RadiusPlayground() {
@@ -85,8 +85,8 @@ export function RadiusPlayground() {
                   className="w-10 h-10 border-2 border-foreground/70 bg-secondary-surface mb-2"
                   style={{ borderRadius: preset.value }}
                 />
-                <span className="text-xs font-semibold">{preset.name}</span>
-                <span className="text-[10px] font-mono text-muted-foreground">{preset.tailwind}</span>
+                <span className="text-xs font-semibold whitespace-nowrap">{preset.name}</span>
+                <span className="text-[10px] font-mono text-muted-foreground whitespace-nowrap">{preset.value}</span>
                 {preset.isStandard && (
                   <span className="mt-1 text-[9px] font-mono text-accent font-semibold">
                     STRICT STANDARD

@@ -41,7 +41,7 @@ export function InspectorPlayground() {
       {/* Node selector buttons */}
       <div className="space-y-1.5">
         <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider block">
-          Select Graph Node to Inspect
+          Select Node
         </label>
         <div className="flex flex-wrap gap-2">
           {nodes.map((n) => (
@@ -49,7 +49,7 @@ export function InspectorPlayground() {
               key={n.id}
               onClick={() => selectNode(n.id)}
               className={cn(
-                "px-3 py-1.5 rounded-md border text-xs font-mono transition-all",
+                "px-3 py-1.5 rounded-md border text-xs font-mono whitespace-nowrap transition-all",
                 selectedNodeId === n.id
                   ? "border-accent bg-accent/10 ring-1 ring-accent text-foreground font-semibold"
                   : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
@@ -60,9 +60,9 @@ export function InspectorPlayground() {
           ))}
           <button
             onClick={() => selectNode(null)}
-            className="px-2.5 py-1.5 rounded-md border border-dashed border-border text-xs font-mono text-muted-foreground hover:text-foreground"
+            className="px-2.5 py-1.5 rounded-md border border-dashed border-border text-xs font-mono whitespace-nowrap text-muted-foreground hover:text-foreground"
           >
-            Clear Selection
+            Clear
           </button>
         </div>
       </div>

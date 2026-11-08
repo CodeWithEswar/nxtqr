@@ -54,7 +54,7 @@ export function SpacingPlayground() {
 
       {/* Density Mode Switcher */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
             1. Standard Density Tiers
           </span>
@@ -66,9 +66,10 @@ export function SpacingPlayground() {
             />
             <label
               htmlFor="show-spatial-guides"
-              className="text-xs font-mono text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors"
+              className="text-xs font-mono text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors whitespace-nowrap"
             >
-              Show Spatial Overlay Guides
+              <span className="hidden sm:inline">Show Spatial Overlay Guides</span>
+              <span className="sm:hidden">Spatial Guides</span>
             </label>
           </div>
         </div>

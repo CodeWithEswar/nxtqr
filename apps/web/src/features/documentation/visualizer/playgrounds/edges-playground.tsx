@@ -50,20 +50,20 @@ export function EdgesPlayground() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setIsActive(!isActive)}
             className={cn(
-              "px-2.5 py-1 text-xs font-mono rounded border transition-colors",
+              "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
               isActive ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
             )}
           >
-            Execution Pulse: {isActive ? "ACTIVE" : "IDLE"}
+            Pulse: {isActive ? "ON" : "OFF"}
           </button>
           <button
             onClick={() => setIsSelected(!isSelected)}
             className={cn(
-              "px-2.5 py-1 text-xs font-mono rounded border transition-colors",
+              "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
               isSelected ? "border-accent bg-accent text-accent-foreground font-semibold" : "border-border text-muted-foreground"
             )}
           >

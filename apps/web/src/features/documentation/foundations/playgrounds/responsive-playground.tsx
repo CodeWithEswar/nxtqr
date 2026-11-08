@@ -60,19 +60,20 @@ export function ResponsivePlayground() {
       {/* Preset Buttons & Width Slider */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             {PRESETS.map((preset) => (
               <button
                 key={preset.name}
                 onClick={() => setFrameWidth(preset.width)}
                 className={cn(
-                  "px-3 py-1 text-xs font-mono rounded-md border transition-all",
+                  "px-3 py-1 text-xs font-mono rounded-md border whitespace-nowrap transition-all",
                   frameWidth === preset.width
                     ? "border-accent bg-accent/10 text-foreground font-semibold"
                     : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
                 )}
               >
-                {preset.name} ({preset.width}px)
+                <span className="hidden sm:inline">{preset.name} ({preset.width}px)</span>
+                <span className="sm:hidden">{preset.name}</span>
               </button>
             ))}
           </div>

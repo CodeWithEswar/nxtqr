@@ -158,7 +158,7 @@ export function IconExplorer() {
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={cn(
-                  "px-2.5 py-1 text-xs font-mono rounded-md border transition-all",
+                  "px-2.5 py-1 text-xs font-mono rounded-md border whitespace-nowrap transition-all",
                   selectedCategory === cat
                     ? "border-accent bg-accent/10 text-foreground"
                     : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"

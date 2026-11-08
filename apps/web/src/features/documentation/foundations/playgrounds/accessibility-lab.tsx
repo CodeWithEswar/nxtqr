@@ -13,7 +13,7 @@ export function AccessibilityLab() {
   const [showTouchTargets, setShowTouchTargets] = React.useState<boolean>(true);
   const [rovingIndex, setRovingIndex] = React.useState<number>(0);
 
-  const toolbarButtons = ["Select Tool", "Pan Tool", "Connect Edge", "Cut Node", "Properties"];
+  const toolbarButtons = ["Select", "Pan", "Connect", "Cut", "Props"];
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") {
@@ -38,20 +38,20 @@ export function AccessibilityLab() {
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 p-1 bg-secondary-surface border border-border rounded-md self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-secondary-surface border border-border rounded-md self-start sm:self-auto">
           {[
-            { id: "focus" as const, label: "Focus Rings" },
-            { id: "touch" as const, label: "Touch Targets" },
-            { id: "keyboard" as const, label: "Keyboard Matrix" },
-            { id: "contrast" as const, label: "Contrast Inspector" },
+            { id: "focus" as const, label: "Focus" },
+            { id: "touch" as const, label: "Touch" },
+            { id: "keyboard" as const, label: "Keyboard" },
+            { id: "contrast" as const, label: "Contrast" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "px-2.5 py-1 text-xs font-mono rounded transition-colors",
+                "px-2.5 py-1 text-xs font-mono rounded whitespace-nowrap transition-colors",
                 activeTab === tab.id
-                  ? "bg-surface text-foreground font-semibold border border-subtle-border"
+                  ? "bg-surface text-foreground font-semibold border border-subtle-border shadow-level-1"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -215,7 +215,7 @@ export function AccessibilityLab() {
             <div
               role="toolbar"
               aria-label="Engineering canvas tools"
-              className="inline-flex p-1.5 rounded-md border border-border bg-elevated-surface gap-1"
+              className="flex flex-wrap items-center p-1.5 rounded-md border border-border bg-elevated-surface gap-1.5"
             >
               {toolbarButtons.map((btn, idx) => {
                 const isSelected = rovingIndex === idx;
@@ -227,7 +227,7 @@ export function AccessibilityLab() {
                     onClick={() => setRovingIndex(idx)}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      "px-3 py-1.5 text-xs font-mono rounded-md transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
+                      "px-3 py-1.5 text-xs font-mono rounded-md whitespace-nowrap transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
                       isSelected
                         ? "bg-accent text-accent-foreground font-semibold shadow-sm"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary-surface"
