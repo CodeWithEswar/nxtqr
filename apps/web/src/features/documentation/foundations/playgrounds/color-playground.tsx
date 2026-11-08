@@ -5,7 +5,7 @@ import {
   ACCENT_PRESET_LIST,
   getAccessibleForeground,
 } from "@nxtqr/design-system";
-import { Button, Input, Badge, Switch } from "@nxtqr/ui";
+import { Button, Input, Switch } from "@nxtqr/ui";
 import { CheckIcon, RefreshIcon } from "@nxtqr/icons";
 import { ContrastMeter } from "../components/contrast-meter";
 import { DeveloperColorPicker } from "../components/developer-color-picker";
@@ -149,13 +149,13 @@ export function ColorPlayground() {
             Outline
           </Button>
 
-          {/* Badge */}
-          <Badge
+          {/* Status Indicator Pill */}
+          <span
             style={{ backgroundColor: selectedHex, color: resolvedForeground }}
-            className="font-mono"
+            className="font-mono text-xs font-semibold px-2.5 py-1 rounded-md inline-flex items-center"
           >
             ACTIVE
-          </Badge>
+          </span>
 
           {/* Switch */}
           <div className="flex items-center gap-2 font-mono text-xs text-foreground">

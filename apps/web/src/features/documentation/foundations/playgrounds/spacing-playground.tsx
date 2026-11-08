@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { spacingTokens, type DensityMode } from "@nxtqr/design-system";
-import { Slider, Button, Badge, Checkbox } from "@nxtqr/ui";
+import { Slider, Button, Checkbox } from "@nxtqr/ui";
 import { RefreshIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -107,9 +107,9 @@ export function SpacingPlayground() {
               >
                 <div className="flex items-center justify-between font-mono text-xs">
                   <span className="font-semibold text-foreground">{item.label}</span>
-                  <Badge variant="outline" className="text-[10px] font-mono">
+                  <span className="text-[10px] font-mono text-muted-foreground border border-subtle-border px-1.5 py-0.5 rounded">
                     {item.cellHeight}
-                  </Badge>
+                  </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-1 leading-snug">
                   {item.description}
@@ -188,9 +188,9 @@ export function SpacingPlayground() {
                   <span className="text-muted-foreground text-[10px] font-mono">({item.id})</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Badge variant="outline" className="text-[10px] font-mono">
+                  <span className="text-[10px] font-mono text-muted-foreground border border-subtle-border px-1.5 py-0.5 rounded">
                     {item.status}
-                  </Badge>
+                  </span>
                   <span className="text-muted-foreground font-mono">{item.latency}</span>
                 </div>
 

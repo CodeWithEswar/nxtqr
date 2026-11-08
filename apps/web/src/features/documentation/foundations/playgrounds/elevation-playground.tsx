@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { type ElevationLevel } from "@nxtqr/design-system";
-import { Button, Badge } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { LayersIcon, CheckIcon, CopyIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -168,9 +168,9 @@ export function ElevationPlayground() {
                   {current.name}
                 </span>
               </div>
-              <Badge variant="outline" className="text-[10px] font-mono">
+              <span className="text-[10px] font-mono text-muted-foreground border border-subtle-border px-1.5 py-0.5 rounded">
                 {current.zIndex}
-              </Badge>
+              </span>
             </div>
 
             <p className="text-xs text-muted-foreground mb-4 font-sans leading-relaxed">

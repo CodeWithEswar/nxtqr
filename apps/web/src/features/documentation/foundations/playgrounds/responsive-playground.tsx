@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Badge } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { MenuIcon, RefreshIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -44,15 +44,22 @@ export function ResponsivePlayground() {
             <span className="sm:hidden">Viewport Simulator</span>
           </h3>
 
-          <div className="flex items-center gap-1.5 shrink-0">
-            <Badge variant="outline" className="font-mono text-xs whitespace-nowrap">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-xs font-mono text-muted-foreground whitespace-nowrap">
               <span className="hidden sm:inline">Width: </span>
               <span className="text-accent font-bold">{frameWidth}px</span>
-            </Badge>
-            <Badge variant="outline" className="font-mono text-xs text-foreground whitespace-nowrap">
-              <span className="hidden sm:inline">BP: </span>
-              <span className="text-accent">{bp.name}</span>
-            </Badge>
+              <span className="mx-1 text-subtle-border">·</span>
+              <span className="text-foreground">{bp.name}</span>
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setFrameWidth(768)}
+              className="h-7 text-xs font-mono gap-1 whitespace-nowrap px-2 sm:px-3"
+            >
+              <RefreshIcon className="h-3 w-3" />
+              <span className="hidden sm:inline">Reset</span>
+            </Button>
           </div>
         </div>
         <p className="text-xs text-muted-foreground">

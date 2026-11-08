@@ -3,7 +3,6 @@
 import * as React from "react";
 import { focusRingClasses } from "@nxtqr/design-system";
 import {
-  Badge,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -139,20 +138,30 @@ export function AccessibilityLab() {
       {/* Stage */}
       {activeTab === "focus" && (
         <div className="space-y-4">
-          <div className="p-6 bg-black border border-subtle-border rounded-md space-y-6">
-            <div className="text-xs font-mono text-muted-foreground">
-              TRY PRESSING <kbd className="px-1.5 py-0.5 bg-secondary-surface border border-border rounded text-foreground">TAB</kbd> TO TEST ACCESSIBLE FOCUS RINGS
+          <div className="p-3 sm:p-6 bg-black border border-subtle-border rounded-md space-y-4 sm:space-y-6">
+            <div className="text-xs font-mono text-muted-foreground flex flex-wrap items-center gap-1.5">
+              <span>
+                <span className="hidden sm:inline">TRY PRESSING </span>
+                <span className="sm:hidden">PRESS </span>
+                <kbd className="px-1.5 py-0.5 bg-secondary-surface border border-border rounded text-foreground font-semibold">TAB</kbd>
+                <span className="hidden sm:inline"> TO TEST ACCESSIBLE FOCUS RINGS</span>
+                <span className="sm:hidden"> FOR FOCUS RINGS</span>
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {/* Compliant NXTQR Focus Ring */}
-              <div className="p-4 rounded-md border border-border bg-elevated-surface space-y-3">
-                <div className="flex items-center justify-between">
+              <div className="p-3.5 sm:p-4 rounded-md border border-border bg-elevated-surface space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
                   <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <CheckIcon className="h-3.5 w-3.5 text-accent" />
-                    Standard Focus Ring (Compliant)
+                    <CheckIcon className="h-3.5 w-3.5 text-accent shrink-0" />
+                    <span className="hidden sm:inline">Standard Focus Ring (Compliant)</span>
+                    <span className="sm:hidden">Focus Ring (Compliant)</span>
                   </span>
-                  <Badge variant="outline" className="text-[10px] font-mono text-accent">1px Ring + Offset</Badge>
+                  <span className="text-[10px] font-mono text-accent shrink-0 border border-accent/30 px-1.5 py-0.5 rounded">
+                    <span className="hidden sm:inline">1px Ring + Offset</span>
+                    <span className="sm:hidden">1px Ring</span>
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Visible across pure black and elevated surfaces with a dedicated 1px offset.
@@ -165,13 +174,14 @@ export function AccessibilityLab() {
                       focusRingClasses
                     )}
                   >
-                    Interactive Button (Tab to focus me)
+                    <span className="hidden sm:inline">Interactive Button (Tab to focus me)</span>
+                    <span className="sm:hidden">Interactive Button (Tab to focus)</span>
                   </button>
                   <input
                     type="text"
-                    placeholder="Input field with focus ring..."
+                    placeholder="Focusable input field..."
                     className={cn(
-                      "px-3 py-2 text-xs font-mono rounded-md border border-border bg-black text-foreground",
+                      "w-full px-3 py-2 text-xs font-mono rounded-md border border-border bg-black text-foreground placeholder:text-muted-foreground",
                       focusRingClasses
                     )}
                   />
@@ -179,13 +189,17 @@ export function AccessibilityLab() {
               </div>
 
               {/* Prohibited Inaccessible Outlines */}
-              <div className="p-4 rounded-md border border-border bg-elevated-surface space-y-3 opacity-80">
-                <div className="flex items-center justify-between">
+              <div className="p-3.5 sm:p-4 rounded-md border border-border bg-elevated-surface space-y-3 opacity-80">
+                <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
                   <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <CloseIcon className="h-3.5 w-3.5 text-red-500" />
-                    Removed Outline (Prohibited)
+                    <CloseIcon className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                    <span className="hidden sm:inline">Removed Outline (Prohibited)</span>
+                    <span className="sm:hidden">No Outline (Prohibited)</span>
                   </span>
-                  <Badge variant="outline" className="text-[10px] font-mono text-red-500">Fails WCAG 2.4.7</Badge>
+                  <span className="text-[10px] font-mono text-red-500 shrink-0 border border-red-500/30 px-1.5 py-0.5 rounded">
+                    <span className="hidden sm:inline">Fails WCAG 2.4.7</span>
+                    <span className="sm:hidden">Fails WCAG</span>
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Using <code className="text-foreground">outline-none</code> without a custom ring leaves keyboard users stranded.
@@ -195,19 +209,20 @@ export function AccessibilityLab() {
                   <button
                     className="px-3 py-2 text-xs font-sans rounded-md border border-border bg-surface text-foreground text-left outline-none"
                   >
-                    No focus ring (Inaccessible)
+                    <span className="hidden sm:inline">No focus ring (Inaccessible)</span>
+                    <span className="sm:hidden">No focus ring</span>
                   </button>
                   <input
                     type="text"
-                    placeholder="Input without focus ring..."
-                    className="px-3 py-2 text-xs font-mono rounded-md border border-border bg-black text-foreground outline-none"
+                    placeholder="Inaccessible input..."
+                    className="w-full px-3 py-2 text-xs font-mono rounded-md border border-border bg-black text-foreground placeholder:text-muted-foreground outline-none"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="p-3 bg-secondary-surface border border-border rounded-md font-mono text-xs text-foreground">
+          <div className="p-3 bg-secondary-surface border border-border rounded-md font-mono text-xs text-foreground overflow-x-auto">
             <span className="text-muted-foreground">Standard Utility: </span>
             <code className="text-accent">{focusRingClasses}</code>
           </div>
@@ -216,19 +231,19 @@ export function AccessibilityLab() {
 
       {activeTab === "touch" && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="text-xs text-muted-foreground">
               WCAG 2.5.5 / 2.5.8 requires a minimum target size of 44×44px (or 24×24px with spacing) for pointer inputs.
             </div>
             <button
               onClick={() => setShowTouchTargets(!showTouchTargets)}
-              className="text-xs font-mono text-accent hover:underline"
+              className="text-xs font-mono text-accent hover:underline shrink-0"
             >
               Toggle 44px Bounds ({showTouchTargets ? "Visible" : "Hidden"})
             </button>
           </div>
 
-          <div className="p-8 bg-black border border-subtle-border rounded-md flex flex-wrap items-center justify-center gap-8">
+          <div className="p-4 sm:p-8 bg-black border border-subtle-border rounded-md flex flex-wrap items-center justify-center gap-6 sm:gap-8">
             {/* 28px Icon Button with 44px Touch Target */}
             <div className="flex flex-col items-center gap-2">
               <div
