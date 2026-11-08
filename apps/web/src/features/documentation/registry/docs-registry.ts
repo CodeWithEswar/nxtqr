@@ -1367,7 +1367,7 @@ export const DOCS_REGISTRY: DocEntry[] = [
   },
 
   // ==========================================
-  // VISUALIZER (PREPARED CATEGORIES / DRAFT)
+  // VISUALIZER (PRODUCTION IMPLEMENTATIONS / READY)
   // ==========================================
   {
     slug: "visualizer/canvas",
@@ -1376,7 +1376,7 @@ export const DOCS_REGISTRY: DocEntry[] = [
       "The high-performance graph canvas powered by @xyflow/react with elkjs automated layout.",
     category: "Visualizer",
     order: 80,
-    status: "draft",
+    status: "ready",
   },
   {
     slug: "visualizer/nodes",
@@ -1385,7 +1385,7 @@ export const DOCS_REGISTRY: DocEntry[] = [
       "Standardized discriminated union node types with handles, custom inspectors, and telemetry badges.",
     category: "Visualizer",
     order: 81,
-    status: "draft",
+    status: "ready",
   },
   {
     slug: "visualizer/edges",
@@ -1394,7 +1394,7 @@ export const DOCS_REGISTRY: DocEntry[] = [
       "Curved and orthogonal directional connectors carrying typed simulation data payloads.",
     category: "Visualizer",
     order: 82,
-    status: "draft",
+    status: "ready",
   },
   {
     slug: "visualizer/inspector",
@@ -1403,7 +1403,7 @@ export const DOCS_REGISTRY: DocEntry[] = [
       "Contextual floating properties inspector with container queries and overscroll containment.",
     category: "Visualizer",
     order: 83,
-    status: "draft",
+    status: "ready",
   },
   {
     slug: "visualizer/simulation-controls",
@@ -1411,7 +1411,7 @@ export const DOCS_REGISTRY: DocEntry[] = [
     description: "Play, pause, step-forward, and scrub controls for deterministic trace execution.",
     category: "Visualizer",
     order: 84,
-    status: "draft",
+    status: "ready",
   },
   {
     slug: "visualizer/trace-viewer",
@@ -1420,7 +1420,16 @@ export const DOCS_REGISTRY: DocEntry[] = [
       "Sub-millisecond chronological event stream with filtering and error highlighting.",
     category: "Visualizer",
     order: 85,
-    status: "draft",
+    status: "ready",
+  },
+  {
+    slug: "visualizer/execution-trace",
+    title: "Execution Trace Viewer",
+    description:
+      "Sub-millisecond chronological event stream with filtering and error highlighting.",
+    category: "Visualizer",
+    order: 86,
+    status: "ready",
   },
 ];
 

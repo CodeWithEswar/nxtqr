@@ -33,3 +33,45 @@ export function canvasToScreen(
 export function snapToGrid(val: number, gridSize = CANVAS_CONSTANTS.GRID_SIZE): number {
   return Math.round(val / gridSize) * gridSize;
 }
+
+export function clampZoom(zoom: number): number {
+  return Math.max(CANVAS_CONSTANTS.MIN_ZOOM, Math.min(CANVAS_CONSTANTS.MAX_ZOOM, zoom));
+}
+
+export interface BoundingBox {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+  width: number;
+  height: number;
+}
+
+export function calculateBoundingBox(
+  nodes: { position: NodePosition; width?: number; height?: number }[]
+): BoundingBox | null {
+  if (nodes.length === 0) return null;
+
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  for (const node of nodes) {
+    const w = node.width ?? 180;
+    const h = node.height ?? 80;
+    minX = Math.min(minX, node.position.x);
+    minY = Math.min(minY, node.position.y);
+    maxX = Math.max(maxX, node.position.x + w);
+    maxY = Math.max(maxY, node.position.y + h);
+  }
+
+  return {
+    minX,
+    minY,
+    maxX,
+    maxY,
+    width: maxX - minX,
+    height: maxY - minY,
+  };
+}

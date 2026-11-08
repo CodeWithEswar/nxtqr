@@ -1,0 +1,69 @@
+---
+title: Graph Edges
+description: Curved and orthogonal directional connectors carrying typed simulation data payloads with execution pulse animations and handle validation.
+category: Visualizer
+order: 82
+---
+
+The `GraphEdges` component provides directional, typed data highways between graph nodes. Supporting Cubic Bezier, Smooth Step, and Straight routing, edges visually communicate active telemetry transfer during simulations through restrained directional pulse dashes while validating handle compatibility.
+
+## Interactive Edges Laboratory
+
+Switch routing curves, toggle active execution pulses, and inspect edge labels:
+
+<EdgesPlayground />
+
+## Edge Capabilities & Features
+
+1. **Routing Geometry**: Seamlessly supports Cubic Bezier, Smooth Step, and Straight connectors with directional arrowheads.
+2. **Simulation Animation**: When an edge is active during simulation traversal, a restrained animated dash pulses forward along the path. Honors `prefers-reduced-motion` settings.
+3. **Connection Validation**: The `validateGraphConnection` utility prevents illegal self-loops, duplicate parallel connections between identical handles, and output-to-output misconfigurations.
+4. **Compact Metadata Labels**: Edge labels render in solid neutral pills with font-mono metrics (e.g. `gRPC [4.2ms]`).
+
+## Connection Validation Rules
+
+```tsx
+import { validateGraphConnection } from "@nxtqr/web/features/visualizers";
+
+const result = validateGraphConnection(
+  { source: "node_1", target: "node_2", sourceHandle: "out", targetHandle: "in" },
+  currentNodes,
+  existingEdges
+);
+
+if (!result.isValid) {
+  console.warn("Connection rejected:", result.reason);
+}
+```
+
+## Public Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `string` | **Required** | Unique edge identifier |
+| `source` | `string` | **Required** | Origin node ID |
+| `target` | `string` | **Required** | Destination node ID |
+| `sourceHandle` | `string` | `undefined` | Specific source output port ID |
+| `targetHandle` | `string` | `undefined` | Specific target input port ID |
+| `type` | `"bezier" \| "smoothstep" \| "straight"` | `"bezier"` | Geometric routing algorithm |
+| `status` | `"idle" \| "active" \| "completed" \| "failed"` | `"idle"` | Runtime simulation state |
+| `label` | `string` | `undefined` | Optional protocol or latency label |
+
+## Implementation Reference
+
+```tsx
+import type { BaseEdge } from "@nxtqr/graph-schema";
+
+export const telemetryEdge: BaseEdge = {
+  id: "edge_ingress_worker",
+  source: "node_ingress",
+  target: "node_worker",
+  sourceHandle: "out",
+  targetHandle: "in",
+  type: "bezier",
+  status: "idle",
+  label: "REST JSON",
+  data: { protocol: "HTTP/2", latencyMs: 1.2 },
+};
+```
+

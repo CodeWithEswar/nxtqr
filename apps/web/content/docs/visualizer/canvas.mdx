@@ -1,0 +1,70 @@
+---
+title: Graph Canvas
+description: High-performance visual engineering canvas powered by @xyflow/react, ELK.js automated layout, and sub-pixel grid rendering.
+category: Visualizer
+order: 80
+---
+
+The `GraphCanvas` component serves as the central visual workspace for all NXTQR engineering visualizers. Built upon `@xyflow/react` and layered with ELK.js automated graph layout, it provides responsive panning, zooming, selection box dragging, snap-to-grid alignment, and undo/redo history management.
+
+## Interactive Canvas Preview
+
+Explore pan, zoom, grid modes, snap-to-grid, and automated hierarchical layout:
+
+<CanvasPlayground />
+
+## Connected Studio Demonstration
+
+Experience how Graph Canvas synchronizes with Node Palette, Inspector, Simulation Controls, and Execution Trace:
+
+<ConnectedWorkspacePlayground />
+
+## Architecture & Principles
+
+1. **Pure Black Canvas**: Baseline canvas is pure black (`#000000`). Grids use restrained neutral dots or lines without noisy glow effects.
+2. **Dynamic User Accent**: Selection rings and marquee borders inherit the user's calibrated accent color (`ring-accent`, `border-accent`).
+3. **Automated Hierarchical Layout**: Integrates ELK.js (`layoutGraphWithElk`) to automatically position nodes along clean left-to-right or top-to-bottom layers without overlapping edges.
+4. **Decoupled State**: Graph document state lives in `@nxtqr/state` via `useGraphEditorStore`, ensuring zero re-render cascades across unselected nodes.
+
+## Installation & Imports
+
+```tsx
+import { GraphCanvas, CanvasToolbar } from "@nxtqr/web/features/visualizers";
+```
+
+## Public Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `className` | `string` | `undefined` | Custom CSS container classes |
+| `showToolbar` | `boolean` | `true` | Display floating viewport navigation and layout toolbar |
+| `showMinimap` | `boolean` | `true` | Display bottom-right spatial minimap |
+| `height` | `string \| number` | `"480px"` | Canvas container viewport height |
+
+## Keyboard Shortcuts
+
+| Shortcut | Action | Scope |
+| :--- | :--- | :--- |
+| **`Delete` / `Backspace`** | Delete selected node or edge | Canvas focused |
+| **`Ctrl+Z` / `Cmd+Z`** | Undo last graph operation | Global canvas |
+| **`Ctrl+Y` / `Cmd+Shift+Z`** | Redo graph operation | Global canvas |
+| **`Escape`** | Deselect active node / edge | Global canvas |
+| **`+` / `-`** | Zoom in / Zoom out | Canvas focused |
+
+## Implementation Reference
+
+```tsx
+import { GraphCanvas } from "@nxtqr/web/features/visualizers";
+
+export function SystemDesignWorkspace() {
+  return (
+    <div className="h-screen w-full bg-background flex flex-col">
+      <GraphCanvas
+        height="100%"
+        showToolbar={true}
+        showMinimap={true}
+      />
+    </div>
+  );
+}
+```

@@ -520,6 +520,13 @@ importers:
         version: 9.1.2(eslint@10.14.0(jiti@1.21.7)(supports-color@10.2.2))
 
   packages/execution-trace:
+    dependencies:
+      '@nxtqr/graph-schema':
+        specifier: workspace:*
+        version: link:../graph-schema
+      '@nxtqr/simulation-core':
+        specifier: workspace:*
+        version: link:../simulation-core
     devDependencies:
       '@nxtqr/typescript-config':
         specifier: workspace:*
@@ -662,9 +669,15 @@ importers:
       '@nxtqr/design-system':
         specifier: workspace:*
         version: link:../design-system
+      '@nxtqr/graph-schema':
+        specifier: workspace:*
+        version: link:../graph-schema
       '@nxtqr/shared-types':
         specifier: workspace:*
         version: link:../shared-types
+      '@nxtqr/simulation-core':
+        specifier: workspace:*
+        version: link:../simulation-core
       zustand:
         specifier: ^5.0.3
         version: 5.1.0(@types/react@19.3.0)(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))

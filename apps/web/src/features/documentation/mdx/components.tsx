@@ -34,6 +34,28 @@ import {
 } from "../foundations/playgrounds";
 import { TokenTable, ContrastMeter } from "../foundations/components";
 
+// Visualizer Components & Interactive Playgrounds
+import {
+  CanvasPlayground,
+  NodesPlayground,
+  EdgesPlayground,
+  InspectorPlayground,
+  SimulationPlayground,
+  TracePlayground,
+  ConnectedWorkspacePlayground,
+} from "../visualizer/playgrounds";
+import {
+  GraphCanvas,
+  CanvasToolbar,
+  EngineeringNode,
+  NodePalette,
+  EngineeringEdge,
+  NodeInspector,
+  SimulationControls,
+  ExecutionTraceViewer,
+  ConnectedGraphWorkspace,
+} from "../../visualizers/shared";
+
 // Re-export shared UI components for direct MDX embedded usage
 import {
   Button,
@@ -426,6 +448,24 @@ export const mdxComponents = {
   ScrollbarPlayground,
   TokenTable,
   ContrastMeter,
+
+  // Visualizer Components & Interactive Playgrounds
+  CanvasPlayground,
+  NodesPlayground,
+  EdgesPlayground,
+  InspectorPlayground,
+  SimulationPlayground,
+  TracePlayground,
+  ConnectedWorkspacePlayground,
+  GraphCanvas,
+  CanvasToolbar,
+  EngineeringNode,
+  NodePalette,
+  EngineeringEdge,
+  NodeInspector,
+  SimulationControls,
+  ExecutionTraceViewer,
+  ConnectedGraphWorkspace,
 
   // UI Primitives
   Button,

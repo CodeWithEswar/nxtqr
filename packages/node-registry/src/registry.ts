@@ -1,5 +1,6 @@
 import type { VisualizerType } from "@nxtqr/shared-types";
 import type { PortDefinition } from "@nxtqr/graph-schema";
+import { standardNodeDefinitions } from "./definitions";
 
 export interface NodeDefinition {
   type: string;
@@ -13,6 +14,16 @@ export interface NodeDefinition {
 
 class NodeRegistryClass {
   private registry = new Map<string, NodeDefinition>();
+
+  constructor() {
+    this.registerDefaults();
+  }
+
+  private registerDefaults(): void {
+    for (const def of standardNodeDefinitions) {
+      this.registry.set(`${def.visualizerType}:${def.type}`, def);
+    }
+  }
 
   public register(def: NodeDefinition): void {
     const key = `${def.visualizerType}:${def.type}`;
@@ -34,6 +45,11 @@ class NodeRegistryClass {
 
   public clear(): void {
     this.registry.clear();
+  }
+
+  public resetToDefaults(): void {
+    this.clear();
+    this.registerDefaults();
   }
 }
 

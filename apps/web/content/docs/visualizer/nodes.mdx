@@ -1,0 +1,67 @@
+---
+title: Graph Nodes
+description: Standardized discriminated union node types with typed input/output ports, physical micro-bevel elevation, and live execution status states.
+category: Visualizer
+order: 81
+---
+
+The `GraphNodes` architecture provides standardized, typed node primitives across all NXTQR visualizer domains. Rather than creating disparate visual representations, each node adheres to a uniform visual grammar: solid elevated surface (`#141414`), directional inset rim lighting, standard `rounded-md` geometry, and typed input/output connection handles.
+
+## Interactive Nodes Laboratory
+
+Test different node architectures, execution states (`idle`, `executing`, `completed`, `failed`), and selection outlines:
+
+<NodesPlayground />
+
+## Standard Node Registry
+
+NXTQR provides seven reference node archetypes in `@nxtqr/node-registry`:
+
+| Node Type | Category | In Ports | Out Ports | Typical Application |
+| :--- | :--- | :--- | :--- | :--- |
+| **`input`** | Entrypoint | 0 | 1 (`out`) | Ingress Gateway, Webhook, Client Trigger |
+| **`process`** | Processing | 1 (`in`) | 1 (`out`) | Compute Lambda, Worker, Transformation |
+| **`decision`** | Logic | 1 (`in`) | 2 (`true`, `false`) | Conditional Branch, Filter, Router |
+| **`service`** | Services | 1 (`req`) | 1 (`res`) | External Microservice, HTTP API client |
+| **`database`** | Persistence | 1 (`query`) | 1 (`data`) | PostgreSQL Primary, Redis Cache, Storage |
+| **`queue`** | Streaming | 1 (`enqueue`) | 1 (`dequeue`) | Kafka Topic, SQS Queue, Message Buffer |
+| **`output`** | Exit | 1 (`in`) | 0 | Client Response, Telemetry Sink, Alert |
+
+## Node Anatomy
+
+1. **Target Handles (Left)**: Input ports that accept incoming connections.
+2. **Category Icon**: 1.5px stroke Hugeicons identifying the node's functional role.
+3. **Title & Subtitle**: Geist Sans heading with compact technical description.
+4. **Execution Status Badge**: Live status indicator (`RUN`, `DONE`, `FAIL`).
+5. **Source Handles (Right)**: Output ports that emit outbound data payloads.
+6. **Selection Border**: User-selected pure accent ring with 1px offset.
+
+## Installation & Imports
+
+```tsx
+import { EngineeringNode, NodePalette } from "@nxtqr/web/features/visualizers";
+import { nodeRegistry, standardNodeDefinitions } from "@nxtqr/node-registry";
+```
+
+## Schema & Node Definition
+
+```tsx
+import type { BaseNode } from "@nxtqr/graph-schema";
+
+export const ingressNode: BaseNode = {
+  id: "node_ingress",
+  type: "input",
+  position: { x: 100, y: 150 },
+  status: "idle",
+  label: "Cloudflare Gateway",
+  description: "HTTPS Edge Ingress",
+  data: {
+    protocol: "HTTPS",
+    rateLimitRps: 2000,
+    authRequired: true,
+  },
+  ports: [
+    { id: "out", name: "Out", type: "output", dataType: "RequestPayload" },
+  ],
+};
+```

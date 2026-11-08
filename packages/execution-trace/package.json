@@ -11,6 +11,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts"
   },
+  "dependencies": {
+    "@nxtqr/graph-schema": "workspace:*",
+    "@nxtqr/simulation-core": "workspace:*"
+  },
   "devDependencies": {
     "@nxtqr/typescript-config": "workspace:*",
     "typescript": "^5.7.3"

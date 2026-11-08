@@ -1,0 +1,67 @@
+---
+title: Node Inspector
+description: Contextual floating properties inspector with real-time graph synchronization, Zod-backed form controls, and responsive sheet adaptations.
+category: Visualizer
+order: 83
+---
+
+The `NodeInspector` component provides a dedicated, high-density properties workspace for configuring selected graph nodes. It generates typed inputs for general metadata, node-specific parameters, and connection topologies, writing changes directly into the central graph editor store in real time.
+
+## Interactive Inspector Preview
+
+Select reference nodes from the graph canvas and modify their configuration properties:
+
+<InspectorPlayground />
+
+## Inspector Architecture
+
+1. **Contextual Panels**: When a node is selected, the inspector reveals dedicated tabs:
+   - **General**: Title, Description, Type, and spatial coordinates.
+   - **Configuration**: Dynamic parameter controls (numbers, booleans, strings) tailored to the node archetype.
+   - **Connections**: Real-time list of incoming and outgoing edges with source/target port IDs.
+2. **Empty State**: When no node is active, an informative empty state guides the user to select any element on the canvas.
+3. **Responsive Adaptation**:
+   - **Desktop (≥ 1024px)**: Integrated right-hand docked sidepane.
+   - **Mobile (< 1024px)**: Converts to an accessible bottom `Sheet` / `Drawer` to preserve canvas visibility.
+
+## Installation & Imports
+
+```tsx
+import { NodeInspector } from "@nxtqr/web/features/visualizers";
+```
+
+## Form Fields & Data Synchronization
+
+Edits within the inspector immediately invoke `updateNodeData(id, partialData)` on `@nxtqr/state`:
+
+```tsx
+// Example node data payload edited by the inspector
+{
+  protocol: "HTTPS/3",
+  rateLimitRps: 2500,
+  authRequired: true,
+  path: "/api/v1/telemetry"
+}
+```
+
+## Implementation Reference
+
+```tsx
+import { NodeInspector } from "@nxtqr/web/features/visualizers";
+
+export function VisualizerLayout() {
+  return (
+    <div className="flex h-screen w-full">
+      <div className="flex-1">
+        <GraphCanvas />
+      </div>
+
+      {/* Docked Right Inspector */}
+      <aside className="w-80 border-l border-border bg-surface p-3">
+        <NodeInspector />
+      </aside>
+    </div>
+  );
+}
+```
+

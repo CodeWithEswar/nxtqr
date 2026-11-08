@@ -1,0 +1,56 @@
+---
+title: Simulation Controls
+description: Deterministic graph execution transport controls with play, pause, step-forward, reset, and configurable playback speed multipliers.
+category: Visualizer
+order: 84
+---
+
+The `SimulationControls` component powers NXTQR's deterministic graph execution runtime. Inspired by physical audio hardware transports, it provides tactile controls to start, pause, resume, step forward, and reset graph traversals while synchronizing live node states and edge pulses.
+
+## Interactive Simulation Laboratory
+
+Start the deterministic reference engine, step through execution events, and test playback speed multipliers:
+
+<SimulationPlayground />
+
+## Simulation State Machine
+
+The runner operates via a strict finite state machine:
+
+| Status | Color | Description | Valid Transitions |
+| :--- | :--- | :--- | :--- |
+| **`idle`** | Gray | Initial resting state, awaiting start command | `running` |
+| **`running`** | Accent (Pulse) | Active graph traversal, emitting events | `paused`, `completed`, `failed` |
+| **`paused`** | Amber | Suspended execution at current step | `running`, `idle` |
+| **`completed`** | Emerald | Full graph topology traversed successfully | `idle` |
+| **`failed`** | Red | Execution halted due to simulated error | `idle` |
+
+## Transport Controls
+
+1. **Start / Resume**: Begins or resumes automated topological traversal through connected nodes.
+2. **Pause**: Suspends traversal immediately without losing current step position.
+3. **Step Forward**: Executes the next logical node in the queue and halts. Ideal for debugging race conditions.
+4. **Reset**: Restores all nodes to `idle`, clears execution queues, and resets step counters.
+5. **Speed Multiplier**: Controls traversal clock speed (`0.5x`, `1.0x`, `2.0x`, `4.0x`).
+
+## Installation & Imports
+
+```tsx
+import { SimulationControls } from "@nxtqr/web/features/visualizers";
+import { DeterministicSimulationEngine } from "@nxtqr/simulation-core";
+```
+
+## Implementation Reference
+
+```tsx
+import { SimulationControls } from "@nxtqr/web/features/visualizers";
+
+export function BottomControlBar() {
+  return (
+    <footer className="h-14 border-t border-border bg-surface px-4 flex items-center">
+      <SimulationControls className="w-full" />
+    </footer>
+  );
+}
+```
+

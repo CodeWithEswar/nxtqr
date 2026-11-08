@@ -1,0 +1,65 @@
+---
+title: Execution Trace Viewer
+description: Sub-millisecond chronological event stream viewer with search filtering, status badges, and bidirectional canvas element highlighting.
+category: Visualizer
+order: 85
+---
+
+The `ExecutionTraceViewer` component is NXTQR's primary runtime debugging interface. It presents a chronological, sub-millisecond timeline of simulation events, allowing engineers to filter by status or node name, inspect structured telemetry payloads, and synchronize element selection with the graph canvas.
+
+## Interactive Trace Viewer Laboratory
+
+Inspect simulation event records, filter by status or keyword, and inspect structured telemetry payloads:
+
+<TracePlayground />
+
+## Core Capabilities
+
+1. **Sub-Millisecond Chronological Stream**: Displays execution events with relative offsets (e.g. `+14.2ms`), step indices, and duration badges.
+2. **Search & Status Filtering**: Real-time keyword filtering across node labels, target IDs, and event types with status filters (`All`, `Success`, `Failure`).
+3. **Bidirectional Selection Sync**: Clicking a trace event automatically selects and centers the corresponding node on the graph canvas.
+4. **Structured JSON Telemetry**: Displays parsed input/output metadata, memory footprint, and duration metrics.
+
+## Trace Event Model
+
+```tsx
+import type { TraceEvent } from "@nxtqr/graph-schema";
+
+export const sampleTrace: TraceEvent = {
+  id: "evt_104",
+  runId: "run_alpha",
+  step: 3,
+  timestamp: 42.4,
+  type: "NODE_EXECUTE",
+  nodeId: "node_worker",
+  status: "success",
+  durationMs: 6.4,
+  payload: {
+    runtime: "NodeJS 20 LTS",
+    memoryMb: 48,
+    concurrency: 4,
+  },
+};
+```
+
+## Installation & Imports
+
+```tsx
+import { ExecutionTraceViewer } from "@nxtqr/web/features/visualizers";
+import { filterTraceEvents, formatRelativeTimestamp } from "@nxtqr/execution-trace";
+```
+
+## Implementation Reference
+
+```tsx
+import { ExecutionTraceViewer } from "@nxtqr/web/features/visualizers";
+
+export function StudioTelemetryPane() {
+  return (
+    <div className="h-64 border-t border-border bg-black">
+      <ExecutionTraceViewer />
+    </div>
+  );
+}
+```
+

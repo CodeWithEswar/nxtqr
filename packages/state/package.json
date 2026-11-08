@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@nxtqr/design-system": "workspace:*",
+    "@nxtqr/graph-schema": "workspace:*",
     "@nxtqr/shared-types": "workspace:*",
+    "@nxtqr/simulation-core": "workspace:*",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
