@@ -17,6 +17,34 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const pathname = usePathname();
 
+  // Auto-close mobile drawer when navigating to another route
+  React.useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Auto-close mobile drawer when window expands to desktop viewport (>= 768px)
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+
+    const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (e.matches) {
+        setMobileOpen(false);
+      }
+    };
+
+    if (mediaQuery.matches) {
+      setMobileOpen(false);
+    }
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleMediaChange);
+      return () => mediaQuery.removeEventListener("change", handleMediaChange);
+    } else {
+      mediaQuery.addListener(handleMediaChange);
+      return () => mediaQuery.removeListener(handleMediaChange);
+    }
+  }, []);
+
   // Top-level section active checks
   const isGettingStarted =
     pathname.startsWith("/docs/getting-started") || pathname === "/docs";
@@ -58,7 +86,7 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
                 <MenuIcon className="h-4 w-4" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-80 bg-black border-border flex flex-col">
+            <SheetContent side="left" className="md:hidden p-0 w-72 max-w-[85vw] bg-black border-border flex flex-col">
               {/* Drawer Header */}
               <div className="p-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-2.5">

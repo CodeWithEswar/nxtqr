@@ -133,6 +133,10 @@ test.describe("NXTQR Documentation Platform (Phase 03)", () => {
     await expect(drawer).toBeVisible();
     await expect(drawer).toContainText("NXTQR Documentation");
     await expect(drawer).toContainText("Button");
+
+    // Expanding viewport to desktop (>= 768px) automatically closes the mobile drawer
+    await page.setViewportSize({ width: 1200, height: 800 });
+    await expect(drawer).toBeHidden();
   });
 
   test("validates syntax-highlighted code block, language indicator, copy feedback, and word wrap toggle", async ({

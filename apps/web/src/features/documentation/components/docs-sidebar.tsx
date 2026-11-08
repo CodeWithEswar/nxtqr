@@ -31,7 +31,7 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
   return (
     <aside
       className={cn(
-        "w-64 shrink-0 h-full overflow-y-auto scrollbar-compact border-r border-border bg-black/40 py-6 px-4 flex flex-col space-y-6 select-none",
+        "w-56 shrink-0 h-full overflow-y-auto scrollbar-compact border-r border-border bg-black/40 py-5 px-3 flex flex-col space-y-5 select-none",
         className,
       )}
     >
@@ -41,13 +41,13 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
           variant="outline"
           size="sm"
           onClick={onSearchClick}
-          className="w-full justify-between h-9 px-3 bg-surface/70 border-border font-sans text-xs text-muted-foreground hover:text-foreground transition-colors duration-140"
+          className="w-full justify-between h-8 px-2.5 bg-surface/70 border-border font-sans text-xs text-muted-foreground hover:text-foreground transition-colors duration-140"
         >
-          <span className="flex items-center gap-2">
-            <SearchIcon className="h-3.5 w-3.5" />
-            <span>Search docs...</span>
+          <span className="flex items-center gap-1.5 min-w-0">
+            <SearchIcon className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">Search docs...</span>
           </span>
-          <kbd className="font-mono text-[10px] bg-black/60 border border-subtle-border px-1.5 py-0.5 rounded text-neutral-400">
+          <kbd className="font-mono text-[10px] bg-black/60 border border-subtle-border px-1 py-0.5 rounded text-neutral-400 shrink-0">
             ⌘K
           </kbd>
         </Button>
