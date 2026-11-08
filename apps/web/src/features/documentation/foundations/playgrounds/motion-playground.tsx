@@ -7,7 +7,7 @@ import {
   cssEasing,
   type MotionEasingToken,
 } from "@nxtqr/design-system";
-import { Button, Badge } from "@nxtqr/ui";
+import { Button } from "@nxtqr/ui";
 import { RefreshIcon, CheckIcon, LayersIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -41,11 +41,11 @@ export function MotionPlayground() {
     { key: "emphasis", label: "Emphasis (420ms)", ms: 420, use: "Complex layout reflows" },
   ];
 
-  const easings: { key: MotionEasingToken; label: string; curve: string }[] = [
-    { key: "standard", label: "Standard [0.2, 0, 0, 1]", curve: cssEasing.standard },
-    { key: "enter", label: "Decelerate [0, 0, 0.2, 1]", curve: cssEasing.enter },
-    { key: "exit", label: "Accelerate [0.4, 0, 1, 1]", curve: cssEasing.exit },
-    { key: "linear", label: "Linear [0, 0, 1, 1]", curve: cssEasing.linear },
+  const easings: { key: MotionEasingToken; label: string; desc: string; curve: string }[] = [
+    { key: "standard", label: "[0.2, 0, 0, 1]", desc: "Standard", curve: cssEasing.standard },
+    { key: "enter", label: "[0, 0, 0.2, 1]", desc: "Decelerate", curve: cssEasing.enter },
+    { key: "exit", label: "[0.4, 0, 1, 1]", desc: "Accelerate", curve: cssEasing.exit },
+    { key: "linear", label: "[0, 0, 1, 1]", desc: "Linear", curve: cssEasing.linear },
   ];
 
   return (
@@ -117,7 +117,10 @@ export function MotionPlayground() {
                     : "border-border bg-elevated-surface hover:border-muted-border"
                 )}
               >
-                <div className="text-xs font-semibold text-foreground">{e.key}</div>
+                <div className="flex items-center justify-between font-mono">
+                  <span className="text-xs font-semibold text-foreground">{e.key}</span>
+                  <span className="text-[9px] text-muted-foreground hidden sm:inline">{e.desc}</span>
+                </div>
                 <div className="text-[10px] font-mono text-muted-foreground truncate">{e.label}</div>
               </button>
             ))}
@@ -154,7 +157,7 @@ export function MotionPlayground() {
         </div>
 
         {/* Speed Multiplier & Reduced Motion Simulator */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <div className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
             <span>Speed:</span>
             {[0.5, 1, 2].map((s) => (
@@ -174,22 +177,30 @@ export function MotionPlayground() {
           <button
             onClick={() => setReducedMotion(!reducedMotion)}
             className={cn(
-              "px-2.5 py-1 rounded-md text-xs font-mono border transition-all flex items-center gap-1.5",
+              "px-2.5 py-1 rounded-md text-xs font-mono border transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0",
               reducedMotion
                 ? "border-accent bg-accent text-accent-foreground font-semibold"
                 : "border-border bg-surface text-muted-foreground hover:text-foreground"
             )}
           >
             {reducedMotion && <CheckIcon className="h-3 w-3" />}
-            Reduced Motion: {reducedMotion ? "ON" : "OFF"}
+            <span className="hidden sm:inline">Reduced Motion: </span>
+            <span className="sm:hidden">Reduced: </span>
+            <span>{reducedMotion ? "ON" : "OFF"}</span>
           </button>
         </div>
       </div>
 
       {/* Live Stage */}
-      <div className="p-8 bg-black border border-subtle-border rounded-md min-h-[300px] flex items-center justify-center relative overflow-hidden">
-        <div className="absolute top-3 left-3 text-[10px] font-mono text-muted-foreground">
-          TIMING: {durationMs}ms · EASING: {easingCss}
+      <div className="p-4 sm:p-6 md:p-8 pt-9 sm:pt-9 bg-black border border-subtle-border rounded-md min-h-[300px] flex items-center justify-center relative overflow-hidden">
+        <div className="absolute top-2.5 left-3 right-3 flex flex-wrap items-center justify-between text-[10px] font-mono text-muted-foreground gap-1">
+          <span>
+            TIMING: <span className="text-foreground font-semibold">{durationMs}ms</span>
+          </span>
+          <span className="truncate">
+            EASING: <span className="text-foreground font-semibold">{selectedEasing}</span>
+            <span className="text-muted-foreground hidden sm:inline"> ({easingCss})</span>
+          </span>
         </div>
 
         {/* Dialog Transition Demo */}
@@ -206,7 +217,7 @@ export function MotionPlayground() {
           >
             <div className="flex items-center justify-between mb-3 border-b border-subtle-border pb-2">
               <span className="text-xs font-mono font-semibold text-foreground">GRAPH_COMMIT_MODAL</span>
-              <Badge variant="outline" className="text-[10px] font-mono text-accent">L2 DIALOG</Badge>
+              <span className="text-[10px] font-mono text-accent">L2 DIALOG</span>
             </div>
             <p className="text-xs text-muted-foreground mb-4">
               Modal surfaces scale from 95% with coordinated opacity fade.
