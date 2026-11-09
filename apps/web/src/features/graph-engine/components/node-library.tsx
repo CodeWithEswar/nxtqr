@@ -317,15 +317,15 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             {/* 1. Clients & User Interfaces Category */}
             {filteredInfra.length > 0 && (
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between px-2">
-                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider">
-                    Clients & User Interfaces ({filteredInfra.length})
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Clients & UI ({filteredInfra.length})
                   </span>
                   <Badge
                     variant="outline"
-                    className="font-mono text-[9px] text-text-muted border-border-subtle"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
                   >
-                    Category 01
+                    Cat 01
                   </Badge>
                 </div>
 
@@ -348,7 +348,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
                         className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
                       >
                         {/* Colored SVG Icon */}
-                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0">
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
                           {IconComponent ? (
                             <IconComponent size={20} variant="colored" />
                           ) : (
@@ -357,15 +357,13 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="font-sans text-xs font-semibold text-foreground truncate">
-                              {comp.display.name}
-                            </span>
-                            <span className="font-mono text-[9px] text-text-muted shrink-0">
-                              {comp.id}
-                            </span>
+                          <div className="font-sans text-xs font-semibold text-foreground leading-tight">
+                            {comp.display.name}
                           </div>
-                          <p className="font-sans text-[10px] text-text-muted truncate leading-relaxed">
+                          <div className="font-mono text-[9.5px] text-text-muted truncate mt-0.5">
+                            {comp.id}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-disabled truncate leading-relaxed mt-0.5">
                             {comp.display.description}
                           </p>
                         </div>
@@ -381,7 +379,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             {/* 2. Foundations Category */}
             {filteredFoundations.length > 0 && (
               <div className="space-y-1.5">
-                <div className="px-2 text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider">
+                <div className="px-2 pt-1 text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider">
                   Foundation Primitives ({filteredFoundations.length})
                 </div>
 
@@ -403,20 +401,18 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
                         onKeyDown={(e) => e.key === "Enter" && handleCreateLegacyNode(def)}
                         className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
                       >
-                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 text-text-muted group-hover:text-foreground">
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 text-text-muted group-hover:text-foreground mt-0.5">
                           <Icon className="h-3.5 w-3.5" />
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="font-sans text-xs font-medium text-text-secondary group-hover:text-foreground truncate">
-                              {def.label}
-                            </span>
-                            <span className="font-mono text-[9px] text-text-disabled shrink-0 uppercase">
-                              {def.type}
-                            </span>
+                          <div className="font-sans text-xs font-medium text-text-secondary group-hover:text-foreground leading-tight">
+                            {def.label}
                           </div>
-                          <p className="font-sans text-[10px] text-text-muted truncate leading-relaxed">
+                          <div className="font-mono text-[9px] text-text-disabled uppercase truncate mt-0.5">
+                            {def.type}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-muted truncate leading-relaxed mt-0.5">
                             {def.description}
                           </p>
                         </div>
@@ -432,7 +428,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             {/* 3. Visualizer / Domain Category */}
             {filteredDomain.length > 0 && (
               <div className="space-y-1.5">
-                <div className="px-2 text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider">
+                <div className="px-2 pt-1 text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider">
                   Visualizer Primitives ({filteredDomain.length})
                 </div>
 
@@ -454,20 +450,18 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
                         onKeyDown={(e) => e.key === "Enter" && handleCreateLegacyNode(def)}
                         className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
                       >
-                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 text-text-muted group-hover:text-foreground">
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 text-text-muted group-hover:text-foreground mt-0.5">
                           <Icon className="h-3.5 w-3.5" />
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="font-sans text-xs font-medium text-text-secondary group-hover:text-foreground truncate">
-                              {def.label}
-                            </span>
-                            <span className="font-mono text-[9px] text-text-disabled shrink-0 uppercase">
-                              {def.type}
-                            </span>
+                          <div className="font-sans text-xs font-medium text-text-secondary group-hover:text-foreground leading-tight">
+                            {def.label}
                           </div>
-                          <p className="font-sans text-[10px] text-text-muted truncate leading-relaxed">
+                          <div className="font-mono text-[9px] text-text-disabled uppercase truncate mt-0.5">
+                            {def.type}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-muted truncate leading-relaxed mt-0.5">
                             {def.description}
                           </p>
                         </div>
