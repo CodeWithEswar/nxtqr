@@ -32,19 +32,19 @@ export default function BrandReviewGatePage() {
   const [loadingMode, setLoadingMode] = useState<boolean>(false);
   const [reducedMotionSim, setReducedMotionSim] = useState<boolean>(false);
 
-  const variants: { id: LogoVariant; label: string }[] = [
-    { id: "full", label: "Full Lockup" },
-    { id: "symbol", label: "Symbol Only" },
-    { id: "minimal", label: "Minimal (No Frame)" },
-    { id: "wordmark", label: "Wordmark" },
-    { id: "stacked", label: "Stacked Lockup" },
+  const variants: { id: LogoVariant; label: string; shortLabel: string }[] = [
+    { id: "full", label: "Full Lockup", shortLabel: "Full" },
+    { id: "symbol", label: "Symbol Only", shortLabel: "Symbol" },
+    { id: "minimal", label: "Minimal", shortLabel: "Minimal" },
+    { id: "wordmark", label: "Wordmark", shortLabel: "Wordmark" },
+    { id: "stacked", label: "Stacked", shortLabel: "Stacked" },
   ];
 
-  const colorModes: { id: LogoColorMode; label: string }[] = [
-    { id: "current", label: "Current (CSS Variable)" },
-    { id: "monochrome", label: "Pure Monochrome (White)" },
-    { id: "inverse", label: "Inverse (Black on White)" },
-    { id: "accent", label: "Accent Mode" },
+  const colorModes: { id: LogoColorMode; label: string; shortLabel: string }[] = [
+    { id: "current", label: "Default (CSS)", shortLabel: "Default" },
+    { id: "monochrome", label: "Pure Monochrome", shortLabel: "Mono" },
+    { id: "inverse", label: "Inverse", shortLabel: "Inverse" },
+    { id: "accent", label: "Accent Mode", shortLabel: "Accent" },
   ];
 
   const testAccents = [
@@ -208,70 +208,75 @@ export default function BrandReviewGatePage() {
 
       {/* Main Interactive Stage */}
       <Card className="surface-raised">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <CardTitle>Logo Verification Stage</CardTitle>
-              <CardDescription>
+            <div className="space-y-1">
+              <CardTitle className="text-base sm:text-lg">Logo Verification Stage</CardTitle>
+              <CardDescription className="text-xs">
                 Inspect variant rendering, color modes, entrance animation, and reduced-motion
                 behavior.
               </CardDescription>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="grid grid-cols-3 sm:flex sm:items-center gap-1.5 sm:gap-2 shrink-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setAnimKey((k) => k + 1)}
-                className="text-xs"
+                className="h-8 px-2 sm:px-2.5 text-xs font-mono gap-1.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 shadow-level-1 active:shadow-level-3 justify-center"
               >
-                <RefreshIcon className="h-3 w-3 mr-1.5" />
-                Replay Entrance
+                <RefreshIcon className="h-3.5 w-3.5 shrink-0" />
+                <span>Replay</span>
               </Button>
               <Button
-                variant={loadingMode ? "default" : "secondary"}
+                variant={loadingMode ? "default" : "outline"}
                 size="sm"
                 onClick={() => setLoadingMode(!loadingMode)}
-                className="text-xs"
+                className="h-8 px-2 sm:px-2.5 text-xs font-mono rounded-md border-border-default shadow-level-1 active:shadow-level-3 justify-center"
               >
-                {loadingMode ? "Stop Loading Loop" : "Test Loading Loop"}
+                {loadingMode ? "Stop Loop" : "Test Loop"}
               </Button>
               <Button
                 variant={reducedMotionSim ? "default" : "outline"}
                 size="sm"
                 onClick={() => setReducedMotionSim(!reducedMotionSim)}
-                className="text-xs"
+                className="h-8 px-2 sm:px-2.5 text-xs font-mono rounded-md border-border-default shadow-level-1 active:shadow-level-3 justify-center"
               >
-                Motion: {reducedMotionSim ? "Reduced" : "Standard"}
+                <span className="sm:hidden">Motion: {reducedMotionSim ? "Off" : "On"}</span>
+                <span className="hidden sm:inline">Motion: {reducedMotionSim ? "Reduced" : "Std"}</span>
               </Button>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Controls Bar */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 bg-surface border border-border rounded-md shadow-level-3">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-3 sm:p-3.5 bg-surface border border-border-default rounded-md shadow-level-1">
             {/* Variant Selector */}
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-mono text-muted-foreground uppercase">Variant</span>
+            <div className="space-y-1.5 lg:col-span-5">
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
+                Variant
+              </span>
               <div className="flex flex-wrap gap-1">
                 {variants.map((v) => (
                   <button
                     key={v.id}
                     onClick={() => setVariant(v.id)}
-                    className={`px-2 py-1 text-xs rounded-md transition-colors ${
+                    title={v.label}
+                    className={`px-2 sm:px-2.5 py-1 text-xs font-mono rounded-md transition-all select-none ${
                       variant === v.id
-                        ? "bg-accent text-accent-foreground font-medium"
-                        : "bg-surface hover:bg-elevated-surface text-muted-foreground border border-border"
+                        ? "bg-foreground text-background font-semibold shadow-level-1 border border-border-strong"
+                        : "bg-surface-01 hover:bg-surface-03 text-muted-foreground hover:text-foreground border border-border-default"
                     }`}
                   >
-                    {v.label}
+                    <span className="md:hidden">{v.shortLabel}</span>
+                    <span className="hidden md:inline">{v.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Color Mode Selector */}
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-mono text-muted-foreground uppercase">
+            <div className="space-y-1.5 lg:col-span-4">
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
                 Color Mode
               </span>
               <div className="flex flex-wrap gap-1">
@@ -279,33 +284,41 @@ export default function BrandReviewGatePage() {
                   <button
                     key={cm.id}
                     onClick={() => setColorMode(cm.id)}
-                    className={`px-2 py-1 text-xs rounded-md transition-colors ${
+                    title={cm.label}
+                    className={`px-2 sm:px-2.5 py-1 text-xs font-mono rounded-md transition-all select-none ${
                       colorMode === cm.id
-                        ? "bg-accent text-accent-foreground font-medium"
-                        : "bg-surface hover:bg-elevated-surface text-muted-foreground border border-border"
+                        ? "bg-foreground text-background font-semibold shadow-level-1 border border-border-strong"
+                        : "bg-surface-01 hover:bg-surface-03 text-muted-foreground hover:text-foreground border border-border-default"
                     }`}
                   >
-                    {cm.label}
+                    <span className="md:hidden">{cm.shortLabel}</span>
+                    <span className="hidden md:inline">{cm.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Accent Override Tester */}
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-mono text-muted-foreground uppercase">
+            <div className="space-y-1.5 lg:col-span-3 lg:justify-self-end">
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
                 Test Accent
               </span>
               <div className="flex flex-wrap gap-1.5 items-center">
                 {testAccents.map((acc) => (
                   <button
                     key={acc.hex}
-                    onClick={() => setTestAccent(acc.hex)}
+                    onClick={() => {
+                      setTestAccent(acc.hex);
+                      if (colorMode !== "accent") {
+                        setColorMode("accent");
+                      }
+                    }}
                     title={acc.name}
-                    className={`h-5 w-5 rounded-md border transition-transform ${
+                    aria-label={`Select accent ${acc.name}`}
+                    className={`h-6 w-6 rounded-md border transition-all ${
                       testAccent === acc.hex
-                        ? "ring-2 ring-border-strong scale-110 border-border-strong"
-                        : "border-border hover:scale-105"
+                        ? "ring-1 ring-border-strong scale-110 border-border-strong shadow-level-2"
+                        : "border-border-default hover:scale-105 opacity-80 hover:opacity-100"
                     }`}
                     style={{ backgroundColor: acc.hex }}
                   />
@@ -316,7 +329,7 @@ export default function BrandReviewGatePage() {
 
           {/* Featured Canvas Presentation */}
           <div
-            className={`p-12 rounded-md border flex items-center justify-center transition-colors min-h-[220px] ${
+            className={`p-6 sm:p-12 rounded-md border flex items-center justify-center transition-colors min-h-[180px] sm:min-h-[220px] overflow-x-auto ${
               colorMode === "inverse"
                 ? "bg-white border-border-strong text-black shadow-level-1"
                 : "bg-black border-border shadow-level-1"
@@ -373,14 +386,15 @@ export default function BrandReviewGatePage() {
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             {/* Hero Tile Preview */}
-            <div className="flex flex-col items-center justify-center p-6 bg-black border border-border rounded-md shadow-level-1">
-              <span className="font-mono text-xs text-muted-foreground mb-4">
+            <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-black border border-border rounded-md shadow-level-1">
+              <span className="font-mono text-xs text-muted-foreground mb-4 text-center">
                 Hero Atmospheric Tile (512×512)
               </span>
               <div className="relative flex items-center justify-center">
-                <AppIcon type="hero" size={220} />
+                <AppIcon type="hero" size={170} className="sm:hidden" />
+                <AppIcon type="hero" size={220} className="hidden sm:block" />
               </div>
-              <span className="font-mono text-[10px] text-muted-foreground/70 mt-4">
+              <span className="font-mono text-[10px] text-muted-foreground/70 mt-4 text-center">
                 Concentric ambient glow rings · Specular laser flare
               </span>
             </div>
@@ -390,22 +404,25 @@ export default function BrandReviewGatePage() {
               <div className="text-xs font-medium text-foreground">
                 App Icon Variations & Dynamic Accent
               </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="flex flex-col items-center p-3 bg-surface border border-border rounded-md shadow-level-1">
-                  <AppIcon type="black" size={96} />
-                  <span className="font-mono text-[10px] text-muted-foreground mt-2">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="flex flex-col items-center p-2 sm:p-3 bg-surface border border-border rounded-md shadow-level-1">
+                  <AppIcon type="black" size={64} className="sm:hidden" />
+                  <AppIcon type="black" size={96} className="hidden sm:block" />
+                  <span className="font-mono text-[10px] text-muted-foreground mt-2 text-center">
                     Dark Tile
                   </span>
                 </div>
-                <div className="flex flex-col items-center p-3 bg-surface border border-border rounded-md shadow-level-1">
-                  <AppIcon type="white" size={96} />
-                  <span className="font-mono text-[10px] text-muted-foreground mt-2">
+                <div className="flex flex-col items-center p-2 sm:p-3 bg-surface border border-border rounded-md shadow-level-1">
+                  <AppIcon type="white" size={64} className="sm:hidden" />
+                  <AppIcon type="white" size={96} className="hidden sm:block" />
+                  <span className="font-mono text-[10px] text-muted-foreground mt-2 text-center">
                     Inverse White
                   </span>
                 </div>
-                <div className="flex flex-col items-center p-3 bg-surface border border-border rounded-md shadow-level-1">
-                  <AppIcon type="red" size={96} accentColor={testAccent} />
-                  <span className="font-mono text-[10px] text-muted-foreground mt-2">
+                <div className="flex flex-col items-center p-2 sm:p-3 bg-surface border border-border rounded-md shadow-level-1">
+                  <AppIcon type="red" size={64} accentColor={testAccent} className="sm:hidden" />
+                  <AppIcon type="red" size={96} accentColor={testAccent} className="hidden sm:block" />
+                  <span className="font-mono text-[10px] text-muted-foreground mt-2 text-center truncate max-w-full">
                     {testAccents.find((a) => a.hex === testAccent)?.name ?? "Accent"} Tile
                   </span>
                 </div>
@@ -504,8 +521,8 @@ export default function BrandReviewGatePage() {
           </div>
 
           {/* Kerning Specifications Table */}
-          <div className="border border-border rounded-md overflow-hidden">
-            <table className="w-full text-xs">
+          <div className="border border-border rounded-md overflow-x-auto">
+            <table className="w-full text-xs min-w-[500px]">
               <thead className="bg-elevated-surface border-b border-border text-muted-foreground font-mono">
                 <tr>
                   <th className="py-2 px-3 text-left">Kerning Pair</th>
@@ -565,8 +582,8 @@ export default function BrandReviewGatePage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border border-border rounded-md overflow-hidden">
-            <table className="w-full text-xs">
+          <div className="border border-border rounded-md overflow-x-auto">
+            <table className="w-full text-xs min-w-[620px]">
               <thead className="bg-elevated-surface border-b border-border text-muted-foreground font-mono">
                 <tr>
                   <th className="py-2 px-3 text-left">File Name</th>
