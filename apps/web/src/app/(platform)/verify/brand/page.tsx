@@ -9,6 +9,11 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@nxtqr/ui";
 import { CheckCircleIcon, RefreshIcon } from "@nxtqr/icons";
 import {
@@ -32,19 +37,19 @@ export default function BrandReviewGatePage() {
   const [loadingMode, setLoadingMode] = useState<boolean>(false);
   const [reducedMotionSim, setReducedMotionSim] = useState<boolean>(false);
 
-  const variants: { id: LogoVariant; label: string; shortLabel: string }[] = [
-    { id: "full", label: "Full Lockup", shortLabel: "Full" },
-    { id: "symbol", label: "Symbol Only", shortLabel: "Symbol" },
-    { id: "minimal", label: "Minimal", shortLabel: "Minimal" },
-    { id: "wordmark", label: "Wordmark", shortLabel: "Wordmark" },
-    { id: "stacked", label: "Stacked", shortLabel: "Stacked" },
+  const variants: { id: LogoVariant; label: string }[] = [
+    { id: "full", label: "Full Lockup" },
+    { id: "symbol", label: "Symbol Only" },
+    { id: "minimal", label: "Minimal (No Frame)" },
+    { id: "wordmark", label: "Wordmark" },
+    { id: "stacked", label: "Stacked Lockup" },
   ];
 
-  const colorModes: { id: LogoColorMode; label: string; shortLabel: string }[] = [
-    { id: "current", label: "Default (CSS)", shortLabel: "Default" },
-    { id: "monochrome", label: "Pure Monochrome", shortLabel: "Mono" },
-    { id: "inverse", label: "Inverse", shortLabel: "Inverse" },
-    { id: "accent", label: "Accent Mode", shortLabel: "Accent" },
+  const colorModes: { id: LogoColorMode; label: string }[] = [
+    { id: "current", label: "Default (CSS Variable)" },
+    { id: "monochrome", label: "Pure Monochrome (White)" },
+    { id: "inverse", label: "Inverse (Black on White)" },
+    { id: "accent", label: "Accent Mode" },
   ];
 
   const testAccents = [
@@ -249,57 +254,49 @@ export default function BrandReviewGatePage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Controls Bar */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-3 sm:p-3.5 bg-surface border border-border-default rounded-md shadow-level-1">
-            {/* Variant Selector */}
-            <div className="space-y-1.5 lg:col-span-5">
-              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
-                Variant
-              </span>
-              <div className="flex flex-wrap gap-1">
-                {variants.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => setVariant(v.id)}
-                    title={v.label}
-                    className={`px-2 sm:px-2.5 py-1 text-xs font-mono rounded-md transition-all select-none ${
-                      variant === v.id
-                        ? "bg-foreground text-background font-semibold shadow-level-1 border border-border-strong"
-                        : "bg-surface-01 hover:bg-surface-03 text-muted-foreground hover:text-foreground border border-border-default"
-                    }`}
-                  >
-                    <span className="md:hidden">{v.shortLabel}</span>
-                    <span className="hidden md:inline">{v.label}</span>
-                  </button>
-                ))}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-3.5 sm:p-4 bg-surface border border-border-default rounded-md shadow-level-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 flex-1">
+              {/* Variant Selector */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
+                  Variant
+                </span>
+                <Select value={variant} onValueChange={(val) => setVariant(val as LogoVariant)}>
+                  <SelectTrigger className="h-8 w-full font-mono text-xs bg-surface-01 border-border-default hover:bg-surface-03 transition-colors shadow-level-1">
+                    <SelectValue placeholder="Select variant" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-surface-02 border-border-strong shadow-level-2">
+                    {variants.map((v) => (
+                      <SelectItem key={v.id} value={v.id} className="font-mono text-xs cursor-pointer">
+                        {v.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
 
-            {/* Color Mode Selector */}
-            <div className="space-y-1.5 lg:col-span-4">
-              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
-                Color Mode
-              </span>
-              <div className="flex flex-wrap gap-1">
-                {colorModes.map((cm) => (
-                  <button
-                    key={cm.id}
-                    onClick={() => setColorMode(cm.id)}
-                    title={cm.label}
-                    className={`px-2 sm:px-2.5 py-1 text-xs font-mono rounded-md transition-all select-none ${
-                      colorMode === cm.id
-                        ? "bg-foreground text-background font-semibold shadow-level-1 border border-border-strong"
-                        : "bg-surface-01 hover:bg-surface-03 text-muted-foreground hover:text-foreground border border-border-default"
-                    }`}
-                  >
-                    <span className="md:hidden">{cm.shortLabel}</span>
-                    <span className="hidden md:inline">{cm.label}</span>
-                  </button>
-                ))}
+              {/* Color Mode Selector */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
+                  Color Mode
+                </span>
+                <Select value={colorMode} onValueChange={(val) => setColorMode(val as LogoColorMode)}>
+                  <SelectTrigger className="h-8 w-full font-mono text-xs bg-surface-01 border-border-default hover:bg-surface-03 transition-colors shadow-level-1">
+                    <SelectValue placeholder="Select color mode" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-surface-02 border-border-strong shadow-level-2">
+                    {colorModes.map((cm) => (
+                      <SelectItem key={cm.id} value={cm.id} className="font-mono text-xs cursor-pointer">
+                        {cm.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             {/* Accent Override Tester */}
-            <div className="space-y-1.5 lg:col-span-3 lg:justify-self-end">
+            <div className="space-y-1.5 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-border-subtle">
               <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
                 Test Accent
               </span>

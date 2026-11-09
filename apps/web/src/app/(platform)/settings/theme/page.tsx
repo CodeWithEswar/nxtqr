@@ -46,12 +46,12 @@ export default function AppearanceSettingsPage() {
 
           <div className="pt-2 flex items-center justify-between border-t border-subtle-border">
             <span className="text-muted-foreground font-sans">Learn more about the architecture:</span>
-            <Link href="/docs/getting-started/design-system">
-              <Button size="sm" variant="default" className="font-mono text-xs gap-1.5">
+            <Button asChild size="sm" variant="default" className="font-mono text-xs gap-1.5">
+              <Link href="/docs/getting-started/design-system">
                 <span>Design System Docs</span>
                 <ChevronRightIcon className="h-3 w-3" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
