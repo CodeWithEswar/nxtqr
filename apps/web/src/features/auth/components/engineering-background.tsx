@@ -28,7 +28,7 @@ export function EngineeringBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d", { alpha: false });
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let animationFrameId: number;
@@ -136,8 +136,7 @@ export function EngineeringBackground() {
     const pointerRadius = 150;
 
     const drawStaticScene = () => {
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, width, height);
+      ctx.clearRect(0, 0, width, height);
 
       // Draw subtle connections
       for (let i = 0; i < nodes.length; i++) {
@@ -188,9 +187,8 @@ export function EngineeringBackground() {
         return;
       }
 
-      // Background fill pure black
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, width, height);
+      // Clear canvas frame for transparent layer composition
+      ctx.clearRect(0, 0, width, height);
 
       // Update and draw nodes
       for (let i = 0; i < nodes.length; i++) {
@@ -314,7 +312,7 @@ export function EngineeringBackground() {
     <div
       aria-hidden="true"
       role="presentation"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-black select-none"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
     >
       <canvas ref={canvasRef} className="block h-full w-full opacity-80" />
     </div>

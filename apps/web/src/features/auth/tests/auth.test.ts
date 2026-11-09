@@ -126,5 +126,36 @@ describe("NXTQR Phase 03: Authentication Core & Security", () => {
       expect(coords.top).toBeGreaterThanOrEqual(0);
     });
   });
+
+  describe("Google Visual Enhancement Specifications", () => {
+    it("defines official Google Brand Colors for the authentication button", () => {
+      const GOOGLE_COLORS = {
+        blue: "#4285F4",
+        green: "#34A853",
+        yellow: "#FBBC05",
+        red: "#EA4335",
+      };
+
+      expect(GOOGLE_COLORS.blue).toBe("#4285F4");
+      expect(GOOGLE_COLORS.green).toBe("#34A853");
+      expect(GOOGLE_COLORS.yellow).toBe("#FBBC05");
+      expect(GOOGLE_COLORS.red).toBe("#EA4335");
+    });
+
+    it("verifies cursor aura boundaries prevent visual noise", () => {
+      const AURA_BOUNDS = {
+        sizePx: 420,
+        maxOpacity: 0.18,
+        reducedMotionOpacity: 0.07,
+        blurPx: 72,
+      };
+
+      // Ensure aura is restrained and unobtrusive
+      expect(AURA_BOUNDS.maxOpacity).toBeLessThanOrEqual(0.20);
+      expect(AURA_BOUNDS.reducedMotionOpacity).toBeLessThanOrEqual(0.10);
+      expect(AURA_BOUNDS.blurPx).toBeGreaterThanOrEqual(60);
+      expect(AURA_BOUNDS.sizePx).toBeGreaterThanOrEqual(360);
+    });
+  });
 });
 

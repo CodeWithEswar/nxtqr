@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { Button } from "@nxtqr/ui";
-import { GoogleIcon, SpinnerIcon } from "@nxtqr/icons";
+import { SpinnerIcon } from "@nxtqr/icons";
+import { GoogleBrandIcon } from "./google-brand-icon";
 import type { AuthFlowState } from "../schemas/auth.schema";
 
 export interface GoogleSignInButtonProps {
@@ -58,7 +59,7 @@ export function GoogleSignInButton({
         {isBusy ? (
           <SpinnerIcon className="h-4 w-4 animate-spin text-text-muted shrink-0" />
         ) : (
-          <GoogleIcon className="h-4 w-4 text-foreground shrink-0" />
+          <GoogleBrandIcon className="h-4 w-4 shrink-0" />
         )}
         <span className="truncate">{getLabel()}</span>
       </div>

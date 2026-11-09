@@ -4,6 +4,8 @@ export * from "./lib/popup-window";
 export * from "./hooks/use-google-auth";
 export * from "./services/auth-service";
 export * from "./components/engineering-background";
+export * from "./components/google-cursor-aura";
+export * from "./components/google-brand-icon";
 export * from "./components/google-sign-in-button";
 export * from "./components/auth-status";
 export * from "./components/login-card";
