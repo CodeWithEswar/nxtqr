@@ -67,10 +67,11 @@ export default function ScrollbarReviewGatePage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Verification Header */}
       <VerificationHeader
-        title="NXTQR — Precision Rail Custom Scrollbar System Review Gate"
-        subtitle="Pure Monochrome · Solid Neumorphic Inset · Tactile Drag Feedback · Radix & Native Parity"
+        title="Scrollbar Review Gate"
+        shortTitle="Scrollbar Gate"
+        subtitle="Pure monochrome · Solid neumorphic inset rail · Tactile drag feedback"
         version="System Verified"
-        logo={<AppLogo variant="symbol" size={28} />}
+        logo={<AppLogo variant="symbol" size={26} />}
         backHref="/verify"
         backLabel="Back to Diagnostics"
         showReviewGates={true}

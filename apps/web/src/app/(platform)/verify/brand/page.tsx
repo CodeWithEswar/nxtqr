@@ -186,10 +186,11 @@ export default function BrandReviewGatePage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Verification Header */}
       <VerificationHeader
-        title="NXTQR — Brand Identity & Concrete Logo Review Gate"
-        subtitle="Vector Geometry · Solid Neumorphic Surfaces · Scale-Invariance"
-        version="Phase 02 · Approved Spec"
-        logo={<AppLogo variant="symbol" size={28} />}
+        title="Brand Review Gate"
+        shortTitle="Brand Gate"
+        subtitle="Vector geometry · Solid neumorphic surfaces · Scale-invariance"
+        version="Phase 02 · Spec"
+        logo={<AppLogo variant="symbol" size={26} />}
         backHref="/verify"
         backLabel="Back to Diagnostics"
         showReviewGates={true}

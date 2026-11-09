@@ -24,6 +24,7 @@ import type { VerificationSummary } from "../schemas/verification.schema";
 
 export interface VerificationHeaderProps {
   title?: string;
+  shortTitle?: string;
   subtitle?: string;
   version?: string;
   logo?: React.ReactNode;
@@ -49,7 +50,7 @@ function StatusChip({
 }) {
   let tone: StatusTone = "ok";
   let label = `${summary.passed} / ${summary.total} verified`;
-  let shortLabel = `${summary.passed}/${summary.total} ver`;
+  let shortLabel = `${summary.passed}/${summary.total} pass`;
 
   if (isRunning) {
     tone = "running";
@@ -74,7 +75,7 @@ function StatusChip({
   return (
     <Badge
       variant="outline"
-      className="h-8 sm:h-9 px-2.5 sm:px-3 text-xs font-mono rounded-md border-border-default bg-surface-01 text-text-secondary shadow-level-1 flex items-center gap-2 shrink-0 font-normal select-none"
+      className="h-8 sm:h-9 px-2.5 sm:px-3 text-xs font-mono rounded-md border-border-default bg-surface-01 text-text-secondary shadow-level-1 flex items-center gap-1.5 sm:gap-2 shrink-0 font-normal select-none"
     >
       {tone === "running" ? (
         <SpinnerIcon className="h-3.5 w-3.5 shrink-0 animate-spin text-text-muted" />
@@ -85,20 +86,21 @@ function StatusChip({
         />
       )}
       <span className="truncate tabular-nums">
-        <span className="xs:hidden">{shortLabel}</span>
-        <span className="hidden xs:inline">{label}</span>
+        <span className="sm:hidden">{shortLabel}</span>
+        <span className="hidden sm:inline">{label}</span>
       </span>
     </Badge>
   );
 }
 
 export function VerificationHeader({
-  title = "Architecture & Infrastructure Diagnostics",
-  subtitle = "Production verification console for workspace packages, design system tokens, database contracts, and live runtime systems.",
-  version = "v0.1.0-alpha",
+  title = "Diagnostics Console",
+  shortTitle,
+  subtitle,
+  version,
   logo,
   backHref = "/docs",
-  backLabel = "Back to Documentation",
+  backLabel = "Back",
   summary,
   isRunning = false,
   onRunDiagnostics,
@@ -115,9 +117,9 @@ export function VerificationHeader({
         className,
       )}
     >
-      <div className="w-full max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-3 sm:py-3.5">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-          {/* Left / Top Row: Back Button, Logo, Title, Version Badge, and Subtitle */}
+      <div className="w-full max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-2.5 sm:py-3">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          {/* Left / Top Row: Back Button, Logo, Concise Title, Version Badge, and Subtitle */}
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
             {backHref && (
               <Link href={backHref} aria-label={backLabel} className="shrink-0">
@@ -136,12 +138,19 @@ export function VerificationHeader({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 min-w-0">
                 <h1 className="font-sans text-sm sm:text-base font-bold tracking-tight text-foreground truncate">
-                  {title}
+                  {shortTitle ? (
+                    <>
+                      <span className="sm:hidden">{shortTitle}</span>
+                      <span className="hidden sm:inline">{title}</span>
+                    </>
+                  ) : (
+                    title
+                  )}
                 </h1>
                 {version && (
                   <Badge
                     variant="outline"
-                    className="hidden sm:inline-flex shrink-0 font-mono text-[10px] px-1.5 py-0.5 rounded-md border-border-subtle bg-surface-00 text-text-muted font-normal"
+                    className="hidden md:inline-flex shrink-0 font-mono text-[10px] px-1.5 py-0.5 rounded-md border-border-subtle bg-surface-00 text-text-muted font-normal"
                   >
                     {version}
                   </Badge>
@@ -149,92 +158,90 @@ export function VerificationHeader({
               </div>
 
               {subtitle && (
-                <p className="hidden md:block text-xs text-text-muted leading-relaxed font-sans truncate mt-0.5 max-w-3xl">
+                <p className="hidden lg:block text-xs text-text-muted leading-relaxed font-sans truncate mt-0.5 max-w-3xl">
                   {subtitle}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Right / Bottom Row: Status Badge, Review Gates Dropdown, and Run Action */}
-          <div className="flex items-center gap-2 shrink-0 justify-between sm:justify-end min-w-0">
+          {/* Right / Bottom Row: Actions ALWAYS Aligned to the Right Side */}
+          <div className="flex items-center gap-2 shrink-0 justify-end ml-auto">
             {summary && <StatusChip summary={summary} isRunning={isRunning} />}
 
-            <div className="flex items-center gap-2 shrink-0">
-              {showReviewGates && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 sm:h-9 px-2.5 sm:px-3 text-xs font-mono font-medium gap-1.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-foreground shadow-level-1 active:shadow-level-3 shrink-0"
-                    >
-                      <span className="sm:hidden">Gates</span>
-                      <span className="hidden sm:inline">Review Gates</span>
-                      <ChevronDownIcon className="h-3 w-3 text-text-muted" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    sideOffset={8}
-                    className="w-56 rounded-md border border-border-strong bg-surface-02 p-1.5 shadow-level-2"
+            {showReviewGates && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 sm:h-9 px-2.5 sm:px-3 text-xs font-mono font-medium gap-1.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-foreground shadow-level-1 active:shadow-level-3 shrink-0"
                   >
-                    <DropdownMenuLabel className="px-2.5 py-1.5 font-mono text-[10px] font-medium text-text-muted uppercase tracking-wider">
-                      Verification Gates
-                    </DropdownMenuLabel>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/verify/scrollbar"
-                        className="flex items-center justify-between cursor-pointer text-xs font-mono rounded-md px-2.5 py-1.5 hover:bg-surface-04 text-foreground transition-colors"
-                      >
-                        <span>Scrollbar Review Gate</span>
-                        <ExternalLinkIcon className="h-3.5 w-3.5 text-text-muted" />
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/verify/brand"
-                        className="flex items-center justify-between cursor-pointer text-xs font-mono rounded-md px-2.5 py-1.5 hover:bg-surface-04 text-foreground transition-colors"
-                      >
-                        <span>Brand Review Gate</span>
-                        <ExternalLinkIcon className="h-3.5 w-3.5 text-text-muted" />
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className="my-1 bg-border-subtle" />
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/docs"
-                        className="flex items-center justify-between cursor-pointer text-xs font-mono rounded-md px-2.5 py-1.5 hover:bg-surface-04 text-text-muted hover:text-foreground transition-colors"
-                      >
-                        <span>Documentation Overview</span>
-                        <ExternalLinkIcon className="h-3.5 w-3.5 text-text-muted" />
-                      </Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-
-              {onRunDiagnostics && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={onRunDiagnostics}
-                  disabled={isRunning}
-                  aria-busy={isRunning}
-                  className="h-8 sm:h-9 px-3 sm:px-4 text-xs font-mono font-semibold gap-1.5 sm:gap-2 rounded-md bg-foreground text-background hover:bg-surface-04 hover:text-foreground border border-border-strong transition-all shadow-level-1 active:shadow-level-3 shrink-0 disabled:opacity-50"
+                    <span className="sm:hidden">Gates</span>
+                    <span className="hidden sm:inline">Review Gates</span>
+                    <ChevronDownIcon className="h-3 w-3 text-text-muted" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  sideOffset={8}
+                  className="w-56 rounded-md border border-border-strong bg-surface-02 p-1.5 shadow-level-2"
                 >
-                  {isRunning ? (
-                    <SpinnerIcon className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <PlayIcon className="h-3 w-3 fill-current" />
-                  )}
-                  <span className="sm:hidden">Run</span>
-                  <span className="hidden sm:inline">Run Diagnostics</span>
-                </Button>
-              )}
+                  <DropdownMenuLabel className="px-2.5 py-1.5 font-mono text-[10px] font-medium text-text-muted uppercase tracking-wider">
+                    Verification Gates
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/verify/scrollbar"
+                      className="flex items-center justify-between cursor-pointer text-xs font-mono rounded-md px-2.5 py-1.5 hover:bg-surface-04 text-foreground transition-colors"
+                    >
+                      <span>Scrollbar Review Gate</span>
+                      <ExternalLinkIcon className="h-3.5 w-3.5 text-text-muted" />
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/verify/brand"
+                      className="flex items-center justify-between cursor-pointer text-xs font-mono rounded-md px-2.5 py-1.5 hover:bg-surface-04 text-foreground transition-colors"
+                    >
+                      <span>Brand Review Gate</span>
+                      <ExternalLinkIcon className="h-3.5 w-3.5 text-text-muted" />
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="my-1 bg-border-subtle" />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/docs"
+                      className="flex items-center justify-between cursor-pointer text-xs font-mono rounded-md px-2.5 py-1.5 hover:bg-surface-04 text-text-muted hover:text-foreground transition-colors"
+                    >
+                      <span>Documentation Overview</span>
+                      <ExternalLinkIcon className="h-3.5 w-3.5 text-text-muted" />
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-              {children}
-            </div>
+            {onRunDiagnostics && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={onRunDiagnostics}
+                disabled={isRunning}
+                aria-busy={isRunning}
+                className="h-8 sm:h-9 px-3 sm:px-4 text-xs font-mono font-semibold gap-1.5 sm:gap-2 rounded-md bg-foreground text-background hover:bg-surface-04 hover:text-foreground border border-border-strong transition-all shadow-level-1 active:shadow-level-3 shrink-0 disabled:opacity-50"
+              >
+                {isRunning ? (
+                  <SpinnerIcon className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <PlayIcon className="h-3 w-3 fill-current" />
+                )}
+                <span className="sm:hidden">Run</span>
+                <span className="hidden sm:inline">Run Diagnostics</span>
+              </Button>
+            )}
+
+            {children}
           </div>
         </div>
       </div>

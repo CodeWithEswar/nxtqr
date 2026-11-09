@@ -48,7 +48,8 @@ export function VerificationPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* 1. Full-Width Edge-to-Edge Sticky Header (100% Solid, Zero Blur, Full Width) */}
       <VerificationHeader
-        title="Architecture & Infrastructure Diagnostics"
+        title="Architecture Diagnostics"
+        shortTitle="Diagnostics"
         subtitle="Production verification console for workspace packages, design system tokens, database contracts, and live runtime systems."
         version="v0.1.0-alpha"
         backHref="/docs"
