@@ -209,15 +209,15 @@ export default function BrandReviewGatePage() {
       {/* Main Interactive Stage */}
       <Card className="surface-raised">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle>Interactive Logo Verification Stage</CardTitle>
+              <CardTitle>Logo Verification Stage</CardTitle>
               <CardDescription>
                 Inspect variant rendering, color modes, entrance animation, and reduced-motion
                 behavior.
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -364,7 +364,7 @@ export default function BrandReviewGatePage() {
       {/* Reference App Icon System Showcase */}
       <Card>
         <CardHeader>
-          <CardTitle>Reference App Icon System Showcase</CardTitle>
+          <CardTitle>App Icon System</CardTitle>
           <CardDescription>
             Faithfully recreated 3D liquid chrome ribbon N monogram, precision corner brackets, and
             horizontal laser beam with specular optical flare.
@@ -422,7 +422,7 @@ export default function BrandReviewGatePage() {
       {/* Multi-Scale Verification Grid */}
       <Card>
         <CardHeader>
-          <CardTitle>Multi-Scale Optical Verification</CardTitle>
+          <CardTitle>Multi-Scale Verification</CardTitle>
           <CardDescription>
             Ensures geometric balance, recognizable silhouette, and corner-bracket sharpness from
             16px to 128px.
@@ -453,7 +453,7 @@ export default function BrandReviewGatePage() {
       {/* Wordmark Typography & Fallback System */}
       <Card>
         <CardHeader>
-          <CardTitle>Wordmark Typography Fallback Architecture</CardTitle>
+          <CardTitle>Wordmark Typography</CardTitle>
           <CardDescription>
             Strict metric preservation rules and optical kerning standards preventing layout reflow.
           </CardDescription>
@@ -466,9 +466,6 @@ export default function BrandReviewGatePage() {
                 <span className="font-mono text-xs font-semibold text-foreground">
                   Primary: Geist Sans
                 </span>
-                <Badge variant="outline" className="text-[10px] font-mono">
-                  Weight 700 · Tracking -0.04em
-                </Badge>
               </div>
               <div className="py-3 border-y border-subtle-border">
                 <LogoWordmark size="lg" showCategory={true} />
@@ -485,9 +482,6 @@ export default function BrandReviewGatePage() {
                 <span className="font-mono text-xs font-semibold text-foreground">
                   Strict Fallback Stack
                 </span>
-                <Badge variant="outline" className="text-[10px] font-mono">
-                  System UI · Non-Breaking
-                </Badge>
               </div>
               <div
                 className="py-3 border-y border-subtle-border"
@@ -557,7 +551,7 @@ export default function BrandReviewGatePage() {
       {/* Asset Manifest & Production Inventory */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <CardTitle>Deterministic Asset Inventory</CardTitle>
               <CardDescription>
@@ -565,7 +559,7 @@ export default function BrandReviewGatePage() {
                 dimensions.
               </CardDescription>
             </div>
-            <Badge variant="outline" className="text-[10px] font-mono">
+            <Badge variant="outline" className="text-[10px] font-mono shrink-0 w-fit">
               13 / 13 Assets Validated
             </Badge>
           </div>

@@ -93,41 +93,47 @@ export default function ScrollbarReviewGatePage() {
       {/* Interactive Monochrome Controller */}
       <Card>
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
               <CardTitle>Tactile Thumb States</CardTitle>
               <CardDescription>
                 Verify scrollbar thumb states across the unified pure black monochrome standard (Idle, Hover, Active/Drag, Inset Track).
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-muted-foreground">Active Focus State:</span>
-              <span className="font-mono text-xs px-2 py-0.5 rounded border border-border bg-surface font-semibold flex items-center gap-1.5 text-foreground">
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="font-mono text-xs text-muted-foreground whitespace-nowrap">
+                Active State:
+              </span>
+              <span className="font-mono text-xs px-2.5 py-1 rounded-md border border-border-default bg-surface-01 font-semibold flex items-center gap-2 text-foreground shadow-level-1">
                 <span
-                  className="w-2.5 h-2.5 rounded-full inline-block border border-border"
+                  className="w-2.5 h-2.5 rounded-full inline-block border border-border-default shrink-0"
                   style={{ backgroundColor: monochromeStates.find(s => s.token === activeThumbState)?.hex || "#FFFFFF" }}
                 />
-                {monochromeStates.find(s => s.token === activeThumbState)?.name || activeThumbState}
+                <span className="truncate">
+                  {monochromeStates.find(s => s.token === activeThumbState)?.name || activeThumbState}
+                </span>
               </span>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             {monochromeStates.map((state) => (
               <Button
                 key={state.token}
                 variant={activeThumbState === state.token ? "default" : "outline"}
                 size="sm"
                 onClick={() => setActiveThumbState(state.token)}
-                className="font-mono text-xs flex items-center gap-1.5"
+                className="font-mono text-xs flex items-center justify-start gap-2 h-9 px-3 w-full"
               >
                 <span
-                  className="w-2 h-2 rounded-full inline-block border border-border"
+                  className="w-2.5 h-2.5 rounded-full inline-block border border-border-default shrink-0"
                   style={{ backgroundColor: state.hex }}
                 />
-                <span>{state.name}</span>
-                <span className="text-[10px] text-muted-foreground font-mono">({state.hex})</span>
+                <span className="truncate">{state.name}</span>
+                <span className="text-[10px] text-muted-foreground font-mono ml-auto shrink-0">
+                  {state.hex}
+                </span>
               </Button>
             ))}
           </div>
