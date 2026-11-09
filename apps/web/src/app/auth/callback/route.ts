@@ -53,16 +53,29 @@ export async function GET(request: NextRequest) {
   <p style="font-size:12px;color:#858585;letter-spacing:0.02em;">Completing secure session...</p>
   <script>
     (function() {
+      var payload = { type: 'NXTQR_AUTH_SUCCESS', attemptId: '${attemptId}' };
+
+      // Channel 1: BroadcastChannel (cross-window on same-origin, bypasses COOP opener severing)
+      try {
+        if ('BroadcastChannel' in window) {
+          var bc = new BroadcastChannel('nxtqr_auth_channel');
+          bc.postMessage(payload);
+          bc.close();
+        }
+      } catch (e) {}
+
+      // Channel 2: LocalStorage storage event sync
+      try {
+        localStorage.setItem('nxtqr_auth_sync', JSON.stringify({ ...payload, timestamp: Date.now() }));
+      } catch (e) {}
+
+      // Channel 3: Direct window.opener postMessage
       try {
         if (window.opener && !window.opener.closed) {
-          window.opener.postMessage(
-            { type: 'NXTQR_AUTH_SUCCESS', attemptId: '${attemptId}' },
-            window.location.origin
-          );
+          window.opener.postMessage(payload, window.location.origin);
         }
-      } catch (e) {
-        // Fallback if cross-window communication is restricted
-      }
+      } catch (e) {}
+
       setTimeout(function() {
         try { window.close(); } catch(e) {}
       }, 350);

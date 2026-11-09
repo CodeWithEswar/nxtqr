@@ -34,11 +34,22 @@ export function calculateCenteredPopupCoordinates(width = 500, height = 620) {
   return { left, top, width, height };
 }
 
+function isWindowClosed(target: Window | null): boolean {
+  if (!target) return true;
+  try {
+    return target.closed;
+  } catch {
+    // If browser COOP or cross-origin restrictions throw or block access,
+    // the window is actively navigating on an external origin (e.g. Google Accounts).
+    // It is NOT closed.
+    return false;
+  }
+}
+
 export function openAuthPopup(options: PopupOptions): PopupController {
   const {
     url,
     attemptId,
-    title = "Sign in with Google · NXTQR Studio",
     width = 500,
     height = 620,
     timeoutMs = 120000, // 2 minutes bounded lifetime
@@ -68,13 +79,13 @@ export function openAuthPopup(options: PopupOptions): PopupController {
 
   let popup: Window | null = null;
   try {
-    popup = window.open(url, title, windowFeatures);
+    popup = window.open(url, "nxtqr_auth_popup", windowFeatures);
   } catch {
     onError(new AppError("AUTH_POPUP_BLOCKED", "Browser prevented popup from opening"));
     return { close: () => {}, isOpen: () => false };
   }
 
-  if (!popup || popup.closed || typeof popup.closed === "undefined") {
+  if (!popup || isWindowClosed(popup)) {
     onError(new AppError("AUTH_POPUP_BLOCKED", "Browser popup blocker active"));
     return { close: () => {}, isOpen: () => false };
   }
@@ -89,6 +100,7 @@ export function openAuthPopup(options: PopupOptions): PopupController {
   let isHandled = false;
   let pollTimer: ReturnType<typeof setInterval> | null = null;
   let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
+  let broadcastChannel: BroadcastChannel | null = null;
 
   const cleanup = () => {
     isHandled = true;
@@ -101,6 +113,15 @@ export function openAuthPopup(options: PopupOptions): PopupController {
       timeoutTimer = null;
     }
     window.removeEventListener("message", handleMessage);
+    window.removeEventListener("storage", handleStorage);
+    if (broadcastChannel) {
+      try {
+        broadcastChannel.close();
+      } catch {
+        // Ignored
+      }
+      broadcastChannel = null;
+    }
   };
 
   const handleMessage = (event: MessageEvent) => {
@@ -109,8 +130,8 @@ export function openAuthPopup(options: PopupOptions): PopupController {
       return;
     }
 
-    // Security check 2: Strict source matching
-    if (popup && event.source !== popup) {
+    // Security check 2: Strict source matching (if source reference is accessible)
+    if (popup && event.source && event.source !== popup) {
       return;
     }
 
@@ -126,7 +147,7 @@ export function openAuthPopup(options: PopupOptions): PopupController {
 
     cleanup();
     try {
-      if (popup && !popup.closed) {
+      if (popup && !isWindowClosed(popup)) {
         popup.close();
       }
     } catch {
@@ -136,18 +157,69 @@ export function openAuthPopup(options: PopupOptions): PopupController {
     onSuccess();
   };
 
-  window.addEventListener("message", handleMessage);
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key !== "nxtqr_auth_sync" || !event.newValue) {
+      return;
+    }
 
-  // Poll for popup closure by user
+    try {
+      const data = JSON.parse(event.newValue) as Partial<AuthCallbackMessage>;
+      if (data.type !== "NXTQR_AUTH_SUCCESS") return;
+      if (data.attemptId && data.attemptId !== attemptId) return;
+
+      cleanup();
+      try {
+        if (popup && !isWindowClosed(popup)) {
+          popup.close();
+        }
+      } catch {
+        // Ignored
+      }
+
+      onSuccess();
+    } catch {
+      // Ignored
+    }
+  };
+
+  window.addEventListener("message", handleMessage);
+  window.addEventListener("storage", handleStorage);
+
+  // BroadcastChannel listener (works across same-origin windows even if COOP severed window.opener)
+  if (typeof window !== "undefined" && "BroadcastChannel" in window) {
+    try {
+      broadcastChannel = new BroadcastChannel("nxtqr_auth_channel");
+      broadcastChannel.onmessage = (event) => {
+        const data = event.data as Partial<AuthCallbackMessage> | undefined;
+        if (!data || data.type !== "NXTQR_AUTH_SUCCESS") return;
+        if (data.attemptId && data.attemptId !== attemptId) return;
+
+        cleanup();
+        try {
+          if (popup && !isWindowClosed(popup)) {
+            popup.close();
+          }
+        } catch {
+          // Ignored
+        }
+
+        onSuccess();
+      };
+    } catch {
+      // Ignored
+    }
+  }
+
+  // Poll for popup closure by user (using COOP-safe isWindowClosed)
   pollTimer = setInterval(() => {
     if (isHandled) return;
 
-    if (!popup || popup.closed) {
+    if (isWindowClosed(popup)) {
       cleanup();
       // If closed by user without receiving message, handle as graceful cancellation
       onCancelled();
     }
-  }, 450);
+  }, 650);
 
   // Enforce bounded attempt timeout
   timeoutTimer = setTimeout(() => {
@@ -155,7 +227,7 @@ export function openAuthPopup(options: PopupOptions): PopupController {
 
     cleanup();
     try {
-      if (popup && !popup.closed) {
+      if (popup && !isWindowClosed(popup)) {
         popup.close();
       }
     } catch {
@@ -168,14 +240,14 @@ export function openAuthPopup(options: PopupOptions): PopupController {
     close: () => {
       cleanup();
       try {
-        if (popup && !popup.closed) {
+        if (popup && !isWindowClosed(popup)) {
           popup.close();
         }
       } catch {
         // Ignored
       }
     },
-    isOpen: () => !!popup && !popup.closed,
+    isOpen: () => !!popup && !isWindowClosed(popup),
   };
 }
 
