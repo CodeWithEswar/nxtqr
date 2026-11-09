@@ -22,6 +22,7 @@ export interface GraphEditorState {
   selectedTraceEventId: string | null;
   gridType: GridType;
   snapToGrid: boolean;
+  showMinimap: boolean;
   isInspectorOpen: boolean;
 
   // Simulation state
@@ -50,6 +51,8 @@ export interface GraphEditorState {
 
   setGridType: (gridType: GridType) => void;
   setSnapToGrid: (enabled: boolean) => void;
+  setShowMinimap: (show: boolean) => void;
+  toggleMinimap: () => void;
   setInspectorOpen: (open: boolean) => void;
   toggleInspector: () => void;
 
@@ -182,6 +185,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => ({
   selectedTraceEventId: null,
   gridType: "dots",
   snapToGrid: true,
+  showMinimap: true,
   isInspectorOpen: true,
 
   simulationStatus: "idle",
@@ -260,6 +264,8 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => ({
 
   setGridType: (gridType) => set({ gridType }),
   setSnapToGrid: (snapToGrid) => set({ snapToGrid }),
+  setShowMinimap: (showMinimap) => set({ showMinimap }),
+  toggleMinimap: () => set((s) => ({ showMinimap: !s.showMinimap })),
   setInspectorOpen: (isInspectorOpen) => set({ isInspectorOpen }),
   toggleInspector: () => set((s) => ({ isInspectorOpen: !s.isInspectorOpen })),
 

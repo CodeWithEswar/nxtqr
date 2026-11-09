@@ -84,6 +84,15 @@
     --warning: #d97706;
     --warning-foreground: #000000;
   }
+
+  /* React Flow Monochrome Overrides */
+  :root,
+  .dark {
+    --xy-minimap-background-color-default: #0a0a0a;
+    --xy-minimap-mask-background-color-default: rgba(0, 0, 0, 0.75);
+    --xy-minimap-mask-stroke-color-default: #262626;
+    --xy-minimap-node-background-color-default: #262626;
+  }
 }
 
 @layer utilities {

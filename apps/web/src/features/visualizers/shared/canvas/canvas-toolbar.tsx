@@ -17,6 +17,8 @@ export function CanvasToolbar({ className }: { className?: string }) {
   const setGridType = useGraphEditorStore((state) => state.setGridType);
   const snapToGrid = useGraphEditorStore((state) => state.snapToGrid);
   const setSnapToGrid = useGraphEditorStore((state) => state.setSnapToGrid);
+  const showMinimap = useGraphEditorStore((state) => state.showMinimap);
+  const toggleMinimap = useGraphEditorStore((state) => state.toggleMinimap);
 
   const nodes = useGraphEditorStore((state) => state.nodes);
   const edges = useGraphEditorStore((state) => state.edges);
@@ -111,6 +113,20 @@ export function CanvasToolbar({ className }: { className?: string }) {
         title={`Snap to Grid (20px): ${snapToGrid ? "ON" : "OFF"}`}
       >
         Snap
+      </button>
+
+      {/* MiniMap Toggle */}
+      <button
+        onClick={toggleMinimap}
+        className={cn(
+          "px-2 h-7 rounded border text-xs font-mono transition-colors whitespace-nowrap",
+          showMinimap
+            ? "border-accent bg-accent/10 text-accent font-semibold"
+            : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
+        )}
+        title={`Toggle MiniMap: ${showMinimap ? "ON" : "OFF"}`}
+      >
+        Map
       </button>
 
       <div className="w-[1px] h-4 bg-border mx-1" />

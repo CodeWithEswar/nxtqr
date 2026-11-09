@@ -53,6 +53,7 @@ function InnerGraphCanvas({
 
   const gridType = useGraphEditorStore((state) => state.gridType);
   const snapToGrid = useGraphEditorStore((state) => state.snapToGrid);
+  const storeShowMinimap = useGraphEditorStore((state) => state.showMinimap);
 
   // Map NXTQR nodes to React Flow format
   const flowNodes = React.useMemo(() => {
@@ -230,7 +231,8 @@ function InnerGraphCanvas({
         minZoom={0.2}
         maxZoom={2.5}
         fitView
-        className="bg-black"
+        colorMode="dark"
+        className="bg-black dark"
         proOptions={{ hideAttribution: true }}
       >
         {/* Subtle Background Grid */}
@@ -251,17 +253,23 @@ function InnerGraphCanvas({
         )}
 
         {/* MiniMap */}
-        {showMinimap && (
+        {showMinimap && storeShowMinimap && (
           <MiniMap
-            className="!bg-surface !border !border-subtle-border !rounded-md !shadow-level-2 hidden md:block"
+            className="!bg-[#0A0A0A] !border !border-subtle-border !rounded-md !shadow-level-2 max-sm:scale-75 max-sm:origin-bottom-right"
+            bgColor="#0A0A0A"
+            maskColor="rgba(0, 0, 0, 0.75)"
+            maskStrokeColor="#262626"
+            maskStrokeWidth={1}
             nodeColor={(node) => {
               if (node.id === selectedNodeId) return "var(--accent)";
               if (node.data?.status === "executing") return "var(--accent)";
               if (node.data?.status === "completed") return "#059669";
-              return "#333333";
+              return "#262626";
             }}
-            maskColor="rgba(0, 0, 0, 0.75)"
-            style={{ width: 130, height: 90 }}
+            nodeStrokeColor="#333333"
+            nodeStrokeWidth={1}
+            nodeBorderRadius={2}
+            style={{ width: 120, height: 80 }}
           />
         )}
       </ReactFlow>
