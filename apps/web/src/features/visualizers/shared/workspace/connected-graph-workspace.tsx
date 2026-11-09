@@ -63,9 +63,9 @@ export function ConnectedGraphWorkspace({
           <button
             onClick={() => setShowPalette(!showPalette)}
             className={cn(
-              "px-2 py-1 text-xs font-mono rounded border transition-colors",
+              "px-2 py-1 text-xs font-mono rounded-md border transition-colors",
               showPalette
-                ? "border-accent bg-accent/10 text-accent font-semibold"
+                ? "border-accent/40 bg-accent/10 text-accent font-semibold"
                 : "border-subtle-border text-muted-foreground hover:text-foreground"
             )}
           >
@@ -74,9 +74,9 @@ export function ConnectedGraphWorkspace({
           <button
             onClick={() => setShowInspector(!showInspector)}
             className={cn(
-              "px-2 py-1 text-xs font-mono rounded border transition-colors",
+              "px-2 py-1 text-xs font-mono rounded-md border transition-colors",
               showInspector
-                ? "border-accent bg-accent/10 text-accent font-semibold"
+                ? "border-accent/40 bg-accent/10 text-accent font-semibold"
                 : "border-subtle-border text-muted-foreground hover:text-foreground"
             )}
           >

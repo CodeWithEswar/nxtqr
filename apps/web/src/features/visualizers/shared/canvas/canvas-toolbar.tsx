@@ -63,7 +63,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
       {/* Zoom Controls */}
       <button
         onClick={() => zoomIn({ duration: 150 })}
-        className="w-7 h-7 rounded border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono font-bold"
+        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono font-bold"
         title="Zoom In"
       >
         +
@@ -71,7 +71,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
 
       <button
         onClick={() => zoomOut({ duration: 150 })}
-        className="w-7 h-7 rounded border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono font-bold"
+        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono font-bold"
         title="Zoom Out"
       >
         -
@@ -79,7 +79,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
 
       <button
         onClick={() => fitView({ duration: 200, padding: 0.2 })}
-        className="px-2 h-7 rounded border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono"
+        className="px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono"
         title="Fit All Nodes"
       >
         Fit
@@ -91,9 +91,9 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={cycleGrid}
         className={cn(
-          "px-2 h-7 rounded border text-xs font-mono transition-colors whitespace-nowrap",
+          "px-2 h-7 rounded-md border text-xs font-mono transition-colors whitespace-nowrap",
           gridType !== "none"
-            ? "border-accent bg-accent/10 text-accent font-semibold"
+            ? "border-accent/40 bg-accent/10 text-accent font-semibold"
             : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
         )}
         title={`Grid: ${gridType}`}
@@ -105,9 +105,9 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={() => setSnapToGrid(!snapToGrid)}
         className={cn(
-          "px-2 h-7 rounded border text-xs font-mono transition-colors",
+          "px-2 h-7 rounded-md border text-xs font-mono transition-colors",
           snapToGrid
-            ? "border-accent bg-accent/10 text-accent font-semibold"
+            ? "border-accent/40 bg-accent/10 text-accent font-semibold"
             : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
         )}
         title={`Snap to Grid (20px): ${snapToGrid ? "ON" : "OFF"}`}
@@ -119,9 +119,9 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={toggleMinimap}
         className={cn(
-          "px-2 h-7 rounded border text-xs font-mono transition-colors whitespace-nowrap",
+          "px-2 h-7 rounded-md border text-xs font-mono transition-colors whitespace-nowrap",
           showMinimap
-            ? "border-accent bg-accent/10 text-accent font-semibold"
+            ? "border-accent/40 bg-accent/10 text-accent font-semibold"
             : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
         )}
         title={`Toggle MiniMap: ${showMinimap ? "ON" : "OFF"}`}
@@ -135,7 +135,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={() => handleAutoLayout("RIGHT")}
         disabled={isLayingOut}
-        className="px-2.5 h-7 rounded border border-border bg-elevated-surface text-foreground hover:border-accent hover:text-accent flex items-center gap-1.5 text-xs font-mono transition-colors"
+        className="px-2.5 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:border-accent/40 hover:text-accent flex items-center gap-1.5 text-xs font-mono transition-colors"
         title="Automated Hierarchical Layout (ELK.js)"
       >
         <LayersIcon className="h-3 w-3" />
@@ -148,7 +148,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={undo}
         disabled={past.length === 0}
-        className="px-2 h-7 rounded border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 disabled:pointer-events-none text-xs font-mono"
+        className="px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 disabled:pointer-events-none text-xs font-mono"
         title="Undo (Ctrl+Z)"
       >
         Undo
@@ -157,7 +157,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={redo}
         disabled={future.length === 0}
-        className="px-2 h-7 rounded border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 disabled:pointer-events-none text-xs font-mono"
+        className="px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 disabled:pointer-events-none text-xs font-mono"
         title="Redo (Ctrl+Y)"
       >
         Redo
@@ -166,7 +166,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
       {/* Reset */}
       <button
         onClick={resetToFixture}
-        className="w-7 h-7 rounded border border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface flex items-center justify-center"
+        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface flex items-center justify-center"
         title="Reset to Fixture Graph"
       >
         <RefreshIcon className="h-3 w-3" />

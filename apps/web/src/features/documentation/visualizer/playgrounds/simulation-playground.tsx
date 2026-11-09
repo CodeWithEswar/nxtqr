@@ -22,7 +22,7 @@ export function SimulationPlayground() {
           </h3>
 
           <div className="flex items-center gap-2 font-mono text-xs shrink-0 whitespace-nowrap">
-            <Badge variant="outline" className="border-accent text-accent uppercase font-semibold">
+            <Badge variant="outline" className="border-accent/40 text-accent uppercase font-semibold">
               {simulationStatus}
             </Badge>
             <span className="text-muted-foreground">Step: {currentStep}</span>

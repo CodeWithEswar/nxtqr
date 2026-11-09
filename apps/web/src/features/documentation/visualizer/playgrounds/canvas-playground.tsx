@@ -54,7 +54,7 @@ export function CanvasPlayground() {
               key={g}
               onClick={() => setGridType(g)}
               className={cn(
-                "px-2 py-0.5 rounded capitalize transition-colors",
+                "px-2 py-0.5 rounded-md capitalize transition-colors",
                 gridType === g
                   ? "bg-accent text-accent-foreground font-semibold"
                   : "text-muted-foreground hover:text-foreground"
@@ -69,9 +69,9 @@ export function CanvasPlayground() {
         <button
           onClick={() => setSnapToGrid(!snapToGrid)}
           className={cn(
-            "px-2.5 py-1 text-xs font-mono rounded border whitespace-nowrap transition-colors",
+            "px-2.5 py-1 text-xs font-mono rounded-md border whitespace-nowrap transition-colors",
             snapToGrid
-              ? "border-accent bg-accent/10 text-accent font-semibold"
+              ? "border-accent/40 bg-accent/10 text-accent font-semibold"
               : "border-border text-muted-foreground hover:text-foreground"
           )}
         >
