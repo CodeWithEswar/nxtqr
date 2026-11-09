@@ -91,10 +91,12 @@ export function ExecutionTraceViewer({ className }: { className?: string }) {
 
           {/* Clear button */}
           <button
+            type="button"
             onClick={clearTraceEvents}
             disabled={traceEvents.length === 0}
-            className="p-1 rounded border border-subtle-border text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors"
+            className="w-6 h-6 flex items-center justify-center rounded-md border border-subtle-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:border-border-hover disabled:opacity-30 transition-colors shadow-level-1 active:shadow-level-3 shrink-0"
             title="Clear Trace Stream"
+            aria-label="Clear Trace Stream"
           >
             <RefreshIcon className="h-3 w-3" />
           </button>

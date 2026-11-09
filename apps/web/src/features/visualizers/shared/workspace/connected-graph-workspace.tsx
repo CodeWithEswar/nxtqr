@@ -104,8 +104,10 @@ export function ConnectedGraphWorkspace({
               <div className="xl:hidden flex items-center justify-between pb-2 mb-2 border-b border-subtle-border">
                 <span className="text-xs font-mono font-semibold uppercase text-muted-foreground">Node Palette</span>
                 <button
+                  type="button"
                   onClick={() => setShowPalette(false)}
-                  className="p-1 rounded border border-subtle-border text-muted-foreground hover:text-foreground"
+                  className="w-6 h-6 flex items-center justify-center rounded-md border border-subtle-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:border-border-hover transition-colors shrink-0 shadow-level-1 active:shadow-level-3"
+                  aria-label="Close Node Palette"
                 >
                   <CloseIcon className="h-3 w-3" />
                 </button>
@@ -142,8 +144,10 @@ export function ConnectedGraphWorkspace({
               <div className="md:hidden flex items-center justify-between pb-2 mb-2 border-b border-subtle-border">
                 <span className="text-xs font-mono font-semibold uppercase text-muted-foreground">Inspector</span>
                 <button
+                  type="button"
                   onClick={() => setShowInspector(false)}
-                  className="p-1 rounded border border-subtle-border text-muted-foreground hover:text-foreground"
+                  className="w-6 h-6 flex items-center justify-center rounded-md border border-subtle-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:border-border-hover transition-colors shrink-0 shadow-level-1 active:shadow-level-3"
+                  aria-label="Close Inspector"
                 >
                   <CloseIcon className="h-3 w-3" />
                 </button>

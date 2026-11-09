@@ -71,18 +71,22 @@ export function NodeInspector({ className }: { className?: string }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
+            type="button"
             onClick={() => removeNode(selectedNode.id)}
-            className="p-1.5 rounded border border-border text-muted-foreground hover:text-red-400 hover:border-red-400/50 transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-md border border-border bg-elevated-surface text-muted-foreground hover:text-red-400 hover:border-red-500/40 hover:bg-surface-04 transition-colors shadow-level-1 active:shadow-level-3 shrink-0"
             title="Delete Node"
+            aria-label="Delete Node"
           >
             <TrashIcon className="h-3.5 w-3.5" />
           </button>
           <button
+            type="button"
             onClick={() => selectNode(null)}
-            className="p-1.5 rounded border border-border text-muted-foreground hover:text-foreground transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-md border border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:border-border-hover hover:bg-surface-04 transition-colors shadow-level-1 active:shadow-level-3 shrink-0"
             title="Close Inspector"
+            aria-label="Close Inspector"
           >
             <CloseIcon className="h-3.5 w-3.5" />
           </button>
@@ -96,7 +100,7 @@ export function NodeInspector({ className }: { className?: string }) {
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={cn(
-              "flex-1 text-xs font-mono py-1 rounded transition-colors uppercase text-center",
+              "flex-1 text-xs font-mono py-1 rounded-md transition-colors uppercase text-center",
               activeTab === tab
                 ? "bg-surface text-foreground font-semibold border border-subtle-border shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -210,13 +214,13 @@ export function NodeInspector({ className }: { className?: string }) {
               Incoming ({incomingEdges.length})
             </div>
             {incomingEdges.length === 0 ? (
-              <div className="text-[11px] text-muted-foreground italic p-2 bg-black/40 rounded border border-border/50">
+              <div className="text-[11px] text-muted-foreground italic p-2 bg-black/40 rounded-md border border-subtle-border">
                 No incoming connections
               </div>
             ) : (
               <div className="space-y-1">
                 {incomingEdges.map((e) => (
-                  <div key={e.id} className="p-1.5 rounded border border-border bg-black flex items-center justify-between">
+                  <div key={e.id} className="p-1.5 rounded-md border border-border bg-black flex items-center justify-between">
                     <span className="text-foreground">{e.source}</span>
                     <span className="text-muted-foreground text-[10px]">→ {e.targetHandle ?? "in"}</span>
                   </div>
@@ -230,13 +234,13 @@ export function NodeInspector({ className }: { className?: string }) {
               Outgoing ({outgoingEdges.length})
             </div>
             {outgoingEdges.length === 0 ? (
-              <div className="text-[11px] text-muted-foreground italic p-2 bg-black/40 rounded border border-border/50">
+              <div className="text-[11px] text-muted-foreground italic p-2 bg-black/40 rounded-md border border-subtle-border">
                 No outgoing connections
               </div>
             ) : (
               <div className="space-y-1">
                 {outgoingEdges.map((e) => (
-                  <div key={e.id} className="p-1.5 rounded border border-border bg-black flex items-center justify-between">
+                  <div key={e.id} className="p-1.5 rounded-md border border-border bg-black flex items-center justify-between">
                     <span className="text-muted-foreground text-[10px]">{e.sourceHandle ?? "out"} →</span>
                     <span className="text-foreground">{e.target}</span>
                   </div>
