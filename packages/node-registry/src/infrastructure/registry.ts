@@ -28,6 +28,10 @@ import {
   cachingAndPerformanceCategoryDefinition,
   ALL_CACHING_AND_PERFORMANCE_DEFINITIONS,
 } from "./definitions/caching-and-performance";
+import {
+  messagingAndEventSystemsCategoryDefinition,
+  ALL_MESSAGING_AND_EVENT_SYSTEMS_DEFINITIONS,
+} from "./definitions/messaging-and-event-systems";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -71,6 +75,12 @@ export class InfrastructureRegistryClass {
     // 6. Register Caching & Performance Category (Cat 06)
     this.registerCategory(cachingAndPerformanceCategoryDefinition);
     for (const def of ALL_CACHING_AND_PERFORMANCE_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 7. Register Messaging & Event Systems Category (Cat 07)
+    this.registerCategory(messagingAndEventSystemsCategoryDefinition);
+    for (const def of ALL_MESSAGING_AND_EVENT_SYSTEMS_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

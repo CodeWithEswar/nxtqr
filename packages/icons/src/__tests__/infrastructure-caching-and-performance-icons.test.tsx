@@ -72,3 +72,4 @@ describe("Category 06 — Caching & Performance Infrastructure Icons", () => {
     expect(html48).toContain('height="48"');
   });
 });
+

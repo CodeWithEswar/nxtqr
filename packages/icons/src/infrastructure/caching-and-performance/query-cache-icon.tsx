@@ -80,3 +80,4 @@ export const QueryCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

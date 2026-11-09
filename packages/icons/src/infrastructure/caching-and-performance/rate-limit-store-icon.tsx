@@ -77,3 +77,4 @@ export const RateLimitStoreIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

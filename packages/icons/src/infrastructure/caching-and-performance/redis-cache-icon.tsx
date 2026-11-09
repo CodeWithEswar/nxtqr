@@ -84,3 +84,4 @@ export const RedisCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

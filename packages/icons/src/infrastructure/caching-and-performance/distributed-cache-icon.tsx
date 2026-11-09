@@ -89,3 +89,4 @@ export const DistributedCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

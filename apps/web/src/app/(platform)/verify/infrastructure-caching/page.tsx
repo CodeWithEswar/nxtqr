@@ -77,6 +77,12 @@ export default function InfrastructureCachingVerificationPage() {
 
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
             <Link
+              href="/verify/infrastructure-messaging"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
+            >
+              Next: Cat 07 Messaging →
+            </Link>
+            <Link
               href="/verify/infrastructure-databases"
               className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
@@ -548,3 +554,4 @@ export default function InfrastructureCachingVerificationPage() {
     </div>
   );
 }
+

@@ -273,5 +273,20 @@ export const nodeTypes = {
   "write-through-cache": GraphNode,
   "write-behind-cache": GraphNode,
   "rate-limit-store": GraphNode,
+  // Infrastructure Category 07: Messaging & Event Systems
+  "message-queue": GraphNode,
+  "message-broker": GraphNode,
+  "event-bus": GraphNode,
+  "pub-sub-topic": GraphNode,
+  "event-stream": GraphNode,
+  "kafka-broker": GraphNode,
+  "rabbitmq-broker": GraphNode,
+  "dead-letter-queue": GraphNode,
+  "retry-queue": GraphNode,
+  "event-consumer": GraphNode,
+  "event-producer": GraphNode,
+  "webhook-dispatcher": GraphNode,
+  "stream-processor": GraphNode,
+  "event-store": GraphNode,
 };
 

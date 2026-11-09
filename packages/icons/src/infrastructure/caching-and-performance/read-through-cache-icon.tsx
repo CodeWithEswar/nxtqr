@@ -78,3 +78,4 @@ export const ReadThroughCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

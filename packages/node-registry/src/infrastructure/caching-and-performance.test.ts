@@ -120,3 +120,4 @@ describe("NXTQR Phase 05.1.6 — Infrastructure Component Registry (Caching & Pe
     expect(writeBehindMatches.some((c) => c.id === "write-behind-cache")).toBe(true);
   });
 });
+

@@ -84,3 +84,4 @@ export const ApplicationCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

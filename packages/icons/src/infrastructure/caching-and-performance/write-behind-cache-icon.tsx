@@ -76,3 +76,4 @@ export const WriteBehindCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

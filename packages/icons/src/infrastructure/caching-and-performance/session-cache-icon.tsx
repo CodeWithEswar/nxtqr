@@ -82,3 +82,4 @@ export const SessionCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

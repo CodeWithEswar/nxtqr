@@ -120,3 +120,4 @@ export const MemcachedCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+
