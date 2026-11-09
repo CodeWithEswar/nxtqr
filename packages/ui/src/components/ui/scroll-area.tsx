@@ -69,10 +69,10 @@ export interface ScrollBarProps extends React.ComponentPropsWithoutRef<
 }
 
 const variantSizeMap = {
-  default: { vertical: "w-[10px]", horizontal: "h-[10px]", thumbRadius: "rounded-md" },
-  compact: { vertical: "w-[7px]", horizontal: "h-[7px]", thumbRadius: "rounded-[4px]" },
-  canvas: { vertical: "w-[7px]", horizontal: "h-[7px]", thumbRadius: "rounded-[4px]" },
-  dense: { vertical: "w-[6px]", horizontal: "h-[6px]", thumbRadius: "rounded-[3px]" },
+  default: { vertical: "w-[6px]", horizontal: "h-[6px]", thumbRadius: "rounded-md" },
+  compact: { vertical: "w-[5px]", horizontal: "h-[5px]", thumbRadius: "rounded-[4px]" },
+  canvas: { vertical: "w-[5px]", horizontal: "h-[5px]", thumbRadius: "rounded-[4px]" },
+  dense: { vertical: "w-[4px]", horizontal: "h-[4px]", thumbRadius: "rounded-[3px]" },
 } as const;
 
 const ScrollBar = React.forwardRef<
@@ -87,15 +87,15 @@ const ScrollBar = React.forwardRef<
       orientation={orientation}
       className={cn(
         "flex touch-none select-none transition-colors nxtqr-scroll-track",
-        orientation === "vertical" && cn("h-full border-l p-[1px]", config.vertical),
-        orientation === "horizontal" && cn("w-full flex-col border-t p-[1px]", config.horizontal),
+        orientation === "vertical" && cn("h-full border-l border-subtle-border", config.vertical),
+        orientation === "horizontal" && cn("w-full border-t border-subtle-border", config.horizontal),
         variant === "canvas" && "overscroll-contain",
         className,
       )}
       {...props}
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
-        className={cn("relative flex-1 nxtqr-scroll-thumb cursor-pointer", config.thumbRadius)}
+        className={cn("relative nxtqr-scroll-thumb cursor-pointer", config.thumbRadius)}
       />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
   );

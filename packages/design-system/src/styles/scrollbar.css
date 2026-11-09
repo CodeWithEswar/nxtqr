@@ -5,10 +5,10 @@
 
 :root {
   /* Scrollbar Dimension Tokens */
-  --scrollbar-size: 10px;
-  --scrollbar-size-compact: 7px;
-  --scrollbar-size-canvas: 7px;
-  --scrollbar-size-dense: 6px;
+  --scrollbar-size: 6px;
+  --scrollbar-size-compact: 5px;
+  --scrollbar-size-canvas: 5px;
+  --scrollbar-size-dense: 4px;
 
   /* Scrollbar Radius Tokens */
   --scrollbar-radius: var(--radius, 0.375rem);

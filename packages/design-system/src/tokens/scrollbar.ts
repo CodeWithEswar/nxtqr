@@ -6,23 +6,23 @@
 export const scrollbarTokens = {
   sizes: {
     default: {
-      px: 10,
-      rem: "0.625rem",
+      px: 6,
+      rem: "0.375rem",
       cssVar: "--scrollbar-size",
     },
     compact: {
-      px: 7,
-      rem: "0.4375rem",
+      px: 5,
+      rem: "0.3125rem",
       cssVar: "--scrollbar-size-compact",
     },
     canvas: {
-      px: 7,
-      rem: "0.4375rem",
+      px: 5,
+      rem: "0.3125rem",
       cssVar: "--scrollbar-size-canvas",
     },
     dense: {
-      px: 6,
-      rem: "0.375rem",
+      px: 4,
+      rem: "0.25rem",
       cssVar: "--scrollbar-size-dense",
     },
   },

@@ -63,7 +63,7 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
       </div>
 
       {/* Navigation groups with Radix ScrollArea precision rail */}
-      <ScrollArea className="flex-1 w-full">
+      <ScrollArea variant="compact" className="flex-1 w-full">
         <nav aria-label="Documentation" className="flex flex-col gap-5 font-sans text-xs py-4 px-3.5">
           {navGroups.map((group) => {
             const isCollapsed = Boolean(collapsedGroups[group.category]);

@@ -22,10 +22,10 @@ export function ScrollbarPlayground() {
   };
 
   const variants: { id: "default" | "compact" | "canvas" | "dense"; label: string; px: number; use: string }[] = [
-    { id: "default", label: "Default", px: 10, use: "Main page & documents" },
-    { id: "compact", label: "Compact", px: 7, use: "Sidebars & popovers" },
-    { id: "canvas", label: "Canvas", px: 7, use: "Node editor viewport" },
-    { id: "dense", label: "Dense", px: 6, use: "Telemetry logs & tables" },
+    { id: "default", label: "Default", px: 6, use: "Main page & documents" },
+    { id: "compact", label: "Compact", px: 5, use: "Sidebars & popovers" },
+    { id: "canvas", label: "Canvas", px: 5, use: "Node editor viewport" },
+    { id: "dense", label: "Dense", px: 4, use: "Telemetry logs & tables" },
   ];
 
   return (
@@ -53,7 +53,7 @@ export function ScrollbarPlayground() {
           </button>
         </div>
         <p className="text-xs text-muted-foreground">
-          Engineered hardware scroll rails. 10px / 7px / 6px precision scales, inset groove lighting, and tactile solid feedback.
+          Engineered hardware scroll rails. 6px / 5px / 4px precision scales, inset groove lighting, and tactile solid feedback.
         </p>
       </div>
 

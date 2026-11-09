@@ -3,10 +3,10 @@ import { scrollbarTokens } from "./scrollbar";
 
 describe("Design System — Precision Rail Scrollbar Tokens", () => {
   it("defines standard dimensions for all 4 variants", () => {
-    expect(scrollbarTokens.sizes.default.px).toBe(10);
-    expect(scrollbarTokens.sizes.compact.px).toBe(7);
-    expect(scrollbarTokens.sizes.canvas.px).toBe(7);
-    expect(scrollbarTokens.sizes.dense.px).toBe(6);
+    expect(scrollbarTokens.sizes.default.px).toBe(6);
+    expect(scrollbarTokens.sizes.compact.px).toBe(5);
+    expect(scrollbarTokens.sizes.canvas.px).toBe(5);
+    expect(scrollbarTokens.sizes.dense.px).toBe(4);
 
     expect(scrollbarTokens.sizes.default.cssVar).toBe("--scrollbar-size");
     expect(scrollbarTokens.sizes.compact.cssVar).toBe("--scrollbar-size-compact");

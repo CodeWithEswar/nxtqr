@@ -39,7 +39,7 @@ function Elbow({
       {hasNext && (
         <path
           d={`M1 ${mid} V${ROW_HEIGHT}`}
-          className="stroke-white/15"
+          className="stroke-[#262626]"
           strokeWidth="1"
         />
       )}
@@ -49,7 +49,7 @@ function Elbow({
         strokeLinecap="round"
         className={cn(
           "transition-[stroke] duration-200",
-          active ? "stroke-white" : "stroke-white/15",
+          active ? "stroke-foreground" : "stroke-[#262626]",
         )}
       />
     </svg>
@@ -99,7 +99,7 @@ export function DocsToc({ headings = [] }: DocsTocProps) {
   };
 
   return (
-    <aside className="hidden xl:block w-60 shrink-0 h-full overflow-y-auto scrollbar-compact py-10 pl-7 pr-5 border-l border-white/10 bg-black">
+    <aside className="hidden xl:block w-60 shrink-0 h-full overflow-y-auto scrollbar-compact py-10 pl-7 pr-5 border-l border-subtle-border bg-black">
       <div className="space-y-5">
         <h4 className="flex items-center gap-2 font-sans text-[12px] font-medium tracking-tight text-white/90">
           <svg

@@ -7,9 +7,9 @@
 
 /* ───────── Tokens (override anywhere; fallbacks keep it working standalone) ───────── */
 :root {
-  --nxtqr-rail-size: 12px;            /* scrollbar hit area */
-  --nxtqr-rail-pad: 3px;              /* idle inset -> thin thumb */
-  --nxtqr-rail-pad-active: 2px;       /* hover/drag inset -> tactile thumb */
+  --nxtqr-rail-size: 6px;             /* scrollbar hit area */
+  --nxtqr-rail-pad: 1px;              /* idle inset -> thin thumb */
+  --nxtqr-rail-pad-active: 0.5px;     /* hover/drag inset -> tactile thumb */
   --nxtqr-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --nxtqr-accent-rgb: 64, 64, 64;     /* dark neutral border strong (#404040) */
 }
@@ -23,7 +23,6 @@
   border-radius: var(--scrollbar-radius, 0.375rem);
   border: 1px solid transparent;
   background-color: transparent;
-  padding: var(--nxtqr-rail-pad);
   transition:
     background-color 150ms var(--nxtqr-ease),
     border-color 150ms var(--nxtqr-ease),
@@ -33,18 +32,30 @@
 
 .nxtqr-scroll-track[data-orientation="vertical"] {
   width: var(--nxtqr-rail-size);
-  flex-direction: column;
+  flex-direction: row;
+  padding: 4px var(--nxtqr-rail-pad);
 }
 
 .nxtqr-scroll-track[data-orientation="horizontal"] {
   height: var(--nxtqr-rail-size);
-  flex-direction: row;
+  flex-direction: column;
+  padding: var(--nxtqr-rail-pad) 4px;
 }
 
 /* Rail only appears while interacting — the thumb alone is visible at rest */
-.nxtqr-scroll-track:hover,
-.nxtqr-scroll-track:has(.nxtqr-scroll-thumb:active) {
-  padding: var(--nxtqr-rail-pad-active);
+.nxtqr-scroll-track[data-orientation="vertical"]:hover,
+.nxtqr-scroll-track[data-orientation="vertical"]:has(.nxtqr-scroll-thumb:active) {
+  padding: 4px var(--nxtqr-rail-pad-active);
+  background-color: var(--scrollbar-track, #080808);
+  border-color: var(--scrollbar-track-border, #141414);
+  box-shadow:
+    inset 0 0 3px 0 rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.nxtqr-scroll-track[data-orientation="horizontal"]:hover,
+.nxtqr-scroll-track[data-orientation="horizontal"]:has(.nxtqr-scroll-thumb:active) {
+  padding: var(--nxtqr-rail-pad-active) 4px;
   background-color: var(--scrollbar-track, #080808);
   border-color: var(--scrollbar-track-border, #141414);
   box-shadow:
@@ -85,7 +96,6 @@
 /* ───────── Thumb (ScrollArea.Thumb) ───────── */
 .nxtqr-scroll-thumb {
   position: relative;
-  flex: 1;
   border-radius: var(--scrollbar-radius, 0.375rem);
   border: 1px solid var(--scrollbar-border, #1f1f1f);
   background-color: var(--scrollbar-thumb, #303030);
@@ -105,8 +115,12 @@
   will-change: transform;
 }
 
-.nxtqr-scroll-thumb[data-orientation="horizontal"],
+.nxtqr-scroll-track[data-orientation="vertical"] .nxtqr-scroll-thumb {
+  width: 100%;
+}
+
 .nxtqr-scroll-track[data-orientation="horizontal"] .nxtqr-scroll-thumb {
+  height: 100%;
   background-image: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.08) 0%,
@@ -139,10 +153,10 @@
 }
 .nxtqr-scroll-track[data-orientation="vertical"] .nxtqr-scroll-thumb::after {
   width: 2px;
-  height: 12px;
+  height: 8px;
 }
 .nxtqr-scroll-track[data-orientation="horizontal"] .nxtqr-scroll-thumb::after {
-  width: 12px;
+  width: 8px;
   height: 2px;
 }
 .nxtqr-scroll-track:hover .nxtqr-scroll-thumb::after {
@@ -178,8 +192,8 @@
   scrollbar-color: var(--scrollbar-thumb, #303030) transparent;
 }
 .nxtqr-native-scroll::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
 }
 .nxtqr-native-scroll::-webkit-scrollbar-track,
 .nxtqr-native-scroll::-webkit-scrollbar-corner {
