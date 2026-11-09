@@ -14,6 +14,7 @@ import {
 import { ChevronRightIcon } from "@nxtqr/icons";
 import { ALL_NAVIGATION_ITEMS } from "../config/navigation";
 import { WorkspaceSwitcher } from "./workspace-switcher";
+import { cn } from "@nxtqr/utils";
 
 export interface WorkspaceBreadcrumbsProps {
   className?: string;
@@ -26,9 +27,9 @@ export function WorkspaceBreadcrumbs({ className }: WorkspaceBreadcrumbsProps) {
   const segments = pathname.split("/").filter(Boolean);
 
   return (
-    <Breadcrumb className={className}>
-      <BreadcrumbList className="text-xs font-mono flex-nowrap items-center overflow-hidden">
-        <BreadcrumbItem className="shrink-0">
+    <Breadcrumb className={cn("min-w-0 overflow-hidden", className)}>
+      <BreadcrumbList className="text-xs font-mono flex-nowrap items-center overflow-hidden min-w-0">
+        <BreadcrumbItem className="shrink min-w-0">
           <WorkspaceSwitcher variant="breadcrumb" />
         </BreadcrumbItem>
 
@@ -48,20 +49,30 @@ export function WorkspaceBreadcrumbs({ className }: WorkspaceBreadcrumbsProps) {
 
           return (
             <React.Fragment key={href}>
-              <BreadcrumbSeparator className="text-text-disabled">
+              <BreadcrumbSeparator
+                className={cn(
+                  "text-text-disabled shrink-0",
+                  !isLast && "hidden sm:inline-flex"
+                )}
+              >
                 <ChevronRightIcon className="h-3 w-3" />
               </BreadcrumbSeparator>
 
-              <BreadcrumbItem className="truncate min-w-0">
+              <BreadcrumbItem
+                className={cn(
+                  "truncate min-w-0",
+                  !isLast && "hidden sm:inline-flex"
+                )}
+              >
                 {isLast ? (
-                  <BreadcrumbPage className="text-foreground font-semibold truncate max-w-[140px] sm:max-w-[200px]">
+                  <BreadcrumbPage className="text-foreground font-semibold truncate max-w-[80px] xs:max-w-[120px] sm:max-w-[200px]">
                     {label}
                   </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
                     <Link
                       href={href}
-                      className="text-text-muted hover:text-foreground transition-colors truncate max-w-[120px]"
+                      className="text-text-muted hover:text-foreground transition-colors truncate max-w-[70px] sm:max-w-[120px]"
                     >
                       {label}
                     </Link>

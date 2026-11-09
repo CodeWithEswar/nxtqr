@@ -181,7 +181,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
 
         {/* Mobile-only Account Avatar Trigger */}
         <div className="md:hidden shrink-0">
-          <AccountTrigger collapsed={true} />
+          <AccountTrigger collapsed={true} side="bottom" align="end" className="h-7 w-7" />
         </div>
 
         {children}

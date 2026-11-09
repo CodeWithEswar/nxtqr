@@ -13,6 +13,7 @@ import { AppLogo } from "@nxtqr/branding";
 import { AccountTrigger } from "@/features/account";
 import { useShellStore } from "../store/shell-store";
 import { SHELL_NAVIGATION_GROUPS } from "../config/navigation";
+import { WorkspaceSwitcher } from "./workspace-switcher";
 import { cn } from "@nxtqr/utils";
 
 export function MobileNavigation() {
@@ -45,6 +46,14 @@ export function MobileNavigation() {
             </Link>
           </SheetTitle>
         </SheetHeader>
+
+        {/* Active Workspace Switcher */}
+        <div className="px-3 pt-3 pb-2 border-b border-border-default bg-surface-01">
+          <div className="px-1 pb-1.5 text-[10px] font-mono font-medium uppercase tracking-wider text-text-muted">
+            Active Workspace
+          </div>
+          <WorkspaceSwitcher variant="button" className="w-full justify-between" />
+        </div>
 
         {/* Navigation list */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5 scrollbar-thin">

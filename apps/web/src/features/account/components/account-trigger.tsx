@@ -10,11 +10,15 @@ import { cn } from "@nxtqr/utils";
 
 export interface AccountTriggerProps {
   collapsed?: boolean;
+  align?: "start" | "end" | "center";
+  side?: "top" | "right" | "bottom" | "left";
   className?: string;
 }
 
 export function AccountTrigger({
   collapsed = false,
+  align = "start",
+  side = "right",
   className,
 }: AccountTriggerProps) {
   const { profile } = useAuthUser();
@@ -27,12 +31,12 @@ export function AccountTrigger({
       <Tooltip>
         <TooltipTrigger asChild>
           <div>
-            <AccountDropdown align="start" side="right">
+            <AccountDropdown align={align} side={side}>
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 className={cn(
-                  "h-9 w-9 rounded-md p-0 hover:bg-surface-03 focus-visible:ring-1 focus-visible:ring-border-strong focus-visible:outline-none",
+                  "h-7 w-7 rounded-md p-0 hover:bg-surface-03 focus-visible:ring-1 focus-visible:ring-border-strong focus-visible:outline-none shrink-0",
                   className
                 )}
                 aria-label={`Studio Account: ${displayName}`}
@@ -40,13 +44,13 @@ export function AccountTrigger({
                 <UserAvatar
                   displayName={displayName}
                   avatarUrl={profile?.avatarUrl}
-                  size="md"
+                  size="sm"
                 />
               </Button>
             </AccountDropdown>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="right" className="font-mono text-xs">
+        <TooltipContent side={side} className="font-mono text-xs">
           <div>
             <p className="font-semibold text-foreground">{displayName}</p>
             <p className="text-[10px] text-text-muted">{email}</p>
@@ -57,7 +61,7 @@ export function AccountTrigger({
   }
 
   return (
-    <AccountDropdown align="start" side="top">
+    <AccountDropdown align={align} side={side === "right" ? "top" : side}>
       <button
         type="button"
         className={cn(

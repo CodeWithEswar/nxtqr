@@ -37,7 +37,8 @@ export function AccountDropdown({
         align={align}
         side={side}
         sideOffset={8}
-        className="w-60 rounded-md border border-border-default bg-surface-02 text-foreground shadow-level-2 p-1.5 font-sans z-50"
+        collisionPadding={12}
+        className="w-[calc(100vw-2rem)] sm:w-60 max-w-[280px] rounded-md border border-border-default bg-surface-02 text-foreground shadow-level-2 p-1.5 font-sans z-50"
       >
         <DropdownMenuLabel className="px-2.5 py-2">
           <p className="text-xs font-semibold text-foreground truncate">{displayName}</p>
