@@ -45,8 +45,8 @@ export function VerificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-6 px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 w-full max-w-[2200px] mx-auto space-y-6">
-      {/* 1. Verified Header Component */}
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* 1. Full-Width Edge-to-Edge Sticky Header (100% Solid, Zero Blur, Full Width) */}
       <VerificationHeader
         title="Architecture & Infrastructure Diagnostics"
         subtitle="Production verification console for workspace packages, design system tokens, database contracts, and live runtime systems."
@@ -59,54 +59,57 @@ export function VerificationPage() {
         showReviewGates={true}
       />
 
-      {/* 2. Compact Summary Metrics Strip */}
-      <VerificationSummaryBar summary={summary} />
+      {/* 2. Main Page Content (Expands Full Width up to 2400px) */}
+      <main className="flex-1 w-full max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6 space-y-6">
+        {/* Compact Summary Metrics Strip */}
+        <VerificationSummaryBar summary={summary} />
 
-      {/* 3. Filters & Quick Search */}
-      <VerificationFilters
-        filter={filter}
-        setFilter={setFilter}
-        search={search}
-        setSearch={setSearch}
-        summary={summary}
-      />
+        {/* Filters & Quick Search */}
+        <VerificationFilters
+          filter={filter}
+          setFilter={setFilter}
+          search={search}
+          setSearch={setSearch}
+          summary={summary}
+        />
 
-      {/* 4. Dual-Pane Engineering Diagnostics Console (Expands Full Width) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 2xl:grid-cols-12 gap-6 items-start min-w-0">
-        {/* Left Column: Categorized Verification Groups (7 cols on desktop) */}
-        <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-7 space-y-6 min-w-0">
-          {filteredChecks.length === 0 ? (
-            <VerificationEmptyState
-              onResetFilters={() => {
-                setFilter("all");
-                setSearch("");
-              }}
+        {/* Dual-Pane Engineering Diagnostics Console */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 2xl:grid-cols-12 gap-6 items-start min-w-0">
+          {/* Left Column: Categorized Verification Groups (7 cols on desktop) */}
+          <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-7 space-y-6 min-w-0">
+            {filteredChecks.length === 0 ? (
+              <VerificationEmptyState
+                onResetFilters={() => {
+                  setFilter("all");
+                  setSearch("");
+                }}
+              />
+            ) : (
+              CATEGORIES.map((category) => {
+                const categoryChecks = filteredChecks.filter((c) => c.category === category);
+                return (
+                  <VerificationGroup
+                    key={category}
+                    category={category}
+                    checks={categoryChecks}
+                    selectedCheckId={selectedCheckId}
+                    onSelectCheck={handleSelectCheck}
+                  />
+                );
+              })
+            )}
+          </div>
+
+          {/* Right Column: Diagnostic Evidence & Output Details (5 cols on desktop, sticky) */}
+          <div className="hidden lg:block lg:col-span-5 xl:col-span-5 2xl:col-span-5 lg:sticky lg:top-20 min-w-0">
+            <VerificationDetails
+              check={selectedCheck}
+              onRecheck={runSingleCheck}
+              isRechecking={isRunning}
             />
-          ) : (
-            CATEGORIES.map((category) => {
-              const categoryChecks = filteredChecks.filter((c) => c.category === category);
-              return (
-                <VerificationGroup
-                  key={category}
-                  category={category}
-                  checks={categoryChecks}
-                  selectedCheckId={selectedCheckId}
-                  onSelectCheck={handleSelectCheck}
-                />
-              );
-            })
-          )}
+          </div>
         </div>
-
-        {/* Right Column: Diagnostic Evidence & Output Details (5 cols on desktop, sticky) */}
-        <div className="hidden lg:block lg:col-span-5 xl:col-span-5 2xl:col-span-5 lg:sticky lg:top-6 min-w-0">
-          <VerificationDetails
-            check={selectedCheck}
-            onRecheck={runSingleCheck}
-            isRechecking={isRunning}
-          />
-        </div>
-      </div>
+      </main>
 
       {/* Mobile & Tablet Diagnostic Details Sheet */}
       <Sheet open={mobileDetailOpen} onOpenChange={setMobileDetailOpen}>

@@ -64,9 +64,7 @@ export default function ScrollbarReviewGatePage() {
   ];
 
   return (
-    <main
-      className="min-h-screen bg-background text-foreground flex flex-col p-4 sm:p-6 lg:p-8 xl:p-10 w-full max-w-[2200px] mx-auto space-y-6"
-    >
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Verification Header */}
       <VerificationHeader
         title="NXTQR — Precision Rail Custom Scrollbar System Review Gate"
@@ -81,13 +79,15 @@ export default function ScrollbarReviewGatePage() {
           <Button
             variant="outline"
             size="sm"
-            className="h-9 px-3 font-mono text-xs gap-1.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-foreground transition-all shadow-level-1"
+            className="h-8 sm:h-9 px-3 font-mono text-xs gap-1.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-foreground transition-all shadow-level-1"
           >
             <span>Brand Review</span>
             <span aria-hidden="true">→</span>
           </Button>
         </Link>
       </VerificationHeader>
+
+      <main className="flex-1 w-full max-w-[2400px] mx-auto p-4 sm:p-6 lg:p-8 xl:p-10 space-y-6">
 
       {/* Interactive Monochrome Controller */}
       <Card>
@@ -493,5 +493,6 @@ export default function ScrollbarReviewGatePage() {
         </CardContent>
       </Card>
     </main>
+  </div>
   );
 }
