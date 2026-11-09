@@ -59,3 +59,4 @@ describe("Legal Document Configurations", () => {
     expect(ids).toContain("retention-deletion");
   });
 });
+

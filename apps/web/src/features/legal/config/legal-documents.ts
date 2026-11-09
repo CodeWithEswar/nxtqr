@@ -75,3 +75,4 @@ export const PRIVACY_CONFIG: LegalDocumentConfig = {
     { id: "contact-inquiries", number: "15", title: "Contact & Privacy Inquiries" },
   ],
 };
+

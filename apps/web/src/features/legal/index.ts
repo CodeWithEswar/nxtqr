@@ -7,3 +7,4 @@ export * from "./components/legal-document";
 export * from "./components/legal-layout";
 export * from "./data/terms-content";
 export * from "./data/privacy-content";
+

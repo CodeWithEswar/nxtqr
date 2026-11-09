@@ -52,3 +52,4 @@ export function LegalMobileNav({ sections }: LegalMobileNavProps) {
     </div>
   );
 }
+

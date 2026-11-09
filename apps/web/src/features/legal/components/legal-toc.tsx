@@ -88,3 +88,4 @@ export function LegalToc({ sections }: LegalTocProps) {
     </nav>
   );
 }
+
