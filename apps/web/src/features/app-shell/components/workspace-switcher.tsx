@@ -12,11 +12,17 @@ import {
 } from "@nxtqr/ui";
 import { ChevronDownIcon, CheckIcon, FolderIcon, PlusIcon } from "@nxtqr/icons";
 import { useShellStore } from "../store/shell-store";
+import { cn } from "@nxtqr/utils";
 
 export interface WorkspaceOption {
   id: string;
   name: string;
   role: string;
+}
+
+export interface WorkspaceSwitcherProps {
+  variant?: "button" | "breadcrumb";
+  className?: string;
 }
 
 const LOCAL_WORKSPACES: WorkspaceOption[] = [
@@ -25,7 +31,10 @@ const LOCAL_WORKSPACES: WorkspaceOption[] = [
   { id: "runtime-verification", name: "Runtime Verification Gate", role: "Audit" },
 ];
 
-export function WorkspaceSwitcher() {
+export function WorkspaceSwitcher({
+  variant = "button",
+  className,
+}: WorkspaceSwitcherProps = {}) {
   const activeWorkspaceId = useShellStore((s) => s.activeWorkspaceId);
 
   const [currentId, setCurrentId] = React.useState(activeWorkspaceId);
@@ -36,16 +45,34 @@ export function WorkspaceSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 px-2.5 font-mono text-xs gap-2 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-foreground shadow-level-1 active:shadow-level-3 shrink-0 select-none max-w-[200px]"
-          aria-label="Switch workspace"
-        >
-          <FolderIcon className="h-3.5 w-3.5 text-text-muted shrink-0" />
-          <span className="truncate font-medium">{active.name}</span>
-          <ChevronDownIcon className="h-3 w-3 text-text-muted shrink-0 ml-auto" />
-        </Button>
+        {variant === "breadcrumb" ? (
+          <button
+            type="button"
+            className={cn(
+              "flex items-center gap-1.5 py-1 px-1.5 -ml-1 rounded-md font-sans text-xs font-semibold text-text-secondary hover:text-foreground hover:bg-surface-02 transition-colors select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong truncate max-w-[130px] sm:max-w-[180px] md:max-w-[220px]",
+              className
+            )}
+            aria-label="Switch workspace"
+          >
+            <FolderIcon className="h-3.5 w-3.5 text-text-muted shrink-0" />
+            <span className="truncate">{active.name}</span>
+            <ChevronDownIcon className="h-3 w-3 text-text-muted shrink-0" />
+          </button>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn(
+              "h-8 px-2.5 font-mono text-xs gap-2 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-foreground shadow-level-1 active:shadow-level-3 shrink-0 select-none max-w-[200px]",
+              className
+            )}
+            aria-label="Switch workspace"
+          >
+            <FolderIcon className="h-3.5 w-3.5 text-text-muted shrink-0" />
+            <span className="truncate font-medium">{active.name}</span>
+            <ChevronDownIcon className="h-3 w-3 text-text-muted shrink-0 ml-auto" />
+          </Button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"

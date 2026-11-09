@@ -26,19 +26,19 @@ export function MobileNavigation() {
         side="left"
         className="w-[280px] p-0 bg-surface-01 border-r border-border-default text-foreground flex flex-col select-none"
       >
-        <SheetHeader className="h-13 px-4 border-b border-border-default flex flex-row items-center justify-between space-y-0">
+        <SheetHeader className="h-12 px-4 border-b border-border-default flex flex-row items-center justify-between space-y-0">
           <SheetTitle asChild>
             <Link
               href="/workspace"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 min-w-0"
             >
-              <AppLogo variant="symbol" size={24} />
-              <div className="flex items-baseline gap-1.5 min-w-0">
-                <span className="font-sans text-xs font-bold tracking-tight text-foreground uppercase">
+              <AppLogo variant="symbol" size={22} />
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="font-sans text-xs font-bold tracking-tight text-foreground">
                   NXTQR
                 </span>
-                <span className="font-mono text-[10px] text-text-muted tracking-wider uppercase">
+                <span className="font-mono text-[9px] font-semibold text-text-muted px-1.5 py-0.5 rounded-md border border-border-subtle bg-surface-02 uppercase tracking-wider">
                   STUDIO
                 </span>
               </div>
@@ -72,7 +72,7 @@ export function MobileNavigation() {
                       className={cn(
                         "flex items-center gap-3 rounded-md px-3 py-2 text-xs font-sans transition-colors",
                         isActive
-                          ? "bg-surface-04 text-foreground font-semibold border border-border-strong shadow-level-1"
+                          ? "bg-surface-03 text-foreground font-semibold border border-border-strong shadow-level-1"
                           : "text-text-secondary hover:text-foreground hover:bg-surface-02 border border-transparent"
                       )}
                     >

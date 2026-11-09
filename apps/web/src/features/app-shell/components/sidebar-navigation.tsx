@@ -29,7 +29,7 @@ export function SidebarNavigation({ collapsed, onItemClick }: SidebarNavigationP
       {SHELL_NAVIGATION_GROUPS.map((group) => (
         <div key={group.id} className="space-y-1">
           {!collapsed && (
-            <div className="px-2.5 py-1 text-[10px] font-mono font-medium uppercase tracking-wider text-text-muted">
+            <div className="px-2.5 pt-1.5 pb-1 text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted">
               {group.label}
             </div>
           )}
@@ -53,7 +53,7 @@ export function SidebarNavigation({ collapsed, onItemClick }: SidebarNavigationP
                         className={cn(
                           "flex h-8 w-8 mx-auto items-center justify-center rounded-md text-xs transition-colors",
                           isActive
-                            ? "bg-surface-04 text-foreground font-semibold border border-border-strong shadow-level-1"
+                            ? "bg-surface-03 text-foreground font-semibold border border-border-strong shadow-level-1"
                             : "text-text-secondary hover:text-foreground hover:bg-surface-02 border border-transparent"
                         )}
                         aria-label={item.label}
@@ -75,9 +75,9 @@ export function SidebarNavigation({ collapsed, onItemClick }: SidebarNavigationP
                   href={item.href}
                   onClick={onItemClick}
                   className={cn(
-                    "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-xs font-sans transition-colors group",
+                    "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-xs font-sans transition-colors group relative",
                     isActive
-                      ? "bg-surface-04 text-foreground font-semibold border border-border-strong shadow-level-1"
+                      ? "bg-surface-03 text-foreground font-semibold border border-border-strong shadow-level-1"
                       : "text-text-secondary hover:text-foreground hover:bg-surface-02 border border-transparent"
                   )}
                   aria-current={isActive ? "page" : undefined}
@@ -90,7 +90,7 @@ export function SidebarNavigation({ collapsed, onItemClick }: SidebarNavigationP
                   />
                   <span className="truncate flex-1 font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className="font-mono text-[9px] px-1 py-0.2 rounded border border-border-subtle bg-surface-00 text-text-muted">
+                    <span className="font-mono text-[9px] px-1.5 py-0.2 rounded-md border border-border-subtle bg-surface-02 text-text-muted">
                       {item.badge}
                     </span>
                   )}

@@ -13,6 +13,7 @@ import {
 } from "@nxtqr/ui";
 import { ChevronRightIcon } from "@nxtqr/icons";
 import { ALL_NAVIGATION_ITEMS } from "../config/navigation";
+import { WorkspaceSwitcher } from "./workspace-switcher";
 
 export interface WorkspaceBreadcrumbsProps {
   className?: string;
@@ -24,35 +25,19 @@ export function WorkspaceBreadcrumbs({ className }: WorkspaceBreadcrumbsProps) {
   // Split path into segments
   const segments = pathname.split("/").filter(Boolean);
 
-  if (segments.length === 0) {
-    return (
-      <Breadcrumb className={className}>
-        <BreadcrumbList className="text-xs font-mono">
-          <BreadcrumbItem>
-            <BreadcrumbPage className="text-foreground font-semibold">
-              Studio
-            </BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-    );
-  }
-
   return (
     <Breadcrumb className={className}>
-      <BreadcrumbList className="text-xs font-mono flex-nowrap overflow-hidden">
+      <BreadcrumbList className="text-xs font-mono flex-nowrap items-center overflow-hidden">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink asChild>
-            <Link
-              href="/workspace"
-              className="text-text-muted hover:text-foreground transition-colors"
-            >
-              Studio
-            </Link>
-          </BreadcrumbLink>
+          <WorkspaceSwitcher variant="breadcrumb" />
         </BreadcrumbItem>
 
         {segments.map((segment, index) => {
+          // If first segment is 'workspace' and there are deeper segments, skip 'workspace' to keep breadcrumb compact
+          if (segment === "workspace" && segments.length > 1) {
+            return null;
+          }
+
           const href = `/${segments.slice(0, index + 1).join("/")}`;
           const isLast = index === segments.length - 1;
 
@@ -69,7 +54,7 @@ export function WorkspaceBreadcrumbs({ className }: WorkspaceBreadcrumbsProps) {
 
               <BreadcrumbItem className="truncate min-w-0">
                 {isLast ? (
-                  <BreadcrumbPage className="text-foreground font-semibold truncate max-w-[160px] sm:max-w-[240px]">
+                  <BreadcrumbPage className="text-foreground font-semibold truncate max-w-[140px] sm:max-w-[200px]">
                     {label}
                   </BreadcrumbPage>
                 ) : (
