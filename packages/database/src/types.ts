@@ -1,11 +1,6 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.18";
-  };
   public: {
     Tables: {
       audit_events: {
@@ -133,9 +128,11 @@ export type Database = {
           graph_document: Json;
           id: string;
           name: string;
+          owner_id: string | null;
+          status: string;
           updated_at: string;
           visualizer_type: string;
-          workspace_id: string;
+          workspace_id: string | null;
         };
         Insert: {
           created_at?: string;
@@ -144,9 +141,11 @@ export type Database = {
           graph_document?: Json;
           id?: string;
           name: string;
+          owner_id?: string | null;
+          status?: string;
           updated_at?: string;
           visualizer_type: string;
-          workspace_id: string;
+          workspace_id?: string | null;
         };
         Update: {
           created_at?: string;
@@ -155,9 +154,11 @@ export type Database = {
           graph_document?: Json;
           id?: string;
           name?: string;
+          owner_id?: string | null;
+          status?: string;
           updated_at?: string;
           visualizer_type?: string;
-          workspace_id?: string;
+          workspace_id?: string | null;
         };
         Relationships: [
           {

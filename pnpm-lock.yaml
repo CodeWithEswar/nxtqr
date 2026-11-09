@@ -256,6 +256,12 @@ importers:
       '@nxtqr/validation':
         specifier: workspace:*
         version: link:../../packages/validation
+      '@supabase/ssr':
+        specifier: ^0.5.2
+        version: 0.5.2(@supabase/supabase-js@2.119.0)
+      '@supabase/supabase-js':
+        specifier: ^2.48.1
+        version: 2.119.0
       '@tanstack/react-query':
         specifier: ^5.66.0
         version: 5.106.1(@types/react@19.3.0)(react@19.3.1)

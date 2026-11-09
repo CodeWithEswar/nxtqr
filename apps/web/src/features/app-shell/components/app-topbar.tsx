@@ -13,6 +13,7 @@ import {
 import { useShellStore } from "../store/shell-store";
 import { WorkspaceBreadcrumbs } from "./workspace-breadcrumbs";
 import { WorkspaceSwitcher } from "./workspace-switcher";
+import { UserAccountMenu } from "@/features/auth";
 import { cn } from "@nxtqr/utils";
 
 export interface AppTopbarProps {
@@ -130,6 +131,9 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
             Documentation
           </TooltipContent>
         </Tooltip>
+
+        {/* User Account / Identity Menu */}
+        <UserAccountMenu />
 
         {children}
       </div>

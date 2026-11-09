@@ -2,7 +2,7 @@ import {
   createServerClient as createSupabaseServerClient,
   type CookieOptions,
 } from "@supabase/ssr";
-import type { Database } from "./types";
+import type { TypedSupabaseClient } from "./client";
 
 export interface CookieStoreAdapter {
   get: (name: string) => { value: string } | undefined | Promise<{ value: string } | undefined>;
@@ -13,15 +13,16 @@ export interface CookieStoreAdapter {
 export function createServerClient(
   cookieStore: CookieStoreAdapter,
   supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL,
-  supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-) {
+  supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+): TypedSupabaseClient {
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(
-      "[NXTQR Database] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "[NXTQR Database] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY / NEXT_PUBLIC_SUPABASE_ANON_KEY",
     );
   }
 
-  return createSupabaseServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createSupabaseServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       async get(name: string) {
         const cookie = await cookieStore.get(name);
@@ -43,5 +44,5 @@ export function createServerClient(
         }
       },
     },
-  });
+  }) as unknown as TypedSupabaseClient;
 }
