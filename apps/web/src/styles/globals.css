@@ -439,8 +439,26 @@
   .ring-accent {
     --tw-ring-color: var(--border-strong) !important;
   }
-  .bg-surface-04 {
+  .bg-surface-00 {
+    background-color: var(--surface-00) !important;
+  }
+  .bg-surface-01, .bg-surface {
+    background-color: var(--surface-01) !important;
+  }
+  .bg-surface-02, .bg-card {
+    background-color: var(--surface-02) !important;
+  }
+  .bg-surface-03, .bg-elevated-surface, .bg-popover {
+    background-color: var(--surface-03) !important;
+  }
+  .bg-surface-04, .bg-secondary-surface {
     background-color: var(--surface-04) !important;
+  }
+  .bg-surface-05 {
+    background-color: var(--surface-05) !important;
+  }
+  .bg-muted-surface, .bg-muted {
+    background-color: var(--muted-surface) !important;
   }
   .bg-primary {
     background-color: var(--primary) !important;
