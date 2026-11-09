@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import type { AuthFlowState } from "../schemas/auth.schema";
 import { openAuthPopup, type PopupController } from "../lib/popup-window";
 import { prepareGoogleOAuth, verifyCurrentSession, getBrowserAuthClient } from "../services/auth-service";
@@ -56,6 +57,10 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   const handleAuthSuccess = React.useCallback(async (destination: string) => {
     setState("verifying_session");
     logAuthEvent("State", "Verifying session after popup signal");
+    toast.loading("Verifying Session...", {
+      id: "auth-toast",
+      description: "Validating credentials and provisioning workspace.",
+    });
 
     try {
       const profile = await verifyCurrentSession();
@@ -65,12 +70,20 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
 
       setState("success");
       logAuthEvent("State", "Authentication fully verified, navigating", { destination });
+      toast.success("Authentication Successful", {
+        id: "auth-toast",
+        description: "Welcome to NXTQR Studio. Redirecting...",
+      });
       router.push(destination);
       router.refresh();
     } catch (err) {
       const formatted = formatAuthError(err);
       setError(formatted);
       setState("failed");
+      toast.error(formatted.title, {
+        id: "auth-toast",
+        description: formatted.message,
+      });
     }
   }, [router]);
 
@@ -84,11 +97,19 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     const destination = nextPath || nextTarget;
     setError(null);
     setState("preparing");
+    toast.loading("Connecting to Google...", {
+      id: "auth-toast",
+      description: "Opening secure sign-in window.",
+    });
 
     try {
       const { url, attemptId } = await prepareGoogleOAuth("popup", destination);
 
       setState("popup_open");
+      toast.loading("Google Sign-In Active", {
+        id: "auth-toast",
+        description: "Complete authentication in the Google window.",
+      });
 
       activePopupRef.current = openAuthPopup({
         url,
@@ -101,6 +122,10 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
           activePopupRef.current = null;
           logAuthEvent("State", "Popup cancelled by user");
           setState("cancelled");
+          toast.dismiss("auth-toast");
+          toast.info("Sign-In Cancelled", {
+            description: "Google authentication window was closed.",
+          });
           // Smooth return to idle after brief moment
           setTimeout(() => {
             setState((prev) => (prev === "cancelled" ? "idle" : prev));
@@ -109,6 +134,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         onError: (appErr) => {
           activePopupRef.current = null;
           logAuthEvent("State", "Popup error occurred", { code: appErr.code });
+          const formatted = formatAuthError(appErr);
           if (appErr.code === "AUTH_POPUP_BLOCKED") {
             setState("blocked");
           } else if (appErr.code === "AUTH_TIMEOUT") {
@@ -116,7 +142,11 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
           } else {
             setState("failed");
           }
-          setError(formatAuthError(appErr));
+          setError(formatted);
+          toast.error(formatted.title, {
+            id: "auth-toast",
+            description: formatted.message,
+          });
         },
       });
     } catch (err) {
@@ -124,6 +154,10 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
       const formatted = formatAuthError(err);
       setError(formatted);
       setState(formatted.code === "AUTH_POPUP_BLOCKED" ? "blocked" : "failed");
+      toast.error(formatted.title, {
+        id: "auth-toast",
+        description: formatted.message,
+      });
     }
   }, [state, nextTarget, handleAuthSuccess]);
 
@@ -131,6 +165,10 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     const destination = nextPath || nextTarget;
     setError(null);
     setState("preparing");
+    toast.loading("Redirecting to Google...", {
+      id: "auth-toast",
+      description: "Navigating to Google OAuth gateway.",
+    });
 
     try {
       const supabase = getBrowserAuthClient();
@@ -156,6 +194,10 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
       const formatted = formatAuthError(err);
       setError(formatted);
       setState("failed");
+      toast.error(formatted.title, {
+        id: "auth-toast",
+        description: formatted.message,
+      });
     }
   }, [nextTarget]);
 

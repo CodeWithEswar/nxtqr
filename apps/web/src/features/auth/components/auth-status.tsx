@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Alert, AlertDescription, AlertTitle, Button } from "@nxtqr/ui";
-import { AlertCircleIcon, ExternalLinkIcon, RefreshIcon } from "@nxtqr/icons";
+import { AlertCircleIcon, CheckCircleIcon, ExternalLinkIcon, RefreshIcon, SpinnerIcon } from "@nxtqr/icons";
 import type { AuthFlowState } from "../schemas/auth.schema";
 import type { UserFacingError } from "../lib/auth-errors";
 
@@ -23,19 +23,20 @@ export function AuthStatus({
     return null;
   }
 
-  // Active status notices
+  // Active status notices (Pending / In-Progress — Amber / Yellow)
   if (state === "popup_open") {
     return (
       <div
         role="status"
         aria-live="polite"
-        className="rounded-md border border-border-default bg-surface-02 p-3 text-center space-y-1"
+        className="rounded-md border border-amber-500/30 bg-surface-02 p-3 text-center space-y-1"
       >
-        <p className="text-xs font-medium text-foreground">
-          Complete sign-in in the Google window
-        </p>
+        <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-amber-400">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span>Google Sign-In Active</span>
+        </div>
         <p className="text-[11px] text-text-muted">
-          Keep this tab open while authenticating.
+          Complete sign-in in the Google window. Keep this tab open.
         </p>
       </div>
     );
@@ -46,11 +47,33 @@ export function AuthStatus({
       <div
         role="status"
         aria-live="polite"
-        className="rounded-md border border-border-default bg-surface-02 p-3 text-center space-y-1"
+        className="rounded-md border border-amber-500/30 bg-surface-02 p-3 text-center space-y-1"
       >
-        <p className="text-xs font-medium text-foreground">Finishing sign-in...</p>
+        <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-amber-400">
+          <SpinnerIcon className="h-3.5 w-3.5 animate-spin text-amber-400 shrink-0" />
+          <span>Verifying Session...</span>
+        </div>
         <p className="text-[11px] text-text-muted">
           Establishing authenticated session and provisioning workspace.
+        </p>
+      </div>
+    );
+  }
+
+  // Success state (Emerald Green)
+  if (state === "success") {
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-md border border-emerald-500/30 bg-surface-02 p-3 text-center space-y-1"
+      >
+        <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-400">
+          <CheckCircleIcon className="h-4 w-4 text-emerald-400 shrink-0" />
+          <span>Authentication Successful</span>
+        </div>
+        <p className="text-[11px] text-text-muted">
+          Session verified. Redirecting to your workspace...
         </p>
       </div>
     );
@@ -68,17 +91,17 @@ export function AuthStatus({
     );
   }
 
-  // Popup blocked by browser
+  // Popup blocked by browser (Failure / Blocked — Red)
   if (state === "blocked" || error?.code === "AUTH_POPUP_BLOCKED") {
     return (
       <Alert
         variant="default"
-        className="border-border-default bg-surface-02 text-foreground rounded-md p-3.5 space-y-2"
+        className="border-red-500/30 bg-surface-02 text-foreground rounded-md p-3.5 space-y-2"
       >
         <div className="flex items-start gap-2.5">
-          <AlertCircleIcon className="h-4 w-4 text-text-muted shrink-0 mt-0.5" />
+          <AlertCircleIcon className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
           <div className="space-y-1 min-w-0 flex-1">
-            <AlertTitle className="text-xs font-semibold text-foreground">
+            <AlertTitle className="text-xs font-semibold text-red-400">
               Popup Blocked by Browser
             </AlertTitle>
             <AlertDescription className="text-[11px] text-text-muted leading-relaxed">
@@ -112,20 +135,20 @@ export function AuthStatus({
     );
   }
 
-  // General errors
+  // General errors (Failure — Red)
   if (error || state === "failed" || state === "timeout") {
-    const title = error?.title || "Authentication Notice";
+    const title = error?.title || "Authentication Failed";
     const message = error?.message || "An unexpected error occurred during sign-in. Please try again.";
 
     return (
       <Alert
         variant="destructive"
-        className="border-border-default bg-surface-02 text-foreground rounded-md p-3.5 space-y-2"
+        className="border-red-500/30 bg-surface-02 text-foreground rounded-md p-3.5 space-y-2"
       >
         <div className="flex items-start gap-2.5">
-          <AlertCircleIcon className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+          <AlertCircleIcon className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
           <div className="space-y-1 min-w-0 flex-1">
-            <AlertTitle className="text-xs font-semibold text-foreground">{title}</AlertTitle>
+            <AlertTitle className="text-xs font-semibold text-red-400">{title}</AlertTitle>
             <AlertDescription className="text-[11px] text-text-muted leading-relaxed">
               {message}
             </AlertDescription>
