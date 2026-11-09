@@ -89,12 +89,12 @@ export function MotionPlayground() {
                 className={cn(
                   "p-2.5 rounded-md border text-left transition-all",
                   selectedDuration === d.key
-                    ? "border-accent bg-accent/10 ring-1 ring-accent"
+                    ? "border-foreground bg-surface-04 ring-1 ring-border-strong"
                     : "border-border bg-elevated-surface hover:border-muted-border"
                 )}
               >
                 <div className="text-xs font-semibold text-foreground">{d.key}</div>
-                <div className="text-[10px] font-mono text-accent">{d.ms}ms</div>
+                <div className="text-[10px] font-mono text-muted-foreground">{d.ms}ms</div>
               </button>
             ))}
           </div>
@@ -113,7 +113,7 @@ export function MotionPlayground() {
                 className={cn(
                   "p-2.5 rounded-md border text-left transition-all",
                   selectedEasing === e.key
-                    ? "border-accent bg-accent/10 ring-1 ring-accent"
+                    ? "border-foreground bg-surface-04 ring-1 ring-border-strong"
                     : "border-border bg-elevated-surface hover:border-muted-border"
                 )}
               >
@@ -166,7 +166,7 @@ export function MotionPlayground() {
                 onClick={() => setSpeedMultiplier(s)}
                 className={cn(
                   "px-1.5 py-0.5 rounded text-[10px]",
-                  speedMultiplier === s ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground hover:text-foreground"
+                  speedMultiplier === s ? "bg-white text-black font-bold" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {s}x
@@ -179,7 +179,7 @@ export function MotionPlayground() {
             className={cn(
               "px-2.5 py-1 rounded-md text-xs font-mono border transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0",
               reducedMotion
-                ? "border-accent bg-accent text-accent-foreground font-semibold"
+                ? "border-foreground bg-white text-black font-semibold"
                 : "border-border bg-surface text-muted-foreground hover:text-foreground"
             )}
           >
@@ -217,7 +217,7 @@ export function MotionPlayground() {
           >
             <div className="flex items-center justify-between mb-3 border-b border-subtle-border pb-2">
               <span className="text-xs font-mono font-semibold text-foreground">GRAPH_COMMIT_MODAL</span>
-              <span className="text-[10px] font-mono text-accent">L2 DIALOG</span>
+              <span className="text-[10px] font-mono text-muted-foreground">L2 DIALOG</span>
             </div>
             <p className="text-xs text-muted-foreground mb-4">
               Modal surfaces scale from 95% with coordinated opacity fade.
@@ -231,7 +231,7 @@ export function MotionPlayground() {
               </button>
               <button
                 onClick={replay}
-                className="px-3 py-1.5 text-xs font-sans rounded-md bg-accent text-accent-foreground font-semibold"
+                className="px-3 py-1.5 text-xs font-sans rounded-md bg-white text-black font-semibold hover:bg-neutral-200"
               >
                 Confirm
               </button>
@@ -307,7 +307,7 @@ export function MotionPlayground() {
             className={cn(
               "p-6 rounded-md border cursor-pointer select-none transition-all duration-200",
               isOpen
-                ? "border-accent bg-elevated-surface ring-2 ring-accent/40 shadow-[0_0_16px_rgba(255,0,0,0.2)]"
+                ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
                 : "border-border bg-surface shadow-none"
             )}
             style={{
@@ -316,7 +316,7 @@ export function MotionPlayground() {
             }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <LayersIcon className="h-4 w-4 text-accent" />
+              <LayersIcon className="h-4 w-4 text-foreground" />
               <span className="text-xs font-mono font-bold text-foreground">GRAPH_NODE_402</span>
             </div>
             <p className="text-xs text-muted-foreground">

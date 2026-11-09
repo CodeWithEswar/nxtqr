@@ -56,14 +56,14 @@ export function CanvasToolbar({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 p-1 rounded-md border border-border bg-surface/95 backdrop-blur-none shadow-level-2 select-none",
+        "inline-flex items-center gap-1 p-1 rounded-md border border-border bg-surface/95 backdrop-blur-none shadow-level-2 select-none max-w-[calc(100%-1.5rem)] overflow-x-auto scrollbar-none",
         className
       )}
     >
       {/* Zoom Controls */}
       <button
         onClick={() => zoomIn({ duration: 150 })}
-        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono font-bold"
+        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono font-bold shrink-0"
         title="Zoom In"
       >
         +
@@ -71,7 +71,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
 
       <button
         onClick={() => zoomOut({ duration: 150 })}
-        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono font-bold"
+        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono font-bold shrink-0"
         title="Zoom Out"
       >
         -
@@ -79,21 +79,21 @@ export function CanvasToolbar({ className }: { className?: string }) {
 
       <button
         onClick={() => fitView({ duration: 200, padding: 0.2 })}
-        className="px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono"
+        className="px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface flex items-center justify-center text-xs font-mono shrink-0"
         title="Fit All Nodes"
       >
         Fit
       </button>
 
-      <div className="w-[1px] h-4 bg-border mx-1" />
+      <div className="w-[1px] h-4 bg-border mx-0.5 shrink-0" />
 
       {/* Grid Toggle */}
       <button
         onClick={cycleGrid}
         className={cn(
-          "px-2 h-7 rounded-md border text-xs font-mono transition-colors whitespace-nowrap",
+          "px-2 h-7 rounded-md border text-xs font-mono transition-colors whitespace-nowrap shrink-0",
           gridType !== "none"
-            ? "border-accent/40 bg-accent/10 text-accent font-semibold"
+            ? "border-foreground bg-[#1a1a1a] text-foreground font-semibold"
             : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
         )}
         title={`Grid: ${gridType}`}
@@ -105,9 +105,9 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={() => setSnapToGrid(!snapToGrid)}
         className={cn(
-          "px-2 h-7 rounded-md border text-xs font-mono transition-colors",
+          "px-2 h-7 rounded-md border text-xs font-mono transition-colors shrink-0",
           snapToGrid
-            ? "border-accent/40 bg-accent/10 text-accent font-semibold"
+            ? "border-foreground bg-[#1a1a1a] text-foreground font-semibold"
             : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
         )}
         title={`Snap to Grid (20px): ${snapToGrid ? "ON" : "OFF"}`}
@@ -119,9 +119,9 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={toggleMinimap}
         className={cn(
-          "px-2 h-7 rounded-md border text-xs font-mono transition-colors whitespace-nowrap",
+          "px-2 h-7 rounded-md border text-xs font-mono transition-colors whitespace-nowrap shrink-0",
           showMinimap
-            ? "border-accent/40 bg-accent/10 text-accent font-semibold"
+            ? "border-foreground bg-[#1a1a1a] text-foreground font-semibold"
             : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
         )}
         title={`Toggle MiniMap: ${showMinimap ? "ON" : "OFF"}`}
@@ -129,26 +129,24 @@ export function CanvasToolbar({ className }: { className?: string }) {
         Map
       </button>
 
-      <div className="w-[1px] h-4 bg-border mx-1" />
+      <div className="w-[1px] h-4 bg-border mx-0.5 shrink-0" />
 
       {/* ELK Auto-layout */}
       <button
         onClick={() => handleAutoLayout("RIGHT")}
         disabled={isLayingOut}
-        className="px-2.5 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:border-accent/40 hover:text-accent flex items-center gap-1.5 text-xs font-mono transition-colors"
+        className="px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:border-foreground hover:bg-[#1a1a1a] flex items-center gap-1.5 text-xs font-mono transition-colors shrink-0"
         title="Automated Hierarchical Layout (ELK.js)"
       >
         <LayersIcon className="h-3 w-3" />
-        {isLayingOut ? "Laying out..." : "Auto-Layout"}
+        <span className="hidden sm:inline">{isLayingOut ? "Laying out..." : "Auto-Layout"}</span>
       </button>
-
-      <div className="w-[1px] h-4 bg-border mx-1" />
 
       {/* Undo / Redo */}
       <button
         onClick={undo}
         disabled={past.length === 0}
-        className="px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 disabled:pointer-events-none text-xs font-mono"
+        className="hidden md:inline-flex px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 disabled:pointer-events-none text-xs font-mono shrink-0 items-center justify-center"
         title="Undo (Ctrl+Z)"
       >
         Undo
@@ -157,7 +155,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={redo}
         disabled={future.length === 0}
-        className="px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 disabled:pointer-events-none text-xs font-mono"
+        className="hidden md:inline-flex px-2 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 disabled:pointer-events-none text-xs font-mono shrink-0 items-center justify-center"
         title="Redo (Ctrl+Y)"
       >
         Redo
@@ -166,7 +164,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
       {/* Reset */}
       <button
         onClick={resetToFixture}
-        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface flex items-center justify-center"
+        className="w-7 h-7 rounded-md border border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface flex items-center justify-center shrink-0"
         title="Reset to Fixture Graph"
       >
         <RefreshIcon className="h-3 w-3" />

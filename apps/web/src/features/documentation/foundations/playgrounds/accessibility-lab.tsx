@@ -94,10 +94,10 @@ export function AccessibilityLab() {
                   onClick={() => setActiveTab(tab.id)}
                   className="flex items-center justify-between cursor-pointer"
                 >
-                  <span className={cn(activeTab === tab.id && "text-accent font-semibold")}>
+                  <span className={cn(activeTab === tab.id && "text-foreground font-semibold")}>
                     {tab.label}
                   </span>
-                  {activeTab === tab.id && <CheckIcon className="h-3.5 w-3.5 text-accent" />}
+                  {activeTab === tab.id && <CheckIcon className="h-3.5 w-3.5 text-foreground" />}
                 </DropdownMenuItem>
               ))}
 
@@ -111,7 +111,7 @@ export function AccessibilityLab() {
                 className="cursor-pointer flex items-center justify-between"
               >
                 <span>44px Bounds Overlay</span>
-                <span className="text-[10px] font-mono text-accent">
+                <span className="text-[10px] font-mono text-foreground">
                   {showTouchTargets ? "ON" : "OFF"}
                 </span>
               </DropdownMenuItem>
@@ -154,11 +154,11 @@ export function AccessibilityLab() {
               <div className="p-3.5 sm:p-4 rounded-md border border-border bg-elevated-surface space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
                   <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <CheckIcon className="h-3.5 w-3.5 text-accent shrink-0" />
+                    <CheckIcon className="h-3.5 w-3.5 text-foreground shrink-0" />
                     <span className="hidden sm:inline">Standard Focus Ring (Compliant)</span>
                     <span className="sm:hidden">Focus Ring (Compliant)</span>
                   </span>
-                  <span className="text-[10px] font-mono text-accent shrink-0 border border-accent/30 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-mono text-foreground shrink-0 border border-border px-1.5 py-0.5 rounded bg-surface">
                     <span className="hidden sm:inline">1px Ring + Offset</span>
                     <span className="sm:hidden">1px Ring</span>
                   </span>
@@ -192,11 +192,11 @@ export function AccessibilityLab() {
               <div className="p-3.5 sm:p-4 rounded-md border border-border bg-elevated-surface space-y-3 opacity-80">
                 <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
                   <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <CloseIcon className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                    <CloseIcon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span className="hidden sm:inline">Removed Outline (Prohibited)</span>
                     <span className="sm:hidden">No Outline (Prohibited)</span>
                   </span>
-                  <span className="text-[10px] font-mono text-red-500 shrink-0 border border-red-500/30 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-mono text-muted-foreground shrink-0 border border-subtle-border px-1.5 py-0.5 rounded bg-surface">
                     <span className="hidden sm:inline">Fails WCAG 2.4.7</span>
                     <span className="sm:hidden">Fails WCAG</span>
                   </span>
@@ -224,7 +224,7 @@ export function AccessibilityLab() {
 
           <div className="p-3 bg-secondary-surface border border-border rounded-md font-mono text-xs text-foreground overflow-x-auto">
             <span className="text-muted-foreground">Standard Utility: </span>
-            <code className="text-accent">{focusRingClasses}</code>
+            <code className="text-foreground">{focusRingClasses}</code>
           </div>
         </div>
       )}
@@ -237,7 +237,7 @@ export function AccessibilityLab() {
             </div>
             <button
               onClick={() => setShowTouchTargets(!showTouchTargets)}
-              className="text-xs font-mono text-accent hover:underline shrink-0"
+              className="text-xs font-mono text-muted-foreground hover:text-foreground hover:underline shrink-0"
             >
               Toggle 44px Bounds ({showTouchTargets ? "Visible" : "Hidden"})
             </button>
@@ -249,7 +249,7 @@ export function AccessibilityLab() {
               <div
                 className={cn(
                   "relative flex items-center justify-center",
-                  showTouchTargets && "border-2 border-dashed border-accent/60 bg-accent/5"
+                  showTouchTargets && "border-2 border-dashed border-border-strong bg-surface-04/50"
                 )}
                 style={{ width: "44px", height: "44px" }}
               >
@@ -260,7 +260,7 @@ export function AccessibilityLab() {
                   <RefreshIcon className="h-3.5 w-3.5" />
                 </button>
                 {showTouchTargets && (
-                  <span className="absolute -bottom-5 text-[9px] font-mono text-accent">44×44px</span>
+                  <span className="absolute -bottom-5 text-[9px] font-mono text-muted-foreground">44×44px</span>
                 )}
               </div>
               <span className="text-xs font-mono text-muted-foreground mt-4">Compact Icon Button</span>
@@ -271,18 +271,18 @@ export function AccessibilityLab() {
               <div
                 className={cn(
                   "relative flex items-center justify-center px-2",
-                  showTouchTargets && "border-2 border-dashed border-accent/60 bg-accent/5"
+                  showTouchTargets && "border-2 border-dashed border-border-strong bg-surface-04/50"
                 )}
                 style={{ minHeight: "44px" }}
               >
                 <button
-                  className="h-9 px-4 rounded-md bg-accent text-accent-foreground text-xs font-semibold flex items-center gap-1.5"
+                  className="h-9 px-4 rounded-md bg-white text-black text-xs font-semibold flex items-center gap-1.5 shadow-level-1 hover:bg-neutral-200"
                 >
                   <CheckIcon className="h-3.5 w-3.5" />
                   Commit Changes
                 </button>
                 {showTouchTargets && (
-                  <span className="absolute -bottom-5 text-[9px] font-mono text-accent">≥ 44px target</span>
+                  <span className="absolute -bottom-5 text-[9px] font-mono text-muted-foreground">≥ 44px target</span>
                 )}
               </div>
               <span className="text-xs font-mono text-muted-foreground mt-4">Standard Action Button</span>
@@ -317,9 +317,9 @@ export function AccessibilityLab() {
                     onClick={() => setRovingIndex(idx)}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      "px-3 py-1.5 text-xs font-mono rounded-md whitespace-nowrap transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
+                      "px-3 py-1.5 text-xs font-mono rounded-md whitespace-nowrap transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                       isSelected
-                        ? "bg-accent text-accent-foreground font-semibold shadow-sm"
+                        ? "bg-white text-black font-semibold shadow-sm"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary-surface"
                     )}
                   >
@@ -330,7 +330,7 @@ export function AccessibilityLab() {
             </div>
 
             <div className="text-xs font-mono text-muted-foreground">
-              Currently focused index: <span className="text-accent font-bold">{rovingIndex}</span> ({toolbarButtons[rovingIndex]})
+              Currently focused index: <span className="text-foreground font-bold">{rovingIndex}</span> ({toolbarButtons[rovingIndex]})
             </div>
           </div>
         </div>

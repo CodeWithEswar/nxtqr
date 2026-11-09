@@ -4,49 +4,46 @@ import * as React from "react";
 import { Badge, Button } from "@nxtqr/ui";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
-import { useThemeStore } from "@nxtqr/state";
-import { RefreshIcon, CheckIcon } from "@nxtqr/icons";
-import type { AccentPresetId } from "@nxtqr/shared-types";
+import { CheckIcon, CopyIcon, LayersIcon } from "@nxtqr/icons";
 
-interface AccentPreset {
-  id: AccentPresetId;
+interface SurfaceLevel {
+  level: string;
   name: string;
-  hex: string;
-  fg: "#000000" | "#FFFFFF";
-  contrastAgainstBlack: string;
+  bg: string;
+  border: string;
+  shadow: string;
+  role: string;
 }
 
-const PRESETS: AccentPreset[] = [
-  { id: "monochrome", name: "Monochrome", hex: "#FFFFFF", fg: "#000000", contrastAgainstBlack: "21.0:1" },
-  { id: "red", name: "Pure Red", hex: "#FF0000", fg: "#FFFFFF", contrastAgainstBlack: "5.25:1" },
-  { id: "orange", name: "Pure Orange", hex: "#FF6600", fg: "#000000", contrastAgainstBlack: "7.84:1" },
-  { id: "yellow", name: "Pure Yellow", hex: "#FFD600", fg: "#000000", contrastAgainstBlack: "15.3:1" },
-  { id: "green", name: "Pure Green", hex: "#00CC66", fg: "#000000", contrastAgainstBlack: "9.62:1" },
-  { id: "blue", name: "Pure Blue", hex: "#0066FF", fg: "#FFFFFF", contrastAgainstBlack: "4.56:1" },
-  { id: "violet", name: "Pure Violet", hex: "#8000FF", fg: "#FFFFFF", contrastAgainstBlack: "3.72:1" },
-  { id: "pink", name: "Pure Pink", hex: "#FF0099", fg: "#FFFFFF", contrastAgainstBlack: "5.88:1" },
+const SURFACES: SurfaceLevel[] = [
+  { level: "L0", name: "Base", bg: "#000000", border: "transparent", shadow: "none", role: "Main canvas viewport & full-page background" },
+  { level: "L1", name: "Raised Surface", bg: "#080808", border: "#202020", shadow: "var(--shadow-level-1)", role: "Toolbars, cards, compact button surfaces" },
+  { level: "L2", name: "Elevated Surface", bg: "#141414", border: "#292929", shadow: "var(--shadow-level-2)", role: "Popovers, dialogs, floating node inspectors" },
+  { level: "L3", name: "Pressed / Inset", bg: "#1A1A1A", border: "#404040", shadow: "var(--shadow-level-3)", role: "Active toolbar items, selected controls, inputs" },
 ];
 
 export function AccentPlayground() {
-  const currentStorePreset = useThemeStore((s) => s.accentPreset);
-  const setAccentPreset = useThemeStore((s) => s.setAccentPreset);
+  const [selectedLevel, setSelectedLevel] = React.useState<string>("L1");
+  const [copied, setCopied] = React.useState<boolean>(false);
 
-  // Local temporary preview state (does NOT overwrite global theme unless explicitly Applied)
-  const [previewPreset, setPreviewPreset] = React.useState<AccentPresetId>(currentStorePreset);
-  const [isApplied, setIsApplied] = React.useState<boolean>(false);
+  const activeSurface = SURFACES.find((s) => s.level === selectedLevel) ?? SURFACES[1];
 
-  const activePreset = PRESETS.find((p) => p.id === previewPreset) ?? PRESETS[1];
-  const activeHex = activePreset.hex;
-  const activeFg = activePreset.fg;
-
-  const handleApplyGlobal = () => {
-    setAccentPreset(previewPreset);
-    setIsApplied(true);
-    setTimeout(() => setIsApplied(false), 2500);
-  };
-
-  const handleReset = () => {
-    setPreviewPreset(currentStorePreset);
+  const handleCopyTokens = () => {
+    navigator.clipboard.writeText(`:root {
+  --background: #000000;
+  --surface-01: #080808;
+  --surface-02: #0d0d0d;
+  --surface-03: #141414;
+  --surface-04: #1a1a1a;
+  --border-subtle: #202020;
+  --border-default: #292929;
+  --border-strong: #404040;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --radius: 0.375rem;
+}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -54,155 +51,139 @@ export function AccentPlayground() {
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="text-sm font-semibold font-sans text-foreground">
-            <span className="hidden sm:inline">Dynamic User Accent & Contrast Laboratory</span>
-            <span className="sm:hidden">Accent Laboratory</span>
+          <h3 className="text-sm font-semibold font-sans text-foreground flex items-center gap-2">
+            <LayersIcon className="h-4 w-4 text-foreground" />
+            <span className="hidden sm:inline">Unified Monochrome & Solid Neumorphic Showcase</span>
+            <span className="sm:hidden">Monochrome Showcase</span>
           </h3>
 
-          <div className="flex items-center gap-1.5 shrink-0">
-            <Button
-              size="sm"
-              onClick={handleApplyGlobal}
-              className="h-7 text-xs font-mono gap-1 whitespace-nowrap"
-            >
-              {isApplied ? <CheckIcon className="h-3 w-3" /> : null}
-              <span className="hidden sm:inline">{isApplied ? "Applied to App" : "Apply to App"}</span>
-              <span className="sm:hidden">{isApplied ? "Applied" : "Apply"}</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleReset}
-              className="h-7 text-xs font-mono gap-1 whitespace-nowrap"
-            >
-              <RefreshIcon className="h-3 w-3" />
-              <span>Reset</span>
-            </Button>
-          </div>
+          <Badge variant="outline" className="text-[10px] font-mono border-subtle-border text-foreground bg-elevated-surface">
+            Pure Black Monochrome
+          </Badge>
         </div>
         <p className="text-xs text-muted-foreground">
-          Evaluate saturated pure accent presets with real-time WCAG contrast calculation. Changes remain isolated until applied.
+          NXTQR operates exclusively on a calibrated pure black monochrome identity with restrained solid neumorphism.
         </p>
       </div>
 
-      {/* Preset Swatches Grid */}
-      <div className="space-y-1.5">
-        <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block font-bold">
-          Calibrated Pure Accent Presets
+      {/* Surface Hierarchy Selector */}
+      <div className="space-y-2">
+        <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider block">
+          Neumorphic Depth Levels (Select to Inspect)
         </label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-          {PRESETS.map((p) => {
-            const isSelected = previewPreset === p.id;
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {SURFACES.map((s) => {
+            const isSelected = selectedLevel === s.level;
             return (
               <button
-                key={p.id}
-                onClick={() => setPreviewPreset(p.id)}
+                key={s.level}
+                onClick={() => setSelectedLevel(s.level)}
                 className={cn(
-                  "p-2 rounded-md border text-left transition-all select-none",
+                  "p-3 rounded-md border text-left transition-all duration-150 select-none relative",
                   isSelected
-                    ? "border-accent ring-1 ring-accent bg-elevated-surface"
-                    : "border-border bg-black hover:border-muted-border hover:bg-secondary-surface"
+                    ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
+                    : "border-border bg-elevated-surface hover:border-muted-border hover:bg-secondary-surface"
                 )}
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <span
-                    className="w-3.5 h-3.5 rounded-full border border-black/40 shrink-0 shadow-sm"
-                    style={{ backgroundColor: p.hex }}
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11px] font-mono font-bold text-foreground">{s.level}</span>
+                  <div
+                    className="w-3.5 h-3.5 rounded-sm border border-subtle-border"
+                    style={{ backgroundColor: s.bg }}
                   />
-                  <span className="text-[11px] font-bold text-foreground font-sans truncate">{p.name}</span>
                 </div>
-                <div className="text-[9px] font-mono text-muted-foreground">{p.hex}</div>
+                <div className="text-xs font-semibold text-foreground truncate">{s.name}</div>
+                <div className="text-[10px] font-mono text-muted-foreground">{s.bg}</div>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Live Component Preview Sandbox */}
+      {/* Live Hardware Surface Stage */}
       <div className="rounded-md border border-subtle-border bg-black p-4 sm:p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-subtle-border pb-3">
+          <div>
+            <span className="text-xs font-mono font-bold text-foreground uppercase">{activeSurface.name} ({activeSurface.level})</span>
+            <span className="text-[11px] text-muted-foreground block">{activeSurface.role}</span>
+          </div>
+
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-foreground font-sans">
-              Sandbox Component Renders:
+            <span className="text-[10px] font-mono text-muted-foreground border border-subtle-border px-2 py-0.5 rounded bg-surface">
+              WCAG AAA · 21:1 Contrast
             </span>
-            <span
-              className="px-2 py-0.5 rounded text-[10px] font-mono font-bold"
-              style={{ backgroundColor: activeHex, color: activeFg }}
-            >
-              {activeHex} · Text: {activeFg}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground">
-            <span>Contrast vs #000000:</span>
-            <span className="text-foreground font-bold">{activePreset.contrastAgainstBlack}</span>
-            <Badge variant="outline" className="text-[9px] text-emerald-400 border-emerald-500/30">
-              WCAG AA
-            </Badge>
           </div>
         </div>
 
-        {/* Demo Controls Grid with Simulated Accent */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-          {/* 1. Button with Accent */}
-          <div className="p-3 rounded bg-surface border border-border space-y-2">
+        {/* Live Interactive Component Samples */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          {/* Primary Action Button */}
+          <div className="p-3 rounded-md border border-subtle-border bg-surface-01 space-y-2">
             <span className="text-[10px] font-mono text-muted-foreground uppercase block">Primary Action</span>
-            <button
-              style={{ backgroundColor: activeHex, color: activeFg }}
-              className="w-full py-1.5 px-3 rounded-md text-xs font-mono font-semibold transition-opacity hover:opacity-90 shadow-sm"
-            >
-              Confirm Deployment
-            </button>
+            <Button className="w-full bg-white text-black font-semibold hover:bg-neutral-200 shadow-level-1 h-8 text-xs">
+              <CheckIcon className="h-3.5 w-3.5 mr-1" />
+              Primary White
+            </Button>
+            <span className="text-[9px] font-mono text-muted-foreground block text-center">#FFFFFF on #000000</span>
           </div>
 
-          {/* 2. Active Tab & Badge */}
-          <div className="p-3 rounded bg-surface border border-border space-y-2">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase block">Selected Tab & Status</span>
-            <div className="flex items-center gap-2">
-              <div
-                style={{ borderColor: activeHex, color: activeHex }}
-                className="px-2.5 py-1 rounded-md border text-xs font-mono font-semibold bg-black/40"
-              >
-                Telemetry Stream
-              </div>
-              <span
-                style={{ backgroundColor: `${activeHex}20`, borderColor: `${activeHex}60`, color: activeHex }}
-                className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border"
-              >
-                LIVE
-              </span>
-            </div>
+          {/* Secondary Raised Button */}
+          <div className="p-3 rounded-md border border-subtle-border bg-surface-01 space-y-2">
+            <span className="text-[10px] font-mono text-muted-foreground uppercase block">Secondary Raised</span>
+            <Button variant="outline" className="w-full border-border bg-elevated-surface text-foreground hover:bg-secondary-surface h-8 text-xs font-mono">
+              Secondary Button
+            </Button>
+            <span className="text-[9px] font-mono text-muted-foreground block text-center">#141414 + #292929 Border</span>
           </div>
 
-          {/* 3. Node Selection Outline */}
-          <div className="p-3 rounded bg-surface border border-border space-y-2">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase block">Graph Node Selection</span>
-            <div
-              style={{ borderColor: activeHex, boxShadow: `0 0 10px ${activeHex}33` }}
-              className="p-2 rounded-md border bg-elevated-surface text-xs font-mono flex items-center justify-between"
-            >
-              <span className="text-foreground font-semibold">Compute Worker</span>
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeHex }} />
-            </div>
+          {/* Inset Hardware Input */}
+          <div className="p-3 rounded-md border border-subtle-border bg-surface-01 space-y-2">
+            <span className="text-[10px] font-mono text-muted-foreground uppercase block">Inset Input</span>
+            <input
+              type="text"
+              readOnly
+              value="node_cluster_alpha"
+              className="w-full px-2.5 py-1.5 text-xs font-mono rounded-md border border-border bg-black text-foreground shadow-level-3 focus:outline-none"
+            />
+            <span className="text-[9px] font-mono text-muted-foreground block text-center">Level 3 Inset Depth</span>
           </div>
         </div>
+      </div>
 
-        {/* Generated CSS Variables */}
-        <div className="space-y-1.5 border-t border-subtle-border pt-3">
-          <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-            Derived CSS Variables (Zero Page Reload)
-          </div>
-          <CodeBlock
-            code={`:root {
-  --accent: ${activeHex};
-  --accent-foreground: ${activeFg};
-  --accent-muted: ${activeHex}1A; /* 10% opacity */
-  --ring: ${activeHex};
+      {/* Copyable CSS Tokens */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+            Monochrome Architecture Tokens (globals.css)
+          </span>
+          <button
+            onClick={handleCopyTokens}
+            className="text-[10px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+          >
+            {copied ? <CheckIcon className="h-3 w-3 text-foreground" /> : <CopyIcon className="h-3 w-3" />}
+            {copied ? "Copied" : "Copy CSS"}
+          </button>
+        </div>
+
+        <CodeBlock
+          code={`:root {
+  color-scheme: dark;
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #0d0d0d;
+  --popover: #141414;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #141414;
+  --secondary-foreground: #ffffff;
+  --muted: #141414;
+  --muted-foreground: #858585;
+  --border: #292929;
+  --radius: 0.375rem;
 }`}
-            language="css"
-            filename="theme-accent.css"
-          />
-        </div>
+          language="css"
+          filename="design-system-tokens.css"
+        />
       </div>
     </div>
   );

@@ -1,11 +1,5 @@
 import { create } from "zustand";
 import type { AccentPresetId, ThemeMode } from "@nxtqr/shared-types";
-import {
-  applyAccentToDocument,
-  DEFAULT_THEME_PREFERENCES,
-  getLocalAccentConfig,
-  setLocalAccentConfig,
-} from "@nxtqr/design-system";
 
 export interface ThemeStoreState {
   themeMode: ThemeMode;
@@ -18,42 +12,28 @@ export interface ThemeStoreState {
   hydrateFromLocal: () => void;
 }
 
-export const useThemeStore = create<ThemeStoreState>((set, get) => ({
-  themeMode: DEFAULT_THEME_PREFERENCES.themeMode,
-  accentPreset: DEFAULT_THEME_PREFERENCES.accentPreset,
-  customHex: DEFAULT_THEME_PREFERENCES.customHex,
+/**
+ * NXTQR Unified Pure Black Monochrome Theme Store
+ * The application has exactly one theme: Pure Black Monochrome + Solid Neumorphism.
+ * Theme mode is permanently "dark" and accent is permanently "monochrome".
+ */
+export const useThemeStore = create<ThemeStoreState>(() => ({
+  themeMode: "dark",
+  accentPreset: "monochrome",
+  customHex: null,
 
-  setThemeMode: (themeMode) => {
-    set({ themeMode });
-    const { accentPreset, customHex } = get();
-    applyAccentToDocument({ preset: accentPreset, customHex }, themeMode === "dark");
-  },
-
-  setAccentPreset: (accentPreset) => {
-    set({ accentPreset, customHex: null });
-    const { themeMode } = get();
-    setLocalAccentConfig({ preset: accentPreset, customHex: null });
-    applyAccentToDocument({ preset: accentPreset, customHex: null }, themeMode === "dark");
-  },
-
-  setCustomHex: (customHex) => {
-    set({ customHex });
-    const { themeMode, accentPreset } = get();
-    setLocalAccentConfig({ preset: accentPreset, customHex });
-    applyAccentToDocument({ preset: accentPreset, customHex }, themeMode === "dark");
-  },
-
-  resetToMonochrome: () => {
-    set({ accentPreset: "monochrome", customHex: null });
-    const { themeMode } = get();
-    setLocalAccentConfig({ preset: "monochrome", customHex: null });
-    applyAccentToDocument({ preset: "monochrome", customHex: null }, themeMode === "dark");
-  },
-
+  setThemeMode: () => {},
+  setAccentPreset: () => {},
+  setCustomHex: () => {},
+  resetToMonochrome: () => {},
   hydrateFromLocal: () => {
-    const config = getLocalAccentConfig();
-    set({ accentPreset: config.preset, customHex: config.customHex });
-    const isDark = get().themeMode === "dark";
-    applyAccentToDocument(config, isDark);
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.removeItem("nxtqr_theme_mode");
+        window.localStorage.removeItem("nxtqr_accent_config");
+      } catch {
+        // Ignore storage errors
+      }
+    }
   },
 }));

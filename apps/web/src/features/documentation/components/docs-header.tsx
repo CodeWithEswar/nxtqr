@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AppLogo } from "@nxtqr/branding";
 import { Button, Sheet, SheetContent, SheetTrigger } from "@nxtqr/ui";
-import { SearchIcon, MenuIcon, SettingsIcon, TerminalIcon, ActivityIcon } from "@nxtqr/icons";
+import { SearchIcon, MenuIcon, TerminalIcon, ActivityIcon } from "@nxtqr/icons";
 import { cn } from "@nxtqr/utils";
 import { DocsSidebar } from "./docs-sidebar";
 
@@ -137,14 +137,6 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
                   <TerminalIcon className="h-3.5 w-3.5" />
                   <span>Diagnostics</span>
                 </Link>
-                <Link
-                  href="/settings/theme"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground px-2 py-1 rounded-md transition-colors"
-                >
-                  <SettingsIcon className="h-3.5 w-3.5" />
-                  <span>Theme</span>
-                </Link>
               </div>
             </SheetContent>
           </Sheet>
@@ -220,21 +212,8 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
             aria-label="System Diagnostics"
             className="h-8 px-2 sm:px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border flex items-center gap-1.5 shadow-level-1"
           >
-            <ActivityIcon className="h-3.5 w-3.5 text-accent shrink-0" />
+            <ActivityIcon className="h-3.5 w-3.5 text-foreground shrink-0" />
             <span className="hidden sm:inline">Diagnostics</span>
-          </Button>
-        </Link>
-
-        {/* Theme Settings */}
-        <Link href="/settings/theme" className="shrink-0">
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label="Theme settings"
-            className="h-8 px-2 sm:px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border flex items-center gap-1.5 shadow-level-1"
-          >
-            <SettingsIcon className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Theme</span>
           </Button>
         </Link>
       </div>

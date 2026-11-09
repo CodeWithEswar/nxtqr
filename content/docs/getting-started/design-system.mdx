@@ -1,0 +1,104 @@
+---
+title: Design System & Appearance
+description: Pure black monochrome foundations, solid neumorphic hierarchy, Geist typography, and WCAG accessibility standards.
+category: Getting Started
+order: 5
+---
+
+NXTQR implements a unified **Pure Black Monochrome Design System** with **Restrained Solid Neumorphism**. There are no alternative themes, no light/dark toggles, and no user-customizable accent colors. The studio is purpose-built to feel like precision-machined digital hardware.
+
+> [!IMPORTANT]
+> **Constitutional Principles (AGENTS.md)**:
+> 1. **Single Unified Identity**: The application theme is permanently pure black (`#000000`) with high-contrast foreground text (`#FFFFFF`) and neutral grayscale surfaces.
+> 2. **Prohibited Customization**: Theme selectors, accent color pickers, light mode toggles, and multicolor presets are strictly eliminated.
+> 3. **Restrained Solid Neumorphism**: Depth is achieved purely through opaque surfaces, fine 1px structural boundaries (`#202020` to `#404040`), and directional hardware shadows. No glassmorphism, no backdrop blurs, and no translucent floating cards.
+> 4. **Global Border Radius Standard**: Every rectangular control, card, panel, and code block must use `rounded-md` (`0.375rem / 6px`).
+> 5. **WCAG AAA Compliance**: Primary foreground text against the canvas guarantees an optimal **21:1** contrast ratio.
+
+---
+
+## Interactive Material & Depth Laboratory
+
+Inspect the surface elevation stack, evaluate solid neumorphic depth levels, and inspect copyable CSS tokens:
+
+<AccentPlayground />
+
+---
+
+## Core Grayscale Color Architecture
+
+NXTQR structures all visual hierarchy using twelve calibrated monochrome tokens:
+
+| Token | Value | CSS Variable | Architectural Purpose |
+| :--- | :--- | :--- | :--- |
+| **Background** | `#000000` | `--background` | Main application canvas, full-page backdrop, viewport base. |
+| **Surface 01** | `#080808` | `--surface-01` | Subtle raised surfaces, bottom toolbars, rail containers. |
+| **Surface 02** | `#0D0D0D` | `--surface-02` | Primary cards, panels, tab stages, inspector bodies. |
+| **Surface 03** | `#141414` | `--surface-03` | Elevated modal dialogs, popovers, floating toolbars. |
+| **Surface 04** | `#1A1A1A` | `--surface-04` | Active tabs, pressed states, hover feedback, inset wells. |
+| **Border Subtle** | `#202020` | `--border-subtle` | Fine structural separation, internal dividers, subtle grids. |
+| **Border Default**| `#292929` | `--border` | Standard card boundaries, input borders, component frames. |
+| **Border Strong** | `#404040` | `--border-strong` | Emphasized boundaries, active focus rings, selection frames. |
+| **Text Primary** | `#FFFFFF` | `--foreground` | Primary titles, headlines, active labels (21:1 AAA contrast). |
+| **Text Secondary**| `#B5B5B5` | `--secondary-foreground` | Secondary descriptors, subtitle copy, table cells. |
+| **Text Muted** | `#858585` | `--muted-foreground` | Supporting metadata, timestamps, keyboard shortcut hints. |
+| **Text Disabled** | `#666666` | `--disabled-foreground` | Inactive elements, disabled buttons, placeholder text. |
+
+---
+
+## Solid Neumorphism Specification
+
+NXTQR hardware material levels avoid diffuse lighting and soft pastel glows in favor of directional physical depth:
+
+### Level 0 — Base Canvas
+- **Background**: `#000000`
+- **Shadow**: `none`
+- **Usage**: Full-page viewport and infinite graph canvas background.
+
+### Level 1 — Raised Surface
+- **Background**: `#080808` / `#0D0D0D`
+- **Border**: `1px solid #202020`
+- **Shadow**: `0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 1px 0 0 rgba(255, 255, 255, 0.03) inset`
+- **Usage**: Standard cards, secondary buttons, toolbars, list rows.
+
+### Level 2 — Elevated Surface
+- **Background**: `#141414`
+- **Border**: `1px solid #292929`
+- **Shadow**: `0 4px 12px 0 rgba(0, 0, 0, 0.7), 0 1px 0 0 rgba(255, 255, 255, 0.05) inset`
+- **Usage**: Modal dialogs, dropdown menus, context menus, floating node inspectors.
+
+### Level 3 — Pressed & Inset Surface
+- **Background**: `#1A1A1A`
+- **Border**: `1px solid #404040`
+- **Shadow**: `inset 0 1px 3px 0 rgba(0, 0, 0, 0.6), inset 0 0 1px 0 rgba(0, 0, 0, 0.4)`
+- **Usage**: Active buttons, pressed toggles, search inputs, code editor viewports.
+
+---
+
+## Global Radius Standard
+
+Every rectangular surface across the platform strictly adheres to **`rounded-md`**:
+
+```tsx
+// Compliant: Standard 6px radius
+<Button className="rounded-md">Execute</Button>
+<Card className="rounded-md border border-border">...</Card>
+
+// Strictly Prohibited on rectangular surfaces:
+// rounded-sm, rounded-lg, rounded-xl, rounded-2xl, rounded-full
+```
+
+*Permitted circular exceptions*: Avatars, radio indicators, and status indicator dots (`rounded-full`).
+
+---
+
+## Next Steps
+
+Explore the individual design system foundations:
+
+- [**Colors**](/docs/foundations/colors): Comprehensive grayscale token architecture and contrast mathematics.
+- [**Typography**](/docs/foundations/typography): Geist Sans and Geist Mono type scale and line heights.
+- [**Elevation**](/docs/foundations/elevation): Solid neumorphism depth matrix and shadow tokens.
+- [**Radius**](/docs/foundations/radius): Global `rounded-md` standard and prohibited radius patterns.
+- [**Accessibility**](/docs/foundations/accessibility): Focus ring geometry, roving tabindex, and WCAG guarantees.
+

@@ -167,7 +167,7 @@ export function ArchitectureOverview() {
 
           <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
             <span className="hidden sm:inline">Selected Stage: </span>
-            <span className="text-accent font-bold">0{stage.step} / 06</span>
+            <span className="text-foreground font-bold">0{stage.step} / 06</span>
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -187,7 +187,7 @@ export function ArchitectureOverview() {
               className={cn(
                 "p-2.5 rounded-md border text-left transition-all duration-150 relative select-none",
                 isActive
-                  ? "border-accent bg-accent/10 ring-1 ring-accent shadow-level-2"
+                  ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
                   : "border-border bg-elevated-surface hover:border-muted-border hover:bg-secondary-surface"
               )}
             >
@@ -195,7 +195,7 @@ export function ArchitectureOverview() {
                 <span className="text-[10px] font-mono text-muted-foreground font-bold">
                   0{s.step}
                 </span>
-                <SIcon className={cn("h-3.5 w-3.5", isActive ? "text-accent" : "text-muted-foreground")} />
+                <SIcon className={cn("h-3.5 w-3.5", isActive ? "text-foreground" : "text-muted-foreground")} />
               </div>
               <div className="text-xs font-semibold font-sans text-foreground truncate">
                 <span className="hidden sm:inline">{s.title}</span>
@@ -213,7 +213,7 @@ export function ArchitectureOverview() {
       <div className="rounded-md border border-subtle-border bg-black p-4 sm:p-5 space-y-4">
         <div className="space-y-3 border-b border-border/60 pb-3">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-md bg-surface border border-border flex items-center justify-center text-accent shrink-0 mt-0.5">
+            <div className="w-8 h-8 rounded-md bg-surface border border-border flex items-center justify-center text-foreground shrink-0 mt-0.5">
               <IconComp className="h-4 w-4" />
             </div>
             <div className="min-w-0 flex-1 space-y-1">
@@ -253,7 +253,7 @@ export function ArchitectureOverview() {
           </div>
           <div className="p-2.5 rounded bg-surface border border-border space-y-1">
             <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Outbound Contract:</span>
-            <span className="text-accent font-semibold">{stage.outputContract}</span>
+            <span className="text-foreground font-semibold">{stage.outputContract}</span>
           </div>
         </div>
 

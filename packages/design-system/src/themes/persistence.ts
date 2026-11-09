@@ -1,5 +1,4 @@
 import type { AccentColorConfig, UserThemePreferences } from "@nxtqr/shared-types";
-import { generateAccentCssVariables } from "./css-generator";
 
 export const THEME_STORAGE_KEYS = {
   MODE: "nxtqr_theme_mode",
@@ -16,50 +15,28 @@ export const DEFAULT_THEME_PREFERENCES: UserThemePreferences = {
 };
 
 /**
- * Safely loads locally persisted accent configuration from localStorage.
+ * NXTQR Unified Monochrome: Always returns pure monochrome configuration.
  */
 export function getLocalAccentConfig(): AccentColorConfig {
-  if (typeof window === "undefined") {
-    return { preset: "monochrome", customHex: null };
-  }
-  try {
-    const raw = window.localStorage.getItem(THEME_STORAGE_KEYS.ACCENT);
-    if (!raw) return { preset: "monochrome", customHex: null };
-    const parsed = JSON.parse(raw);
-    return {
-      preset: parsed.preset ?? "monochrome",
-      customHex: parsed.customHex ?? null,
-    };
-  } catch {
-    return { preset: "monochrome", customHex: null };
-  }
+  return { preset: "monochrome", customHex: null };
 }
 
 /**
- * Persists accent config to localStorage.
+ * Cleans up legacy theme/accent keys from localStorage.
  */
-export function setLocalAccentConfig(config: AccentColorConfig): void {
+export function setLocalAccentConfig(_config?: AccentColorConfig): void {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(THEME_STORAGE_KEYS.ACCENT, JSON.stringify(config));
+    window.localStorage.removeItem(THEME_STORAGE_KEYS.ACCENT);
+    window.localStorage.removeItem(THEME_STORAGE_KEYS.MODE);
   } catch {
     // Ignore storage quota or disabled storage errors
   }
 }
 
 /**
- * Directly applies accent CSS variables to documentElement style to prevent
- * any flash of un-themed content and achieve zero-reload transitions.
+ * In the unified monochrome system, CSS variables are defined statically in CSS.
  */
-export function applyAccentToDocument(config: AccentColorConfig, isDark = true): void {
-  if (typeof document === "undefined") return;
-  const vars = generateAccentCssVariables({
-    preset: config.preset,
-    customHex: config.customHex,
-    isDarkMode: isDark,
-  });
-  const root = document.documentElement;
-  for (const [key, value] of Object.entries(vars)) {
-    root.style.setProperty(key, value);
-  }
+export function applyAccentToDocument(_config?: AccentColorConfig, _isDark = true): void {
+  // Pure monochrome tokens are statically declared in CSS.
 }

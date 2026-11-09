@@ -79,7 +79,7 @@ export function PackageDependencyGraph() {
 
           <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
             <span className="hidden sm:inline">Active Tier: </span>
-            <span className="text-accent font-bold">Level {activeLayer.level}</span>
+            <span className="text-foreground font-bold">Level {activeLayer.level}</span>
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -98,7 +98,7 @@ export function PackageDependencyGraph() {
               className={cn(
                 "p-3 rounded-md border transition-all cursor-pointer text-xs font-mono select-none",
                 isSelected
-                  ? "border-accent bg-accent/10 ring-1 ring-accent shadow-level-2"
+                  ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
                   : "border-border bg-elevated-surface hover:border-muted-border hover:bg-secondary-surface"
               )}
             >
@@ -107,7 +107,7 @@ export function PackageDependencyGraph() {
                   <span
                     className={cn(
                       "px-1.5 py-0.5 rounded text-[10px] font-bold",
-                      isSelected ? "bg-accent text-accent-foreground" : "bg-black text-muted-foreground"
+                      isSelected ? "bg-white text-black font-bold" : "bg-black text-muted-foreground"
                     )}
                   >
                     L{layer.level}
@@ -136,7 +136,7 @@ export function PackageDependencyGraph() {
       <div className="rounded-md border border-subtle-border bg-black p-4 space-y-3 text-xs font-mono">
         <div className="flex items-center justify-between border-b border-border/60 pb-2">
           <div className="flex items-center gap-2">
-            <ShieldIcon className="h-4 w-4 text-accent" />
+            <ShieldIcon className="h-4 w-4 text-foreground" />
             <span className="font-bold text-foreground font-sans">
               Layer {activeLayer.level} Rules: {activeLayer.name}
             </span>

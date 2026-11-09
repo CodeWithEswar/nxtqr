@@ -80,7 +80,7 @@ export function QuickStartWalkthrough() {
 
           <div className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
             <span className="hidden sm:inline">Phase: </span>
-            <span className="text-accent font-bold">0{activeStep} of 05</span>
+            <span className="text-foreground font-bold">0{activeStep} of 05</span>
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -97,7 +97,7 @@ export function QuickStartWalkthrough() {
             className={cn(
               "p-2 rounded-md border text-left transition-all text-xs font-mono select-none",
               activeStep === st.num
-                ? "border-accent bg-accent/10 ring-1 ring-accent font-semibold text-foreground"
+                ? "border-foreground bg-surface-04 ring-1 ring-border-strong font-semibold text-foreground shadow-level-1"
                 : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
             )}
           >
@@ -120,9 +120,9 @@ export function QuickStartWalkthrough() {
                   className={cn(
                     "p-3 rounded-md border text-xs font-mono min-w-[130px] transition-all duration-200 select-none",
                     n.status === "completed"
-                      ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                      ? "border-white/60 bg-surface-03 text-foreground"
                       : n.status === "executing"
-                        ? "border-accent bg-accent/10 text-accent ring-1 ring-accent animate-pulse"
+                        ? "border-foreground bg-surface-04 text-foreground ring-1 ring-border-strong"
                         : "border-border bg-elevated-surface text-foreground"
                   )}
                 >
@@ -140,7 +140,7 @@ export function QuickStartWalkthrough() {
                     <div
                       className={cn(
                         "h-0.5 w-8 sm:w-12 transition-colors",
-                        quickstartEdges[idx].status === "active" ? "bg-accent" : "bg-zinc-700"
+                        quickstartEdges[idx].status === "active" ? "bg-white" : "bg-zinc-700"
                       )}
                     />
                   </div>
@@ -202,7 +202,7 @@ export function QuickStartWalkthrough() {
           <div className="space-y-1.5 border-t border-subtle-border pt-3">
             <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider flex items-center justify-between">
               <span>Emitted Execution Telemetry Trace</span>
-              <span className="text-accent font-bold">{simEvents.length} Events</span>
+              <span className="text-foreground font-bold">{simEvents.length} Events</span>
             </div>
             <div className="space-y-1 max-h-36 overflow-y-auto scrollbar-dense">
               {simEvents.map((evt) => (
@@ -211,12 +211,12 @@ export function QuickStartWalkthrough() {
                   className="p-2 rounded bg-surface border border-border flex items-center justify-between text-xs font-mono"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-accent font-bold">#{evt.step}</span>
+                    <span className="text-foreground font-bold">#{evt.step}</span>
                     <span className="text-muted-foreground text-[10px]">+{evt.timestamp.toFixed(1)}ms</span>
                     <span className="text-foreground font-semibold">{evt.type}</span>
                     <span className="text-muted-foreground">({evt.targetNodeId})</span>
                   </div>
-                  <span className="text-emerald-400 text-[10px] uppercase font-bold">SUCCESS</span>
+                  <span className="text-foreground text-[10px] uppercase font-bold">SUCCESS</span>
                 </div>
               ))}
             </div>

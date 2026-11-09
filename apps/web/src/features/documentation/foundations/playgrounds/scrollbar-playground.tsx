@@ -8,7 +8,7 @@ import { cn } from "@nxtqr/utils";
 
 export function ScrollbarPlayground() {
   const [activeVariant, setActiveVariant] = React.useState<"default" | "compact" | "canvas" | "dense">("default");
-  const [accentThumb, setAccentThumb] = React.useState<boolean>(false);
+  const [highlightTrack, setHighlightTrack] = React.useState<boolean>(false);
   const itemCount = 40;
   const [copied, setCopied] = React.useState<boolean>(false);
 
@@ -39,21 +39,21 @@ export function ScrollbarPlayground() {
           </h3>
 
           <button
-            onClick={() => setAccentThumb(!accentThumb)}
+            onClick={() => setHighlightTrack(!highlightTrack)}
             className={cn(
               "px-2.5 py-1 rounded-md text-xs font-mono border transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap",
-              accentThumb
-                ? "border-accent bg-accent text-accent-foreground font-semibold"
+              highlightTrack
+                ? "border-foreground bg-white text-black font-semibold"
                 : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
             )}
           >
-            {accentThumb && <CheckIcon className="h-3 w-3" />}
-            <span className="hidden sm:inline">Accent Thumb: </span>
-            <span>{accentThumb ? "ON" : "OFF"}</span>
+            {highlightTrack && <CheckIcon className="h-3 w-3" />}
+            <span className="hidden sm:inline">Track Guide: </span>
+            <span>{highlightTrack ? "ON" : "OFF"}</span>
           </button>
         </div>
         <p className="text-xs text-muted-foreground">
-          Engineered hardware scroll rails. 10px / 7px / 6px precision scales, inset groove lighting, and dynamic user-accent drag feedback.
+          Engineered hardware scroll rails. 10px / 7px / 6px precision scales, inset groove lighting, and tactile solid feedback.
         </p>
       </div>
 
@@ -66,13 +66,13 @@ export function ScrollbarPlayground() {
             className={cn(
               "p-3 rounded-md border text-left transition-all",
               activeVariant === v.id
-                ? "border-accent bg-accent/10 ring-1 ring-accent"
+                ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-1"
                 : "border-border bg-elevated-surface hover:border-muted-border"
             )}
           >
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs font-semibold text-foreground whitespace-nowrap">{v.label}</span>
-              <span className="text-[10px] font-mono text-accent whitespace-nowrap">{v.px}px</span>
+              <span className="text-[10px] font-mono text-muted-foreground whitespace-nowrap">{v.px}px</span>
             </div>
             <div className="text-[10px] font-mono text-muted-foreground truncate">{v.use}</div>
           </button>
@@ -89,7 +89,7 @@ export function ScrollbarPlayground() {
             onClick={copyCssVar}
             className="text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
           >
-            {copied ? <CheckIcon className="h-3 w-3 text-accent" /> : <CopyIcon className="h-3 w-3" />}
+            {copied ? <CheckIcon className="h-3 w-3 text-foreground" /> : <CopyIcon className="h-3 w-3" />}
             {copied ? "Copied" : currentSize.cssVar}
           </button>
         </div>
@@ -99,26 +99,26 @@ export function ScrollbarPlayground() {
           <div
             className={cn(
               "h-64 border border-border bg-elevated-surface rounded-md overflow-y-scroll overflow-x-auto p-4 transition-all",
-              accentThumb && "precision-rail-accent"
+              highlightTrack && "border-foreground"
             )}
             style={{
               scrollbarWidth: activeVariant === "dense" || activeVariant === "compact" ? "thin" : "auto",
-              scrollbarColor: accentThumb ? "var(--accent) #080808" : "#303030 #080808",
+              scrollbarColor: "#505050 #080808",
             }}
           >
             <div className="w-[600px] space-y-2">
-              <div className="text-xs font-mono text-accent font-semibold sticky top-0 bg-elevated-surface/90 py-1 backdrop-blur-none border-b border-subtle-border">
+              <div className="text-xs font-mono text-foreground font-semibold sticky top-0 bg-elevated-surface/90 py-1 backdrop-blur-none border-b border-subtle-border">
                 Telemetry Log Stream — 2D Scrollable Surface
               </div>
 
               {Array.from({ length: itemCount }).map((_, i) => (
                 <div
                   key={i}
-                  className="p-2 rounded border border-border/60 bg-surface flex items-center justify-between font-mono text-xs text-muted-foreground hover:text-foreground hover:border-accent transition-colors"
+                  className="p-2 rounded border border-border/60 bg-surface flex items-center justify-between font-mono text-xs text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
                 >
                   <span className="text-foreground font-semibold">LOG_PACKET_0x{i.toString(16).padStart(4, "0")}</span>
                   <span>TIME: +{(i * 12.4).toFixed(1)}ms</span>
-                  <span className="text-accent">STATE: SYNCED</span>
+                  <span className="text-foreground">STATE: SYNCED</span>
                   <span>BUFFER_ADDR: 0x7FFF{i * 8}</span>
                 </div>
               ))}
@@ -179,7 +179,7 @@ export function ScrollbarPlayground() {
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: var(--accent); /* Dynamic pure accent feedback */
+  background: #707070; /* Solid tactile feedback */
 }`}
           language="css"
           filename="precision-rail.css"

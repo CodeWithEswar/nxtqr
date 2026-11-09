@@ -46,14 +46,14 @@ export function ConnectedGraphWorkspace({
       {/* Workspace Header Bar */}
       <div className="h-10 px-3 bg-surface border-b border-subtle-border flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2 min-w-0 pr-2">
-          <div className="w-5 h-5 rounded bg-accent flex items-center justify-center font-mono text-[10px] font-bold text-accent-foreground shrink-0">
+          <div className="w-5 h-5 rounded bg-primary flex items-center justify-center font-mono text-[10px] font-bold text-primary-foreground shrink-0">
             NX
           </div>
           <span className="text-xs font-bold font-sans text-foreground truncate">
             <span className="hidden sm:inline">Connected Graph Engineering Studio</span>
             <span className="sm:hidden">Graph Studio</span>
           </span>
-          <Badge variant="outline" className="text-[10px] font-mono border-subtle-border text-accent shrink-0">
+          <Badge variant="outline" className="text-[10px] font-mono border-subtle-border text-muted-foreground shrink-0">
             <span className="hidden sm:inline">{nodes.length} Nodes · {edges.length} Edges</span>
             <span className="sm:hidden">{nodes.length}N · {edges.length}E</span>
           </Badge>
@@ -65,7 +65,7 @@ export function ConnectedGraphWorkspace({
             className={cn(
               "px-2 py-1 text-xs font-mono rounded-md border transition-colors",
               showPalette
-                ? "border-accent/40 bg-accent/10 text-accent font-semibold"
+                ? "border-foreground bg-[#1a1a1a] text-foreground font-semibold"
                 : "border-subtle-border text-muted-foreground hover:text-foreground"
             )}
           >
@@ -76,7 +76,7 @@ export function ConnectedGraphWorkspace({
             className={cn(
               "px-2 py-1 text-xs font-mono rounded-md border transition-colors",
               showInspector
-                ? "border-accent/40 bg-accent/10 text-accent font-semibold"
+                ? "border-foreground bg-[#1a1a1a] text-foreground font-semibold"
                 : "border-subtle-border text-muted-foreground hover:text-foreground"
             )}
           >

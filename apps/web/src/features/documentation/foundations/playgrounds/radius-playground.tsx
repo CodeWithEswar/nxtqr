@@ -79,7 +79,7 @@ export function RadiusPlayground() {
                 className={cn(
                   "flex flex-col items-center justify-center p-3 rounded-md border text-center transition-all",
                   isSelected
-                    ? "border-accent bg-accent/10 text-foreground ring-1 ring-accent"
+                    ? "border-foreground bg-surface-04 text-foreground ring-1 ring-border-strong shadow-level-1"
                     : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
                 )}
               >
@@ -90,7 +90,7 @@ export function RadiusPlayground() {
                 <span className="text-xs font-semibold whitespace-nowrap">{preset.name}</span>
                 <span className="text-[10px] font-mono text-muted-foreground whitespace-nowrap">{preset.value}</span>
                 {preset.isStandard && (
-                  <span className="mt-1 text-[9px] font-mono text-accent font-semibold">
+                  <span className="mt-1 text-[9px] font-mono text-foreground font-semibold">
                     STRICT STANDARD
                   </span>
                 )}
@@ -112,7 +112,7 @@ export function RadiusPlayground() {
             onClick={copyCode}
             className="text-[11px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors shrink-0"
           >
-            {copied ? <CheckIcon className="h-3 w-3 text-accent" /> : <CopyIcon className="h-3 w-3" />}
+            {copied ? <CheckIcon className="h-3 w-3 text-foreground" /> : <CopyIcon className="h-3 w-3" />}
             {copied ? "Copied" : "Copy class"}
           </button>
         </div>
@@ -138,14 +138,14 @@ export function RadiusPlayground() {
               <input
                 type="text"
                 defaultValue="[1.000, 0.000, 0.000, 1.000]"
-                className="w-full text-xs font-mono px-3 py-2 bg-black border border-border text-foreground focus:outline-none focus:border-accent"
+                className="w-full text-xs font-mono px-3 py-2 bg-black border border-border text-foreground focus:outline-none focus:border-foreground"
                 style={{ borderRadius: selectedPreset.value }}
               />
             </div>
 
             <div className="flex items-center gap-2 pt-2">
               <button
-                className="px-3 py-1.5 text-xs font-medium bg-accent text-accent-foreground font-sans transition-opacity hover:opacity-90"
+                className="px-3 py-1.5 text-xs font-medium bg-white text-black font-semibold shadow-sm hover:bg-neutral-200 transition-colors"
                 style={{ borderRadius: selectedPreset.value }}
               >
                 Apply Transform
@@ -163,7 +163,7 @@ export function RadiusPlayground() {
           <div className="border border-border bg-elevated-surface p-5 space-y-4 shadow-level-1 rounded-md">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground">Concentric Radius Math</span>
-              <span className="text-[10px] font-mono text-accent">R_inner = R_outer - Padding</span>
+              <span className="text-[10px] font-mono text-muted-foreground">R_inner = R_outer - Padding</span>
             </div>
 
             <p className="text-xs text-muted-foreground">
@@ -178,12 +178,12 @@ export function RadiusPlayground() {
                 max="24"
                 value={outerPadding}
                 onChange={(e) => setOuterPadding(Number(e.target.value))}
-                className="flex-1 accent-accent h-1 bg-secondary-surface rounded-none cursor-pointer"
+                className="flex-1 accent-white h-1 bg-secondary-surface rounded-none cursor-pointer"
               />
             </div>
 
             <div
-              className="border-2 border-dashed border-accent/40 bg-black flex items-center justify-center transition-all"
+              className="border-2 border-dashed border-border-strong bg-black flex items-center justify-center transition-all"
               style={{
                 borderRadius: `${outerPx}px`,
                 padding: `${outerPadding}px`,
@@ -217,7 +217,7 @@ export function RadiusPlayground() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
           <div className="p-3 border border-border bg-elevated-surface rounded-md flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-accent/20 border border-accent flex items-center justify-center font-mono text-xs font-bold text-accent">
+            <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center font-mono text-xs font-bold text-foreground">
               NX
             </div>
             <div>
@@ -227,8 +227,8 @@ export function RadiusPlayground() {
           </div>
 
           <div className="p-3 border border-border bg-elevated-surface rounded-md flex items-center gap-3">
-            <div className="w-5 h-5 rounded-full border-2 border-accent flex items-center justify-center">
-              <div className="w-2.5 h-2.5 rounded-full bg-accent" />
+            <div className="w-5 h-5 rounded-full border-2 border-foreground flex items-center justify-center">
+              <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
             </div>
             <div>
               <div className="text-xs font-semibold text-foreground">Radio Indicators</div>
@@ -237,7 +237,7 @@ export function RadiusPlayground() {
           </div>
 
           <div className="p-3 border border-border bg-elevated-surface rounded-md flex items-center gap-3">
-            <div className="w-5 h-5 rounded-full border-2 border-t-accent border-r-transparent border-b-border border-l-transparent animate-spin" />
+            <div className="w-5 h-5 rounded-full border-2 border-t-foreground border-r-transparent border-b-border border-l-transparent animate-spin" />
             <div>
               <div className="text-xs font-semibold text-foreground">Loading Spinners</div>
               <div className="text-[10px] font-mono text-muted-foreground">rounded-full (circular)</div>
@@ -258,8 +258,8 @@ export function RadiusPlayground() {
 </button>
 
 // Permitted Circular Exception (Avatars & Spinners Only)
-<div className="rounded-full h-8 w-8 bg-accent/20 flex items-center justify-center">
-  <AvatarIcon className="h-4 w-4 text-accent" />
+<div className="rounded-full h-8 w-8 bg-surface border border-border flex items-center justify-center">
+  <AvatarIcon className="h-4 w-4 text-foreground" />
 </div>`}
           language="tsx"
           filename="radius-usage.tsx"

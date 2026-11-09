@@ -93,28 +93,21 @@ test.describe("NXTQR Phase 08 — Getting Started Documentation & Onboarding", (
     await expect(page.getByText("Application Shell").first()).toBeVisible();
   });
 
-  test("5. Theming & Accents renders accent playground and previews color presets", async ({ page }) => {
-    await page.goto("/docs/getting-started/theming");
-    await expect(page.locator("h1")).toContainText("Theming & Accents");
+  test("5. Design System & Appearance renders unified monochrome showcase", async ({ page }) => {
+    await page.goto("/docs/getting-started/design-system");
+    await expect(page.locator("h1")).toContainText("Design System & Appearance");
 
-    // Dynamic User Accent & Contrast Laboratory
-    await expect(page.getByText("Dynamic User Accent & Contrast Laboratory").first()).toBeVisible();
+    // Unified Monochrome Showcase
+    await expect(page.getByText("Unified Monochrome & Solid Neumorphic Showcase").first()).toBeVisible();
 
-    // Click Pure Green Preset
-    const greenSwatch = page.getByRole("button", { name: /Pure Green/i }).first();
-    await expect(greenSwatch).toBeVisible();
-    await greenSwatch.click();
+    // Verify Solid Neumorphic Levels
+    await expect(page.getByText("L0").first()).toBeVisible();
+    await expect(page.getByText("L1").first()).toBeVisible();
+    await expect(page.getByText("L2").first()).toBeVisible();
+    await expect(page.getByText("L3").first()).toBeVisible();
 
-    // Check that active preview displays #00CC66 and black text
-    await expect(page.getByText("#00CC66 · Text: #000000").first()).toBeVisible();
-
-    // Click Pure Blue Preset
-    const blueSwatch = page.getByRole("button", { name: /Pure Blue/i }).first();
-    await expect(blueSwatch).toBeVisible();
-    await blueSwatch.click();
-
-    // Check that active preview displays #0066FF and white text
-    await expect(page.getByText("#0066FF · Text: #FFFFFF").first()).toBeVisible();
+    // Verify 21:1 Contrast
+    await expect(page.getByText("WCAG AAA · 21:1 Contrast").first()).toBeVisible();
   });
 
   test("6. Responsive mobile viewport layout check", async ({ page }) => {

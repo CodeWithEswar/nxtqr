@@ -143,7 +143,7 @@ export function InstallationSteps() {
             className={cn(
               "p-2.5 rounded-md border text-left transition-all select-none",
               activeStep === st.num
-                ? "border-accent bg-accent/10 ring-1 ring-accent"
+                ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
                 : "border-border bg-elevated-surface hover:border-muted-border hover:bg-secondary-surface"
             )}
           >
@@ -205,7 +205,7 @@ git --version`}
           <div className="space-y-4">
             <div className="space-y-1">
               <h4 className="text-sm font-bold font-sans text-foreground flex items-center gap-2">
-                <TerminalIcon className="h-4 w-4 text-accent shrink-0" />
+                <TerminalIcon className="h-4 w-4 text-foreground shrink-0" />
                 <span className="hidden sm:inline">Step 2: Clone & Install Dependencies</span>
                 <span className="sm:hidden">Step 2: Clone & Install</span>
               </h4>
@@ -231,7 +231,7 @@ pnpm install`}
           <div className="space-y-4">
             <div className="space-y-1">
               <h4 className="text-sm font-bold font-sans text-foreground flex items-center gap-2">
-                <SettingsIcon className="h-4 w-4 text-accent shrink-0" />
+                <SettingsIcon className="h-4 w-4 text-foreground shrink-0" />
                 <span className="hidden sm:inline">Step 3: Environment Variables Configuration</span>
                 <span className="sm:hidden">Step 3: Environment (.env)</span>
               </h4>
@@ -254,7 +254,7 @@ pnpm install`}
                 <tbody className="divide-y divide-subtle-border">
                   {ENV_VARS.map((env) => (
                     <tr key={env.name} className="hover:bg-surface/50">
-                      <td className="p-2.5 text-accent font-semibold">{env.name}</td>
+                      <td className="p-2.5 text-foreground font-semibold font-mono">{env.name}</td>
                       <td className="p-2.5 text-muted-foreground">{env.target}</td>
                       <td className="p-2.5 text-foreground/80 font-sans text-[11px]">{env.purpose}</td>
                       <td className="p-2.5 text-muted-foreground text-[11px] truncate max-w-[160px]">{env.example}</td>
@@ -280,7 +280,7 @@ NODE_ENV=development`}
           <div className="space-y-4">
             <div className="space-y-1">
               <h4 className="text-sm font-bold font-sans text-foreground flex items-center gap-2">
-                <TerminalIcon className="h-4 w-4 text-accent shrink-0" />
+                <TerminalIcon className="h-4 w-4 text-foreground shrink-0" />
                 <span className="hidden sm:inline">Step 4: Launching Development Services</span>
                 <span className="sm:hidden">Step 4: Development Run</span>
               </h4>
@@ -362,7 +362,7 @@ open http://localhost:3000/verify`}
                   <ChevronDownIcon
                     className={cn(
                       "h-3.5 w-3.5 text-muted-foreground transition-transform duration-150 shrink-0",
-                      isExpanded && "rotate-180 text-accent"
+                      isExpanded && "rotate-180 text-foreground"
                     )}
                   />
                 </button>

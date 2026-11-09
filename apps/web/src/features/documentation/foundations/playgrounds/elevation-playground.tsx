@@ -126,7 +126,7 @@ export function ElevationPlayground() {
               className={cn(
                 "p-3 rounded-md border text-left transition-all relative overflow-hidden",
                 isSelected
-                  ? "border-accent bg-accent/10 ring-1 ring-accent"
+                  ? "border-foreground bg-surface-04 ring-1 ring-border-strong"
                   : "border-border bg-elevated-surface hover:border-muted-border"
               )}
             >
@@ -163,7 +163,7 @@ export function ElevationPlayground() {
           >
             <div className="flex items-center justify-between mb-4 border-b border-subtle-border pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-accent" />
+                <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
                 <span className="text-xs font-mono font-semibold text-foreground">
                   {current.name}
                 </span>
@@ -179,7 +179,7 @@ export function ElevationPlayground() {
 
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <button
-                className="px-3 py-1.5 text-xs font-sans font-medium rounded-md bg-accent text-accent-foreground shadow-sm hover:opacity-90 transition-opacity"
+                className="px-3 py-1.5 text-xs font-sans font-medium rounded-md bg-white text-black font-semibold shadow-sm hover:bg-neutral-200 transition-colors"
               >
                 Simulate Action
               </button>
@@ -200,7 +200,7 @@ export function ElevationPlayground() {
                 className={cn(
                   "p-4 rounded-md border cursor-pointer transition-all flex items-center justify-between",
                   activeLevel === level.id
-                    ? "border-accent ring-1 ring-accent"
+                    ? "border-foreground ring-1 ring-border-strong shadow-level-2"
                     : "border-border hover:border-muted-border"
                 )}
                 style={{
@@ -210,7 +210,7 @@ export function ElevationPlayground() {
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold text-accent">L{level.levelNum}</span>
+                    <span className="text-xs font-mono font-bold text-foreground">L{level.levelNum}</span>
                     <span className="text-xs font-semibold text-foreground">{level.name}</span>
                   </div>
                   <div className="text-[11px] text-muted-foreground mt-0.5">{level.role}</div>
@@ -235,7 +235,7 @@ export function ElevationPlayground() {
               onClick={copyShadow}
               className="text-[11px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
             >
-              {copied ? <CheckIcon className="h-3 w-3 text-accent" /> : <CopyIcon className="h-3 w-3" />}
+              {copied ? <CheckIcon className="h-3 w-3 text-foreground" /> : <CopyIcon className="h-3 w-3" />}
               {copied ? "Copied" : "Copy CSS"}
             </button>
           </div>
@@ -246,7 +246,7 @@ export function ElevationPlayground() {
 
         <div className="space-y-2">
           <span className="text-xs font-mono text-muted-foreground uppercase block">Tailwind Utility Class</span>
-          <div className="p-3 bg-black border border-border rounded-md font-mono text-xs text-accent">
+          <div className="p-3 bg-black border border-border rounded-md font-mono text-xs text-foreground font-semibold">
             {current.tailwind}
           </div>
         </div>

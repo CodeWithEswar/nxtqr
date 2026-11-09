@@ -4,22 +4,25 @@
 
 ---
 
-## 1. Pure Monochrome Foundation
+## 1. Unified Pure Monochrome Standard
 
-The default appearance of NXTQR is built on an absolute pure black foundation:
+NXTQR implements exactly **one application theme**: Pure Black Monochrome.
+There are no light/dark toggles, no system theme listeners, no theme switchers, no accent color pickers, and no multicolor presets.
 
-| Token                           | Dark Theme | Light Theme |
-| :------------------------------ | :--------- | :---------- |
-| **Background (Level 0)**        | `#000000`  | `#FFFFFF`   |
-| **Foreground**                  | `#FFFFFF`  | `#000000`   |
-| **Surface (Level 1)**           | `#0A0A0A`  | `#F5F5F5`   |
-| **Elevated Surface (Level 2)**  | `#141414`  | `#FFFFFF`   |
-| **Secondary Surface (Level 3)** | `#1A1A1A`  | `#EBEBEB`   |
-| **Border**                      | `#262626`  | `#E5E5E5`   |
-| **Subtle Border**               | `#1C1C1C`  | `#F0F0F0`   |
-| **Muted Text**                  | `#A3A3A3`  | `#737373`   |
-| **Disabled Text**               | `#737373`  | `#A3A3A3`   |
-| **Default Accent**              | `#FFFFFF`  | `#000000`   |
+| Token | Hex Value | CSS Variable | Architectural Role | Contrast vs #000 |
+| :--- | :--- | :--- | :--- | :--- |
+| **Background (Level 0)** | `#000000` | `--background` | Full canvas viewport and full-page layout base | 1.0:1 |
+| **Foreground** | `#FFFFFF` | `--foreground` | Primary text, titles, high-contrast symbols | 21.0:1 (AAA) |
+| **Surface 01 (Level 1)** | `#080808` | `--surface-01` | Subtle raised surfaces, bottom toolbars, rail containers | 1.06:1 |
+| **Surface 02** | `#0D0D0D` | `--surface-02` | Primary cards, panels, tab stages, inspector bodies | 1.13:1 |
+| **Surface 03 (Level 2)** | `#141414` | `--surface-03` | Floating dialogs, popovers, inspectors, context menus | 1.23:1 |
+| **Surface 04 (Level 3)** | `#1A1A1A` | `--surface-04` | Active tabs, pressed states, hover feedback, inset wells | 1.34:1 |
+| **Border Subtle** | `#202020` | `--border-subtle` | Structural separation, internal table lines, subtle grids | 1.47:1 |
+| **Border Default** | `#292929` | `--border` | Standard card boundaries, input frames, component borders | 1.65:1 |
+| **Border Strong** | `#404040` | `--border-strong` | Emphasized boundaries, active focus rings, selection frames | 2.16:1 |
+| **Text Secondary** | `#B5B5B5` | `--secondary-foreground` | Secondary descriptors, subtitle copy, table cells | 12.7:1 (AAA) |
+| **Text Muted** | `#858585` | `--muted-foreground` | Supporting metadata, timestamps, keyboard hints | 7.15:1 (AAA) |
+| **Text Disabled** | `#666666` | `--disabled-foreground` | Inactive elements, disabled buttons, placeholder text | 4.54:1 (AA) |
 
 - True black (`#000000`) is mandatory for the main application and canvas background.
 - Gradients, decorative navy, charcoal-blue, or purple tinted backgrounds are strictly prohibited.
@@ -31,68 +34,46 @@ The default appearance of NXTQR is built on an absolute pure black foundation:
 NXTQR employs restrained solid neumorphism to communicate tactile depth without blurry or soft decorative artifacts:
 
 ### Level 0 — Base
-
 - Pure black background (`#000000`).
 - Used for main canvas, full-page viewports, and application layout base.
 
 ### Level 1 — Raised
-
-- Solid surface (`#0A0A0A`) with subtle border (`#262626`) and directional shadow:
+- Solid surface (`#080808` / `#0D0D0D`) with subtle border (`#202020` / `#292929`) and directional shadow:
   `box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 1px 0 0 rgba(255, 255, 255, 0.03) inset;`
 - Used for buttons, toolbars, interactive controls, compact cards.
 
 ### Level 2 — Elevated
-
 - Stronger elevation on `#141414`:
   `box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.7), 0 1px 0 0 rgba(255, 255, 255, 0.05) inset;`
 - Used for popovers, dropdown menus, dialogs, floating inspectors.
 
-### Level 3 — Pressed
-
+### Level 3 — Pressed / Inset
 - Inset tactile treatment on `#1A1A1A`:
   `box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.6), inset 0 0 1px 0 rgba(0, 0, 0, 0.4);`
-- Used for active toolbar buttons, selected segmented controls, pressed states.
+- Used for active toolbar buttons, selected segmented controls, inputs, and pressed states.
 
 **Prohibited:** Glassmorphism, backdrop blur, transparent floating cards, excessive glow, large diffuse shadows.
 
 ---
 
-## 3. Pure Accent Color System
+## 3. Strict Elimination of Decorative Accents
 
-Users choose their own accent color. Presets use clean, saturated pure tones:
-
-| Accent Preset   | HEX       | Accessible Text Color |
-| :-------------- | :-------- | :-------------------- |
-| **Monochrome**  | `#FFFFFF` | `#000000` (Black)     |
-| **Pure Red**    | `#FF0000` | `#FFFFFF` (White)     |
-| **Pure Orange** | `#FF6600` | `#000000` (Black)     |
-| **Pure Yellow** | `#FFD600` | `#000000` (Black)     |
-| **Pure Green**  | `#00CC66` | `#000000` (Black)     |
-| **Pure Blue**   | `#0066FF` | `#FFFFFF` (White)     |
-| **Pure Violet** | `#8000FF` | `#FFFFFF` (White)     |
-| **Pure Pink**   | `#FF0099` | `#FFFFFF` (White)     |
-
-- Text contrast on accent surfaces is dynamically calculated via relative luminance math (threshold: 0.30).
-- Accent colors are strictly for primary emphasis (primary actions, active tabs, selected graph nodes, focus rings). The majority of the interface remains monochrome.
+- Primary interaction emphasis must use pure white (`#FFFFFF`) or high-contrast neutral gray (`#1A1A1A`).
+- Red accent buttons, blue active navigation, violet highlights, orange CTAs, green selected tabs, and multicolor presets are strictly prohibited.
+- Narrow functional status exceptions (pass/fail, execution status) use semantic status tokens with accompanying Hugeicons and text labels, never as decorative themes.
 
 ---
 
-## 4. Global Border Radius Standard: `rounded-md`
+## 4. Global Border Radius Standard
 
-- Every rectangular control and card **must use `rounded-md`** (`0.375rem / 6px`).
-- Do not randomly mix `rounded-sm`, `rounded-lg`, `rounded-xl`, or `rounded-2xl`.
-- Circular exceptions (`rounded-full`) are strictly permitted only for avatars, radio selectors, and loading spinners.
+- Every rectangular control and card **must use `rounded-md`** (`--radius: 0.375rem / 6px`).
+- **Never** use `rounded-sm`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, or `rounded-full` on rectangular surfaces.
+- Permitted circular exceptions: Avatars, Radio button indicators, Loading spinners (`rounded-full`).
 
 ---
 
-## 5. UI Hygiene Standards
+## 5. Iconography
 
-1. **No Decorative Badges:**
-   - Badges are permitted strictly for status, environment, version, severity, permission, or meaningful counts.
-   - Never use badges for card titles, section headings, or redundant labels.
-2. **No Duplicate Actions:**
-   - One clearly identifiable primary action where appropriate.
-   - No duplicate "Create", "Save", or "Refresh" buttons within the same view.
-3. **Hugeicons Exclusivity:**
-   - Standard 1.5 stroke weight, 16px default dimensions.
-   - Never mix Lucide, Heroicons, or raw SVGs.
+- Hugeicons is the primary iconography library. Standard stroke width: `1.5`. Default size: `16px`.
+- **Never use emoji** as functional icons in UI controls.
+- **Never mix** Lucide, Heroicons, and Hugeicons.

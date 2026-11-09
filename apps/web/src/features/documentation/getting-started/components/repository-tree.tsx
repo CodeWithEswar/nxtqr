@@ -332,7 +332,7 @@ export function RepositoryTree() {
           className={cn(
             "p-1.5 rounded-md text-xs font-mono flex items-center justify-between gap-2 cursor-pointer transition-all",
             isSelected
-              ? "border border-accent bg-accent/10 text-foreground ring-1 ring-accent font-semibold"
+              ? "border border-foreground bg-surface-04 text-foreground ring-1 ring-border-strong font-semibold shadow-level-1"
               : "border border-transparent hover:bg-elevated-surface text-muted-foreground hover:text-foreground"
           )}
         >
@@ -344,7 +344,7 @@ export function RepositoryTree() {
             ) : (
               <span className="w-4 inline-block" />
             )}
-            <IconComponent className={cn("h-3.5 w-3.5 shrink-0", isSelected ? "text-accent" : "text-muted-foreground")} />
+            <IconComponent className={cn("h-3.5 w-3.5 shrink-0", isSelected ? "text-foreground" : "text-muted-foreground")} />
             <span className="truncate">{node.name}</span>
           </div>
 
@@ -420,7 +420,7 @@ export function RepositoryTree() {
               placeholder="Search packages, folders, or files..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs font-mono rounded-md border border-border bg-black text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
+              className="w-full pl-8 pr-3 py-1.5 text-xs font-mono rounded-md border border-border bg-black text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
             />
           </div>
 
@@ -449,7 +449,7 @@ export function RepositoryTree() {
 
           <div className="space-y-1">
             <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Filesystem Path:</span>
-            <div className="p-2 rounded bg-black border border-border text-[11px] text-accent truncate">
+            <div className="p-2 rounded bg-black border border-border text-[11px] text-foreground truncate">
               {selectedNode.path}
             </div>
           </div>

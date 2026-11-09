@@ -75,7 +75,7 @@ export function TypographyPlayground() {
               className={cn(
                 "py-1.5 px-2 rounded-md border text-center transition-colors whitespace-nowrap",
                 fontFamily === "sans"
-                  ? "border-accent bg-secondary-surface text-foreground font-semibold"
+                  ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-1"
                   : "border-subtle-border bg-surface text-muted-foreground hover:text-foreground",
               )}
             >
@@ -88,7 +88,7 @@ export function TypographyPlayground() {
               className={cn(
                 "py-1.5 px-2 rounded-md border text-center transition-colors whitespace-nowrap",
                 fontFamily === "mono"
-                  ? "border-accent bg-secondary-surface text-foreground font-semibold"
+                  ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-1"
                   : "border-subtle-border bg-surface text-muted-foreground hover:text-foreground",
               )}
             >
@@ -112,7 +112,7 @@ export function TypographyPlayground() {
                 className={cn(
                   "py-1.5 rounded-md border text-center transition-colors text-[11px]",
                   fontWeight === w
-                    ? "border-accent bg-secondary-surface text-foreground font-semibold"
+                    ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-1"
                     : "border-subtle-border bg-surface text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -140,7 +140,7 @@ export function TypographyPlayground() {
                 className={cn(
                   "py-1.5 rounded-md border text-center transition-colors text-[11px]",
                   sampleType === s.id
-                    ? "border-accent bg-secondary-surface text-foreground font-semibold"
+                    ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-1"
                     : "border-subtle-border bg-surface text-muted-foreground hover:text-foreground",
                 )}
               >

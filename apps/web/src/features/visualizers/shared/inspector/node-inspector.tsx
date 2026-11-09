@@ -62,7 +62,7 @@ export function NodeInspector({ className }: { className?: string }) {
             <span className="text-xs font-bold font-sans text-foreground truncate">
               {selectedNode.label ?? selectedNode.id}
             </span>
-            <Badge variant="outline" className="text-[9px] font-mono uppercase px-1.5 py-0 border-accent text-accent">
+            <Badge variant="outline" className="text-[9px] font-mono uppercase px-1.5 py-0 border-subtle-border text-foreground bg-surface-03">
               {selectedNode.type}
             </Badge>
           </div>
@@ -116,7 +116,7 @@ export function NodeInspector({ className }: { className?: string }) {
               type="text"
               value={selectedNode.label ?? ""}
               onChange={(e) => updateNodeData(selectedNode.id, { label: e.target.value })}
-              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-sans text-xs focus:outline-none focus:border-accent"
+              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-sans text-xs focus:outline-none focus:border-foreground"
             />
           </div>
 
@@ -126,7 +126,7 @@ export function NodeInspector({ className }: { className?: string }) {
               rows={2}
               value={selectedNode.description ?? ""}
               onChange={(e) => updateNodeData(selectedNode.id, { description: e.target.value })}
-              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-sans text-xs focus:outline-none focus:border-accent resize-none"
+              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-sans text-xs focus:outline-none focus:border-foreground resize-none"
             />
           </div>
 
@@ -137,7 +137,7 @@ export function NodeInspector({ className }: { className?: string }) {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Status:</span>
-              <span className="text-accent uppercase font-bold">{selectedNode.status ?? "idle"}</span>
+              <span className="text-foreground uppercase font-bold">{selectedNode.status ?? "idle"}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Position:</span>
@@ -172,13 +172,13 @@ export function NodeInspector({ className }: { className?: string }) {
                       onClick={() => updateNodeData(selectedNode.id, { [key]: !val })}
                       className={cn(
                         "w-9 h-4 rounded-full p-0.5 transition-colors border",
-                        val ? "bg-accent border-accent" : "bg-black border-border"
+                        val ? "bg-white border-white" : "bg-black border-border"
                       )}
                     >
                       <div
                         className={cn(
-                          "w-3 h-3 rounded-full bg-white transition-transform",
-                          val ? "translate-x-5" : "translate-x-0"
+                          "w-3 h-3 rounded-full transition-transform",
+                          val ? "bg-black translate-x-5" : "bg-muted-foreground translate-x-0"
                         )}
                       />
                     </button>
@@ -193,7 +193,7 @@ export function NodeInspector({ className }: { className?: string }) {
                       const nextVal = isNumber ? Number(e.target.value) : e.target.value;
                       updateNodeData(selectedNode.id, { [key]: nextVal });
                     }}
-                    className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-mono text-xs focus:outline-none focus:border-accent"
+                    className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-mono text-xs focus:outline-none focus:border-foreground"
                   />
                 )}
               </div>
@@ -218,7 +218,7 @@ export function NodeInspector({ className }: { className?: string }) {
                 {incomingEdges.map((e) => (
                   <div key={e.id} className="p-1.5 rounded border border-border bg-black flex items-center justify-between">
                     <span className="text-foreground">{e.source}</span>
-                    <span className="text-accent text-[10px]">→ {e.targetHandle ?? "in"}</span>
+                    <span className="text-muted-foreground text-[10px]">→ {e.targetHandle ?? "in"}</span>
                   </div>
                 ))}
               </div>
@@ -237,7 +237,7 @@ export function NodeInspector({ className }: { className?: string }) {
               <div className="space-y-1">
                 {outgoingEdges.map((e) => (
                   <div key={e.id} className="p-1.5 rounded border border-border bg-black flex items-center justify-between">
-                    <span className="text-accent text-[10px]">{e.sourceHandle ?? "out"} →</span>
+                    <span className="text-muted-foreground text-[10px]">{e.sourceHandle ?? "out"} →</span>
                     <span className="text-foreground">{e.target}</span>
                   </div>
                 ))}

@@ -40,10 +40,10 @@ export const DOCS_REGISTRY: DocEntry[] = [
     status: "ready",
   },
   {
-    slug: "getting-started/theming",
-    title: "Theming & Accents",
+    slug: "getting-started/design-system",
+    title: "Design System & Appearance",
     description:
-      "Dynamic user-customizable accent colors, pure black monochrome foundations, and WCAG contrast rules.",
+      "Pure black monochrome foundations, solid neumorphic depth, Geist typography, and WCAG accessibility standards.",
     category: "Getting Started",
     order: 5,
     status: "ready",
@@ -1434,7 +1434,10 @@ export const DOCS_REGISTRY: DocEntry[] = [
 ];
 
 export function getDocEntryBySlug(slug: string): DocEntry | undefined {
-  const normalized = slug.replace(/^\//, "").replace(/\/$/, "");
+  let normalized = slug.replace(/^\//, "").replace(/\/$/, "");
+  if (normalized === "getting-started/theming") {
+    normalized = "getting-started/design-system";
+  }
   return DOCS_REGISTRY.find((entry) => entry.slug === normalized);
 }
 
@@ -1442,7 +1445,10 @@ export function getAdjacentDocs(slug: string): {
   prev?: DocEntry;
   next?: DocEntry;
 } {
-  const normalized = slug.replace(/^\//, "").replace(/\/$/, "");
+  let normalized = slug.replace(/^\//, "").replace(/\/$/, "");
+  if (normalized === "getting-started/theming") {
+    normalized = "getting-started/design-system";
+  }
   const index = DOCS_REGISTRY.findIndex((e) => e.slug === normalized);
   if (index === -1) return {};
   return {

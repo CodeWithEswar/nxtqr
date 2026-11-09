@@ -58,13 +58,6 @@ function InnerGraphCanvas({
 
   const { setCenter } = useReactFlow();
 
-  const handleMiniMapClick = React.useCallback(
-    (_: React.MouseEvent, position: { x: number; y: number }) => {
-      setCenter(position.x, position.y, { duration: 250 });
-    },
-    [setCenter]
-  );
-
   // Map NXTQR nodes to React Flow format
   const flowNodes = React.useMemo(() => {
     return nodes.map((n) => ({
@@ -265,22 +258,21 @@ function InnerGraphCanvas({
         {/* MiniMap */}
         {showMinimap && storeShowMinimap && (
           <MiniMap
-            className="!bg-[#0A0A0A] !border !border-subtle-border !rounded-md !shadow-level-2 max-sm:scale-75 max-sm:origin-bottom-right cursor-grab active:cursor-grabbing"
-            bgColor="#0A0A0A"
+            className="!bg-[#080808] !border !border-border !rounded-md !shadow-level-2 max-sm:scale-75 max-sm:origin-bottom-right cursor-grab active:cursor-grabbing"
+            bgColor="#080808"
             maskColor="rgba(0, 0, 0, 0.75)"
-            maskStrokeColor="#262626"
+            maskStrokeColor="#404040"
             maskStrokeWidth={1}
             pannable={true}
             zoomable={true}
-            onClick={handleMiniMapClick}
             onNodeClick={(_, node) => {
               selectNode(node.id);
               setCenter(node.position.x + 80, node.position.y + 40, { duration: 250 });
             }}
             nodeColor={(node) => {
-              if (node.id === selectedNodeId) return "var(--accent)";
-              if (node.data?.status === "executing") return "var(--accent)";
-              if (node.data?.status === "completed") return "#059669";
+              if (node.id === selectedNodeId) return "#ffffff";
+              if (node.data?.status === "executing") return "#ffffff";
+              if (node.data?.status === "completed") return "#00cc66";
               return "#262626";
             }}
             nodeStrokeColor="#333333"

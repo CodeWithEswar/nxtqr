@@ -33,39 +33,35 @@ Strictly respect monorepo package boundaries:
 
 ---
 
-## 3. Design System & Theming Rules
+## 3. Design System & Appearance Standard
 
-1. **Pure Monochrome Base**:
-   - The default theme is pure black (`#000000`).
-   - Foreground is pure white (`#FFFFFF`).
-   - Surfaces use neutral grayscale hierarchy:
-     - Surface: `#0A0A0A`
-     - Elevated Surface: `#141414`
-     - Secondary Surface: `#1A1A1A`
-     - Border: `#262626`
-     - Subtle Border: `#1C1C1C`
-     - Muted Text: `#A3A3A3`
-     - Disabled Text: `#737373`
+1. **Unified Pure Black Monochrome**:
+   - The studio has exactly **one visual identity**: Pure Black Monochrome.
+   - Absolutely **no** light mode, dark mode toggle, system theme listener, theme switcher, accent color picker, multicolor presets, or custom HEX inputs.
+   - The default and only visual identity is monochrome:
+     - Background: `#000000`
+     - Foreground: `#FFFFFF`
+     - Surface 01: `#080808`
+     - Surface 02: `#0D0D0D`
+     - Surface 03: `#141414`
+     - Surface 04: `#1A1A1A`
+     - Border subtle: `#202020`
+     - Border default: `#292929`
+     - Border strong: `#404040`
+     - Text secondary: `#B5B5B5`
+     - Text muted: `#858585`
+     - Text disabled: `#666666`
    - **Never** introduce dark blue, purple, or gradient AI dashboard backgrounds.
 2. **Solid Neumorphism (Restrained Depth)**:
    - **Level 0 — Base**: `#000000` (main canvas and full-page background).
-   - **Level 1 — Raised**: Solid surface with subtle border (`#262626`) and restrained directional shadow (`--shadow-level-1`). Used for buttons, toolbars, compact cards.
+   - **Level 1 — Raised**: Solid surface with subtle border (`#202020`) and restrained directional shadow (`--shadow-level-1`). Used for buttons, toolbars, compact cards.
    - **Level 2 — Elevated**: Stronger elevation (`--shadow-level-2`). Used for popovers, dropdown menus, dialogs, floating inspectors.
-   - **Level 3 — Pressed**: Inset treatment indicating active or pressed state (`--shadow-level-3`). Used for active toolbar buttons, selected controls.
+   - **Level 3 — Pressed**: Inset treatment indicating active or pressed state (`--shadow-level-3`). Used for active toolbar buttons, selected controls, inputs.
    - **No glassmorphism, no backdrop blur**, and no transparent floating cards.
-3. **Pure Saturated Accent Color System**:
-   - Calibrated pure presets:
-     - Monochrome: `#FFFFFF`
-     - Pure Red: `#FF0000`
-     - Pure Orange: `#FF6600`
-     - Pure Yellow: `#FFD600`
-     - Pure Green: `#00CC66`
-     - Pure Blue: `#0066FF`
-     - Pure Violet: `#8000FF`
-     - Pure Pink: `#FF0099`
-   - **Never hardcode accent colors** in React components.
-   - Always reference semantic CSS classes: `bg-accent`, `text-accent`, `text-accent-foreground`, `border-accent`, `ring-accent`.
-   - Contrast must always satisfy WCAG 2.1 AA/AAA. Foreground text on accent surfaces is automatically derived via `@nxtqr/design-system` (e.g. Pure Red gets `#FFFFFF`, Pure Orange gets `#000000`).
+3. **No Decorative Accent Colors**:
+   - Red accent buttons, blue active links, violet highlights, orange CTAs, green selected tabs, multicolor backgrounds, rainbow gradients, and neon glows are strictly **prohibited**.
+   - Primary interaction emphasis must use pure white (`#FFFFFF`), near-white, or neutral grayscale (`#1A1A1A`).
+   - Narrow functional status exceptions (e.g. simulation execution pass/fail) use restrained semantic tokens (`--destructive`, `--success`, `--warning`) alongside explicit text labels and Hugeicons, never as general UI decoration.
 4. **Global Border Radius Standard**:
    - Every rectangular control and card **must use `rounded-md`** (`--radius: 0.375rem / 6px`).
    - **Never** use `rounded-sm`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, or `rounded-full` on rectangular surfaces.

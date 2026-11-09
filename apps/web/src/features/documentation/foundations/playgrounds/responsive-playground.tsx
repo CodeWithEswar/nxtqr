@@ -47,7 +47,7 @@ export function ResponsivePlayground() {
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-xs font-mono text-muted-foreground whitespace-nowrap">
               <span className="hidden sm:inline">Width: </span>
-              <span className="text-accent font-bold">{frameWidth}px</span>
+              <span className="text-foreground font-bold">{frameWidth}px</span>
               <span className="mx-1 text-subtle-border">·</span>
               <span className="text-foreground">{bp.name}</span>
             </span>
@@ -78,7 +78,7 @@ export function ResponsivePlayground() {
                 className={cn(
                   "px-3 py-1 text-xs font-mono rounded-md border whitespace-nowrap transition-all",
                   frameWidth === preset.width
-                    ? "border-accent bg-accent/10 text-foreground font-semibold"
+                    ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-1"
                     : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
                 )}
               >
@@ -107,7 +107,7 @@ export function ResponsivePlayground() {
             step="8"
             value={frameWidth}
             onChange={(e) => setFrameWidth(Number(e.target.value))}
-            className="w-full accent-accent h-1.5 bg-black rounded-none cursor-pointer"
+            className="w-full accent-white h-1.5 bg-black rounded-none cursor-pointer"
           />
           <span className="text-xs font-mono text-muted-foreground shrink-0">1200px</span>
         </div>
@@ -122,7 +122,7 @@ export function ResponsivePlayground() {
           {/* Simulated App Header */}
           <div className="h-11 px-4 border-b border-subtle-border bg-elevated-surface flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-md bg-accent flex items-center justify-center font-mono text-[10px] font-bold text-accent-foreground">
+              <div className="w-5 h-5 rounded-md bg-white text-black flex items-center justify-center font-mono text-[10px] font-bold">
                 NX
               </div>
               <span className="text-xs font-bold text-foreground font-sans">NXTQR STUDIO</span>
@@ -141,7 +141,7 @@ export function ResponsivePlayground() {
                 <span className="text-foreground">Visualizer</span>
                 <span>Schematics</span>
                 <span>Telemetry</span>
-                <span className="px-2 py-0.5 rounded bg-accent/10 text-accent border border-accent/20">LIVE</span>
+                <span className="px-2 py-0.5 rounded bg-surface-03 text-foreground border border-subtle-border font-semibold">LIVE</span>
               </div>
             )}
           </div>
@@ -161,7 +161,7 @@ export function ResponsivePlayground() {
 
             <div className="flex items-center justify-between text-xs font-mono">
               <span className="text-muted-foreground">ENGINEERING_MODULES</span>
-              <span className="text-accent">{bp.col} Column Reflow</span>
+              <span className="text-foreground font-semibold">{bp.col} Column Reflow</span>
             </div>
 
             {/* Fluid Card Grid */}
@@ -181,7 +181,7 @@ export function ResponsivePlayground() {
                 <div key={card.title} className="p-3.5 rounded-md border border-border bg-elevated-surface space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-foreground">{card.title}</span>
-                    <span className="text-[10px] font-mono text-accent">{card.status}</span>
+                    <span className="text-[10px] font-mono text-foreground font-semibold">{card.status}</span>
                   </div>
                   <div className="text-sm font-mono font-bold text-foreground">{card.metric}</div>
                 </div>
