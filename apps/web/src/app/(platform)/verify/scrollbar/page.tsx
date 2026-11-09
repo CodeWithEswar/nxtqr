@@ -23,17 +23,13 @@ import { AppLogo } from "@nxtqr/branding";
 import { scrollbarTokens } from "@nxtqr/design-system";
 
 export default function ScrollbarReviewGatePage() {
-  const [testAccent, setTestAccent] = useState<string>("#FF0000");
+  const [activeThumbState, setActiveThumbState] = useState<string>("active");
 
-  const testAccents = [
-    { name: "Pure Red", hex: "#FF0000" },
-    { name: "Pure Orange", hex: "#FF6600" },
-    { name: "Pure Yellow", hex: "#FFD600" },
-    { name: "Pure Green", hex: "#00CC66" },
-    { name: "Pure Blue", hex: "#0066FF" },
-    { name: "Pure Violet", hex: "#8000FF" },
-    { name: "Pure Pink", hex: "#FF0099" },
-    { name: "Monochrome", hex: "#FFFFFF" },
+  const monochromeStates = [
+    { name: "Idle Thumb", token: "Border Default", hex: "#292929", desc: "Default rest state" },
+    { name: "Hovered Thumb", token: "Border Strong", hex: "#404040", desc: "Pointer hover highlight" },
+    { name: "Active Drag", token: "Foreground", hex: "#FFFFFF", desc: "Active drag state" },
+    { name: "Inset Track", token: "Pure Black", hex: "#000000", desc: "Recessed rail surface" },
   ];
 
   const logLines = Array.from({ length: 40 }, (_, i) => ({
@@ -71,18 +67,6 @@ export default function ScrollbarReviewGatePage() {
   return (
     <main
       className="min-h-screen bg-background text-foreground flex flex-col p-6 max-w-5xl mx-auto space-y-6"
-      style={
-        {
-          "--accent": testAccent,
-          "--accent-foreground":
-            testAccent === "#FF0000" ||
-            testAccent === "#0066FF" ||
-            testAccent === "#8000FF" ||
-            testAccent === "#FF0099"
-              ? "#FFFFFF"
-              : "#000000",
-        } as React.CSSProperties
-      }
     >
       {/* Header bar */}
       <header className="flex items-center justify-between border-b border-border pb-4">
@@ -103,7 +87,7 @@ export default function ScrollbarReviewGatePage() {
               NXTQR — Precision Rail Custom Scrollbar System Review Gate
             </h1>
             <p className="text-[11px] text-muted-foreground font-mono">
-              Pure Monochrome · Solid Neumorphic Inset · Dynamic User Accent · Radix & Native Parity
+              Pure Monochrome · Solid Neumorphic Inset · Tactile Drag Feedback · Radix & Native Parity
             </p>
           </div>
         </div>
@@ -111,7 +95,7 @@ export default function ScrollbarReviewGatePage() {
         <div className="flex items-center gap-2">
           <Badge
             variant="outline"
-            className="font-mono text-[10px] text-emerald-400 border-emerald-500/30"
+            className="font-mono text-[10px] text-foreground border-border"
           >
             <CheckCircleIcon className="h-3 w-3 mr-1 inline" />
             System Verified
@@ -124,44 +108,44 @@ export default function ScrollbarReviewGatePage() {
         </div>
       </header>
 
-      {/* Interactive Accent Controller */}
+      {/* Interactive Monochrome Controller */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Dynamic User Accent Drag Feedback</CardTitle>
+              <CardTitle>Monochrome Scrollbar Tactical Feedback</CardTitle>
               <CardDescription>
-                Select an accent preset to verify that active scrollbar thumbs dynamically highlight
-                with the user's chosen accent color without page refresh.
+                Verify scrollbar thumb states across the unified pure black monochrome standard (Idle, Hover, Active/Drag, Inset Track).
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-muted-foreground">Active Accent:</span>
-              <span className="font-mono text-xs px-2 py-0.5 rounded border border-border bg-surface font-semibold flex items-center gap-1.5">
+              <span className="font-mono text-xs text-muted-foreground">Active Focus State:</span>
+              <span className="font-mono text-xs px-2 py-0.5 rounded border border-border bg-surface font-semibold flex items-center gap-1.5 text-foreground">
                 <span
-                  className="w-2.5 h-2.5 rounded-full inline-block"
-                  style={{ backgroundColor: testAccent }}
+                  className="w-2.5 h-2.5 rounded-full inline-block border border-border"
+                  style={{ backgroundColor: monochromeStates.find(s => s.token === activeThumbState)?.hex || "#FFFFFF" }}
                 />
-                {testAccent}
+                {monochromeStates.find(s => s.token === activeThumbState)?.name || activeThumbState}
               </span>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {testAccents.map((accent) => (
+            {monochromeStates.map((state) => (
               <Button
-                key={accent.hex}
-                variant={testAccent === accent.hex ? "default" : "outline"}
+                key={state.token}
+                variant={activeThumbState === state.token ? "default" : "outline"}
                 size="sm"
-                onClick={() => setTestAccent(accent.hex)}
+                onClick={() => setActiveThumbState(state.token)}
                 className="font-mono text-xs flex items-center gap-1.5"
               >
                 <span
-                  className="w-2 h-2 rounded-full inline-block"
-                  style={{ backgroundColor: accent.hex }}
+                  className="w-2 h-2 rounded-full inline-block border border-border"
+                  style={{ backgroundColor: state.hex }}
                 />
-                {accent.name}
+                <span>{state.name}</span>
+                <span className="text-[10px] text-muted-foreground font-mono">({state.hex})</span>
               </Button>
             ))}
           </div>
@@ -197,9 +181,9 @@ export default function ScrollbarReviewGatePage() {
                 (#303030), and a 1px specular top highlight.
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                When hovered, the thumb transitions smoothly to a lighter shade (#505050). When
-                actively dragged, the perimeter adopts the user's custom accent color (currently{" "}
-                {testAccent}) while maintaining native pointer physics and keyboard scroll gestures.
+                When hovered, the thumb transitions smoothly to a lighter shade (#404040). When
+                actively dragged, the perimeter adopts the pure white monochrome highlight (#FFFFFF)
+                while maintaining native pointer physics and keyboard scroll gestures.
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Try dragging the thumb or scrolling via mouse wheel and arrow keys. Notice how the

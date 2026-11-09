@@ -1,6 +1,6 @@
 /**
  * NXTQR Precision Rail Scrollbar Tokens
- * Solid Neumorphism · Pure Monochrome Foundation · Dynamic User Accent
+ * Solid Neumorphism · Pure Black Monochrome Foundation
  */
 
 export const scrollbarTokens = {

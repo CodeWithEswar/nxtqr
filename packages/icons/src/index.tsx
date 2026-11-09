@@ -122,6 +122,19 @@ export const PlusIcon = createIcon("PlusIcon", (props) => (
   </svg>
 ));
 
+export const MinusIcon = createIcon("MinusIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+));
+
 export const TrashIcon = createIcon("TrashIcon", (props) => (
   <svg
     viewBox="0 0 24 24"

@@ -202,20 +202,19 @@ function InnerGraphCanvas({
   return (
     <div
       className={cn(
-        "relative w-full rounded-md border border-border bg-black overflow-hidden shadow-level-1",
+        "relative w-full rounded-md border border-border bg-black overflow-hidden shadow-level-1 flex flex-col",
         className
       )}
       style={{ height }}
     >
-      {/* Canvas Viewport Toolbar */}
+      {/* Canvas Viewport Toolbar (Full-Width Studio Bar) */}
       {showToolbar && (
-        <div className="absolute top-3 left-3 z-20">
-          <CanvasToolbar />
-        </div>
+        <CanvasToolbar className="w-full shrink-0 border-b border-subtle-border bg-surface" />
       )}
 
-      {/* Main Flow Canvas */}
-      <ReactFlow
+      {/* Main Flow Canvas Viewport */}
+      <div className="flex-1 relative w-full h-full min-h-0">
+        <ReactFlow
         nodes={flowNodes}
         edges={flowEdges}
         nodeTypes={nodeTypes}
@@ -282,6 +281,7 @@ function InnerGraphCanvas({
           />
         )}
       </ReactFlow>
+      </div>
     </div>
   );
 }

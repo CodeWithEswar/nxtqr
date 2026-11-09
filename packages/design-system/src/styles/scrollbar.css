@@ -1,6 +1,6 @@
 /**
  * NXTQR Precision Rail Scrollbar Styles
- * Solid Neumorphism · Pure Monochrome Foundation · Dynamic User Accent
+ * Solid Neumorphism · Pure Black Monochrome Foundation
  */
 
 :root {
@@ -15,7 +15,7 @@
   --scrollbar-radius-compact: 4px;
   --scrollbar-radius-dense: 3px;
 
-  /* Pure Monochrome Dark Palette */
+  /* Pure Monochrome Palette */
   --scrollbar-track: #080808;
   --scrollbar-track-border: #141414;
   --scrollbar-thumb: #303030;
@@ -24,18 +24,8 @@
   --scrollbar-border: #1f1f1f;
   --scrollbar-highlight: #626262;
 
-  /* Dynamic Accent Integration */
-  --scrollbar-accent: var(--accent, #ffffff);
-}
-
-.light {
-  --scrollbar-track: #f5f5f5;
-  --scrollbar-track-border: #e5e5e5;
-  --scrollbar-thumb: #cccccc;
-  --scrollbar-thumb-hover: #a3a3a3;
-  --scrollbar-thumb-active: #737373;
-  --scrollbar-border: #e0e0e0;
-  --scrollbar-highlight: #ffffff;
+  /* Monochrome Active Highlight */
+  --scrollbar-accent: #ffffff;
 }
 
 /* ==========================================================================

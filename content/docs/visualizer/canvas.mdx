@@ -22,7 +22,7 @@ Experience how Graph Canvas synchronizes with Node Palette, Inspector, Simulatio
 ## Architecture & Principles
 
 1. **Pure Black Canvas**: Baseline canvas is pure black (`#000000`). Grids use restrained neutral dots or lines without noisy glow effects.
-2. **Dynamic User Accent**: Selection rings and marquee borders inherit the user's calibrated accent color (`ring-accent`, `border-accent`).
+2. **Pure Black Monochrome**: Selection rings and marquee borders adhere to the strict pure black monochrome standard (`ring-foreground`, `border-foreground`).
 3. **Automated Hierarchical Layout**: Integrates ELK.js (`layoutGraphWithElk`) to automatically position nodes along clean left-to-right or top-to-bottom layers without overlapping edges.
 4. **Decoupled State**: Graph document state lives in `@nxtqr/state` via `useGraphEditorStore`, ensuring zero re-render cascades across unselected nodes.
 
@@ -37,7 +37,7 @@ import { GraphCanvas, CanvasToolbar } from "@nxtqr/web/features/visualizers";
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `className` | `string` | `undefined` | Custom CSS container classes |
-| `showToolbar` | `boolean` | `true` | Display floating viewport navigation and layout toolbar |
+| `showToolbar` | `boolean` | `true` | Display full-width edge-to-edge studio toolbar with mobile popover tools menu |
 | `showMinimap` | `boolean` | `true` | Display bottom-right spatial minimap |
 | `height` | `string \| number` | `"480px"` | Canvas container viewport height |
 
