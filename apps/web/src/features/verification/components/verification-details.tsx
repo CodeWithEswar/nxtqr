@@ -107,7 +107,7 @@ export function VerificationDetails({
               <RefreshIcon
                 className={`h-3.5 w-3.5 text-foreground ${isRechecking || check.status === "running" ? "animate-spin" : ""}`}
               />
-              <span className="hidden xs:inline sm:inline">Verify</span>
+              <span className="hidden sm:inline">Verify</span>
             </Button>
 
             {onClose && (

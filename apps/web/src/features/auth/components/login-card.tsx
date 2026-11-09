@@ -89,20 +89,24 @@ export function LoginCard({ nextTarget = "/workspace" }: LoginCardProps) {
             </Link>
             .
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-[10px] text-text-muted font-mono">
-            <Link
-              href="/docs"
-              className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
-            >
-              Documentation
-            </Link>
-            <span className="text-text-disabled" aria-hidden="true">·</span>
-            <Link
-              href="/verify"
-              className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
-            >
-              Diagnostics
-            </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-x-2 gap-y-1 text-[10px] text-text-muted font-mono text-center">
+            <div className="flex items-center gap-2">
+              <Link
+                href="/docs"
+                className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
+              >
+                Documentation
+              </Link>
+              <span className="text-text-disabled" aria-hidden="true">·</span>
+              <Link
+                href="/verify"
+                className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
+              >
+                Diagnostics
+              </Link>
+            </div>
+            <span className="hidden sm:inline text-text-disabled" aria-hidden="true">·</span>
+            <span className="text-text-disabled whitespace-nowrap">Enterprise Grade · Pure Monochrome</span>
           </div>
         </CardFooter>
       </Card>
