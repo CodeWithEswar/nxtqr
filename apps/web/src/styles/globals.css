@@ -146,24 +146,31 @@
     min-height: 100%;
     background: var(--background);
     scrollbar-color: #393939 #000000;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
   }
 
   body {
     @apply bg-background text-foreground antialiased font-sans;
 
     min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-feature-settings:
       "rlig" 1,
       "calt" 1;
-    text-rendering: optimizeLegibility;
+    text-rendering: geometricPrecision;
   }
 
-  /* BORDER DEFAULTS */
+  /* BORDER DEFAULTS & GLOBAL SHARP FONT SMOOTHING */
   *,
   *::before,
   *::after {
     box-sizing: border-box;
     border-color: var(--border);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* TEXT SELECTION */

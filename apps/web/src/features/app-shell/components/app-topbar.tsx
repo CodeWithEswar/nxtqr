@@ -43,7 +43,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
           variant="outline"
           size="icon-sm"
           onClick={() => setMobileNavOpen(true)}
-          className="md:hidden h-7.5 w-7.5 rounded-md border-border-default bg-surface-01 text-text-muted hover:text-foreground shrink-0 shadow-level-1"
+          className="md:hidden h-7 w-7 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 text-text-muted hover:text-foreground shrink-0 shadow-level-1"
           aria-label="Open mobile navigation"
         >
           <MenuIcon className="h-4 w-4" />
@@ -57,7 +57,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
                 variant="outline"
                 size="icon-sm"
                 onClick={toggleSidebar}
-                className="hidden md:flex h-7.5 w-7.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
+                className="hidden md:flex h-7 w-7 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
                 aria-label="Expand sidebar (Ctrl+B)"
               >
                 <PanelLeftIcon className="h-3.5 w-3.5 rotate-180" />
@@ -84,7 +84,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
               variant="outline"
               size="icon-sm"
               onClick={() => setCommandPaletteOpen(true)}
-              className="sm:hidden h-7.5 w-7.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-02 text-text-muted hover:text-foreground shadow-level-1"
+              className="sm:hidden h-7 w-7 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
               aria-label="Search or jump to (Ctrl+K)"
             >
               <SearchIcon className="h-3.5 w-3.5" />
@@ -99,7 +99,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
         <button
           type="button"
           onClick={() => setCommandPaletteOpen(true)}
-          className="hidden sm:flex h-7.5 items-center justify-between gap-2.5 rounded-md border border-border-default bg-surface-02/80 hover:bg-surface-02 hover:border-border-hover px-2.5 text-xs text-text-muted hover:text-foreground transition-all shadow-level-1 w-44 md:w-56 lg:w-64 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong"
+          className="hidden sm:flex h-7 items-center justify-between gap-2.5 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 hover:border-border-hover px-2.5 text-xs text-text-muted hover:text-foreground transition-all shadow-level-1 w-44 md:w-56 lg:w-64 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong"
           aria-label="Open command palette (Ctrl+K)"
         >
           <div className="flex items-center gap-2 truncate min-w-0">
@@ -116,7 +116,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
         {/* Studio Status Pill (Large desktop) */}
         <Link
           href="/verify"
-          className="hidden xl:flex items-center gap-1.5 h-7 px-2 rounded-md border border-border-subtle bg-surface-02 hover:bg-surface-03 text-[10px] font-mono text-text-muted hover:text-text-secondary transition-colors shadow-level-1"
+          className="hidden xl:flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 text-[11px] font-mono text-text-muted hover:text-text-secondary transition-colors shadow-level-1 shrink-0"
           title="Engine Status: Active · Phase 04 Ready"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -130,7 +130,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
               asChild
               variant="outline"
               size="icon-sm"
-              className="hidden sm:flex h-7.5 w-7.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
+              className="hidden sm:flex h-7 w-7 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
             >
               <Link href="/verify" aria-label="Review Gates">
                 <CheckCircleIcon className="h-3.5 w-3.5" />
@@ -149,7 +149,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
               variant="outline"
               size="icon-sm"
               onClick={resetWorkspaceLayout}
-              className="hidden md:flex h-7.5 w-7.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
+              className="hidden md:flex h-7 w-7 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
               aria-label="Reset workspace panel layout"
             >
               <RefreshIcon className="h-3.5 w-3.5" />
@@ -167,7 +167,7 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
               asChild
               variant="outline"
               size="icon-sm"
-              className="hidden sm:flex h-7.5 w-7.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
+              className="hidden sm:flex h-7 w-7 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
             >
               <Link href="/docs" aria-label="Documentation">
                 <BookOpenIcon className="h-3.5 w-3.5" />

@@ -15,6 +15,7 @@ import {
   LayersIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
+import { cn } from "@nxtqr/utils";
 
 export interface GraphToolbarProps {
   className?: string;
@@ -44,21 +45,23 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
 
   return (
     <div
-      className={`h-9 px-3 border-b border-border-default bg-surface-01 shrink-0 flex items-center justify-between text-xs font-mono select-none ${
-        className || ""
-      }`}
+      className={cn(
+        "h-9 px-3 border-b border-border-default bg-surface-01 shrink-0 flex items-center justify-between text-xs font-mono select-none",
+        className
+      )}
     >
-      {/* Left: Mode Selection + Node Library Toggle */}
+      {/* Left: Palette + Tool Mode (Select/Pan) + Undo/Redo */}
       <div className="flex items-center gap-1.5">
         <Button
           variant="outline"
           size="sm"
           onClick={toggleNodeLibrary}
-          className={`h-7 px-2 text-[11px] font-mono rounded-md gap-1.5 transition-colors ${
+          className={cn(
+            "h-7 px-2 text-[11px] font-mono rounded-md gap-1.5 border transition-colors shadow-level-1",
             isNodeLibraryOpen
               ? "bg-surface-04 border-border-strong text-foreground shadow-level-3 font-semibold"
-              : "bg-surface-01 border-border-default text-text-muted hover:text-foreground"
-          }`}
+              : "bg-surface-02 border-border-default text-text-muted hover:text-foreground hover:bg-surface-03"
+          )}
           title="Toggle Node Library Panel"
         >
           <PlusIcon className="h-3.5 w-3.5" />
@@ -72,11 +75,12 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
           <button
             type="button"
             onClick={() => setToolMode("select")}
-            className={`h-6 w-6 rounded flex items-center justify-center transition-colors ${
+            className={cn(
+              "h-6 w-6 rounded flex items-center justify-center transition-colors cursor-pointer",
               toolMode === "select"
                 ? "bg-surface-04 text-foreground shadow-level-1 font-semibold"
-                : "text-text-muted hover:text-foreground"
-            }`}
+                : "text-text-muted hover:text-foreground hover:bg-surface-03"
+            )}
             title="Select & Box Marquee Tool (V)"
           >
             <CursorIcon className="h-3.5 w-3.5" />
@@ -84,11 +88,12 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
           <button
             type="button"
             onClick={() => setToolMode("pan")}
-            className={`h-6 w-6 rounded flex items-center justify-center transition-colors ${
+            className={cn(
+              "h-6 w-6 rounded flex items-center justify-center transition-colors cursor-pointer",
               toolMode === "pan"
                 ? "bg-surface-04 text-foreground shadow-level-1 font-semibold"
-                : "text-text-muted hover:text-foreground"
-            }`}
+                : "text-text-muted hover:text-foreground hover:bg-surface-03"
+            )}
             title="Hand & Canvas Pan Tool (H)"
           >
             <HandIcon className="h-3.5 w-3.5" />
@@ -96,67 +101,66 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
         </div>
 
         {/* Undo / Redo */}
-        <div className="flex items-center gap-0.5 ml-1">
-          <Button
-            variant="ghost"
-            size="icon-sm"
+        <div className="flex items-center bg-surface-02 p-0.5 rounded-md border border-border-subtle">
+          <button
+            type="button"
             onClick={undo}
             disabled={!canUndo}
-            className="h-7 w-7 rounded-md text-text-muted hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
+            className="h-6 w-6 rounded flex items-center justify-center transition-colors text-text-muted hover:text-foreground hover:bg-surface-03 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
             title="Undo (Ctrl+Z)"
           >
             <UndoIcon className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
+          </button>
+          <button
+            type="button"
             onClick={redo}
             disabled={!canRedo}
-            className="h-7 w-7 rounded-md text-text-muted hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
+            className="h-6 w-6 rounded flex items-center justify-center transition-colors text-text-muted hover:text-foreground hover:bg-surface-03 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
             title="Redo (Ctrl+Shift+Z)"
           >
             <RedoIcon className="h-3.5 w-3.5" />
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* Right: Layout, Viewport & Inspector Toggles */}
+      {/* Right: Layout, Viewport (Fit View + Grid Snap) & Inspector */}
       <div className="flex items-center gap-1.5">
         {/* ELK Auto Layout */}
         <Button
           variant="outline"
           size="sm"
           onClick={() => applyAutoLayout("LR")}
-          className="h-7 px-2 text-[11px] font-mono rounded-md gap-1.5 border-border-default hover:bg-surface-03 text-text-secondary hover:text-foreground shadow-level-1"
+          className="h-7 px-2 text-[11px] font-mono rounded-md gap-1.5 border border-border-default bg-surface-02 hover:bg-surface-03 text-text-secondary hover:text-foreground shadow-level-1"
           title="Auto-arrange graph layout via ELK.js (Left to Right)"
         >
           <LayersIcon className="h-3.5 w-3.5" />
           <span className="hidden md:inline">Auto Layout</span>
         </Button>
 
-        {/* Fit View */}
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => fitView({ duration: 250, padding: 0.2 })}
-          className="h-7 w-7 rounded-md text-text-muted hover:text-foreground"
-          title="Fit Canvas to Content"
-        >
-          <MaximizeIcon className="h-3.5 w-3.5" />
-        </Button>
-
-        {/* Snap to Grid Toggle */}
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => setSnapToGrid(!snapToGrid)}
-          className={`h-7 w-7 rounded-md transition-colors ${
-            snapToGrid ? "text-foreground bg-surface-03" : "text-text-muted hover:text-foreground"
-          }`}
-          title="Toggle 16px Grid Snap"
-        >
-          <GridIcon className="h-3.5 w-3.5" />
-        </Button>
+        {/* Viewport controls: Fit View + Snap to Grid */}
+        <div className="flex items-center bg-surface-02 p-0.5 rounded-md border border-border-subtle">
+          <button
+            type="button"
+            onClick={() => fitView({ duration: 250, padding: 0.2 })}
+            className="h-6 w-6 rounded flex items-center justify-center transition-colors text-text-muted hover:text-foreground hover:bg-surface-03 cursor-pointer"
+            title="Fit Canvas to Content (Shift+1)"
+          >
+            <MaximizeIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setSnapToGrid(!snapToGrid)}
+            className={cn(
+              "h-6 w-6 rounded flex items-center justify-center transition-colors cursor-pointer",
+              snapToGrid
+                ? "bg-surface-04 text-foreground shadow-level-1 font-semibold"
+                : "text-text-muted hover:text-foreground hover:bg-surface-03"
+            )}
+            title="Toggle 16px Grid Snap (G)"
+          >
+            <GridIcon className="h-3.5 w-3.5" />
+          </button>
+        </div>
 
         <div className="h-4 w-px bg-border-subtle mx-1" />
 
@@ -165,11 +169,12 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
           variant="outline"
           size="sm"
           onClick={toggleInspector}
-          className={`h-7 px-2 text-[11px] font-mono rounded-md gap-1.5 transition-colors ${
+          className={cn(
+            "h-7 px-2 text-[11px] font-mono rounded-md gap-1.5 border transition-colors shadow-level-1",
             isInspectorOpen
               ? "bg-surface-04 border-border-strong text-foreground shadow-level-3 font-semibold"
-              : "bg-surface-01 border-border-default text-text-muted hover:text-foreground"
-          }`}
+              : "bg-surface-02 border-border-default text-text-muted hover:text-foreground hover:bg-surface-03"
+          )}
           title="Toggle Node Inspector Panel"
         >
           <SlidersIcon className="h-3.5 w-3.5" />

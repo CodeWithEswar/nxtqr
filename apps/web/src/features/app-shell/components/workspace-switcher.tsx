@@ -77,7 +77,7 @@ export function WorkspaceSwitcher({
       <DropdownMenuContent
         align="start"
         sideOffset={6}
-        className="w-56 rounded-md border border-border-strong bg-surface-02 p-1.5 shadow-level-2"
+        className="w-64 rounded-md border border-border-strong bg-surface-02 p-1.5 shadow-level-2"
       >
         <DropdownMenuLabel className="px-2.5 py-1 text-[10px] font-mono text-text-muted uppercase tracking-wider">
           Workspaces
@@ -100,10 +100,10 @@ export function WorkspaceSwitcher({
         <DropdownMenuSeparator className="my-1 bg-border-subtle" />
         <DropdownMenuItem
           disabled
-          className="flex items-center gap-2 text-xs font-mono rounded-md px-2.5 py-1.5 text-text-muted opacity-50 cursor-not-allowed"
+          className="flex items-center gap-2 text-xs font-mono rounded-md px-2.5 py-1.5 text-text-muted opacity-50 cursor-not-allowed whitespace-nowrap"
         >
-          <PlusIcon className="h-3.5 w-3.5" />
-          <span>New Workspace (Phase 03)</span>
+          <PlusIcon className="h-3.5 w-3.5 shrink-0" />
+          <span>New Workspace</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
