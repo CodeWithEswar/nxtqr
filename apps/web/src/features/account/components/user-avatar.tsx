@@ -55,3 +55,4 @@ export function UserAvatar({
     </Avatar>
   );
 }
+

@@ -8,3 +8,4 @@ export default async function WorkspaceProjectPage({ params }: WorkspaceProjectP
   const { id } = await params;
   redirect(`/projects/${id}`);
 }
+

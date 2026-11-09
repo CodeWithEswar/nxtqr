@@ -136,3 +136,4 @@ export const ERROR_DISPLAY_REGISTRY: Record<AppErrorCode, ErrorDisplayConfig> = 
     visualVariant: "error",
   },
 };
+

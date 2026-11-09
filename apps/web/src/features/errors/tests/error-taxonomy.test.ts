@@ -43,3 +43,4 @@ describe("NXTQR Error Taxonomy & User Safety Architecture", () => {
     }
   });
 });
+

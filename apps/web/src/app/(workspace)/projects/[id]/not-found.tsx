@@ -6,3 +6,4 @@ import { ProjectUnavailableView } from "@/features/errors";
 export default function ProjectNotFound() {
   return <ProjectUnavailableView />;
 }
+

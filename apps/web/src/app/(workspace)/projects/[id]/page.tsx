@@ -50,3 +50,4 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   // 4. Authorized owner navigation to visualizer canvas
   redirect(`/workspace?project=${id}`);
 }
+

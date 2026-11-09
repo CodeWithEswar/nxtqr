@@ -57,3 +57,4 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
     </aside>
   );
 }
+

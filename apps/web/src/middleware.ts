@@ -3,6 +3,17 @@ import { createServerClient } from "@nxtqr/database/server";
 import { isProtectedRoute, validateSafeRedirect } from "./lib/routing/route-policy";
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Fast bailout: Immediately bypass static files, Next.js internals, and assets
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon.ico") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
+
   const response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -38,8 +49,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
-
   // Layer 1: Edge & Route Interception for protected studio routes
   if (isProtectedRoute(pathname)) {
     if (!user) {
@@ -67,6 +76,5 @@ export const config = {
     "/settings/:path*",
     "/visualizers/:path*",
     "/login",
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
