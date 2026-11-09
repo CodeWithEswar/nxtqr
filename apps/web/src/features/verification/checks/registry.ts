@@ -282,5 +282,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       foundationsPagesReady: 11,
     },
   },
+  {
+    id: "infra_category_01_clients",
+    category: "frontend",
+    title: "Infrastructure Components: Category 01 Clients & UI",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "clients-and-user-interfaces",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-clients",
+    },
+  },
 ];
 

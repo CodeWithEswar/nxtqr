@@ -21,7 +21,8 @@ import { nodeTypes } from "./graph-node";
 import { edgeTypes } from "./graph-edge";
 import { validatePortConnection } from "../domain/port-validator";
 import { useGraphShortcuts } from "../hooks/use-graph-shortcuts";
-import type { BaseEdge, NodePosition } from "../schemas/graph.schema";
+import { infrastructureRegistry, nodeRegistry } from "@nxtqr/node-registry";
+import type { BaseEdge, BaseNode, NodePosition } from "../schemas/graph.schema";
 
 export interface GraphCanvasProps {
   className?: string;
@@ -41,10 +42,12 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
   const selectEdge = useGraphEditorStore((s) => s.selectEdge);
   const selectNodes = useGraphEditorStore((s) => s.selectNodes);
   const clearSelection = useGraphEditorStore((s) => s.clearSelection);
+  const addNode = useGraphEditorStore((s) => s.addNode);
   const addEdge = useGraphEditorStore((s) => s.addEdge);
   const moveNodesBatch = useGraphEditorStore((s) => s.moveNodesBatch);
   const setViewport = useGraphEditorStore((s) => s.setViewport);
 
+  const visualizerType = useGraphEditorStore((s) => s.visualizerType);
   const toolMode = useGraphEditorStore((s) => s.toolMode);
   const gridType = useGraphEditorStore((s) => s.gridType);
   const snapToGrid = useGraphEditorStore((s) => s.snapToGrid);
@@ -229,7 +232,51 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
     [selectNodes],
   );
 
-  const { setCenter } = useReactFlow();
+  const { setCenter, screenToFlowPosition } = useReactFlow();
+
+  const onDragOver = React.useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+  }, []);
+
+  const onDrop = React.useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      const nodeType = event.dataTransfer.getData("application/nxtqr-node-type");
+      const isInfra = event.dataTransfer.getData("application/nxtqr-is-infra") === "true";
+      if (!nodeType) return;
+
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      if (isInfra) {
+        const newNode = infrastructureRegistry.createInfrastructureNode(nodeType, { position });
+        addNode(newNode);
+        selectNode(newNode.id, false);
+      } else {
+        const def = nodeRegistry.get(visualizerType as any, nodeType);
+        if (def) {
+          const id = `node_${def.type}_${crypto.randomUUID().slice(0, 6)}`;
+          const newNode: BaseNode = {
+            id,
+            type: def.type,
+            position,
+            dimensions: { width: 200, height: 80 },
+            status: "idle",
+            label: def.label,
+            description: def.description,
+            data: { ...def.defaultData },
+            ports: def.ports,
+          };
+          addNode(newNode);
+          selectNode(newNode.id, false);
+        }
+      }
+    },
+    [screenToFlowPosition, addNode, selectNode],
+  );
 
   // Minimap click-to-center navigation
   const onMinimapClick = React.useCallback(
@@ -265,6 +312,8 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
         onPaneClick={onPaneClick}
         onSelectionChange={onSelectionChange}
         onMoveEnd={onMoveEnd}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
         // Interaction controls
         panOnDrag={toolMode === "pan" ? true : [1, 2]} // In select mode, right-click or middle-click pans
         selectionOnDrag={toolMode === "select"}

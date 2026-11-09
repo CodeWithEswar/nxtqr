@@ -11,8 +11,9 @@ import {
   GridIcon,
   CheckCircleIcon,
   SlidersIcon,
+  getClientInfrastructureIcon,
 } from "@nxtqr/icons";
-import { nodeRegistry } from "@nxtqr/node-registry";
+import { nodeRegistry, infrastructureRegistry } from "@nxtqr/node-registry";
 import type { BaseNode, PortDefinition } from "../schemas/graph.schema";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -49,20 +50,32 @@ export const GraphNode = React.memo(function GraphNode({
     return nodeRegistry.get(visualizerType, nodeType);
   }, [visualizerType, nodeType]);
 
+  const infraDef = React.useMemo(() => {
+    return infrastructureRegistry.getComponent(nodeType);
+  }, [nodeType]);
+
+  const InfraIcon = React.useMemo(() => {
+    return getClientInfrastructureIcon(infraDef?.display.iconSlug || nodeType);
+  }, [infraDef, nodeType]);
+
   const IconComponent = ICON_MAP[nodeType] || CpuIcon;
-  const label = nodeData.label || nodeDef?.label || "Node";
-  const description = nodeData.description || nodeDef?.description || "";
+  const label = nodeData.label || infraDef?.display.name || nodeDef?.label || "Node";
+  const description = nodeData.description || infraDef?.display.description || nodeDef?.description || "";
+  const categoryLabel = infraDef ? "CLIENTS & UI" : (nodeDef?.category || nodeType);
 
   // Merge registered ports with node instance ports
   const ports = React.useMemo(() => {
     if (nodeData.ports && nodeData.ports.length > 0) {
       return nodeData.ports;
     }
+    if (infraDef && infraDef.ports) {
+      return [...infraDef.ports];
+    }
     return nodeDef?.ports || [
       { id: "in", name: "In", type: "input", dataType: "Any" },
       { id: "out", name: "Out", type: "output", dataType: "Any" },
     ];
-  }, [nodeData.ports, nodeDef]);
+  }, [nodeData.ports, infraDef, nodeDef]);
 
   const inputPorts = ports.filter((p) => p.type === "input" || p.type === "bidirectional");
   const outputPorts = ports.filter((p) => p.type === "output" || p.type === "bidirectional");
@@ -107,13 +120,17 @@ export const GraphNode = React.memo(function GraphNode({
               : "bg-surface-01 border-border-default text-text-secondary group-hover:text-foreground"
           }`}
         >
-          <IconComponent className="h-3.5 w-3.5" />
+          {InfraIcon ? (
+            <InfraIcon size={20} variant="colored" />
+          ) : (
+            <IconComponent className="h-3.5 w-3.5" />
+          )}
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-1">
             <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider font-semibold truncate">
-              {nodeDef?.category || nodeType}
+              {categoryLabel}
             </span>
             <span className="font-mono text-[9px] text-text-disabled shrink-0">
               #{id.slice(-4)}
@@ -173,5 +190,16 @@ export const nodeTypes = {
   queue: GraphNode,
   generic: GraphNode,
   custom: GraphNode,
+  // Infrastructure Category 01: Clients & User Interfaces
+  "web-browser": GraphNode,
+  "mobile-application": GraphNode,
+  "desktop-application": GraphNode,
+  "single-page-application": GraphNode,
+  "server-side-rendered-app": GraphNode,
+  "static-website": GraphNode,
+  "progressive-web-app": GraphNode,
+  "cli-client": GraphNode,
+  "iot-device": GraphNode,
+  "third-party-client": GraphNode,
 };
 

@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@nxtqr/graph-schema": "workspace:*",
-    "@nxtqr/shared-types": "workspace:*"
+    "@nxtqr/shared-types": "workspace:*",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@nxtqr/typescript-config": "workspace:*",
