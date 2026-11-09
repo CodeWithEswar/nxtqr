@@ -34,13 +34,13 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100vw-2rem)] sm:w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-elevated-surface p-6 shadow-level-2 rounded-md data-[state=open]:animate-dialog-in data-[state=closed]:animate-dialog-out duration-200 data-[state=closed]:duration-140 motion-reduce:animate-none",
+        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100vw-2rem)] sm:w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border-strong bg-surface-02 p-6 shadow-level-2 rounded-md data-[state=open]:animate-dialog-in data-[state=closed]:animate-dialog-out duration-200 data-[state=closed]:duration-140 motion-reduce:animate-none",
         className,
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-2.5 top-2.5 h-7 w-7 rounded-md inline-flex items-center justify-center border border-transparent hover:border-border hover:bg-surface active:bg-secondary-surface active:shadow-level-3 text-muted-foreground hover:text-foreground outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:border-border transition-colors duration-140 disabled:pointer-events-none z-10">
+      <DialogPrimitive.Close className="absolute right-2.5 top-2.5 h-7 w-7 rounded-md inline-flex items-center justify-center border border-border bg-surface text-muted-foreground hover:text-foreground hover:border-border-hover hover:bg-surface-04 active:shadow-level-3 outline-none focus-visible:ring-1 focus-visible:ring-ring transition-colors duration-140 disabled:pointer-events-none z-10 cursor-pointer">
         <CloseIcon className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>

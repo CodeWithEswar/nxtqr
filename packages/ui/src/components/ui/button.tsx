@@ -7,16 +7,16 @@ import { cn } from "@nxtqr/utils";
 import { SpinnerIcon } from "@nxtqr/icons";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium transition-all duration-140 ease-standard focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 select-none motion-reduce:transition-none motion-reduce:active:transform-none",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium transition-all duration-140 ease-standard focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 select-none motion-reduce:transition-none motion-reduce:active:transform-none cursor-pointer",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-level-1 hover:opacity-90 active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
+          "bg-primary text-primary-foreground shadow-level-1 hover:bg-white/90 hover:text-black active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
         secondary:
           "bg-surface text-foreground border border-border shadow-level-1 hover:bg-elevated-surface active:bg-secondary-surface active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
         outline:
-          "border border-border bg-transparent shadow-level-1 hover:bg-surface hover:text-foreground active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
+          "border border-border bg-surface-01 text-foreground shadow-level-1 hover:bg-surface-03 hover:border-border-hover active:shadow-level-3 active:scale-[0.985] active:translate-y-[0.5px]",
         ghost:
           "hover:bg-surface hover:text-foreground active:bg-secondary-surface active:shadow-level-3 active:scale-[0.985]",
         destructive:

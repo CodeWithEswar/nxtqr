@@ -442,6 +442,12 @@
   .bg-surface-04 {
     background-color: var(--surface-04) !important;
   }
+  .bg-primary {
+    background-color: var(--primary) !important;
+  }
+  .text-primary-foreground {
+    color: var(--primary-foreground) !important;
+  }
   .ring-border-strong {
     --tw-ring-color: var(--border-strong) !important;
   }
