@@ -328,21 +328,21 @@ export function RepositoryTree() {
             if (hasChildren) toggleExpand(node.id);
             setSelectedNode(node);
           }}
-          style={{ paddingLeft: `${depth * 14 + 8}px` }}
+          style={{ paddingLeft: `${Math.min(depth * 14 + 8, 48)}px` }}
           className={cn(
-            "p-1.5 rounded-md text-xs font-mono flex items-center justify-between gap-2 cursor-pointer transition-all",
+            "p-1.5 rounded-md text-xs font-mono flex items-center justify-between gap-2 cursor-pointer transition-all min-w-0",
             isSelected
               ? "border border-border-strong bg-surface-04 text-foreground ring-1 ring-border-default font-semibold shadow-level-1"
               : "border border-transparent hover:bg-elevated-surface text-muted-foreground hover:text-foreground"
           )}
         >
-          <div className="flex items-center gap-1.5 min-w-0">
+          <div className="flex items-center gap-1.5 min-w-0 flex-1">
             {hasChildren ? (
-              <span className="p-0.5 text-muted-foreground">
+              <span className="p-0.5 text-muted-foreground shrink-0">
                 {isExpanded ? <ChevronDownIcon className="h-3 w-3" /> : <ChevronRightIcon className="h-3 w-3" />}
               </span>
             ) : (
-              <span className="w-4 inline-block" />
+              <span className="w-4 inline-block shrink-0" />
             )}
             <IconComponent className={cn("h-3.5 w-3.5 shrink-0", isSelected ? "text-foreground" : "text-muted-foreground")} />
             <span className="truncate">{node.name}</span>
@@ -368,15 +368,14 @@ export function RepositoryTree() {
     <div className="my-6 rounded-md border border-border bg-surface overflow-hidden shadow-level-1 space-y-4 p-4 sm:p-6">
       {/* Header */}
       <div className="border-b border-subtle-border pb-4 space-y-1">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
-            <h3 className="text-sm font-semibold font-sans text-foreground truncate sm:whitespace-normal">
-              <span className="hidden sm:inline">NXTQR Monorepo Architecture Explorer</span>
-              <span className="sm:hidden">Repository Explorer</span>
+            <h3 className="text-sm font-semibold font-sans text-foreground truncate">
+              NXTQR Monorepo Architecture Explorer
             </h3>
             <Badge
               variant="outline"
-              className="text-[10px] font-mono shrink-0 hidden sm:inline-flex"
+              className="text-[10px] font-mono shrink-0 hidden sm:inline-flex border-subtle-border bg-surface-02 text-foreground"
             >
               29 Workspaces
             </Badge>
@@ -409,9 +408,9 @@ export function RepositoryTree() {
       </div>
 
       {/* Main Grid: Left Tree Explorer, Right Boundary Spec */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Left Tree Explorer (7 cols) */}
-        <div className="lg:col-span-7 space-y-2">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 min-w-0">
+        {/* Left Tree Explorer (7 cols on xl) */}
+        <div className="xl:col-span-7 min-w-0 space-y-2">
           {/* Quick Filter */}
           <div className="relative">
             <SearchIcon className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
@@ -425,50 +424,51 @@ export function RepositoryTree() {
           </div>
 
           {/* Tree Scroll Container */}
-          <div className="rounded-md border border-border bg-black/60 p-2 max-h-[380px] overflow-y-auto scrollbar-dense">
+          <div className="rounded-md border border-border bg-black/60 p-2 max-h-[380px] overflow-y-auto overflow-x-auto scrollbar-dense">
             {renderTree(REPOSITORY_TREE)}
           </div>
         </div>
 
-        {/* Right Boundary & Responsibility Inspector (5 cols) */}
-        <div className="lg:col-span-5 rounded-md border border-border bg-elevated-surface p-4 space-y-3 font-mono text-xs shadow-level-1">
-          <div className="flex items-start justify-between gap-2 border-b border-subtle-border pb-3">
-            <div>
+        {/* Right Boundary & Responsibility Inspector (5 cols on xl) */}
+        <div className="xl:col-span-5 min-w-0 rounded-md border border-border bg-elevated-surface p-4 space-y-3 font-mono text-xs shadow-level-1">
+          <div className="flex items-start justify-between gap-2 border-b border-subtle-border pb-3 min-w-0">
+            <div className="min-w-0 flex-1">
               <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Package / Target:</span>
-              <div className="text-sm font-bold text-foreground font-sans mt-0.5">{selectedNode.name}</div>
+              <div className="text-sm font-bold text-foreground font-sans mt-0.5 break-words">{selectedNode.name}</div>
             </div>
             <button
+              type="button"
               onClick={handleCopyPath}
-              className="flex items-center gap-1 text-[10px] p-1.5 rounded border border-border text-muted-foreground hover:text-foreground hover:bg-secondary-surface transition-colors"
+              className="flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-md border border-border bg-surface text-muted-foreground hover:text-foreground hover:border-border-hover hover:bg-surface-04 transition-colors shrink-0 shadow-level-1 active:shadow-level-3 cursor-pointer"
               title="Copy path"
             >
-              {copied ? <CheckIcon className="h-3 w-3 text-emerald-400" /> : <CopyIcon className="h-3 w-3" />}
-              <span className="hidden sm:inline">{copied ? "Copied" : "Copy Path"}</span>
+              {copied ? <CheckIcon className="h-3 w-3 text-foreground" /> : <CopyIcon className="h-3 w-3" />}
+              <span className="whitespace-nowrap">{copied ? "Copied" : "Copy Path"}</span>
             </button>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 min-w-0">
             <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Filesystem Path:</span>
-            <div className="p-2 rounded bg-black border border-border text-[11px] text-foreground truncate">
+            <div className="p-2 rounded-md bg-black border border-subtle-border text-[11px] text-foreground font-mono break-all sm:truncate">
               {selectedNode.path}
             </div>
           </div>
 
           {selectedNode.responsibility && (
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
               <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Architectural Responsibility:</span>
-              <p className="text-foreground/90 font-sans text-xs leading-relaxed p-2.5 rounded bg-surface border border-border">
+              <p className="text-foreground/90 font-sans text-xs leading-relaxed p-2.5 rounded-md bg-surface border border-subtle-border break-words">
                 {selectedNode.responsibility}
               </p>
             </div>
           )}
 
           {selectedNode.prohibited && (
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
               <span className="text-[10px] text-red-400 uppercase tracking-wider block font-bold">
                 Constitution Prohibited Contents (AGENTS.md):
               </span>
-              <p className="text-foreground/90 font-sans text-xs leading-relaxed p-2.5 rounded bg-red-950/20 border border-red-900/40">
+              <p className="text-foreground/90 font-sans text-xs leading-relaxed p-2.5 rounded-md bg-red-950/20 border border-red-900/40 break-words">
                 {selectedNode.prohibited}
               </p>
             </div>

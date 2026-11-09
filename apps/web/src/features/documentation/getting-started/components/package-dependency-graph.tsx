@@ -120,7 +120,7 @@ export function PackageDependencyGraph() {
                   {layer.packages.map((pkg) => (
                     <span
                       key={pkg}
-                      className="px-2 py-0.5 rounded text-[10px] bg-black border border-border text-foreground"
+                      className="px-2 py-0.5 rounded-md text-[10px] bg-black border border-subtle-border text-foreground"
                     >
                       {pkg}
                     </span>
@@ -134,20 +134,20 @@ export function PackageDependencyGraph() {
 
       {/* Selected Layer Boundary Specifications */}
       <div className="rounded-md border border-subtle-border bg-black p-4 space-y-3 text-xs font-mono">
-        <div className="flex items-center justify-between border-b border-border/60 pb-2">
-          <div className="flex items-center gap-2">
-            <ShieldIcon className="h-4 w-4 text-foreground" />
-            <span className="font-bold text-foreground font-sans">
+        <div className="flex items-center justify-between border-b border-subtle-border pb-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <ShieldIcon className="h-4 w-4 text-foreground shrink-0" />
+            <span className="font-bold text-foreground font-sans truncate">
               Layer {activeLayer.level} Rules: {activeLayer.name}
             </span>
           </div>
-          <Badge variant="outline" className="text-[10px] font-mono">
+          <Badge variant="outline" className="text-[10px] font-mono shrink-0 border-subtle-border bg-surface-02 text-foreground">
             {activeLayer.packages.length} Packages
           </Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="p-3 rounded bg-surface border border-border space-y-1">
+          <div className="p-3 rounded-md bg-surface border border-subtle-border space-y-1">
             <span className="text-[10px] text-emerald-400 uppercase font-bold block">
               Permitted Inbound Dependencies:
             </span>
@@ -156,7 +156,7 @@ export function PackageDependencyGraph() {
             </p>
           </div>
 
-          <div className="p-3 rounded bg-red-950/20 border border-red-900/40 space-y-1">
+          <div className="p-3 rounded-md bg-red-950/20 border border-red-900/40 space-y-1">
             <span className="text-[10px] text-red-400 uppercase font-bold block">
               Strictly Prohibited Imports (AGENTS.md):
             </span>
