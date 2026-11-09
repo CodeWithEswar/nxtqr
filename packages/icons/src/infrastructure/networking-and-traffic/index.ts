@@ -47,3 +47,4 @@ export function getNetworkingAndTrafficInfrastructureIcon(
 ): InfrastructureIconComponent | null {
   return networkingAndTrafficIconRegistry[slug] || null;
 }
+

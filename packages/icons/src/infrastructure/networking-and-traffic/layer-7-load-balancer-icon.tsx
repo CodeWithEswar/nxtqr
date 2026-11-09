@@ -66,3 +66,4 @@ export const Layer7LoadBalancerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

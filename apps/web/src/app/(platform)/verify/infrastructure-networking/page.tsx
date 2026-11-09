@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Badge } from "@nxtqr/ui";
+import {
+  Badge,
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@nxtqr/ui";
 import { CopyIcon } from "@nxtqr/icons";
 import {
   getInfrastructureIcon,
@@ -43,53 +50,53 @@ export default function InfrastructureNetworkingVerificationPage() {
   const ActiveIcon = getInfrastructureIcon(activeComponent.id);
 
   return (
-    <div className="min-h-screen bg-black text-foreground selection:bg-surface-03">
-      {/* Precision Header */}
-      <header className="border-b border-border-default bg-surface-01 px-6 py-4">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 max-w-7xl mx-auto">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-[11px] text-text-muted uppercase tracking-wider">
+    <div className="min-h-screen bg-black text-foreground selection:bg-surface-03 overflow-x-hidden">
+      {/* Precision Responsive Header */}
+      <header className="border-b border-border-default bg-surface-01 px-4 sm:px-6 py-4">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 max-w-7xl mx-auto">
+          <div className="space-y-1.5 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-mono text-[11px] text-text-muted uppercase tracking-wider truncate">
                 Infrastructure Architecture Verification Gate
               </span>
-              <span className="text-border-subtle">·</span>
+              <span className="text-border-subtle hidden xs:inline">·</span>
               <Badge
                 variant="outline"
-                className="font-mono text-[10px] text-sky-400 border-sky-900/40 bg-sky-950/20"
+                className="font-mono text-[10px] text-sky-400 border-sky-900/40 bg-sky-950/20 shrink-0"
               >
                 P0 Approved
               </Badge>
             </div>
-            <h1 className="font-sans text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <h1 className="font-sans text-lg sm:text-xl font-bold tracking-tight text-foreground flex items-center gap-2.5 flex-wrap">
               <span>Category 03 — Networking & Traffic Infrastructure</span>
-              <span className="font-mono text-xs font-normal text-text-muted px-2 py-0.5 rounded bg-surface-02 border border-border-subtle">
+              <span className="font-mono text-xs font-normal text-text-muted px-2 py-0.5 rounded bg-surface-02 border border-border-subtle shrink-0">
                 12 Components
               </span>
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
             <Link
               href="/verify/infrastructure-dns-cdn-edge"
-              className="px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
               ← Cat 02 DNS/Edge
             </Link>
             <Link
               href="/verify/infrastructure-clients"
-              className="px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
               Cat 01 Clients
             </Link>
             <Link
               href="/workspace"
-              className="px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-foreground transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
-              Open Studio Canvas
+              Studio Canvas
             </Link>
             <Link
               href="/verify"
-              className="px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
               All Diagnostics
             </Link>
@@ -98,7 +105,7 @@ export default function InfrastructureNetworkingVerificationPage() {
       </header>
 
       {/* Main Review Body */}
-      <main className="max-w-7xl mx-auto p-6 space-y-8">
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8 overflow-hidden">
         {/* SECTION 1: Icon Gallery & Geometry Matrix */}
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -235,32 +242,39 @@ export default function InfrastructureNetworkingVerificationPage() {
           {/* Right Column: React Flow Live Node Preview */}
           <div className="lg:col-span-7 space-y-4">
             <div className="p-5 rounded-md border border-border-default bg-surface-01 space-y-4">
-              <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border-subtle pb-3">
                 <span className="font-mono text-xs uppercase tracking-wider text-text-muted font-semibold">
                   React Flow Node Visualizer
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => setIsSelectedNode(!isSelectedNode)}
-                    className={`px-2.5 py-0.5 rounded text-[11px] font-mono border transition-colors ${
+                    className={`px-3 py-1.5 rounded-md text-xs font-mono border transition-colors flex-1 sm:flex-initial text-center ${
                       isSelectedNode
-                        ? "bg-surface-04 border-border-strong text-foreground font-semibold"
-                        : "border-border-subtle text-text-muted hover:text-foreground"
+                        ? "bg-surface-04 border-border-strong text-foreground font-semibold shadow-level-1"
+                        : "bg-surface-02 border-border-subtle text-text-muted hover:text-foreground"
                     }`}
                   >
                     {isSelectedNode ? "Selected State" : "Default State"}
                   </button>
-                  <select
-                    value={previewStatus}
-                    onChange={(e) => setPreviewStatus(e.target.value as any)}
-                    className="bg-surface-02 border border-border-default text-[11px] font-mono rounded px-2 py-0.5 text-foreground focus:outline-none"
-                  >
-                    <option value="idle">Status: Idle</option>
-                    <option value="running">Status: Running</option>
-                    <option value="success">Status: Healthy</option>
-                    <option value="error">Status: Degraded</option>
-                  </select>
+
+                  <div className="w-[140px] flex-1 sm:flex-initial">
+                    <Select
+                      value={previewStatus}
+                      onValueChange={(val: any) => setPreviewStatus(val)}
+                    >
+                      <SelectTrigger className="h-8 w-full bg-surface-02 border-border-default text-xs font-mono text-foreground shadow-level-1 hover:border-border-hover">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2">
+                        <SelectItem value="idle">Status: Idle</SelectItem>
+                        <SelectItem value="running">Status: Running</SelectItem>
+                        <SelectItem value="success">Status: Healthy</SelectItem>
+                        <SelectItem value="error">Status: Degraded</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
@@ -451,3 +465,4 @@ export default function InfrastructureNetworkingVerificationPage() {
     </div>
   );
 }
+

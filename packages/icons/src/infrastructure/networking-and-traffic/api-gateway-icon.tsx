@@ -69,3 +69,4 @@ export const ApiGatewayIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

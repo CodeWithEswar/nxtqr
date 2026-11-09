@@ -16,7 +16,15 @@ import {
   type InspectorFieldDefinition,
   type InspectorSectionDefinition,
 } from "@nxtqr/node-registry";
-import { Button, Badge } from "@nxtqr/ui";
+import {
+  Button,
+  Badge,
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@nxtqr/ui";
 
 export interface NodeInspectorProps {
   className?: string;
@@ -370,16 +378,20 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                 <label className="text-[10px] text-text-secondary block">
                   Environment
                 </label>
-                <select
+                <Select
                   value={String(data.environment || "production")}
-                  onChange={(e) => handleDataFieldChange("environment", e.target.value)}
-                  className="w-full h-8 px-2 bg-surface-01 border border-border-default hover:border-border-hover focus:border-border-strong rounded-md text-xs text-foreground outline-none transition-colors"
+                  onValueChange={(val) => handleDataFieldChange("environment", val)}
                 >
-                  <option value="development">Development</option>
-                  <option value="staging">Staging</option>
-                  <option value="production">Production</option>
-                  <option value="edge">Edge Global</option>
-                </select>
+                  <SelectTrigger className="w-full h-8 px-2.5 bg-surface-01 border-border-default hover:border-border-hover text-xs text-foreground font-mono">
+                    <SelectValue placeholder="Select Environment" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground">
+                    <SelectItem value="development">Development</SelectItem>
+                    <SelectItem value="staging">Staging</SelectItem>
+                    <SelectItem value="production">Production</SelectItem>
+                    <SelectItem value="edge">Edge Global</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Description */}
@@ -595,16 +607,20 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                 <label className="text-[10px] text-text-secondary block">
                   Target Availability (SLA)
                 </label>
-                <select
+                <Select
                   value={String(data.slaTarget || "99.9%")}
-                  onChange={(e) => handleDataFieldChange("slaTarget", e.target.value)}
-                  className="w-full h-8 px-2 bg-surface-01 border border-border-default rounded-md text-xs text-foreground outline-none"
+                  onValueChange={(val) => handleDataFieldChange("slaTarget", val)}
                 >
-                  <option value="99.0%">99.0% (Best Effort)</option>
-                  <option value="99.9%">99.9% (Standard Production)</option>
-                  <option value="99.95%">99.95% (High Availability)</option>
-                  <option value="99.99%">99.99% (Mission Critical)</option>
-                </select>
+                  <SelectTrigger className="w-full h-8 px-2.5 bg-surface-01 border-border-default hover:border-border-hover text-xs text-foreground font-mono">
+                    <SelectValue placeholder="Select SLA" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground">
+                    <SelectItem value="99.0%">99.0% (Best Effort)</SelectItem>
+                    <SelectItem value="99.9%">99.9% (Standard Production)</SelectItem>
+                    <SelectItem value="99.95%">99.95% (High Availability)</SelectItem>
+                    <SelectItem value="99.99%">99.99% (Mission Critical)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-1">
@@ -706,17 +722,21 @@ function FieldRenderer({
           />
         </button>
       ) : isSelect ? (
-        <select
-          value={String(value ?? "")}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full h-8 px-2 bg-surface-01 border border-border-default hover:border-border-hover focus:border-border-strong rounded-md text-xs text-foreground outline-none transition-colors"
+        <Select
+          value={String(value ?? (field.options?.[0]?.value ?? ""))}
+          onValueChange={(val) => onChange(val)}
         >
-          {field.options?.map((opt) => (
-            <option key={String(opt.value)} value={String(opt.value)}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full h-8 px-2.5 bg-surface-01 border-border-default hover:border-border-hover text-xs text-foreground font-mono">
+            <SelectValue placeholder={`Select ${field.label}`} />
+          </SelectTrigger>
+          <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground">
+            {field.options?.map((opt) => (
+              <SelectItem key={String(opt.value)} value={String(opt.value)}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       ) : isNum ? (
         <div className="relative">
           <input

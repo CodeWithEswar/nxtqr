@@ -57,3 +57,4 @@ export const ServiceMeshIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

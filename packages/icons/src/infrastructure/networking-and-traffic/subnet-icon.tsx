@@ -70,3 +70,4 @@ export const SubnetIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

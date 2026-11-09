@@ -63,3 +63,4 @@ export const LoadBalancerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

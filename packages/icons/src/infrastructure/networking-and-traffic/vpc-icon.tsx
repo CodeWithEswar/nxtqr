@@ -65,3 +65,4 @@ export const VpcIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

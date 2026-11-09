@@ -60,3 +60,4 @@ export const ForwardProxyIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -180,3 +180,4 @@ export const NetworkFirewallConfigSchema = SharedInfrastructureConfigSchema.exte
   throughputGbps: z.number().int().min(1).max(100).default(10),
 });
 export type NetworkFirewallConfig = z.infer<typeof NetworkFirewallConfigSchema>;
+

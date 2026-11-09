@@ -61,3 +61,4 @@ export const ServiceDiscoveryIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

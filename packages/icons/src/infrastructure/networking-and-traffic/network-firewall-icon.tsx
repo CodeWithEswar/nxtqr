@@ -54,3 +54,4 @@ export const NetworkFirewallIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

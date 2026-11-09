@@ -61,3 +61,4 @@ export const IngressControllerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

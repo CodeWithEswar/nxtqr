@@ -59,3 +59,4 @@ export const NatGatewayIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+
