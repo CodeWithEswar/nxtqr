@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { type DocHeading } from "../schemas/docs-schema";
-import { ScrollArea } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
 
 export interface DocsTocProps {
@@ -40,7 +39,7 @@ function Elbow({
       {hasNext && (
         <path
           d={`M1 ${mid} V${ROW_HEIGHT}`}
-          className="stroke-border-subtle"
+          className="stroke-white/15"
           strokeWidth="1"
         />
       )}
@@ -50,7 +49,7 @@ function Elbow({
         strokeLinecap="round"
         className={cn(
           "transition-[stroke] duration-200",
-          active ? "stroke-border-strong" : "stroke-border-subtle",
+          active ? "stroke-white" : "stroke-white/15",
         )}
       />
     </svg>
@@ -100,83 +99,81 @@ export function DocsToc({ headings = [] }: DocsTocProps) {
   };
 
   return (
-    <aside className="hidden xl:block w-60 shrink-0 h-full border-l border-subtle-border bg-black select-none">
-      <ScrollArea className="h-full w-full py-10 pl-7 pr-5">
-        <div className="space-y-5">
-          <h4 className="flex items-center gap-2 font-sans text-[12px] font-medium tracking-tight text-foreground">
-            <svg
-              aria-hidden="true"
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              className="text-muted-foreground"
-            >
-              <path
-                d="M1.5 3h9M1.5 6h6M1.5 9h4"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-              />
-            </svg>
-            On this page
-          </h4>
+    <aside className="hidden xl:block w-60 shrink-0 h-full overflow-y-auto scrollbar-compact py-10 pl-7 pr-5 border-l border-white/10 bg-black">
+      <div className="space-y-5">
+        <h4 className="flex items-center gap-2 font-sans text-[12px] font-medium tracking-tight text-white/90">
+          <svg
+            aria-hidden="true"
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            className="text-white/50"
+          >
+            <path
+              d="M1.5 3h9M1.5 6h6M1.5 9h4"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+          </svg>
+          On this page
+        </h4>
 
-          <nav aria-label="Table of contents" className="relative font-sans">
-            <ul>
-              {headings.map((heading, i) => {
-                const isActive = activeId === heading.id;
-                const isSub = heading.level >= 3;
-                const next = headings[i + 1];
-                const hasNextSibling = isSub && !!next && next.level >= 3;
+        <nav aria-label="Table of contents" className="relative font-sans">
+          <ul>
+            {headings.map((heading, i) => {
+              const isActive = activeId === heading.id;
+              const isSub = heading.level >= 3;
+              const next = headings[i + 1];
+              const hasNextSibling = isSub && !!next && next.level >= 3;
 
-                return (
-                  <li
-                    key={heading.id}
-                    className={cn("relative", isSub && "ml-1.5")}
-                    style={{ height: ROW_HEIGHT }}
-                  >
-                    {isSub && (
-                      <Elbow active={isActive} hasNext={hasNextSibling} />
+              return (
+                <li
+                  key={heading.id}
+                  className={cn("relative", isSub && "ml-1.5")}
+                  style={{ height: ROW_HEIGHT }}
+                >
+                  {isSub && (
+                    <Elbow active={isActive} hasNext={hasNextSibling} />
+                  )}
+
+                  <a
+                    href={`#${heading.id}`}
+                    onClick={(e) => handleClick(e, heading.id)}
+                    title={heading.title}
+                    aria-current={isActive ? "location" : undefined}
+                    className={cn(
+                      "group relative flex h-full items-center truncate rounded-sm outline-none",
+                      "transition-colors duration-200",
+                      "focus-visible:ring-1 focus-visible:ring-white/40",
+                      isSub
+                        ? "pl-6 text-[12px] font-normal"
+                        : "pl-0 text-[12.5px] font-medium",
+                      isActive
+                        ? "text-white"
+                        : "text-white/45 hover:text-white/85",
                     )}
-
-                    <a
-                      href={`#${heading.id}`}
-                      onClick={(e) => handleClick(e, heading.id)}
-                      title={heading.title}
-                      aria-current={isActive ? "location" : undefined}
-                      className={cn(
-                        "group relative flex h-full items-center truncate rounded-md outline-none",
-                        "transition-colors duration-140",
-                        "focus-visible:ring-1 focus-visible:ring-ring",
-                        isSub
-                          ? "pl-6 text-[12px] font-normal"
-                          : "pl-0 text-[12.5px] font-medium",
-                        isActive
-                          ? "text-foreground font-semibold"
-                          : "text-muted-foreground hover:text-foreground",
-                      )}
-                    >
-                      {!isSub && (
-                        <span
-                          aria-hidden="true"
-                          className={cn(
-                            "mr-2.5 inline-block size-1 shrink-0 rounded-full transition-all duration-200",
-                            isActive
-                              ? "scale-125 bg-foreground"
-                              : "bg-neutral-600 group-hover:bg-neutral-400",
-                          )}
-                        />
-                      )}
-                      <span className="truncate">{heading.title}</span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-        </div>
-      </ScrollArea>
+                  >
+                    {!isSub && (
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "mr-2.5 inline-block size-1 shrink-0 rounded-full transition-all duration-200",
+                          isActive
+                            ? "scale-125 bg-white shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+                            : "bg-white/20 group-hover:bg-white/50",
+                        )}
+                      />
+                    )}
+                    <span className="truncate">{heading.title}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
     </aside>
   );
 }
