@@ -77,6 +77,16 @@ const config: Config = {
         "muted-foreground": "var(--muted-foreground)",
         "secondary-foreground": "var(--secondary-foreground)",
         "disabled-foreground": "var(--disabled-foreground)",
+        text: {
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
+          disabled: "var(--text-disabled)",
+        },
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "text-muted": "var(--text-muted)",
+        "text-disabled": "var(--text-disabled)",
         ring: "var(--ring)",
         accent: {
           DEFAULT: "var(--accent)",

@@ -55,14 +55,14 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
   const flowNodes = React.useMemo(() => {
     return nodes.map((n) => ({
       id: n.id,
-      type: n.type,
+      type: n.type || "generic",
       position: n.position,
       selected: selectedNodeIds.includes(n.id),
       data: {
         label: n.label,
         description: n.description,
-        nodeType: n.type,
-        status: n.status,
+        nodeType: n.type || "process",
+        status: n.status || "idle",
         ports: n.ports,
         ...n.data,
       },

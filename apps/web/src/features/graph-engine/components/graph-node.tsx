@@ -73,14 +73,14 @@ export const GraphNode = React.memo(function GraphNode({
   return (
     <div
       data-node-id={id}
-      className={`group relative min-w-[190px] max-w-[260px] rounded-md border transition-all duration-150 select-none ${
+      className={`group relative min-w-[200px] max-w-[260px] rounded-md border transition-all duration-150 select-none text-foreground ${
         selected
           ? "bg-surface-04 border-border-strong shadow-level-3 ring-1 ring-border-strong"
           : "bg-surface-02 border-border-default hover:border-border-hover hover:bg-surface-03 shadow-level-1"
       }`}
     >
       {/* Input Ports (Top / Left) */}
-      <div className="absolute -top-1.5 left-0 right-0 flex justify-around pointer-events-auto">
+      <div className="absolute -top-1.5 left-0 right-0 flex justify-around pointer-events-auto z-10">
         {inputPorts.map((port, index) => {
           const total = inputPorts.length;
           const leftPercent = total === 1 ? 50 : ((index + 1) / (total + 1)) * 100;
@@ -91,7 +91,7 @@ export const GraphNode = React.memo(function GraphNode({
               type="target"
               position={Position.Top}
               style={{ left: `${leftPercent}%` }}
-              className="!w-2.5 !h-2.5 !rounded-full !bg-surface-01 !border-2 !border-border-strong hover:!border-foreground hover:!scale-125 transition-all duration-150"
+              className="!w-2.5 !h-2.5 !rounded-full !bg-surface-03 !border-2 !border-border-strong hover:!border-foreground hover:!scale-125 transition-all duration-150"
               title={`${port.name} (${port.dataType || "Any"})`}
             />
           );
@@ -104,7 +104,7 @@ export const GraphNode = React.memo(function GraphNode({
           className={`h-7 w-7 rounded-md flex items-center justify-center shrink-0 border transition-colors ${
             selected
               ? "bg-surface-03 border-border-strong text-foreground"
-              : "bg-surface-01 border-border-default text-text-muted group-hover:text-foreground"
+              : "bg-surface-01 border-border-default text-text-secondary group-hover:text-foreground"
           }`}
         >
           <IconComponent className="h-3.5 w-3.5" />
@@ -121,7 +121,7 @@ export const GraphNode = React.memo(function GraphNode({
           </div>
           <h4
             className={`font-sans text-xs leading-tight truncate ${
-              selected ? "text-foreground font-semibold" : "text-text-secondary group-hover:text-foreground font-medium"
+              selected ? "text-foreground font-semibold" : "text-text-primary group-hover:text-foreground font-medium"
             }`}
           >
             {label}
@@ -130,17 +130,17 @@ export const GraphNode = React.memo(function GraphNode({
       </div>
 
       {/* Node Body / Metadata */}
-      <div className="px-2.5 py-1.5 flex items-center justify-between font-mono text-[10px] text-text-muted">
-        <span className="truncate max-w-[130px]">
+      <div className="px-2.5 py-1.5 flex items-center justify-between font-mono text-[10px] text-text-muted bg-surface-01/40 rounded-b-md">
+        <span className="truncate max-w-[130px] text-text-secondary">
           {description ? description.slice(0, 24) : nodeType}
         </span>
-        <span className="text-[9px] px-1 py-0.5 rounded bg-surface-01 border border-border-subtle text-text-disabled">
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-surface-02 border border-border-subtle text-text-muted">
           {inputPorts.length}in · {outputPorts.length}out
         </span>
       </div>
 
       {/* Output Ports (Bottom / Right) */}
-      <div className="absolute -bottom-1.5 left-0 right-0 flex justify-around pointer-events-auto">
+      <div className="absolute -bottom-1.5 left-0 right-0 flex justify-around pointer-events-auto z-10">
         {outputPorts.map((port, index) => {
           const total = outputPorts.length;
           const leftPercent = total === 1 ? 50 : ((index + 1) / (total + 1)) * 100;
@@ -151,7 +151,7 @@ export const GraphNode = React.memo(function GraphNode({
               type="source"
               position={Position.Bottom}
               style={{ left: `${leftPercent}%` }}
-              className="!w-2.5 !h-2.5 !rounded-full !bg-surface-01 !border-2 !border-border-strong hover:!border-foreground hover:!scale-125 transition-all duration-150"
+              className="!w-2.5 !h-2.5 !rounded-full !bg-surface-03 !border-2 !border-border-strong hover:!border-foreground hover:!scale-125 transition-all duration-150"
               title={`${port.name} (${port.dataType || "Any"})`}
             />
           );
@@ -162,6 +162,7 @@ export const GraphNode = React.memo(function GraphNode({
 });
 
 export const nodeTypes = {
+  default: GraphNode,
   input: GraphNode,
   process: GraphNode,
   output: GraphNode,
@@ -171,5 +172,6 @@ export const nodeTypes = {
   database: GraphNode,
   queue: GraphNode,
   generic: GraphNode,
+  custom: GraphNode,
 };
 
