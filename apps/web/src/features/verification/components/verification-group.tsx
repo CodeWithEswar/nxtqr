@@ -64,23 +64,23 @@ export function VerificationGroup({
   const failedCount = checks.filter((c) => c.status === "failed").length;
 
   return (
-    <section className="space-y-2.5">
+    <section className="space-y-3">
       {/* Group Header */}
       <div className="flex items-center justify-between gap-2 px-1">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-surface border border-border flex items-center justify-center text-accent">
-            <IconComp className="h-3 w-3" />
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-6 h-6 rounded-md bg-surface border border-border-default flex items-center justify-center text-foreground shrink-0 shadow-level-1">
+            <IconComp className="h-3.5 w-3.5" />
           </div>
-          <div>
-            <h2 className="text-xs font-bold font-sans text-foreground uppercase tracking-wider">
+          <div className="min-w-0">
+            <h2 className="text-xs font-bold font-sans text-foreground uppercase tracking-wider truncate">
               {meta.title}
             </h2>
           </div>
         </div>
 
         {/* Group Counts */}
-        <div className="flex items-center gap-1.5 text-[10px] font-mono">
-          <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-subtle-border bg-black text-muted-foreground">
+        <div className="flex items-center gap-2 text-[10px] font-mono shrink-0">
+          <Badge variant="outline" className="text-[10px] py-0 px-2 rounded-md border-border-subtle bg-surface-00 text-muted-foreground">
             {checks.length} Checks
           </Badge>
           {warningCount > 0 && (
@@ -101,8 +101,8 @@ export function VerificationGroup({
         </div>
       </div>
 
-      {/* Group Rows List */}
-      <div className="space-y-1.5">
+      {/* Group Checks Rows */}
+      <div className="space-y-2">
         {checks.map((check) => (
           <VerificationRow
             key={check.id}
@@ -115,4 +115,3 @@ export function VerificationGroup({
     </section>
   );
 }
-

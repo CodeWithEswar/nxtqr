@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
   Button,
   Badge,
@@ -11,7 +10,7 @@ import {
   CardDescription,
   CardContent,
 } from "@nxtqr/ui";
-import { ChevronLeftIcon, CheckCircleIcon, RefreshIcon } from "@nxtqr/icons";
+import { CheckCircleIcon, RefreshIcon } from "@nxtqr/icons";
 import {
   AppLogo,
   LogoMark,
@@ -23,6 +22,7 @@ import {
   type LogoVariant,
   type LogoColorMode,
 } from "@nxtqr/branding";
+import { VerificationHeader } from "@/features/verification";
 
 export default function BrandReviewGatePage() {
   const [variant, setVariant] = useState<LogoVariant>("full");
@@ -183,33 +183,25 @@ export default function BrandReviewGatePage() {
   ];
 
   return (
-    <main className="min-h-screen bg-background text-foreground flex flex-col p-6 max-w-5xl mx-auto space-y-6">
-      {/* Header bar */}
-      <header className="flex items-center justify-between border-b border-border pb-4">
-        <div className="flex items-center gap-3">
-          <Link href="/verify">
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-              <ChevronLeftIcon className="h-4 w-4" />
-            </Button>
-          </Link>
-          <AppLogo variant="symbol" size={28} />
-          <div>
-            <h1 className="text-sm font-semibold tracking-tight text-foreground">
-              NXTQR — Brand Identity & Concrete Logo Review Gate
-            </h1>
-            <p className="text-[11px] text-muted-foreground font-mono">
-              Vector Geometry · Solid Neumorphic Surfaces · Scale-Invariance
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[10px] font-mono border-border">
-            Phase 02 · Approved Spec
-          </Badge>
-          <Badge className="bg-success text-black text-[10px] font-mono">GATE: VERIFIED</Badge>
-        </div>
-      </header>
+    <main className="min-h-screen bg-background text-foreground flex flex-col p-4 sm:p-6 lg:p-8 xl:p-10 w-full max-w-[2200px] mx-auto space-y-6">
+      {/* Verification Header */}
+      <VerificationHeader
+        title="NXTQR — Brand Identity & Concrete Logo Review Gate"
+        subtitle="Vector Geometry · Solid Neumorphic Surfaces · Scale-Invariance"
+        version="Phase 02 · Approved Spec"
+        logo={<AppLogo variant="symbol" size={28} />}
+        backHref="/verify"
+        backLabel="Back to Diagnostics"
+        showReviewGates={true}
+      >
+        <Badge
+          variant="outline"
+          className="h-9 px-3 font-mono text-xs gap-1.5 rounded-md border-border-strong bg-surface-02 text-emerald-400 shadow-level-1 shrink-0"
+        >
+          <CheckCircleIcon className="h-3.5 w-3.5 text-emerald-400" />
+          <span>GATE: VERIFIED</span>
+        </Badge>
+      </VerificationHeader>
 
       {/* Main Interactive Stage */}
       <Card className="surface-raised">

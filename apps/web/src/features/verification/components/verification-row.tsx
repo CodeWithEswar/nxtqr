@@ -27,7 +27,7 @@ export function VerificationRow({
   const getStatusIcon = () => {
     switch (check.status) {
       case "running":
-        return <SpinnerIcon className="h-4 w-4 text-accent animate-spin shrink-0" />;
+        return <SpinnerIcon className="h-4 w-4 text-muted-foreground animate-spin shrink-0" />;
       case "passed":
         return <CheckCircleIcon className="h-4 w-4 text-emerald-400 shrink-0" />;
       case "warning":
@@ -36,7 +36,7 @@ export function VerificationRow({
         return <AlertCircleIcon className="h-4 w-4 text-red-400 shrink-0" />;
       default:
         return (
-          <span className="w-4 h-4 rounded-full border border-zinc-600 inline-block shrink-0" />
+          <span className="w-4 h-4 rounded-md border border-border-default inline-block shrink-0 bg-surface-00" />
         );
     }
   };
@@ -45,31 +45,31 @@ export function VerificationRow({
     switch (check.status) {
       case "running":
         return (
-          <Badge variant="outline" className="text-[10px] font-mono border-accent/40 text-accent bg-accent/5">
+          <Badge variant="outline" className="text-[10px] font-mono rounded-md border-border-default text-foreground bg-surface-02">
             Running
           </Badge>
         );
       case "passed":
         return (
-          <Badge variant="outline" className="text-[10px] font-mono border-emerald-500/40 text-emerald-400 bg-emerald-500/5">
+          <Badge variant="outline" className="text-[10px] font-mono rounded-md border-border-strong text-emerald-400 bg-surface-02">
             Verified
           </Badge>
         );
       case "warning":
         return (
-          <Badge variant="outline" className="text-[10px] font-mono border-amber-500/40 text-amber-400 bg-amber-500/5">
+          <Badge variant="outline" className="text-[10px] font-mono rounded-md border-border-strong text-amber-400 bg-surface-02">
             Warning
           </Badge>
         );
       case "failed":
         return (
-          <Badge variant="outline" className="text-[10px] font-mono border-red-500/40 text-red-400 bg-red-500/5">
+          <Badge variant="outline" className="text-[10px] font-mono rounded-md border-border-strong text-red-400 bg-surface-02">
             Failed
           </Badge>
         );
       default:
         return (
-          <Badge variant="outline" className="text-[10px] font-mono border-subtle-border text-muted-foreground">
+          <Badge variant="outline" className="text-[10px] font-mono rounded-md border-border-default text-muted-foreground bg-surface-02">
             {formatStatusLabel(check.status)}
           </Badge>
         );
@@ -103,22 +103,22 @@ export function VerificationRow({
         }
       }}
       className={cn(
-        "p-3 rounded-md border transition-all duration-150 cursor-pointer select-none",
+        "p-3 sm:p-3.5 rounded-md border transition-all duration-150 cursor-pointer select-none",
         "flex items-center justify-between gap-3 text-xs",
         isSelected
-          ? "border-accent bg-elevated-surface ring-1 ring-accent shadow-level-2"
-          : "border-border bg-surface hover:bg-elevated-surface hover:border-muted-border"
+          ? "border-border-strong bg-surface-04 ring-1 ring-border-strong shadow-level-3"
+          : "border-border-default bg-surface hover:bg-surface-02 hover:border-border-hover shadow-level-1"
       )}
     >
       {/* Left: Status Icon, Title, and Description */}
-      <div className="flex items-start gap-2.5 min-w-0 flex-1">
+      <div className="flex items-start gap-2.5 sm:gap-3 min-w-0 flex-1">
         <div className="mt-0.5">{getStatusIcon()}</div>
-        <div className="min-w-0 flex-1 space-y-0.5">
+        <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-foreground font-sans truncate">
               {check.title}
             </span>
-            <span className="text-[9px] font-mono text-muted-foreground uppercase border border-subtle-border px-1.5 py-0.2 rounded bg-black">
+            <span className="text-[9px] font-mono text-muted-foreground uppercase border border-border-subtle px-1.5 py-0.5 rounded-md bg-surface-00">
               {formatVerificationType(check.verificationType)}
             </span>
           </div>
@@ -129,7 +129,7 @@ export function VerificationRow({
       </div>
 
       {/* Right: Duration, Status Badge, and Arrow */}
-      <div className="flex items-center gap-2.5 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
         {check.durationMs !== undefined && (
           <span className="text-[10px] font-mono text-muted-foreground tabular-nums hidden sm:inline">
             {formatDuration(check.durationMs)}
@@ -138,12 +138,11 @@ export function VerificationRow({
         {getStatusBadge()}
         <ChevronRightIcon
           className={cn(
-            "h-3.5 w-3.5 transition-transform duration-150",
-            isSelected ? "text-accent translate-x-0.5" : "text-muted-foreground opacity-50"
+            "h-3.5 w-3.5 transition-transform duration-150 shrink-0",
+            isSelected ? "text-foreground translate-x-0.5" : "text-muted-foreground opacity-50"
           )}
         />
       </div>
     </div>
   );
 }
-

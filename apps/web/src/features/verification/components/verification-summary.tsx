@@ -21,17 +21,17 @@ export function VerificationSummaryBar({ summary }: VerificationSummaryBarProps)
   const failedPct = (summary.failed / total) * 100;
 
   return (
-    <div className="rounded-md border border-border bg-surface p-4 shadow-level-1 space-y-3">
+    <div className="rounded-md border border-border-default bg-surface p-4 sm:p-5 shadow-level-1 space-y-3.5">
       {/* Metrics Row */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           {/* Total */}
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <span className="text-[11px] uppercase tracking-wider">Total Checks:</span>
             <span className="text-foreground font-bold">{summary.total}</span>
           </div>
 
-          <span className="text-border hidden sm:inline">|</span>
+          <span className="text-border-subtle hidden sm:inline">|</span>
 
           {/* Passed */}
           <div className="flex items-center gap-1.5 text-emerald-400">
@@ -56,13 +56,13 @@ export function VerificationSummaryBar({ summary }: VerificationSummaryBarProps)
         </div>
 
         {/* Right side: Execution Duration & Timestamp */}
-        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <ActivityIcon className="h-3 w-3 text-accent" />
+        <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <ActivityIcon className="h-3.5 w-3.5 text-muted-foreground" />
             <span>Duration:</span>
             <span className="text-foreground font-semibold">{formatDuration(summary.durationMs)}</span>
           </div>
-          <span className="text-border">·</span>
+          <span className="text-border-subtle">·</span>
           <div>
             <span>Checked:</span>{" "}
             <span className="text-foreground font-semibold">
@@ -72,8 +72,8 @@ export function VerificationSummaryBar({ summary }: VerificationSummaryBarProps)
         </div>
       </div>
 
-      {/* Segmented Real Progress Bar */}
-      <div className="w-full h-1.5 bg-black rounded-full overflow-hidden flex border border-subtle-border">
+      {/* Segmented Real Progress Bar (Rounded-md standard) */}
+      <div className="w-full h-2 bg-surface-00 rounded-md overflow-hidden flex border border-border-default">
         {passedPct > 0 && (
           <div
             style={{ width: `${passedPct}%` }}
@@ -99,4 +99,3 @@ export function VerificationSummaryBar({ summary }: VerificationSummaryBarProps)
     </div>
   );
 }
-

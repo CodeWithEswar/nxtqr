@@ -38,8 +38,8 @@ export function VerificationDetails({
 
   if (!check) {
     return (
-      <div className="rounded-md border border-border bg-surface p-8 text-center text-muted-foreground shadow-level-1">
-        <TerminalIcon className="h-8 w-8 mx-auto mb-2 opacity-40 text-accent" />
+      <div className="rounded-md border border-border-default bg-surface p-8 text-center text-muted-foreground shadow-level-1">
+        <TerminalIcon className="h-8 w-8 mx-auto mb-2 opacity-40 text-muted-foreground" />
         <p className="text-xs font-mono">Select a verification check to view diagnostic telemetry.</p>
       </div>
     );
@@ -59,7 +59,7 @@ export function VerificationDetails({
   const getStatusIcon = () => {
     switch (check.status) {
       case "running":
-        return <SpinnerIcon className="h-4 w-4 text-accent animate-spin" />;
+        return <SpinnerIcon className="h-4 w-4 text-muted-foreground animate-spin" />;
       case "passed":
         return <CheckCircleIcon className="h-4 w-4 text-emerald-400" />;
       case "warning":
@@ -72,16 +72,16 @@ export function VerificationDetails({
   };
 
   return (
-    <div className="rounded-md border border-border bg-surface shadow-level-1 flex flex-col overflow-hidden">
+    <div className="rounded-md border border-border-default bg-surface shadow-level-1 flex flex-col overflow-hidden">
       {/* Detail Header */}
-      <div className="p-4 border-b border-subtle-border bg-elevated-surface space-y-3">
+      <div className="p-4 sm:p-5 border-b border-border-subtle bg-surface-02 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-accent uppercase tracking-wider">
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider font-semibold">
                 {check.category}
               </span>
-              <span className="text-border">·</span>
+              <span className="text-border-subtle">·</span>
               <span className="text-[10px] font-mono text-muted-foreground">
                 ID: {check.id}
               </span>
@@ -97,7 +97,7 @@ export function VerificationDetails({
             size="sm"
             onClick={() => onRecheck(check.id)}
             disabled={isRechecking || check.status === "running"}
-            className="h-7 text-xs font-mono gap-1.5 shrink-0"
+            className="h-8 text-xs font-mono gap-1.5 shrink-0 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 shadow-level-1 active:shadow-level-3"
             title="Re-run this verification check"
           >
             <RefreshIcon
@@ -113,14 +113,14 @@ export function VerificationDetails({
             {getStatusIcon()}
             <Badge
               variant="outline"
-              className={`text-[10px] uppercase font-bold ${
+              className={`text-[10px] uppercase font-bold rounded-md ${
                 check.status === "passed"
-                  ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/10"
+                  ? "border-border-strong text-emerald-400 bg-surface-01"
                   : check.status === "warning"
-                    ? "border-amber-500/40 text-amber-400 bg-amber-500/10"
+                    ? "border-border-strong text-amber-400 bg-surface-01"
                     : check.status === "failed"
-                      ? "border-red-500/40 text-red-400 bg-red-500/10"
-                      : "border-border text-muted-foreground"
+                      ? "border-border-strong text-red-400 bg-surface-01"
+                      : "border-border-default text-muted-foreground bg-surface-01"
               }`}
             >
               {formatStatusLabel(check.status)}
@@ -139,7 +139,7 @@ export function VerificationDetails({
       </div>
 
       {/* Detail Content Body */}
-      <div className="p-4 space-y-4 text-xs font-mono overflow-y-auto max-h-[calc(100vh-280px)] scrollbar-dense">
+      <div className="p-4 sm:p-5 space-y-4 text-xs font-mono overflow-y-auto max-h-[calc(100vh-280px)] scrollbar-dense">
         {/* Description */}
         <div className="space-y-1">
           <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
@@ -156,7 +156,7 @@ export function VerificationDetails({
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
               Diagnostic Telemetry Output
             </div>
-            <div className="p-2.5 rounded bg-black border border-border text-[11px] text-foreground leading-relaxed font-mono">
+            <div className="p-3 rounded-md bg-surface-00 border border-border-default text-[11px] text-foreground leading-relaxed font-mono">
               {check.diagnostics}
             </div>
           </div>
@@ -164,7 +164,7 @@ export function VerificationDetails({
 
         {/* Warning / Error Remediation guidance */}
         {(check.status === "warning" || check.status === "failed") && check.remediation && (
-          <div className="p-3 rounded border border-amber-500/30 bg-amber-500/5 space-y-1 text-xs">
+          <div className="p-3.5 rounded-md border border-amber-500/30 bg-surface-01 space-y-1.5 text-xs">
             <div className="flex items-center gap-1.5 text-amber-400 font-bold uppercase text-[10px]">
               <AlertTriangleIcon className="h-3.5 w-3.5" />
               Remediation Guidance
@@ -182,19 +182,19 @@ export function VerificationDetails({
               Live Reactively Subscribed Values
             </div>
             <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <div className="p-2 rounded bg-black border border-border">
+              <div className="p-2.5 rounded-md bg-surface-00 border border-border-default">
                 <span className="text-muted-foreground text-[10px] block">Canvas Tool:</span>
-                <span className="text-accent font-bold">{canvasTool}</span>
+                <span className="text-foreground font-bold">{canvasTool}</span>
               </div>
-              <div className="p-2 rounded bg-black border border-border">
+              <div className="p-2.5 rounded-md bg-surface-00 border border-border-default">
                 <span className="text-muted-foreground text-[10px] block">Canvas Zoom:</span>
                 <span className="text-foreground font-bold">{(canvasZoom * 100).toFixed(0)}%</span>
               </div>
-              <div className="p-2 rounded bg-black border border-border">
+              <div className="p-2.5 rounded-md bg-surface-00 border border-border-default">
                 <span className="text-muted-foreground text-[10px] block">Sidebar:</span>
                 <span className="text-foreground font-bold">{sidebarCollapsed ? "Collapsed" : "Expanded"}</span>
               </div>
-              <div className="p-2 rounded bg-black border border-border">
+              <div className="p-2.5 rounded-md bg-surface-00 border border-border-default">
                 <span className="text-muted-foreground text-[10px] block">Studio Elements:</span>
                 <span className="text-foreground font-bold">{studioNodesCount} nodes · {studioEdgesCount} edges</span>
               </div>
@@ -227,7 +227,7 @@ export function VerificationDetails({
                 )}
               </button>
             </div>
-            <pre className="p-3 rounded bg-black border border-border text-[11px] text-muted-foreground overflow-x-auto leading-relaxed">
+            <pre className="p-3.5 rounded-md bg-surface-00 border border-border-default text-[11px] text-muted-foreground overflow-x-auto leading-relaxed">
               {JSON.stringify(check.evidence, null, 2)}
             </pre>
           </div>
@@ -235,7 +235,7 @@ export function VerificationDetails({
 
         {/* Contract Dependencies */}
         {check.dependencies && check.dependencies.length > 0 && (
-          <div className="space-y-1 border-t border-subtle-border pt-3">
+          <div className="space-y-1.5 border-t border-border-subtle pt-3.5">
             <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold block">
               Audited Dependencies
             </span>
@@ -243,7 +243,7 @@ export function VerificationDetails({
               {check.dependencies.map((dep, idx) => (
                 <span
                   key={idx}
-                  className="px-2 py-0.5 rounded text-[10px] font-mono bg-black border border-border text-foreground"
+                  className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-surface-00 border border-border-default text-foreground"
                 >
                   {dep}
                 </span>
@@ -255,4 +255,3 @@ export function VerificationDetails({
     </div>
   );
 }
-

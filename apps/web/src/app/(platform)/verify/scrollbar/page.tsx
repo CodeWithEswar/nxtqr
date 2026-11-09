@@ -13,14 +13,13 @@ import {
   ScrollArea,
 } from "@nxtqr/ui";
 import {
-  ChevronLeftIcon,
-  CheckCircleIcon,
   LayersIcon,
   TerminalIcon,
   SettingsIcon,
 } from "@nxtqr/icons";
 import { AppLogo } from "@nxtqr/branding";
 import { scrollbarTokens } from "@nxtqr/design-system";
+import { VerificationHeader } from "@/features/verification";
 
 export default function ScrollbarReviewGatePage() {
   const [activeThumbState, setActiveThumbState] = useState<string>("active");
@@ -66,47 +65,29 @@ export default function ScrollbarReviewGatePage() {
 
   return (
     <main
-      className="min-h-screen bg-background text-foreground flex flex-col p-6 max-w-5xl mx-auto space-y-6"
+      className="min-h-screen bg-background text-foreground flex flex-col p-4 sm:p-6 lg:p-8 xl:p-10 w-full max-w-[2200px] mx-auto space-y-6"
     >
-      {/* Header bar */}
-      <header className="flex items-center justify-between border-b border-border pb-4">
-        <div className="flex items-center gap-3">
-          <Link href="/verify">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 w-8 p-0"
-              aria-label="Back to Diagnostics"
-            >
-              <ChevronLeftIcon className="h-4 w-4" />
-            </Button>
-          </Link>
-          <AppLogo variant="symbol" size={28} />
-          <div>
-            <h1 className="text-sm font-semibold tracking-tight text-foreground">
-              NXTQR — Precision Rail Custom Scrollbar System Review Gate
-            </h1>
-            <p className="text-[11px] text-muted-foreground font-mono">
-              Pure Monochrome · Solid Neumorphic Inset · Tactile Drag Feedback · Radix & Native Parity
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Badge
+      {/* Verification Header */}
+      <VerificationHeader
+        title="NXTQR — Precision Rail Custom Scrollbar System Review Gate"
+        subtitle="Pure Monochrome · Solid Neumorphic Inset · Tactile Drag Feedback · Radix & Native Parity"
+        version="System Verified"
+        logo={<AppLogo variant="symbol" size={28} />}
+        backHref="/verify"
+        backLabel="Back to Diagnostics"
+        showReviewGates={true}
+      >
+        <Link href="/verify/brand">
+          <Button
             variant="outline"
-            className="font-mono text-[10px] text-foreground border-border"
+            size="sm"
+            className="h-9 px-3 font-mono text-xs gap-1.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-foreground transition-all shadow-level-1"
           >
-            <CheckCircleIcon className="h-3 w-3 mr-1 inline" />
-            System Verified
-          </Badge>
-          <Link href="/verify/brand">
-            <Button variant="outline" size="sm" className="font-mono text-xs">
-              Brand Review →
-            </Button>
-          </Link>
-        </div>
-      </header>
+            <span>Brand Review</span>
+            <span aria-hidden="true">→</span>
+          </Button>
+        </Link>
+      </VerificationHeader>
 
       {/* Interactive Monochrome Controller */}
       <Card>
