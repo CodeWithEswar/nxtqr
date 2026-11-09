@@ -71,8 +71,8 @@ export function LoginCard({ nextTarget = "/workspace" }: LoginCardProps) {
           />
         </CardContent>
 
-        <CardFooter className="pt-3 pb-6 px-6 sm:px-8 border-t border-border-subtle flex flex-col items-center justify-center text-center gap-1.5">
-          <p className="font-sans text-[11px] text-text-muted leading-relaxed">
+        <CardFooter className="pt-3 pb-6 px-4 sm:px-6 border-t border-border-subtle flex flex-col items-center justify-center text-center gap-2 select-none">
+          <p className="font-sans text-[11px] text-text-muted leading-relaxed max-w-[320px]">
             By continuing, you agree to the{" "}
             <Link
               href="/terms"
@@ -89,15 +89,20 @@ export function LoginCard({ nextTarget = "/workspace" }: LoginCardProps) {
             </Link>
             .
           </p>
-          <div className="flex items-center gap-2 text-[10px] text-text-muted font-mono pt-1">
+          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-[10px] text-text-muted font-mono">
             <Link
               href="/docs"
               className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
             >
               Documentation
             </Link>
-            <span className="text-text-disabled">·</span>
-            <span>Enterprise Grade · Pure Monochrome</span>
+            <span className="text-text-disabled" aria-hidden="true">·</span>
+            <Link
+              href="/verify"
+              className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
+            >
+              Diagnostics
+            </Link>
           </div>
         </CardFooter>
       </Card>
