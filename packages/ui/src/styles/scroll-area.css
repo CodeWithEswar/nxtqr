@@ -1,5 +1,6 @@
 /**
- * NXTQR Radix ScrollArea — Premium Precision Rail
+ * NXTQR Radix ScrollArea — Precision Rail
+ * Solid Neumorphism · Pure Black Monochrome Foundation
  * Classes: .nxtqr-scroll-track (ScrollArea.Scrollbar), .nxtqr-scroll-thumb (ScrollArea.Thumb)
  * No arrows (Radix has none; native fallback arrows are hidden too).
  */
@@ -7,10 +8,10 @@
 /* ───────── Tokens (override anywhere; fallbacks keep it working standalone) ───────── */
 :root {
   --nxtqr-rail-size: 12px;            /* scrollbar hit area */
-  --nxtqr-rail-pad: 4px;              /* idle inset -> thin thumb */
-  --nxtqr-rail-pad-active: 2px;       /* hover/drag inset -> fatter thumb */
+  --nxtqr-rail-pad: 3px;              /* idle inset -> thin thumb */
+  --nxtqr-rail-pad-active: 2px;       /* hover/drag inset -> tactile thumb */
   --nxtqr-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --nxtqr-accent-rgb: 99, 102, 241;   /* fallback accent (indigo) */
+  --nxtqr-accent-rgb: 255, 255, 255;   /* pure monochrome white */
 }
 
 /* ───────── Track (ScrollArea.Scrollbar) ───────── */
@@ -19,15 +20,15 @@
   user-select: none;
   touch-action: none;
   box-sizing: border-box;
-  border-radius: 999px;
+  border-radius: var(--scrollbar-radius, 0.375rem);
   border: 1px solid transparent;
   background-color: transparent;
   padding: var(--nxtqr-rail-pad);
   transition:
-    background-color 220ms var(--nxtqr-ease),
-    border-color 220ms var(--nxtqr-ease),
-    box-shadow 220ms var(--nxtqr-ease),
-    padding 260ms var(--nxtqr-ease);
+    background-color 150ms var(--nxtqr-ease),
+    border-color 150ms var(--nxtqr-ease),
+    box-shadow 150ms var(--nxtqr-ease),
+    padding 180ms var(--nxtqr-ease);
 }
 
 .nxtqr-scroll-track[data-orientation="vertical"] {
@@ -40,47 +41,36 @@
   flex-direction: row;
 }
 
-/* Rail only “appears” while interacting — the thumb alone is visible at rest */
+/* Rail only appears while interacting — the thumb alone is visible at rest */
 .nxtqr-scroll-track:hover,
 .nxtqr-scroll-track:has(.nxtqr-scroll-thumb:active) {
   padding: var(--nxtqr-rail-pad-active);
-  background-color: var(--scrollbar-track, rgba(255, 255, 255, 0.035));
-  border-color: var(--scrollbar-track-border, rgba(255, 255, 255, 0.05));
+  background-color: var(--scrollbar-track, #080808);
+  border-color: var(--scrollbar-track-border, #141414);
   box-shadow:
-    inset 0 0 6px 0 rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(6px) saturate(140%);
-  -webkit-backdrop-filter: blur(6px) saturate(140%);
-}
-
-.light .nxtqr-scroll-track:hover,
-.light .nxtqr-scroll-track:has(.nxtqr-scroll-thumb:active) {
-  background-color: var(--scrollbar-track, rgba(0, 0, 0, 0.035));
-  border-color: var(--scrollbar-track-border, rgba(0, 0, 0, 0.06));
-  box-shadow:
-    inset 0 0 5px 0 rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.5);
+    inset 0 0 3px 0 rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
 /* Fade + glide in/out when Radix toggles visibility (type="hover" | "scroll") */
 .nxtqr-scroll-track[data-state="visible"] {
-  animation: nxtqr-rail-in 280ms var(--nxtqr-ease) both;
+  animation: nxtqr-rail-in 220ms var(--nxtqr-ease) both;
 }
 .nxtqr-scroll-track[data-state="hidden"] {
-  animation: nxtqr-rail-out 220ms ease-in both;
+  animation: nxtqr-rail-out 180ms ease-in both;
 }
 
 .nxtqr-scroll-track[data-orientation="vertical"][data-state="visible"] {
-  --nxtqr-from: translateX(6px);
+  --nxtqr-from: translateX(4px);
 }
 .nxtqr-scroll-track[data-orientation="horizontal"][data-state="visible"] {
-  --nxtqr-from: translateY(6px);
+  --nxtqr-from: translateY(4px);
 }
 .nxtqr-scroll-track[data-orientation="vertical"][data-state="hidden"] {
-  --nxtqr-to: translateX(6px);
+  --nxtqr-to: translateX(4px);
 }
 .nxtqr-scroll-track[data-orientation="horizontal"][data-state="hidden"] {
-  --nxtqr-to: translateY(6px);
+  --nxtqr-to: translateY(4px);
 }
 
 @keyframes nxtqr-rail-in {
@@ -96,23 +86,22 @@
 .nxtqr-scroll-thumb {
   position: relative;
   flex: 1;
-  border-radius: 999px;
-  border: 1px solid var(--scrollbar-border, rgba(255, 255, 255, 0.14));
-  background-color: var(--scrollbar-thumb, rgba(255, 255, 255, 0.28));
+  border-radius: var(--scrollbar-radius, 0.375rem);
+  border: 1px solid var(--scrollbar-border, #1f1f1f);
+  background-color: var(--scrollbar-thumb, #303030);
   background-image: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(255, 255, 255, 0.04) 100%
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.01) 100%
   );
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
-    0 1px 3px rgba(0, 0, 0, 0.45);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.5);
   transition:
-    background-color 200ms var(--nxtqr-ease),
-    border-color 200ms var(--nxtqr-ease),
-    box-shadow 260ms var(--nxtqr-ease),
-    transform 200ms var(--nxtqr-ease),
-    filter 200ms ease;
+    background-color 150ms var(--nxtqr-ease),
+    border-color 150ms var(--nxtqr-ease),
+    box-shadow 200ms var(--nxtqr-ease),
+    transform 150ms var(--nxtqr-ease);
   will-change: transform;
 }
 
@@ -120,20 +109,19 @@
 .nxtqr-scroll-track[data-orientation="horizontal"] .nxtqr-scroll-thumb {
   background-image: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(255, 255, 255, 0.04) 100%
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.01) 100%
   );
 }
 
-/* Subtle accent glow + grip on hover */
+/* Subtle solid neumorphic highlight + grip on hover */
 .nxtqr-scroll-thumb:hover,
 .nxtqr-scroll-track:hover .nxtqr-scroll-thumb {
-  background-color: var(--scrollbar-thumb-hover, rgba(255, 255, 255, 0.42));
-  border-color: var(--scrollbar-highlight, rgba(var(--nxtqr-accent-rgb), 0.55));
+  background-color: var(--scrollbar-thumb-hover, #505050);
+  border-color: var(--scrollbar-highlight, #626262);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.25),
-    0 0 0 1px rgba(var(--nxtqr-accent-rgb), 0.15),
-    0 0 14px -2px rgba(var(--nxtqr-accent-rgb), 0.45);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 /* Engraved grip marks (centered, appear on hover) */
@@ -142,77 +130,40 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.55);
+  border-radius: var(--scrollbar-radius, 0.375rem);
+  background: rgba(255, 255, 255, 0.4);
   opacity: 0;
   transform: scale(0.6);
-  transition: opacity 200ms ease, transform 260ms var(--nxtqr-ease);
+  transition: opacity 150ms ease, transform 200ms var(--nxtqr-ease);
   pointer-events: none;
 }
 .nxtqr-scroll-track[data-orientation="vertical"] .nxtqr-scroll-thumb::after {
   width: 2px;
-  height: 14px;
+  height: 12px;
 }
 .nxtqr-scroll-track[data-orientation="horizontal"] .nxtqr-scroll-thumb::after {
-  width: 14px;
+  width: 12px;
   height: 2px;
 }
 .nxtqr-scroll-track:hover .nxtqr-scroll-thumb::after {
-  opacity: 0.55;
+  opacity: 0.5;
   transform: scale(1);
 }
 
-/* Dragging */
+/* Dragging — Level 3 Pressed Tactile Feedback */
 .nxtqr-scroll-thumb:active {
-  background-color: var(--scrollbar-thumb-active, rgba(255, 255, 255, 0.55));
-  border-color: var(--scrollbar-accent, rgba(var(--nxtqr-accent-rgb), 0.9));
+  background-color: var(--scrollbar-thumb-active, #666666);
+  border-color: var(--scrollbar-accent, #ffffff);
   box-shadow:
-    inset 0 1px 2px 0 rgba(0, 0, 0, 0.55),
-    0 0 0 3px rgba(var(--nxtqr-accent-rgb), 0.18),
-    0 0 18px 0 rgba(var(--nxtqr-accent-rgb), 0.55);
-  filter: brightness(1.08);
+    inset 0 1px 2px 0 rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
-/* Keyboard focus (when the viewport is focused, rail gets a clear ring) */
+/* Keyboard focus (when the viewport is focused, rail gets a visible ring conforming to WCAG 2.4.7) */
 .nxtqr-scroll-track:focus-visible,
 .nxtqr-scroll-thumb:focus-visible {
-  outline: 2px solid rgba(var(--nxtqr-accent-rgb), 0.8);
-  outline-offset: 2px;
-}
-
-/* ───────── Light theme ───────── */
-.light .nxtqr-scroll-thumb {
-  border-color: var(--scrollbar-border, rgba(0, 0, 0, 0.12));
-  background-color: var(--scrollbar-thumb, rgba(0, 0, 0, 0.26));
-  background-image: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-    0 1px 2px rgba(0, 0, 0, 0.12);
-}
-
-.light .nxtqr-scroll-thumb:hover,
-.light .nxtqr-scroll-track:hover .nxtqr-scroll-thumb {
-  background-color: var(--scrollbar-thumb-hover, rgba(0, 0, 0, 0.4));
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-    0 0 0 1px rgba(var(--nxtqr-accent-rgb), 0.12),
-    0 0 12px -2px rgba(var(--nxtqr-accent-rgb), 0.35);
-}
-
-.light .nxtqr-scroll-thumb::after {
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.light .nxtqr-scroll-thumb:active {
-  background-color: var(--scrollbar-thumb-active, rgba(0, 0, 0, 0.55));
-  box-shadow:
-    inset 0 1px 2px 0 rgba(0, 0, 0, 0.25),
-    0 0 0 3px rgba(var(--nxtqr-accent-rgb), 0.15),
-    0 0 14px 0 rgba(var(--nxtqr-accent-rgb), 0.4);
+  outline: 1px solid #ffffff;
+  outline-offset: 1px;
 }
 
 /* ───────── Corner where both rails meet ───────── */
@@ -223,7 +174,7 @@
 /* ───────── Native fallback (non-Radix scroll containers) ───────── */
 .nxtqr-native-scroll {
   scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb, rgba(255, 255, 255, 0.28)) transparent;
+  scrollbar-color: var(--scrollbar-thumb, #303030) transparent;
 }
 .nxtqr-native-scroll::-webkit-scrollbar {
   width: 10px;
@@ -234,14 +185,14 @@
   background: transparent;
 }
 .nxtqr-native-scroll::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb, rgba(255, 255, 255, 0.28));
-  border: 3px solid transparent;
+  background-color: var(--scrollbar-thumb, #303030);
+  border: 2px solid transparent;
   background-clip: padding-box;
-  border-radius: 999px;
-  transition: background-color 200ms ease;
+  border-radius: var(--scrollbar-radius, 0.375rem);
+  transition: background-color 150ms ease;
 }
 .nxtqr-native-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: var(--scrollbar-thumb-hover, rgba(255, 255, 255, 0.45));
+  background-color: var(--scrollbar-thumb-hover, #505050);
 }
 /* Hide arrow buttons */
 .nxtqr-native-scroll::-webkit-scrollbar-button {
