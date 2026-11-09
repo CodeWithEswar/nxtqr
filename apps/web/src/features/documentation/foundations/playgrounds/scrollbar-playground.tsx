@@ -43,7 +43,7 @@ export function ScrollbarPlayground() {
             className={cn(
               "px-2.5 py-1 rounded-md text-xs font-mono border transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap",
               highlightTrack
-                ? "border-foreground bg-white text-black font-semibold"
+                ? "border-border-strong bg-white text-black font-semibold shadow-level-1"
                 : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"
             )}
           >
@@ -66,8 +66,8 @@ export function ScrollbarPlayground() {
             className={cn(
               "p-3 rounded-md border text-left transition-all",
               activeVariant === v.id
-                ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-1"
-                : "border-border bg-elevated-surface hover:border-muted-border"
+                ? "border-border-strong bg-surface-04 ring-1 ring-border-default shadow-level-1"
+                : "border-border bg-elevated-surface hover:border-border-hover"
             )}
           >
             <div className="flex items-center justify-between mb-1">
@@ -99,7 +99,7 @@ export function ScrollbarPlayground() {
           <div
             className={cn(
               "h-64 border border-border bg-elevated-surface rounded-md overflow-y-scroll overflow-x-auto p-4 transition-all",
-              highlightTrack && "border-foreground"
+              highlightTrack && "border-border-strong ring-1 ring-border-default"
             )}
             style={{
               scrollbarWidth: activeVariant === "dense" || activeVariant === "compact" ? "thin" : "auto",
@@ -114,7 +114,7 @@ export function ScrollbarPlayground() {
               {Array.from({ length: itemCount }).map((_, i) => (
                 <div
                   key={i}
-                  className="p-2 rounded border border-border/60 bg-surface flex items-center justify-between font-mono text-xs text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
+                  className="p-2 rounded border border-border/60 bg-surface flex items-center justify-between font-mono text-xs text-muted-foreground hover:text-foreground hover:border-border-hover transition-colors"
                 >
                   <span className="text-foreground font-semibold">LOG_PACKET_0x{i.toString(16).padStart(4, "0")}</span>
                   <span>TIME: +{(i * 12.4).toFixed(1)}ms</span>

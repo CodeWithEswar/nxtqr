@@ -131,7 +131,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
                   className={cn(
                     "px-2 h-6 rounded-md text-[11px] font-mono capitalize transition-all",
                     isActive
-                      ? "bg-surface-04 border border-foreground text-foreground font-semibold shadow-level-3"
+                      ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
                       : "text-muted-foreground hover:text-foreground border border-transparent"
                   )}
                   title={`Switch to ${type} grid`}
@@ -148,7 +148,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
             className={cn(
               "px-2.5 h-7 rounded-md border text-xs font-mono transition-all flex items-center gap-1.5",
               snapToGrid
-                ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-3"
+                ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
                 : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface shadow-level-1"
             )}
             title={`Toggle 20px grid snapping (${snapToGrid ? "ON" : "OFF"})`}
@@ -170,7 +170,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
             className={cn(
               "px-2.5 h-7 rounded-md border text-xs font-mono transition-all flex items-center gap-1.5",
               showMinimap
-                ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-3"
+                ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
                 : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface shadow-level-1"
             )}
             title={`Toggle canvas minimap navigator (${showMinimap ? "ON" : "OFF"})`}
@@ -193,7 +193,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
           <button
             onClick={() => handleAutoLayout("RIGHT")}
             disabled={isLayingOut}
-            className="px-2.5 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:border-foreground hover:bg-surface-04 flex items-center gap-1.5 text-xs font-mono transition-colors shadow-level-1 active:shadow-level-3 disabled:opacity-40"
+            className="px-2.5 h-7 rounded-md border border-border bg-elevated-surface text-foreground hover:border-border-hover hover:bg-surface-04 flex items-center gap-1.5 text-xs font-mono transition-colors shadow-level-1 active:shadow-level-3 disabled:opacity-40"
             title="Automated Hierarchical Layout (ELK.js)"
           >
             {isLayingOut ? (
@@ -317,7 +317,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
                       className={cn(
                         "py-1 rounded text-xs font-mono capitalize transition-all text-center",
                         isActive
-                          ? "bg-surface-04 border border-foreground text-foreground font-semibold shadow-level-3"
+                          ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
                           : "text-muted-foreground hover:text-foreground border border-transparent"
                       )}
                     >
@@ -339,7 +339,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
                   className={cn(
                     "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md border text-xs font-mono transition-all",
                     snapToGrid
-                      ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-3"
+                      ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
                       : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface shadow-level-1"
                   )}
                 >
@@ -353,7 +353,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
                   className={cn(
                     "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md border text-xs font-mono transition-all",
                     showMinimap
-                      ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-3"
+                      ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
                       : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface shadow-level-1"
                   )}
                 >
@@ -373,7 +373,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
               <button
                 onClick={() => handleAutoLayout("RIGHT")}
                 disabled={isLayingOut}
-                className="w-full h-8 px-2.5 rounded-md border border-border bg-elevated-surface text-foreground hover:border-foreground hover:bg-surface-04 flex items-center justify-center gap-2 text-xs font-mono transition-colors shadow-level-1 disabled:opacity-50"
+                className="w-full h-8 px-2.5 rounded-md border border-border bg-elevated-surface text-foreground hover:border-border-hover hover:bg-surface-04 flex items-center justify-center gap-2 text-xs font-mono transition-colors shadow-level-1 disabled:opacity-50"
               >
                 {isLayingOut ? (
                   <SpinnerIcon className="h-3.5 w-3.5 animate-spin text-foreground" />

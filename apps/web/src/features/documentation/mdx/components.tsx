@@ -192,7 +192,7 @@ export function ColorPreview({
       {name && <span className="font-sans font-medium text-foreground mr-1">{name}</span>}
       {showCode && <span className="text-muted-foreground">{color}</span>}
       <span
-        className="relative h-2.5 w-2.5 rounded-[2px] border border-white/25 shadow-[0_0_0_1px_rgba(0,0,0,0.5)] shrink-0 inline-block overflow-hidden select-none group-hover:scale-110 transition-transform"
+        className="relative h-2.5 w-2.5 rounded-[2px] border border-border-strong shadow-[0_0_0_1px_rgba(0,0,0,0.5)] shrink-0 inline-block overflow-hidden select-none group-hover:scale-110 transition-transform"
         aria-hidden="true"
         title={`Color preview: ${color}`}
       >
@@ -303,7 +303,7 @@ export const mdxComponents = {
           >
             <span>{children}</span>
             <span
-              className="relative h-2.5 w-2.5 rounded-[2px] border border-white/25 shadow-[0_0_0_1px_rgba(0,0,0,0.5)] shrink-0 inline-block overflow-hidden select-none group-hover:scale-110 transition-transform"
+              className="relative h-2.5 w-2.5 rounded-[2px] border border-border-strong shadow-[0_0_0_1px_rgba(0,0,0,0.5)] shrink-0 inline-block overflow-hidden select-none group-hover:scale-110 transition-transform"
               aria-hidden="true"
               title={`Color preview: ${colorValue}`}
             >
@@ -409,7 +409,7 @@ export const mdxComponents = {
         <Link
           href={href}
           className={cn(
-            "text-accent underline underline-offset-4 hover:opacity-80 transition-opacity font-medium",
+            "text-foreground font-medium underline underline-offset-4 decoration-border-strong hover:decoration-foreground transition-colors",
             className,
           )}
           {...props}
@@ -422,7 +422,7 @@ export const mdxComponents = {
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "text-accent underline underline-offset-4 hover:opacity-80 transition-opacity font-medium",
+          "text-foreground font-medium underline underline-offset-4 decoration-border-strong hover:decoration-foreground transition-colors",
           className,
         )}
         {...props}

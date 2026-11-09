@@ -116,7 +116,7 @@ export function NodeInspector({ className }: { className?: string }) {
               type="text"
               value={selectedNode.label ?? ""}
               onChange={(e) => updateNodeData(selectedNode.id, { label: e.target.value })}
-              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-sans text-xs focus:outline-none focus:border-foreground"
+              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-sans text-xs focus:outline-none focus:border-border-strong focus:ring-1 focus:ring-border-strong"
             />
           </div>
 
@@ -126,7 +126,7 @@ export function NodeInspector({ className }: { className?: string }) {
               rows={2}
               value={selectedNode.description ?? ""}
               onChange={(e) => updateNodeData(selectedNode.id, { description: e.target.value })}
-              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-sans text-xs focus:outline-none focus:border-foreground resize-none"
+              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-sans text-xs focus:outline-none focus:border-border-strong focus:ring-1 focus:ring-border-strong resize-none"
             />
           </div>
 
@@ -172,7 +172,7 @@ export function NodeInspector({ className }: { className?: string }) {
                       onClick={() => updateNodeData(selectedNode.id, { [key]: !val })}
                       className={cn(
                         "w-9 h-4 rounded-full p-0.5 transition-colors border",
-                        val ? "bg-white border-white" : "bg-black border-border"
+                        val ? "bg-foreground border-border-strong" : "bg-black border-border"
                       )}
                     >
                       <div
@@ -193,7 +193,7 @@ export function NodeInspector({ className }: { className?: string }) {
                       const nextVal = isNumber ? Number(e.target.value) : e.target.value;
                       updateNodeData(selectedNode.id, { [key]: nextVal });
                     }}
-                    className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-mono text-xs focus:outline-none focus:border-foreground"
+                    className="w-full px-2.5 py-1.5 rounded-md border border-border bg-black text-foreground font-mono text-xs focus:outline-none focus:border-border-strong focus:ring-1 focus:ring-border-strong"
                   />
                 )}
               </div>

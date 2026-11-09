@@ -101,7 +101,7 @@ export function SpacingPlayground() {
                 className={cn(
                   "p-3 rounded-md border text-left transition-all duration-140 outline-none focus-visible:ring-1 focus-visible:ring-ring",
                   isSelected
-                    ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-1"
+                    ? "border-border-strong bg-surface-04 ring-1 ring-border-default shadow-level-1"
                     : "border-border bg-black/40 hover:bg-secondary-surface/60",
                 )}
               >

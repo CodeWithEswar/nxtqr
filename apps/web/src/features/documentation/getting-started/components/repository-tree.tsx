@@ -332,7 +332,7 @@ export function RepositoryTree() {
           className={cn(
             "p-1.5 rounded-md text-xs font-mono flex items-center justify-between gap-2 cursor-pointer transition-all",
             isSelected
-              ? "border border-foreground bg-surface-04 text-foreground ring-1 ring-border-strong font-semibold shadow-level-1"
+              ? "border border-border-strong bg-surface-04 text-foreground ring-1 ring-border-default font-semibold shadow-level-1"
               : "border border-transparent hover:bg-elevated-surface text-muted-foreground hover:text-foreground"
           )}
         >
@@ -420,7 +420,7 @@ export function RepositoryTree() {
               placeholder="Search packages, folders, or files..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs font-mono rounded-md border border-border bg-black text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+              className="w-full pl-8 pr-3 py-1.5 text-xs font-mono rounded-md border border-border bg-black text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border-strong focus:ring-1 focus:ring-border-strong"
             />
           </div>
 

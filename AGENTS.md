@@ -45,13 +45,21 @@ Strictly respect monorepo package boundaries:
      - Surface 02: `#0D0D0D`
      - Surface 03: `#141414`
      - Surface 04: `#1A1A1A`
-     - Border subtle: `#202020`
-     - Border default: `#292929`
-     - Border strong: `#404040`
+     - Border subtle (`--border-subtle`): `#1A1A1A` (Minimal separation)
+     - Border inset (`--border-inset`): `#202020` (Inset neumorphic surfaces)
+     - Border default (`--border-default`): `#262626` (Standard component boundaries)
+     - Border hover (`--border-hover`): `#333333` (Hover feedback)
+     - Border strong (`--border-strong`): `#404040` (Emphasized boundaries)
      - Text secondary: `#B5B5B5`
      - Text muted: `#858585`
      - Text disabled: `#666666`
    - **Never** introduce dark blue, purple, or gradient AI dashboard backgrounds.
+   - **STRICT BORDER RULE — ZERO WHITE BORDERS**:
+     - **Never use white, near-white, or bright-gray borders (`#FFFFFF`, `#F5F5F5`, `#E5E5E5`, `border-white`, `border-foreground`, `outline-white`, `ring-white`) for component outlines, including hover, active, selected, and focus states.**
+     - White is strictly reserved for typography and intentional solid button fills—NEVER for component borders.
+     - For active, selected, and hover states, use slightly brighter solid surfaces (`bg-surface-04`), dark-gray borders (`#333333` / `#404040`), bold foreground typography, and pressed neumorphic depth (`shadow-level-3`).
+     - For graph nodes, use dark neutral boundaries (`#333333` / `#404040`) and non-color selection cues.
+     - For keyboard focus indicators, use dark-gray focus rings (`#404040` / `#555555`) or surface contrast/inset indicators.
 2. **Solid Neumorphism (Restrained Depth)**:
    - **Level 0 — Base**: `#000000` (main canvas and full-page background).
    - **Level 1 — Raised**: Solid surface with subtle border (`#202020`) and restrained directional shadow (`--shadow-level-1`). Used for buttons, toolbars, compact cards.
@@ -78,6 +86,7 @@ Strictly respect monorepo package boundaries:
 
 ### Prohibited Design Patterns:
 
+- **No** white or near-white component borders, outlines, or rings (`#FFFFFF`, `#F5F5F5`, `#E5E5E5`, `border-white`, `border-foreground`, `outline-white`, `ring-white`). All boundaries must use approved dark-gray tokens (`#1A1A1A` to `#404040`).
 - **No** random decorative gradients or glassmorphism blurs.
 - **No** decorative badges (badges permitted _only_ for meaningful status, version, severity, permission, or counts).
 - **No** duplicate action buttons (e.g. repeated "Create Project" or redundant Save/Refresh in the same view).

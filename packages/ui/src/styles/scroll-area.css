@@ -11,7 +11,7 @@
   --nxtqr-rail-pad: 3px;              /* idle inset -> thin thumb */
   --nxtqr-rail-pad-active: 2px;       /* hover/drag inset -> tactile thumb */
   --nxtqr-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --nxtqr-accent-rgb: 255, 255, 255;   /* pure monochrome white */
+  --nxtqr-accent-rgb: 64, 64, 64;     /* dark neutral border strong (#404040) */
 }
 
 /* ───────── Track (ScrollArea.Scrollbar) ───────── */
@@ -153,17 +153,18 @@
 /* Dragging — Level 3 Pressed Tactile Feedback */
 .nxtqr-scroll-thumb:active {
   background-color: var(--scrollbar-thumb-active, #666666);
-  border-color: var(--scrollbar-accent, #ffffff);
+  border-color: var(--border-strong, #404040);
   box-shadow:
     inset 0 1px 2px 0 rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(255, 255, 255, 0.3);
+    0 0 0 1px rgba(64, 64, 64, 0.4);
 }
 
 /* Keyboard focus (when the viewport is focused, rail gets a visible ring conforming to WCAG 2.4.7) */
 .nxtqr-scroll-track:focus-visible,
 .nxtqr-scroll-thumb:focus-visible {
-  outline: 1px solid #ffffff;
+  outline: 1px solid #404040;
   outline-offset: 1px;
+  box-shadow: 0 0 0 1px #000000;
 }
 
 /* ───────── Corner where both rails meet ───────── */

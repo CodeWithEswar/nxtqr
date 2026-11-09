@@ -41,7 +41,7 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
   return (
     <aside
       className={cn(
-        "w-60 shrink-0 h-full overflow-y-auto scrollbar-compact border-r border-white/10 bg-black py-5 px-3.5 flex flex-col gap-6 select-none",
+        "w-60 shrink-0 h-full overflow-y-auto scrollbar-compact border-r border-subtle-border bg-black py-5 px-3.5 flex flex-col gap-6 select-none",
         className,
       )}
     >
@@ -49,13 +49,13 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
       <button
         type="button"
         onClick={onSearchClick}
-        className="group flex h-9 w-full items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-3 font-sans text-xs text-white/45 outline-none transition-colors duration-200 hover:border-white/20 hover:bg-white/[0.06] hover:text-white/80 focus-visible:ring-1 focus-visible:ring-white/40"
+        className="group flex h-9 w-full items-center justify-between rounded-md border border-border bg-surface px-3 font-sans text-xs text-muted-foreground outline-none transition-colors duration-140 hover:border-border-hover hover:bg-secondary-surface hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring shadow-level-1 active:shadow-level-3"
       >
         <span className="flex min-w-0 items-center gap-2">
-          <SearchIcon className="h-3.5 w-3.5 shrink-0 transition-colors duration-200 group-hover:text-white" />
+          <SearchIcon className="h-3.5 w-3.5 shrink-0 transition-colors duration-140 group-hover:text-foreground" />
           <span className="truncate">Search docs</span>
         </span>
-        <kbd className="shrink-0 rounded border border-white/10 bg-black px-1.5 py-0.5 font-sans text-[10px] leading-none text-white/40">
+        <kbd className="shrink-0 rounded-md border border-subtle-border bg-black px-1.5 py-0.5 font-sans text-[10px] leading-none text-muted-foreground">
           ⌘K
         </kbd>
       </button>
@@ -76,27 +76,27 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
                 onClick={() => toggleGroup(group.category)}
                 aria-expanded={!isCollapsed}
                 className={cn(
-                  "group flex h-7 w-full items-center justify-between rounded-md px-2 text-[12px] font-medium tracking-tight outline-none transition-colors duration-200 focus-visible:ring-1 focus-visible:ring-white/40",
+                  "group flex h-7 w-full items-center justify-between rounded-md px-2 text-[12px] font-medium tracking-tight outline-none transition-colors duration-140 focus-visible:ring-1 focus-visible:ring-ring",
                   hasActive
-                    ? "text-white"
-                    : "text-white/60 hover:text-white",
+                    ? "text-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "size-1 shrink-0 rounded-full transition-all duration-300",
+                      "size-1 shrink-0 rounded-full transition-all duration-200",
                       hasActive
-                        ? "bg-white shadow-[0_0_8px_rgba(255,255,255,0.6)]"
-                        : "bg-white/20 group-hover:bg-white/50",
+                        ? "bg-foreground"
+                        : "bg-neutral-600 group-hover:bg-neutral-400",
                     )}
                   />
                   <span className="truncate">{group.category}</span>
                 </span>
 
                 <span className="flex items-center gap-1.5">
-                  <span className="text-[10px] tabular-nums text-white/30">
+                  <span className="text-[10px] tabular-nums text-muted-foreground">
                     {group.items.length}
                   </span>
                   <motion.span
@@ -104,7 +104,7 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
                     transition={{ duration: reduceMotion ? 0 : 0.2, ease: EASE }}
                     className="flex"
                   >
-                    <ChevronDownIcon className="h-3 w-3 text-white/40 transition-colors duration-200 group-hover:text-white/80" />
+                    <ChevronDownIcon className="h-3 w-3 text-muted-foreground transition-colors duration-140 group-hover:text-foreground" />
                   </motion.span>
                 </span>
               </button>
@@ -127,7 +127,7 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
                       {/* Rail */}
                       <span
                         aria-hidden="true"
-                        className="pointer-events-none absolute inset-y-0 left-0 w-px bg-white/10"
+                        className="pointer-events-none absolute inset-y-0 left-0 w-px bg-subtle-border"
                       />
 
                       {group.items.map((item) => {
@@ -138,19 +138,19 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
                           <li key={item.slug} className="relative">
                             {isActive && (
                               <>
-                                {/* Sliding background */}
+                                {/* Sliding solid neumorphic background */}
                                 <motion.span
                                   layoutId="docs-sidebar-active-bg"
                                   aria-hidden="true"
                                   transition={indicatorTransition}
-                                  className="absolute inset-0 rounded-r-md bg-gradient-to-r from-white/[0.08] to-white/[0.02]"
+                                  className="absolute inset-0 rounded-r-md bg-surface-04 border-r border-y border-border-strong shadow-level-3"
                                 />
                                 {/* Sliding indicator bar on the rail */}
                                 <motion.span
                                   layoutId="docs-sidebar-active-bar"
                                   aria-hidden="true"
                                   transition={indicatorTransition}
-                                  className="absolute inset-y-1 left-0 w-[2px] rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.55)]"
+                                  className="absolute inset-y-1 left-0 w-[2px] rounded-full bg-foreground"
                                 />
                               </>
                             )}
@@ -159,17 +159,17 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
                               href={itemHref}
                               aria-current={isActive ? "page" : undefined}
                               className={cn(
-                                "group/item relative flex h-8 items-center justify-between gap-2 rounded-r-md pl-4 pr-2.5 text-[12.5px] outline-none transition-colors duration-200 focus-visible:ring-1 focus-visible:ring-white/40",
+                                "group/item relative flex h-8 items-center justify-between gap-2 rounded-r-md pl-4 pr-2.5 text-[12.5px] outline-none transition-colors duration-140 focus-visible:ring-1 focus-visible:ring-ring",
                                 isActive
-                                  ? "font-medium text-white"
-                                  : "text-white/45 hover:bg-white/[0.04] hover:text-white/90",
+                                  ? "font-semibold text-foreground"
+                                  : "text-muted-foreground hover:bg-secondary-surface hover:text-foreground",
                               )}
                             >
                               {/* Hover tick on the rail (inactive only) */}
                               {!isActive && (
                                 <span
                                   aria-hidden="true"
-                                  className="absolute inset-y-2 left-0 w-px origin-center scale-y-0 bg-white/50 transition-transform duration-200 group-hover/item:scale-y-100 motion-reduce:transition-none"
+                                  className="absolute inset-y-2 left-0 w-px origin-center scale-y-0 bg-neutral-400 transition-transform duration-140 group-hover/item:scale-y-100 motion-reduce:transition-none"
                                 />
                               )}
 
@@ -178,7 +178,7 @@ export function DocsSidebar({ onSearchClick, className }: DocsSidebarProps) {
                               {item.status === "draft" && (
                                 <Badge
                                   variant="outline"
-                                  className="shrink-0 border-white/15 px-1.5 py-0 text-[9px] font-normal text-white/40"
+                                  className="shrink-0 border-subtle-border px-1.5 py-0 text-[9px] font-normal text-muted-foreground"
                                 >
                                   Draft
                                 </Badge>

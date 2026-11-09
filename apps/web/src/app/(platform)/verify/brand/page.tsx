@@ -309,7 +309,7 @@ export default function BrandReviewGatePage() {
                     title={acc.name}
                     className={`h-5 w-5 rounded-md border transition-transform ${
                       testAccent === acc.hex
-                        ? "ring-2 ring-foreground scale-110 border-white"
+                        ? "ring-2 ring-border-strong scale-110 border-border-strong"
                         : "border-border hover:scale-105"
                     }`}
                     style={{ backgroundColor: acc.hex }}
@@ -323,7 +323,7 @@ export default function BrandReviewGatePage() {
           <div
             className={`p-12 rounded-md border flex items-center justify-center transition-colors min-h-[220px] ${
               colorMode === "inverse"
-                ? "bg-white border-neutral-300 text-black shadow-level-1"
+                ? "bg-white border-border-strong text-black shadow-level-1"
                 : "bg-black border-border shadow-level-1"
             }`}
             style={

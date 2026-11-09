@@ -97,8 +97,8 @@ export function QuickStartWalkthrough() {
             className={cn(
               "p-2 rounded-md border text-left transition-all text-xs font-mono select-none",
               activeStep === st.num
-                ? "border-foreground bg-surface-04 ring-1 ring-border-strong font-semibold text-foreground shadow-level-1"
-                : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
+                ? "border-border-strong bg-surface-04 ring-1 ring-border-default font-semibold text-foreground shadow-level-1"
+                : "border-border bg-elevated-surface text-muted-foreground hover:border-border-hover hover:text-foreground"
             )}
           >
             <div className="truncate">
@@ -120,9 +120,9 @@ export function QuickStartWalkthrough() {
                   className={cn(
                     "p-3 rounded-md border text-xs font-mono min-w-[130px] transition-all duration-200 select-none",
                     n.status === "completed"
-                      ? "border-white/60 bg-surface-03 text-foreground"
+                      ? "border-border-hover bg-surface-03 text-foreground"
                       : n.status === "executing"
-                        ? "border-foreground bg-surface-04 text-foreground ring-1 ring-border-strong"
+                        ? "border-border-strong bg-surface-04 text-foreground ring-1 ring-border-default"
                         : "border-border bg-elevated-surface text-foreground"
                   )}
                 >

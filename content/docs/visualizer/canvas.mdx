@@ -22,7 +22,7 @@ Experience how Graph Canvas synchronizes with Node Palette, Inspector, Simulatio
 ## Architecture & Principles
 
 1. **Pure Black Canvas**: Baseline canvas is pure black (`#000000`). Grids use restrained neutral dots or lines without noisy glow effects.
-2. **Pure Black Monochrome**: Selection rings and marquee borders adhere to the strict pure black monochrome standard (`ring-foreground`, `border-foreground`).
+2. **Dark Neutral Boundaries**: Selection indicators and marquee borders adhere to the strict dark-gray border standard (`ring-border-strong`, `border-border-strong`, `#404040`), with zero white component outlines.
 3. **Automated Hierarchical Layout**: Integrates ELK.js (`layoutGraphWithElk`) to automatically position nodes along clean left-to-right or top-to-bottom layers without overlapping edges.
 4. **Decoupled State**: Graph document state lives in `@nxtqr/state` via `useGraphEditorStore`, ensuring zero re-render cascades across unselected nodes.
 

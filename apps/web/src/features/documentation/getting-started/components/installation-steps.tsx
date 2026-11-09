@@ -143,8 +143,8 @@ export function InstallationSteps() {
             className={cn(
               "p-2.5 rounded-md border text-left transition-all select-none",
               activeStep === st.num
-                ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
-                : "border-border bg-elevated-surface hover:border-muted-border hover:bg-secondary-surface"
+                ? "border-border-strong bg-surface-04 ring-1 ring-border-default shadow-level-2"
+                : "border-border bg-elevated-surface hover:border-border-hover hover:bg-secondary-surface"
             )}
           >
             <div className="text-[10px] font-mono text-muted-foreground font-bold mb-0.5">

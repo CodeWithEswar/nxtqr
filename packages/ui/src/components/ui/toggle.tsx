@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@nxtqr/utils";
 
 const toggleVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-xs font-medium transition-all hover:bg-surface hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-secondary-surface data-[state=on]:text-accent data-[state=on]:shadow-level-3",
+  "inline-flex items-center justify-center rounded-md text-xs font-medium transition-all hover:bg-surface hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-surface-04 data-[state=on]:text-foreground data-[state=on]:font-semibold data-[state=on]:shadow-level-3 border border-transparent data-[state=on]:border-border-strong",
   {
     variants: {
       variant: {

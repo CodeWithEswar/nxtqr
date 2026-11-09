@@ -65,8 +65,8 @@ export function ConnectedGraphWorkspace({
             className={cn(
               "px-2 py-1 text-xs font-mono rounded-md border transition-colors",
               showPalette
-                ? "border-foreground bg-[#1a1a1a] text-foreground font-semibold"
-                : "border-subtle-border text-muted-foreground hover:text-foreground"
+                ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
+                : "border-subtle-border text-muted-foreground hover:text-foreground hover:bg-secondary-surface"
             )}
           >
             Palette
@@ -76,8 +76,8 @@ export function ConnectedGraphWorkspace({
             className={cn(
               "px-2 py-1 text-xs font-mono rounded-md border transition-colors",
               showInspector
-                ? "border-foreground bg-[#1a1a1a] text-foreground font-semibold"
-                : "border-subtle-border text-muted-foreground hover:text-foreground"
+                ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
+                : "border-subtle-border text-muted-foreground hover:text-foreground hover:bg-secondary-surface"
             )}
           >
             Inspector

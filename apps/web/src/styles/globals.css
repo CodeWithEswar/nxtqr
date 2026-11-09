@@ -58,19 +58,19 @@
     --accent-muted-foreground: #999999;
 
     /* Focus is deliberately dark, not white */
-    --accent-ring: #525252;
+    --accent-ring: #404040;
 
-    /* 05 — DARK NEUTRAL BORDERS */
-    --border-subtle: #1c1c1c;
-    --border-default: #292929;
-    --border-hover: #363636;
-    --border-strong: #424242;
+    /* 05 — DARK NEUTRAL BORDERS (STRICT BORDER SYSTEM) */
+    --border-subtle: #1a1a1a;
+    --border-default: #262626;
+    --border-hover: #333333;
+    --border-strong: #404040;
     --border-inset: #202020;
 
     --border: var(--border-default);
     --subtle-border: var(--border-subtle);
-    --input: #303030;
-    --ring: #525252;
+    --input: #262626;
+    --ring: #404040;
 
     /* 06 — TYPOGRAPHY */
     --text-primary: #f5f5f5;
@@ -335,6 +335,11 @@
     cursor: grab;
   }
 
+  .react-flow__minimap-node {
+    fill: #262626;
+    stroke: var(--border-subtle);
+  }
+
   .react-flow__minimap:active,
   .react-flow__minimap-svg:active,
   .react-flow__minimap-mask:active {
@@ -405,5 +410,36 @@
   .interactive-surface,
   .react-flow__controls-button {
     transition-duration: 0.01ms;
+  }
+}
+
+/* ==========================================================
+   STRICT DARK NEUTRAL BORDER UTILITY OVERRIDES
+   Guarantees zero white borders and full currentColor immunity
+   ========================================================== */
+@layer utilities {
+  .border-border-strong, .border-strong {
+    border-color: var(--border-strong) !important;
+  }
+  .border-border-default, .border-default {
+    border-color: var(--border-default) !important;
+  }
+  .border-border-subtle, .border-subtle {
+    border-color: var(--border-subtle) !important;
+  }
+  .border-border-hover {
+    border-color: var(--border-hover) !important;
+  }
+  .border-border-inset {
+    border-color: var(--border-inset) !important;
+  }
+  .bg-surface-04 {
+    background-color: var(--surface-04) !important;
+  }
+  .ring-border-strong {
+    --tw-ring-color: var(--border-strong) !important;
+  }
+  .ring-border-default {
+    --tw-ring-color: var(--border-default) !important;
   }
 }

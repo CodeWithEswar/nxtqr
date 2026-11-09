@@ -98,8 +98,8 @@ export function PackageDependencyGraph() {
               className={cn(
                 "p-3 rounded-md border transition-all cursor-pointer text-xs font-mono select-none",
                 isSelected
-                  ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
-                  : "border-border bg-elevated-surface hover:border-muted-border hover:bg-secondary-surface"
+                  ? "border-border-strong bg-surface-04 ring-1 ring-border-default shadow-level-2"
+                  : "border-border bg-elevated-surface hover:border-border-hover hover:bg-secondary-surface"
               )}
             >
               <div className="flex flex-wrap items-center justify-between gap-2">

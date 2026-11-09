@@ -269,8 +269,8 @@ function InnerGraphCanvas({
               setCenter(node.position.x + 80, node.position.y + 40, { duration: 250 });
             }}
             nodeColor={(node) => {
-              if (node.id === selectedNodeId) return "#ffffff";
-              if (node.data?.status === "executing") return "#ffffff";
+              if (node.id === selectedNodeId) return "#555555";
+              if (node.data?.status === "executing") return "#404040";
               if (node.data?.status === "completed") return "#00cc66";
               return "#262626";
             }}

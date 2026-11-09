@@ -12,8 +12,10 @@ export const monochromeTokens = {
   surface03: "#141414",
   surface04: "#1A1A1A",
 
-  borderSubtle: "#202020",
-  borderDefault: "#292929",
+  borderSubtle: "#1A1A1A",
+  borderInset: "#202020",
+  borderDefault: "#262626",
+  borderHover: "#333333",
   borderStrong: "#404040",
 
   textPrimary: "#FFFFFF",
@@ -28,8 +30,8 @@ export const monochromeTokens = {
   secondarySurface: "#1A1A1A",
   mutedSurface: "#141414",
 
-  border: "#292929",
-  subtleBorder: "#202020",
+  border: "#262626",
+  subtleBorder: "#1A1A1A",
 
   mutedForeground: "#858585",
   secondaryForeground: "#B5B5B5",
@@ -42,7 +44,7 @@ export const monochromeTokens = {
   accentForeground: "#000000",
   accentMuted: "#141414",
   accentMutedForeground: "#858585",
-  ring: "#E5E5E5",
+  ring: "#404040",
 
   // Functional status tokens (for accessible status indicators only)
   destructive: "#FF0000",

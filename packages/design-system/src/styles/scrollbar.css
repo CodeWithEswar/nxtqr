@@ -24,8 +24,8 @@
   --scrollbar-border: #1f1f1f;
   --scrollbar-highlight: #626262;
 
-  /* Monochrome Active Highlight */
-  --scrollbar-accent: #ffffff;
+  /* Monochrome Active Highlight — dark neutral boundary */
+  --scrollbar-accent: #404040;
 }
 
 /* ==========================================================================

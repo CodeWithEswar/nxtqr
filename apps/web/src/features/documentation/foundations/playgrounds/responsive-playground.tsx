@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@nxtqr/ui";
+import { Button, Slider } from "@nxtqr/ui";
 import { MenuIcon, RefreshIcon } from "@nxtqr/icons";
 import { CodeBlock } from "../../components/code-block";
 import { cn } from "@nxtqr/utils";
@@ -78,8 +78,8 @@ export function ResponsivePlayground() {
                 className={cn(
                   "px-3 py-1 text-xs font-mono rounded-md border whitespace-nowrap transition-all",
                   frameWidth === preset.width
-                    ? "border-foreground bg-surface-04 text-foreground font-semibold shadow-level-1"
-                    : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
+                    ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
+                    : "border-border bg-elevated-surface text-muted-foreground hover:border-border-hover hover:text-foreground"
                 )}
               >
                 <span className="hidden sm:inline">{preset.name} ({preset.width}px)</span>
@@ -100,14 +100,13 @@ export function ResponsivePlayground() {
         {/* Manual Slider */}
         <div className="flex items-center gap-3 p-3 bg-secondary-surface border border-border rounded-md">
           <span className="text-xs font-mono text-muted-foreground shrink-0">320px</span>
-          <input
-            type="range"
-            min="320"
-            max="1200"
-            step="8"
-            value={frameWidth}
-            onChange={(e) => setFrameWidth(Number(e.target.value))}
-            className="w-full accent-white h-1.5 bg-black rounded-none cursor-pointer"
+          <Slider
+            min={320}
+            max={1200}
+            step={8}
+            value={[frameWidth]}
+            onValueChange={([val]) => setFrameWidth(val)}
+            className="flex-1"
           />
           <span className="text-xs font-mono text-muted-foreground shrink-0">1200px</span>
         </div>

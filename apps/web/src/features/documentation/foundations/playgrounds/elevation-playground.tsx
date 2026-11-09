@@ -126,8 +126,8 @@ export function ElevationPlayground() {
               className={cn(
                 "p-3 rounded-md border text-left transition-all relative overflow-hidden",
                 isSelected
-                  ? "border-foreground bg-surface-04 ring-1 ring-border-strong"
-                  : "border-border bg-elevated-surface hover:border-muted-border"
+                  ? "border-border-strong bg-surface-04 ring-1 ring-border-default"
+                  : "border-border bg-elevated-surface hover:border-border-hover"
               )}
             >
               <div className="flex items-center justify-between mb-1">
@@ -200,8 +200,8 @@ export function ElevationPlayground() {
                 className={cn(
                   "p-4 rounded-md border cursor-pointer transition-all flex items-center justify-between",
                   activeLevel === level.id
-                    ? "border-foreground ring-1 ring-border-strong shadow-level-2"
-                    : "border-border hover:border-muted-border"
+                    ? "border-border-strong ring-1 ring-border-default shadow-level-2"
+                    : "border-border hover:border-border-hover"
                 )}
                 style={{
                   backgroundColor: level.surface,

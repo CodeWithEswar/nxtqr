@@ -39,7 +39,7 @@ function Elbow({
       {hasNext && (
         <path
           d={`M1 ${mid} V${ROW_HEIGHT}`}
-          className="stroke-white/15"
+          className="stroke-border-subtle"
           strokeWidth="1"
         />
       )}
@@ -49,7 +49,7 @@ function Elbow({
         strokeLinecap="round"
         className={cn(
           "transition-[stroke] duration-200",
-          active ? "stroke-white" : "stroke-white/15",
+          active ? "stroke-border-strong" : "stroke-border-subtle",
         )}
       />
     </svg>
@@ -99,16 +99,16 @@ export function DocsToc({ headings = [] }: DocsTocProps) {
   };
 
   return (
-    <aside className="hidden xl:block w-60 shrink-0 h-full overflow-y-auto scrollbar-compact py-10 pl-7 pr-5 border-l border-white/10 bg-black">
+    <aside className="hidden xl:block w-60 shrink-0 h-full overflow-y-auto scrollbar-compact py-10 pl-7 pr-5 border-l border-subtle-border bg-black">
       <div className="space-y-5">
-        <h4 className="flex items-center gap-2 font-sans text-[12px] font-medium tracking-tight text-white/90">
+        <h4 className="flex items-center gap-2 font-sans text-[12px] font-medium tracking-tight text-foreground">
           <svg
             aria-hidden="true"
             width="12"
             height="12"
             viewBox="0 0 12 12"
             fill="none"
-            className="text-white/50"
+            className="text-muted-foreground"
           >
             <path
               d="M1.5 3h9M1.5 6h6M1.5 9h4"
@@ -144,15 +144,15 @@ export function DocsToc({ headings = [] }: DocsTocProps) {
                     title={heading.title}
                     aria-current={isActive ? "location" : undefined}
                     className={cn(
-                      "group relative flex h-full items-center truncate rounded-sm outline-none",
-                      "transition-colors duration-200",
-                      "focus-visible:ring-1 focus-visible:ring-white/40",
+                      "group relative flex h-full items-center truncate rounded-md outline-none",
+                      "transition-colors duration-140",
+                      "focus-visible:ring-1 focus-visible:ring-ring",
                       isSub
                         ? "pl-6 text-[12px] font-normal"
                         : "pl-0 text-[12.5px] font-medium",
                       isActive
-                        ? "text-white"
-                        : "text-white/45 hover:text-white/85",
+                        ? "text-foreground font-semibold"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
                     {!isSub && (
@@ -161,8 +161,8 @@ export function DocsToc({ headings = [] }: DocsTocProps) {
                         className={cn(
                           "mr-2.5 inline-block size-1 shrink-0 rounded-full transition-all duration-200",
                           isActive
-                            ? "scale-125 bg-white shadow-[0_0_8px_rgba(255,255,255,0.6)]"
-                            : "bg-white/20 group-hover:bg-white/50",
+                            ? "scale-125 bg-foreground"
+                            : "bg-neutral-600 group-hover:bg-neutral-400",
                         )}
                       />
                     )}

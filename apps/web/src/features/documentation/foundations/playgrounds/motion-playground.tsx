@@ -89,8 +89,8 @@ export function MotionPlayground() {
                 className={cn(
                   "p-2.5 rounded-md border text-left transition-all",
                   selectedDuration === d.key
-                    ? "border-foreground bg-surface-04 ring-1 ring-border-strong"
-                    : "border-border bg-elevated-surface hover:border-muted-border"
+                    ? "border-border-strong bg-surface-04 ring-1 ring-border-default"
+                    : "border-border bg-elevated-surface hover:border-border-hover"
                 )}
               >
                 <div className="text-xs font-semibold text-foreground">{d.key}</div>
@@ -113,8 +113,8 @@ export function MotionPlayground() {
                 className={cn(
                   "p-2.5 rounded-md border text-left transition-all",
                   selectedEasing === e.key
-                    ? "border-foreground bg-surface-04 ring-1 ring-border-strong"
-                    : "border-border bg-elevated-surface hover:border-muted-border"
+                    ? "border-border-strong bg-surface-04 ring-1 ring-border-default"
+                    : "border-border bg-elevated-surface hover:border-border-hover"
                 )}
               >
                 <div className="flex items-center justify-between font-mono">
@@ -179,8 +179,8 @@ export function MotionPlayground() {
             className={cn(
               "px-2.5 py-1 rounded-md text-xs font-mono border transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0",
               reducedMotion
-                ? "border-foreground bg-white text-black font-semibold"
-                : "border-border bg-surface text-muted-foreground hover:text-foreground"
+                ? "border-border-strong bg-white text-black font-semibold shadow-level-1"
+                : "border-border bg-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface"
             )}
           >
             {reducedMotion && <CheckIcon className="h-3 w-3" />}
@@ -307,7 +307,7 @@ export function MotionPlayground() {
             className={cn(
               "p-6 rounded-md border cursor-pointer select-none transition-all duration-200",
               isOpen
-                ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
+                ? "border-border-strong bg-surface-04 ring-1 ring-border-default shadow-level-2"
                 : "border-border bg-surface shadow-none"
             )}
             style={{

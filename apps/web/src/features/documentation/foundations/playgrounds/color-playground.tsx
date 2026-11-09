@@ -96,8 +96,8 @@ export function ColorPlayground() {
                 className={cn(
                   "p-2.5 rounded-md border text-left transition-all select-none relative group",
                   isSelected
-                    ? "border-foreground bg-surface-04 ring-1 ring-border-strong shadow-level-2"
-                    : "border-border bg-elevated-surface hover:border-muted-border hover:bg-secondary-surface"
+                    ? "border-border-strong bg-surface-04 ring-1 ring-border-default shadow-level-2"
+                    : "border-border bg-elevated-surface hover:border-border-hover hover:bg-secondary-surface"
                 )}
               >
                 <div className="flex items-center justify-between mb-1.5">

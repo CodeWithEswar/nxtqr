@@ -58,7 +58,7 @@ export function NodePalette({ className, columns = 1 }: NodePaletteProps) {
           <button
             key={def.type}
             onClick={() => handleAddNode(def)}
-            className="p-2 rounded-md border border-subtle-border bg-elevated-surface hover:border-foreground hover:bg-secondary-surface transition-all text-left flex items-center justify-between group"
+            className="p-2 rounded-md border border-subtle-border bg-elevated-surface hover:border-border-hover hover:bg-secondary-surface transition-all text-left flex items-center justify-between group"
             title={`Add ${def.label} to canvas`}
           >
             <div className="min-w-0 flex-1 pr-2">
@@ -70,7 +70,7 @@ export function NodePalette({ className, columns = 1 }: NodePaletteProps) {
               </div>
             </div>
 
-            <div className="w-5 h-5 rounded border border-subtle-border bg-surface flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-foreground group-hover:border-foreground transition-colors">
+            <div className="w-5 h-5 rounded border border-subtle-border bg-surface flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-foreground group-hover:border-border-hover transition-colors">
               <PlusIcon className="h-3 w-3" />
             </div>
           </button>

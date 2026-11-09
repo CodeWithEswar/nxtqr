@@ -79,12 +79,12 @@ export function RadiusPlayground() {
                 className={cn(
                   "flex flex-col items-center justify-center p-3 rounded-md border text-center transition-all",
                   isSelected
-                    ? "border-foreground bg-surface-04 text-foreground ring-1 ring-border-strong shadow-level-1"
-                    : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
+                    ? "border-border-strong bg-surface-04 text-foreground ring-1 ring-border-default shadow-level-1"
+                    : "border-border bg-elevated-surface text-muted-foreground hover:border-border-hover hover:text-foreground"
                 )}
               >
                 <div
-                  className="w-10 h-10 border-2 border-foreground/70 bg-secondary-surface mb-2"
+                  className="w-10 h-10 border-2 border-border-strong bg-secondary-surface mb-2"
                   style={{ borderRadius: preset.value }}
                 />
                 <span className="text-xs font-semibold whitespace-nowrap">{preset.name}</span>
@@ -138,7 +138,7 @@ export function RadiusPlayground() {
               <input
                 type="text"
                 defaultValue="[1.000, 0.000, 0.000, 1.000]"
-                className="w-full text-xs font-mono px-3 py-2 bg-black border border-border text-foreground focus:outline-none focus:border-foreground"
+                className="w-full text-xs font-mono px-3 py-2 bg-black border border-border text-foreground focus:outline-none focus:border-border-strong focus:ring-1 focus:ring-border-strong"
                 style={{ borderRadius: selectedPreset.value }}
               />
             </div>
@@ -227,7 +227,7 @@ export function RadiusPlayground() {
           </div>
 
           <div className="p-3 border border-border bg-elevated-surface rounded-md flex items-center gap-3">
-            <div className="w-5 h-5 rounded-full border-2 border-foreground flex items-center justify-center">
+            <div className="w-5 h-5 rounded-full border-2 border-border-strong flex items-center justify-center">
               <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
             </div>
             <div>

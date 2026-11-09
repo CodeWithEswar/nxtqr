@@ -55,12 +55,12 @@ export function EngineeringNode({
   return (
     <div
       className={cn(
-        "min-w-[200px] max-w-[260px] rounded-md border bg-elevated-surface p-3 transition-all duration-150 select-none",
+        "min-w-[200px] max-w-[260px] rounded-md border p-3 transition-all duration-150 select-none",
         "shadow-level-1",
         selected
-          ? "border-accent ring-1 ring-accent"
-          : "border-border hover:border-muted-border",
-        status === "executing" && "border-accent shadow-[0_0_12px_rgba(255,100,0,0.35)]",
+          ? "border-border-strong bg-surface-04 ring-1 ring-border-hover shadow-level-2"
+          : "border-border bg-elevated-surface hover:border-border-hover",
+        status === "executing" && "border-border-strong ring-1 ring-border-hover",
         status === "completed" && "border-emerald-600/70",
         status === "failed" && "border-red-600"
       )}
@@ -74,7 +74,7 @@ export function EngineeringNode({
           id={port.id}
           style={{
             top: inputPorts.length > 1 ? `${((idx + 1) / (inputPorts.length + 1)) * 100}%` : "50%",
-            backgroundColor: selected ? "var(--accent)" : "#505050",
+            backgroundColor: selected ? "#707070" : "#404040",
             width: "8px",
             height: "8px",
             borderRadius: "2px",
@@ -141,7 +141,7 @@ export function EngineeringNode({
           id={port.id}
           style={{
             top: outputPorts.length > 1 ? `${((idx + 1) / (outputPorts.length + 1)) * 100}%` : "50%",
-            backgroundColor: selected ? "var(--accent)" : "#505050",
+            backgroundColor: selected ? "#707070" : "#404040",
             width: "8px",
             height: "8px",
             borderRadius: "2px",

@@ -180,8 +180,8 @@ export function IconExplorer() {
                 className={cn(
                   "px-2.5 py-1 text-xs font-mono rounded-md border whitespace-nowrap transition-all",
                   selectedCategory === cat
-                    ? "border-accent bg-accent/10 text-foreground"
-                    : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
+                    ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
+                    : "border-border bg-elevated-surface text-muted-foreground hover:border-border-hover hover:text-foreground"
                 )}
               >
                 {cat}
@@ -195,7 +195,7 @@ export function IconExplorer() {
               onClick={() => setColorMode("mono")}
               className={cn(
                 "px-2 py-0.5 rounded border text-[11px]",
-                colorMode === "mono" ? "border-foreground text-foreground bg-elevated-surface" : "border-border text-muted-foreground"
+                colorMode === "mono" ? "border-border-strong text-foreground bg-surface-04 font-semibold shadow-level-3" : "border-border text-muted-foreground hover:text-foreground"
               )}
             >
               Mono
@@ -204,16 +204,16 @@ export function IconExplorer() {
               onClick={() => setColorMode("accent")}
               className={cn(
                 "px-2 py-0.5 rounded border text-[11px]",
-                colorMode === "accent" ? "border-accent text-accent bg-accent/10" : "border-border text-muted-foreground"
+                colorMode === "accent" ? "border-border-strong text-foreground bg-surface-04 font-semibold shadow-level-3" : "border-border text-muted-foreground hover:text-foreground"
               )}
             >
-              Accent
+              Primary
             </button>
             <button
               onClick={() => setColorMode("muted")}
               className={cn(
                 "px-2 py-0.5 rounded border text-[11px]",
-                colorMode === "muted" ? "border-muted-border text-muted-foreground bg-elevated-surface" : "border-border text-muted-foreground"
+                colorMode === "muted" ? "border-border-strong text-muted-foreground bg-surface-04 font-semibold shadow-level-3" : "border-border text-muted-foreground hover:text-foreground"
               )}
             >
               Muted
