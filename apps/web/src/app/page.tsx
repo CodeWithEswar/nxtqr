@@ -21,17 +21,23 @@ export default function RootVerificationPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/verify/brand">
-            <Button variant="outline" size="sm" className="font-mono text-xs">
-              Brand Review Gate →
-            </Button>
-          </Link>
-          <Link href="/docs/getting-started/design-system">
-            <Button variant="default" size="sm" className="font-mono text-xs gap-1.5">
-              <span>Design System</span>
+          <Button asChild variant="default" size="sm" className="font-mono text-xs gap-1.5 bg-foreground text-background">
+            <Link href="/workspace">
+              <span>Studio Workspace</span>
               <ChevronRightIcon className="h-3 w-3" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="font-mono text-xs">
+            <Link href="/verify/brand">
+              <span>Brand Gate →</span>
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="font-mono text-xs gap-1.5">
+            <Link href="/docs/getting-started/design-system">
+              <span>Docs</span>
+              <ChevronRightIcon className="h-3 w-3" />
+            </Link>
+          </Button>
         </div>
       </header>
 

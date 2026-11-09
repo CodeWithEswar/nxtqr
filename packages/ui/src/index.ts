@@ -35,6 +35,7 @@ export * from "./components/ui/breadcrumb";
 export * from "./components/ui/navigation-menu";
 export * from "./components/ui/menubar";
 export * from "./components/ui/pagination";
+export * from "./components/ui/resizable";
 
 // Composite Components
 export * from "./components/composite/data-table";

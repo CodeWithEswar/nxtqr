@@ -212,6 +212,15 @@ export function VerificationHeader({
                   <DropdownMenuSeparator className="my-1 bg-border-subtle" />
                   <DropdownMenuItem asChild>
                     <Link
+                      href="/workspace"
+                      className="flex items-center justify-between cursor-pointer text-xs font-mono rounded-md px-2.5 py-1.5 hover:bg-surface-04 text-foreground transition-colors"
+                    >
+                      <span>Studio Workspace</span>
+                      <ExternalLinkIcon className="h-3.5 w-3.5 text-text-muted" />
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
                       href="/docs"
                       className="flex items-center justify-between cursor-pointer text-xs font-mono rounded-md px-2.5 py-1.5 hover:bg-surface-04 text-text-muted hover:text-foreground transition-colors"
                     >
