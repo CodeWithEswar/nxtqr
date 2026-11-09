@@ -99,3 +99,4 @@ export const KafkaBrokerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

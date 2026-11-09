@@ -32,6 +32,10 @@ import {
   messagingAndEventSystemsCategoryDefinition,
   ALL_MESSAGING_AND_EVENT_SYSTEMS_DEFINITIONS,
 } from "./definitions/messaging-and-event-systems";
+import {
+  storageAndFileSystemsCategoryDefinition,
+  ALL_STORAGE_AND_FILE_SYSTEMS_DEFINITIONS,
+} from "./definitions/storage-and-file-systems";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -81,6 +85,12 @@ export class InfrastructureRegistryClass {
     // 7. Register Messaging & Event Systems Category (Cat 07)
     this.registerCategory(messagingAndEventSystemsCategoryDefinition);
     for (const def of ALL_MESSAGING_AND_EVENT_SYSTEMS_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 8. Register Storage & File Systems Category (Cat 08)
+    this.registerCategory(storageAndFileSystemsCategoryDefinition);
+    for (const def of ALL_STORAGE_AND_FILE_SYSTEMS_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

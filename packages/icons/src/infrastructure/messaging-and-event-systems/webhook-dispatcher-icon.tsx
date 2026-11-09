@@ -115,3 +115,4 @@ export const WebhookDispatcherIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

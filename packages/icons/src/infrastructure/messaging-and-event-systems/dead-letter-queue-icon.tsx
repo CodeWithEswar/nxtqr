@@ -103,3 +103,4 @@ export const DeadLetterQueueIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -126,3 +126,4 @@ export const EventStreamIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

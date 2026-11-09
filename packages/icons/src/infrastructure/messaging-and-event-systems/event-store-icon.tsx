@@ -104,3 +104,4 @@ export const EventStoreIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

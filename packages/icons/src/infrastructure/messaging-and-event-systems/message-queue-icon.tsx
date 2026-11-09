@@ -107,3 +107,4 @@ export const MessageQueueIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

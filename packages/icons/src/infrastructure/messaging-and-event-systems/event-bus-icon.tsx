@@ -99,3 +99,4 @@ export const EventBusIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

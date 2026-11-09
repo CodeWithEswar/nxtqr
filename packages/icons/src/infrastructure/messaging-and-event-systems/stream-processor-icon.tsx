@@ -92,3 +92,4 @@ export const StreamProcessorIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

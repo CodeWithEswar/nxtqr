@@ -387,5 +387,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-messaging",
     },
   },
+  {
+    id: "infra_category_08_storage",
+    category: "frontend",
+    title: "Infrastructure Components: Category 08 Storage & File Systems",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, storage connection semantics, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "storage-and-file-systems",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-storage",
+    },
+  },
 ];
 

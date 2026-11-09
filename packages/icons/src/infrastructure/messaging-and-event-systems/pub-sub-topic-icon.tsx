@@ -89,3 +89,4 @@ export const PubSubTopicIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

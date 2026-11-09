@@ -106,3 +106,4 @@ export const RabbitmqBrokerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

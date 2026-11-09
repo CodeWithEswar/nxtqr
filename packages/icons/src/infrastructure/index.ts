@@ -6,6 +6,7 @@ export * from "./compute-and-application-services";
 export * from "./databases-and-persistence";
 export * from "./caching-and-performance";
 export * from "./messaging-and-event-systems";
+export * from "./storage-and-file-systems";
 
 import type { InfrastructureIconComponent } from "./types";
 import { clientIconRegistry } from "./clients";
@@ -15,6 +16,7 @@ import { computeAndApplicationServicesIconRegistry } from "./compute-and-applica
 import { databasesAndPersistenceIconRegistry } from "./databases-and-persistence";
 import { cachingAndPerformanceIconRegistry } from "./caching-and-performance";
 import { messagingAndEventSystemsIconRegistry } from "./messaging-and-event-systems";
+import { storageAndFileSystemsIconRegistry } from "./storage-and-file-systems";
 
 export const allInfrastructureIconRegistry: Record<string, InfrastructureIconComponent> = {
   ...clientIconRegistry,
@@ -24,6 +26,7 @@ export const allInfrastructureIconRegistry: Record<string, InfrastructureIconCom
   ...databasesAndPersistenceIconRegistry,
   ...cachingAndPerformanceIconRegistry,
   ...messagingAndEventSystemsIconRegistry,
+  ...storageAndFileSystemsIconRegistry,
 };
 
 export function getInfrastructureIcon(slug: string): InfrastructureIconComponent | undefined {

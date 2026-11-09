@@ -102,3 +102,4 @@ export const EventConsumerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

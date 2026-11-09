@@ -288,5 +288,16 @@ export const nodeTypes = {
   "webhook-dispatcher": GraphNode,
   "stream-processor": GraphNode,
   "event-store": GraphNode,
+  // Infrastructure Category 08: Storage & File Systems
+  "object-storage": GraphNode,
+  "block-storage": GraphNode,
+  "file-storage": GraphNode,
+  "distributed-file-system": GraphNode,
+  "blob-storage": GraphNode,
+  "media-storage": GraphNode,
+  "backup-storage": GraphNode,
+  "archive-storage": GraphNode,
+  "storage-gateway": GraphNode,
+  "content-repository": GraphNode,
 };
 

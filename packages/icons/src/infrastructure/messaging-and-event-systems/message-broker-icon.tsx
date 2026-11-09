@@ -128,3 +128,4 @@ export const MessageBrokerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

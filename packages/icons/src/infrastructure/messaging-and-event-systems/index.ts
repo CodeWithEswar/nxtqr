@@ -68,3 +68,4 @@ export function getMessagingAndEventSystemsInfrastructureIcon(
 ): InfrastructureIconComponent | null {
   return messagingAndEventSystemsIconRegistry[componentId] || null;
 }
+

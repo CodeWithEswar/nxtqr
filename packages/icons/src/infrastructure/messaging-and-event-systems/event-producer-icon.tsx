@@ -91,3 +91,4 @@ export const EventProducerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+
