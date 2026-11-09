@@ -157,23 +157,23 @@ export function SimulationControls({ className }: { className?: string }) {
       )}
     >
       {/* Left: Transport Playback Controls */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 shrink-0">
         {simulationStatus === "running" ? (
           <button
             onClick={handlePause}
-            className="px-3 py-1.5 rounded-md border border-amber-500/60 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors"
+            className="px-2.5 sm:px-3 py-1.5 rounded-md border border-amber-500/60 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors"
           >
             <span className="w-2 h-2 bg-amber-400 rounded-none inline-block" />
-            Pause
+            <span>Pause</span>
           </button>
         ) : (
           <button
             onClick={handleStart}
             disabled={simulationStatus === "completed"}
-            className="px-3 py-1.5 rounded-md border border-accent bg-accent text-accent-foreground hover:opacity-90 disabled:opacity-40 text-xs font-mono font-semibold flex items-center gap-1.5 transition-opacity"
+            className="px-2.5 sm:px-3 py-1.5 rounded-md border border-accent bg-accent text-accent-foreground hover:opacity-90 disabled:opacity-40 text-xs font-mono font-semibold flex items-center gap-1.5 transition-opacity"
           >
             <span className="w-0 h-0 border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent border-l-[7px] border-l-current inline-block" />
-            {simulationStatus === "paused" ? "Resume" : "Start"}
+            <span>{simulationStatus === "paused" ? "Resume" : "Start"}</span>
           </button>
         )}
 
@@ -181,7 +181,7 @@ export function SimulationControls({ className }: { className?: string }) {
         <button
           onClick={handleStep}
           disabled={simulationStatus === "running" || simulationStatus === "completed"}
-          className="px-2.5 py-1.5 rounded-md border border-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 text-xs font-mono font-medium flex items-center gap-1 transition-colors"
+          className="px-2 sm:px-2.5 py-1.5 rounded-md border border-subtle-border bg-elevated-surface text-foreground hover:bg-secondary-surface disabled:opacity-40 text-xs font-mono font-medium flex items-center gap-1 transition-colors"
           title="Advance single execution step"
         >
           <span>Step</span>
@@ -191,44 +191,46 @@ export function SimulationControls({ className }: { className?: string }) {
         {/* Reset */}
         <button
           onClick={handleReset}
-          className="px-2.5 py-1.5 rounded-md border border-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface text-xs font-mono flex items-center gap-1 transition-colors"
+          className="px-2 sm:px-2.5 py-1.5 rounded-md border border-subtle-border bg-elevated-surface text-muted-foreground hover:text-foreground hover:bg-secondary-surface text-xs font-mono flex items-center gap-1 transition-colors"
           title="Reset simulation state"
         >
           <RefreshIcon className="h-3 w-3" />
-          <span>Reset</span>
+          <span className="hidden sm:inline">Reset</span>
         </button>
       </div>
 
       {/* Middle: Live Status Badge & Step Counter */}
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-black font-mono text-xs">
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-md border border-subtle-border bg-black font-mono text-xs">
           <span
             className={cn(
-              "w-2 h-2 rounded-full",
+              "w-2 h-2 rounded-full shrink-0",
               simulationStatus === "running" && "bg-accent animate-pulse",
               simulationStatus === "completed" && "bg-emerald-400",
               simulationStatus === "paused" && "bg-amber-400",
               simulationStatus === "idle" && "bg-zinc-600"
             )}
           />
-          <span className="text-muted-foreground">STATUS:</span>
-          <span className="text-foreground font-semibold uppercase">{simulationStatus}</span>
+          <span className="text-muted-foreground hidden sm:inline">STATUS:</span>
+          <span className="text-foreground font-semibold uppercase text-[11px] sm:text-xs">{simulationStatus}</span>
         </div>
 
-        <div className="px-2.5 py-1 rounded-md border border-border bg-black font-mono text-xs text-muted-foreground">
-          STEP: <span className="text-accent font-bold tabular-nums">{currentStep}</span>
+        <div className="px-2 sm:px-2.5 py-1 rounded-md border border-subtle-border bg-black font-mono text-xs text-muted-foreground">
+          <span className="hidden sm:inline">STEP: </span>
+          <span className="sm:hidden">S: </span>
+          <span className="text-accent font-bold tabular-nums">{currentStep}</span>
         </div>
       </div>
 
       {/* Right: Speed Multiplier */}
-      <div className="flex items-center gap-1 p-1 bg-secondary-surface border border-border rounded-md">
-        <span className="text-[10px] font-mono text-muted-foreground px-1.5">Speed:</span>
+      <div className="flex items-center gap-0.5 sm:gap-1 p-1 bg-secondary-surface border border-subtle-border rounded-md shrink-0">
+        <span className="text-[10px] font-mono text-muted-foreground px-1 hidden sm:inline">Speed:</span>
         {speeds.map((s) => (
           <button
             key={s}
             onClick={() => setPlaybackSpeed(s)}
             className={cn(
-              "px-2 py-0.5 rounded text-xs font-mono transition-colors",
+              "px-1.5 sm:px-2 py-0.5 rounded text-[11px] sm:text-xs font-mono transition-colors",
               playbackSpeed === s
                 ? "bg-accent text-accent-foreground font-bold shadow-sm"
                 : "text-muted-foreground hover:text-foreground"

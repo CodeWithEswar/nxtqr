@@ -89,7 +89,7 @@ export function CanvasToolbar({ className }: { className?: string }) {
       <button
         onClick={cycleGrid}
         className={cn(
-          "px-2 h-7 rounded border text-xs font-mono transition-colors",
+          "px-2 h-7 rounded border text-xs font-mono transition-colors whitespace-nowrap",
           gridType !== "none"
             ? "border-accent bg-accent/10 text-accent font-semibold"
             : "border-border bg-elevated-surface text-muted-foreground hover:text-foreground"

@@ -7,7 +7,12 @@ import { Badge } from "@nxtqr/ui";
 import { PlusIcon } from "@nxtqr/icons";
 import { cn } from "@nxtqr/utils";
 
-export function NodePalette({ className }: { className?: string }) {
+export interface NodePaletteProps {
+  className?: string;
+  columns?: 1 | 2;
+}
+
+export function NodePalette({ className, columns = 1 }: NodePaletteProps) {
   const addNode = useGraphEditorStore((state) => state.addNode);
   const nodes = useGraphEditorStore((state) => state.nodes);
 
@@ -35,7 +40,7 @@ export function NodePalette({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "rounded-md border border-border bg-surface p-3 shadow-level-1 space-y-3",
+        "rounded-md border border-subtle-border bg-surface p-3 shadow-level-1 space-y-3",
         className
       )}
     >
@@ -43,20 +48,20 @@ export function NodePalette({ className }: { className?: string }) {
         <span className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground">
           Node Palette
         </span>
-        <Badge variant="outline" className="text-[10px] font-mono">
+        <Badge variant="outline" className="text-[10px] font-mono border-subtle-border">
           {standardNodeDefinitions.length} Types
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+      <div className={cn("grid gap-1.5", columns === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1")}>
         {standardNodeDefinitions.map((def) => (
           <button
             key={def.type}
             onClick={() => handleAddNode(def)}
-            className="p-2 rounded-md border border-border bg-elevated-surface hover:border-accent hover:bg-secondary-surface transition-all text-left flex items-center justify-between group"
+            className="p-2 rounded-md border border-subtle-border bg-elevated-surface hover:border-accent hover:bg-secondary-surface transition-all text-left flex items-center justify-between group"
             title={`Add ${def.label} to canvas`}
           >
-            <div className="min-w-0 pr-2">
+            <div className="min-w-0 flex-1 pr-2">
               <div className="text-xs font-semibold font-sans text-foreground truncate group-hover:text-accent transition-colors">
                 {def.label}
               </div>
@@ -65,7 +70,7 @@ export function NodePalette({ className }: { className?: string }) {
               </div>
             </div>
 
-            <div className="w-5 h-5 rounded border border-border bg-surface flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-accent group-hover:border-accent transition-colors">
+            <div className="w-5 h-5 rounded border border-subtle-border bg-surface flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-accent group-hover:border-accent transition-colors">
               <PlusIcon className="h-3 w-3" />
             </div>
           </button>

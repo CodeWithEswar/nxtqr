@@ -46,38 +46,39 @@ export function ExecutionTraceViewer({ className }: { className?: string }) {
       )}
     >
       {/* Header & Filter Bar */}
-      <div className="p-3 border-b border-subtle-border bg-elevated-surface flex flex-wrap items-center justify-between gap-2.5">
-        <div className="flex items-center gap-2">
-          <TerminalIcon className="h-4 w-4 text-accent" />
+      <div className="p-2.5 sm:p-3 border-b border-subtle-border bg-elevated-surface flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <TerminalIcon className="h-4 w-4 text-accent shrink-0" />
           <span className="text-xs font-mono font-semibold text-foreground">
-            Execution Trace Stream
+            <span className="hidden sm:inline">Execution Trace Stream</span>
+            <span className="sm:hidden">Trace Stream</span>
           </span>
-          <Badge variant="outline" className="text-[10px] font-mono">
-            {filteredEvents.length} Events
+          <Badge variant="outline" className="text-[10px] font-mono border-subtle-border">
+            {filteredEvents.length} <span className="hidden sm:inline">Events</span>
           </Badge>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Search */}
           <div className="relative">
             <SearchIcon className="absolute left-2.5 top-2 h-3 w-3 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Filter trace events..."
+              placeholder="Filter trace..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="text-xs font-mono pl-7 pr-2.5 py-1 rounded-md border border-border bg-black text-foreground placeholder:text-muted-foreground w-40 sm:w-48 focus:outline-none focus:border-accent"
+              className="text-xs font-mono pl-7 pr-2.5 py-1 rounded-md border border-subtle-border bg-black text-foreground placeholder:text-muted-foreground w-28 sm:w-44 focus:outline-none focus:border-accent"
             />
           </div>
 
           {/* Status Filter */}
-          <div className="flex items-center gap-1 p-0.5 bg-black border border-border rounded-md">
+          <div className="flex items-center gap-0.5 p-0.5 bg-black border border-subtle-border rounded-md">
             {(["all", "success", "failure"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
                 className={cn(
-                  "px-2 py-0.5 text-[10px] font-mono rounded capitalize transition-colors",
+                  "px-1.5 sm:px-2 py-0.5 text-[10px] font-mono rounded capitalize transition-colors",
                   statusFilter === s
                     ? "bg-accent text-accent-foreground font-semibold"
                     : "text-muted-foreground hover:text-foreground"
@@ -92,7 +93,7 @@ export function ExecutionTraceViewer({ className }: { className?: string }) {
           <button
             onClick={clearTraceEvents}
             disabled={traceEvents.length === 0}
-            className="p-1 rounded border border-border text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors"
+            className="p-1 rounded border border-subtle-border text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors"
             title="Clear Trace Stream"
           >
             <RefreshIcon className="h-3 w-3" />

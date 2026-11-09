@@ -253,7 +253,7 @@ function InnerGraphCanvas({
         {/* MiniMap */}
         {showMinimap && (
           <MiniMap
-            className="!bg-surface !border !border-border !rounded-md !shadow-level-2"
+            className="!bg-surface !border !border-subtle-border !rounded-md !shadow-level-2 hidden md:block"
             nodeColor={(node) => {
               if (node.id === selectedNodeId) return "var(--accent)";
               if (node.data?.status === "executing") return "var(--accent)";
