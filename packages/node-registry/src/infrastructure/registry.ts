@@ -16,6 +16,10 @@ import {
   networkingAndTrafficCategoryDefinition,
   ALL_NETWORKING_AND_TRAFFIC_DEFINITIONS,
 } from "./definitions/networking-and-traffic";
+import {
+  computeAndApplicationServicesCategoryDefinition,
+  ALL_COMPUTE_AND_APPLICATION_SERVICES_DEFINITIONS,
+} from "./definitions/compute-and-application-services";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -41,6 +45,12 @@ export class InfrastructureRegistryClass {
     // 3. Register Networking & Traffic Infrastructure Category (Cat 03)
     this.registerCategory(networkingAndTrafficCategoryDefinition);
     for (const def of ALL_NETWORKING_AND_TRAFFIC_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 4. Register Compute & Application Services Category (Cat 04)
+    this.registerCategory(computeAndApplicationServicesCategoryDefinition);
+    for (const def of ALL_COMPUTE_AND_APPLICATION_SERVICES_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

@@ -231,5 +231,20 @@ export const nodeTypes = {
   "service-discovery": GraphNode,
   "service-mesh": GraphNode,
   "network-firewall": GraphNode,
+  // Infrastructure Category 04: Compute & Application Services
+  "web-server": GraphNode,
+  "application-server": GraphNode,
+  "backend-service": GraphNode,
+  "microservice": GraphNode,
+  "monolithic-application": GraphNode,
+  "serverless-function": GraphNode,
+  "container": GraphNode,
+  "container-cluster": GraphNode,
+  "kubernetes-pod": GraphNode,
+  "kubernetes-service": GraphNode,
+  "virtual-machine": GraphNode,
+  "background-worker": GraphNode,
+  "scheduled-job": GraphNode,
+  "batch-processor": GraphNode,
 };
 

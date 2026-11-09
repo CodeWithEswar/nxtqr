@@ -327,5 +327,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-networking",
     },
   },
+  {
+    id: "infra_category_04_compute",
+    category: "frontend",
+    title: "Infrastructure Components: Category 04 Compute & Application Services",
+    description: "Validates 14 colored SVG icons, typed registry definitions, Zod schemas, compute connection ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "compute-and-application-services",
+      componentCount: 14,
+      iconsVerified: 14,
+      inspectionRoute: "/verify/infrastructure-compute",
+    },
+  },
 ];
 
