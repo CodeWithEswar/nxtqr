@@ -62,3 +62,4 @@ export const SinglePageApplicationIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

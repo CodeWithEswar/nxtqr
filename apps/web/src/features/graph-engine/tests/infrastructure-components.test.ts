@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
-import { getClientInfrastructureIcon, clientIconRegistry } from "@nxtqr/icons";
+import { getClientInfrastructureIcon } from "@nxtqr/icons";
 import { BaseNodeSchema } from "@nxtqr/graph-schema";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 

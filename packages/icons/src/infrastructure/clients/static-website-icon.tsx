@@ -58,3 +58,4 @@ export const StaticWebsiteIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

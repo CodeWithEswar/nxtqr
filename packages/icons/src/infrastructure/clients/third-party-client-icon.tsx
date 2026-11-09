@@ -78,3 +78,4 @@ export const ThirdPartyClientIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

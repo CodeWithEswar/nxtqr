@@ -71,3 +71,4 @@ export const IotDeviceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

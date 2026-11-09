@@ -1,24 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { Badge } from "@nxtqr/ui";
+import { CopyIcon } from "@nxtqr/icons";
 import {
-  Button,
-  Badge,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@nxtqr/ui";
-import {
-  CheckCircleIcon,
-  CopyIcon,
-  SlidersIcon,
-  SearchIcon,
-  LayersIcon,
-} from "@nxtqr/icons";
-import {
-  clientIconRegistry,
   getClientInfrastructureIcon,
   type InfrastructureIconVariant,
 } from "@nxtqr/icons";
@@ -30,7 +15,6 @@ const SIZES = [16, 20, 24, 32, 48] as const;
 export default function InfrastructureClientsVerificationPage() {
   const [variant, setVariant] = React.useState<InfrastructureIconVariant>("colored");
   const [selectedSlug, setSelectedSlug] = React.useState<string>("web-browser");
-  const [previewSize, setPreviewSize] = React.useState<number>(32);
   const [previewStatus, setPreviewStatus] = React.useState<"idle" | "running" | "success" | "error">("idle");
   const [isSelectedNode, setIsSelectedNode] = React.useState<boolean>(false);
   const [copiedKey, setCopiedKey] = React.useState<string | null>(null);
@@ -482,3 +466,4 @@ export default function InfrastructureClientsVerificationPage() {
     </div>
   );
 }
+

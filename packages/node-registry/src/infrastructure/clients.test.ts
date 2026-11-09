@@ -99,3 +99,4 @@ describe("NXTQR Phase 05.1.1 — Infrastructure Component Registry (Clients & UI
     expect(infrastructureRegistry.searchComponents("non-existent-xyz")).toHaveLength(0);
   });
 });
+

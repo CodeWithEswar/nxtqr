@@ -66,3 +66,4 @@ export const MobileApplicationIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

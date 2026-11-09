@@ -39,3 +39,4 @@ export function getClientInfrastructureIcon(
 ): InfrastructureIconComponent | undefined {
   return clientIconRegistry[slug];
 }
+

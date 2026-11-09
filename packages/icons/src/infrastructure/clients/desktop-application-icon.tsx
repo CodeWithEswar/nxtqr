@@ -72,3 +72,4 @@ export const DesktopApplicationIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

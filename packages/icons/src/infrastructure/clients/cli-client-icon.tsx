@@ -74,3 +74,4 @@ export const CliClientIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

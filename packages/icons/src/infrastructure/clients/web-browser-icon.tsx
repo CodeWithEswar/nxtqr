@@ -63,3 +63,4 @@ export const WebBrowserIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -10,3 +10,4 @@ export interface InfrastructureIconProps extends Omit<React.SVGProps<SVGSVGEleme
 }
 
 export type InfrastructureIconComponent = React.FC<InfrastructureIconProps>;
+

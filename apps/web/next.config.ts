@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -27,6 +30,14 @@ const nextConfig: NextConfig = {
   experimental: {
     // optimizePackageImports for heavy libraries
     optimizePackageImports: ["@hugeicons/react", "d3", "recharts", "@xyflow/react"],
+  },
+  webpack: (config) => {
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      zod: require.resolve("zod"),
+    };
+    return config;
   },
   async headers() {
     return [

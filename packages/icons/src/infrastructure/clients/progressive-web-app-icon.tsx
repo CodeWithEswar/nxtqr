@@ -75,3 +75,4 @@ export const ProgressiveWebAppIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+
