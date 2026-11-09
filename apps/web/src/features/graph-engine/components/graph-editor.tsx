@@ -10,13 +10,14 @@ import { useGraphEditorStore } from "../store/graph-editor-store";
 import { useGraphPersistence } from "../hooks/use-graph-persistence";
 import { Badge } from "@nxtqr/ui";
 import { CheckCircleIcon, SpinnerIcon, AlertCircleIcon } from "@nxtqr/icons";
+import { ReactFlowProvider } from "@xyflow/react";
 
 export interface GraphEditorProps {
   projectId?: string | null;
   className?: string;
 }
 
-export function GraphEditor({ projectId, className }: GraphEditorProps) {
+function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const { autosaveStatus } = useGraphPersistence(projectId);
 
   const title = useGraphEditorStore((s) => s.title);
@@ -143,6 +144,14 @@ export function GraphEditor({ projectId, className }: GraphEditorProps) {
         </div>
       </footer>
     </div>
+  );
+}
+
+export function GraphEditor(props: GraphEditorProps) {
+  return (
+    <ReactFlowProvider>
+      <InnerGraphEditor {...props} />
+    </ReactFlowProvider>
   );
 }
 

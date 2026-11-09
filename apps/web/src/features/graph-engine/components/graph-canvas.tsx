@@ -11,7 +11,6 @@ import {
   type EdgeChange,
   applyNodeChanges,
   applyEdgeChanges,
-  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -296,10 +295,6 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
 }
 
 export function GraphCanvas(props: GraphCanvasProps) {
-  return (
-    <ReactFlowProvider>
-      <InnerGraphCanvas {...props} />
-    </ReactFlowProvider>
-  );
+  return <InnerGraphCanvas {...props} />;
 }
 
