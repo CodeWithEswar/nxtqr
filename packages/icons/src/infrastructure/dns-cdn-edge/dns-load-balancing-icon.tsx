@@ -69,3 +69,4 @@ export const DnsLoadBalancingIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

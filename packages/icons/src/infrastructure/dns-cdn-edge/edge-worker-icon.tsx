@@ -70,3 +70,4 @@ export const EdgeWorkerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

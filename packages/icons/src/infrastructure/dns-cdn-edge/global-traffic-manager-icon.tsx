@@ -64,3 +64,4 @@ export const GlobalTrafficManagerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

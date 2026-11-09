@@ -63,3 +63,4 @@ export const AnycastNetworkIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

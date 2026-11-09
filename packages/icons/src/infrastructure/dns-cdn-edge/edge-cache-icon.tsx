@@ -78,3 +78,4 @@ export const EdgeCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

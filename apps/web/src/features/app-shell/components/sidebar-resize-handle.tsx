@@ -12,6 +12,7 @@ export function SidebarResizeHandle({ className }: SidebarResizeHandleProps) {
   const sidebarCollapsed = useShellStore((s) => s.sidebarCollapsed);
   const sidebarWidth = useShellStore((s) => s.sidebarWidth);
   const setSidebarWidth = useShellStore((s) => s.setSidebarWidth);
+  const isDragging = useShellStore((s) => s.isDraggingSidebar);
   const setIsDragging = useShellStore((s) => s.setIsDraggingSidebar);
 
   const handlePointerDown = React.useCallback(
@@ -19,7 +20,18 @@ export function SidebarResizeHandle({ className }: SidebarResizeHandleProps) {
       if (sidebarCollapsed) return;
 
       e.preventDefault();
+      e.stopPropagation();
+
+      // Capture pointer so all moves are dispatched reliably
+      try {
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+      } catch {
+        // Fallback for browsers that don't support pointer capture
+      }
+
       setIsDragging(true);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
 
       const startX = e.clientX;
       const startWidth = sidebarWidth;
@@ -30,8 +42,17 @@ export function SidebarResizeHandle({ className }: SidebarResizeHandleProps) {
         setSidebarWidth(newWidth);
       };
 
-      const handlePointerUp = () => {
+      const handlePointerUp = (upEvent: PointerEvent) => {
+        try {
+          (e.target as HTMLElement).releasePointerCapture(upEvent.pointerId);
+        } catch {
+          // Ignore
+        }
+
         setIsDragging(false);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+
         window.removeEventListener("pointermove", handlePointerMove);
         window.removeEventListener("pointerup", handlePointerUp);
         window.removeEventListener("pointercancel", handlePointerUp);
@@ -88,11 +109,18 @@ export function SidebarResizeHandle({ className }: SidebarResizeHandleProps) {
       onDoubleClick={handleDoubleClick}
       onKeyDown={handleKeyDown}
       className={cn(
-        "group relative w-1 cursor-col-resize select-none bg-border-default hover:bg-border-hover active:bg-border-strong transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong",
-        "after:absolute after:inset-y-0 after:-left-1 after:w-3 after:content-['']",
+        "group absolute inset-y-0 -right-1.5 w-3 cursor-col-resize select-none z-40 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong",
         className
       )}
-    />
+      title="Drag to resize sidebar (double-click to reset)"
+    >
+      <div
+        className={cn(
+          "w-0.5 h-full transition-colors",
+          "group-hover:bg-border-strong group-active:bg-border-strong",
+          isDragging ? "bg-border-strong" : "bg-transparent"
+        )}
+      />
+    </div>
   );
 }
-

@@ -71,3 +71,4 @@ export const ReverseProxyIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -50,6 +50,8 @@ export interface GraphEditorState {
   showMinimap: boolean;
   isInspectorOpen: boolean;
   isNodeLibraryOpen: boolean;
+  nodeLibraryWidth: number;
+  inspectorWidth: number;
   autosaveStatus: AutosaveStatus;
 
   // History state indicators
@@ -72,6 +74,9 @@ export interface GraphEditorState {
   toggleInspector: () => void;
   setNodeLibraryOpen: (open: boolean) => void;
   toggleNodeLibrary: () => void;
+  setNodeLibraryWidth: (width: number) => void;
+  setInspectorWidth: (width: number) => void;
+  resetPanelWidths: () => void;
   setAutosaveStatus: (status: AutosaveStatus) => void;
 
   // Selection
@@ -212,6 +217,8 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     showMinimap: true,
     isInspectorOpen: true,
     isNodeLibraryOpen: true,
+    nodeLibraryWidth: 280,
+    inspectorWidth: 320,
     autosaveStatus: "saved",
 
     canUndo: false,
@@ -249,6 +256,15 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     toggleInspector: () => set((s) => ({ isInspectorOpen: !s.isInspectorOpen })),
     setNodeLibraryOpen: (open) => set({ isNodeLibraryOpen: open }),
     toggleNodeLibrary: () => set((s) => ({ isNodeLibraryOpen: !s.isNodeLibraryOpen })),
+    setNodeLibraryWidth: (width) => {
+      const clamped = Math.max(220, Math.min(480, width));
+      set({ nodeLibraryWidth: clamped });
+    },
+    setInspectorWidth: (width) => {
+      const clamped = Math.max(260, Math.min(540, width));
+      set({ inspectorWidth: clamped });
+    },
+    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320 }),
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),
 
     selectNode: (id, multi = false) => {

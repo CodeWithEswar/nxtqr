@@ -70,3 +70,4 @@ export const AuthoritativeDnsIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

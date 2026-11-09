@@ -148,7 +148,12 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={resetWorkspaceLayout}
+              onClick={() => {
+                resetWorkspaceLayout();
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent("nxtqr:reset-layout"));
+                }
+              }}
               className="hidden md:flex h-7 w-7 rounded-md border border-border-default bg-surface-02 hover:bg-surface-03 text-text-muted hover:text-foreground shadow-level-1 shrink-0"
               aria-label="Reset workspace panel layout"
             >

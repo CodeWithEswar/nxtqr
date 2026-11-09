@@ -66,3 +66,4 @@ export const CdnIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

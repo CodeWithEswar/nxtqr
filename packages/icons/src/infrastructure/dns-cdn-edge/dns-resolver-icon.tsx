@@ -63,3 +63,4 @@ export const DnsResolverIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

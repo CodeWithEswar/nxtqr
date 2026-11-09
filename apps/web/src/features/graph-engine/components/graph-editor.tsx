@@ -6,6 +6,7 @@ import { GraphToolbar } from "./graph-toolbar";
 import { NodeLibrary } from "./node-library";
 import { NodeInspector } from "./node-inspector";
 import { MobileGraphToolbar } from "./mobile-graph-toolbar";
+import { PanelResizeHandle } from "./panel-resize-handle";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { useGraphPersistence } from "../hooks/use-graph-persistence";
 import { Badge } from "@nxtqr/ui";
@@ -25,6 +26,19 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const edges = useGraphEditorStore((s) => s.edges);
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const isInspectorOpen = useGraphEditorStore((s) => s.isInspectorOpen);
+  const nodeLibraryWidth = useGraphEditorStore((s) => s.nodeLibraryWidth);
+  const inspectorWidth = useGraphEditorStore((s) => s.inspectorWidth);
+  const setNodeLibraryWidth = useGraphEditorStore((s) => s.setNodeLibraryWidth);
+  const setInspectorWidth = useGraphEditorStore((s) => s.setInspectorWidth);
+  const resetPanelWidths = useGraphEditorStore((s) => s.resetPanelWidths);
+
+  React.useEffect(() => {
+    const handleReset = () => {
+      resetPanelWidths();
+    };
+    window.addEventListener("nxtqr:reset-layout", handleReset);
+    return () => window.removeEventListener("nxtqr:reset-layout", handleReset);
+  }, [resetPanelWidths]);
 
   return (
     <div
@@ -65,7 +79,10 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
       <div className="flex-1 flex relative overflow-hidden min-h-0">
         {/* Left: Desktop Node Library (Resizable / Collapsible) */}
         {isNodeLibraryOpen && (
-          <aside className="hidden md:flex w-64 lg:w-68 border-r border-border-default bg-surface-01 shrink-0 overflow-hidden flex-col shadow-level-1">
+          <aside
+            style={{ width: `${nodeLibraryWidth}px` }}
+            className="hidden md:flex relative border-r border-border-default bg-surface-01 shrink-0 overflow-visible flex-col shadow-level-1 select-none"
+          >
             <div className="h-8 px-3 border-b border-border-subtle bg-surface-02 flex items-center justify-between text-[11px] font-mono font-semibold text-text-muted uppercase tracking-wider shrink-0">
               <span>Node Palette</span>
               <Badge variant="outline" className="text-[9px] font-mono rounded-md h-4 px-1 text-text-disabled">
@@ -75,6 +92,17 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
             <div className="flex-1 overflow-hidden min-h-0">
               <NodeLibrary />
             </div>
+
+            {/* Resize Handle on Right Edge of Node Palette */}
+            <PanelResizeHandle
+              side="right"
+              currentWidth={nodeLibraryWidth}
+              minWidth={220}
+              maxWidth={480}
+              defaultWidth={280}
+              onResize={setNodeLibraryWidth}
+              ariaLabel="Resize Node Palette panel"
+            />
           </aside>
         )}
 
@@ -88,7 +116,10 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
 
         {/* Right: Desktop Node Inspector (Resizable / Collapsible) */}
         {isInspectorOpen && (
-          <aside className="hidden md:flex w-72 lg:w-80 border-l border-border-default bg-surface-01 shrink-0 overflow-hidden flex-col shadow-level-1">
+          <aside
+            style={{ width: `${inspectorWidth}px` }}
+            className="hidden md:flex relative border-l border-border-default bg-surface-01 shrink-0 overflow-visible flex-col shadow-level-1 select-none"
+          >
             <div className="h-8 px-3 border-b border-border-subtle bg-surface-02 flex items-center justify-between text-[11px] font-mono font-semibold text-text-muted uppercase tracking-wider shrink-0">
               <span>Inspector</span>
               <Badge variant="outline" className="text-[9px] font-mono rounded-md h-4 px-1 text-text-disabled">
@@ -98,6 +129,17 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
             <div className="flex-1 overflow-hidden min-h-0">
               <NodeInspector />
             </div>
+
+            {/* Resize Handle on Left Edge of Node Inspector */}
+            <PanelResizeHandle
+              side="left"
+              currentWidth={inspectorWidth}
+              minWidth={260}
+              maxWidth={540}
+              defaultWidth={320}
+              onResize={setInspectorWidth}
+              ariaLabel="Resize Node Inspector panel"
+            />
           </aside>
         )}
       </div>

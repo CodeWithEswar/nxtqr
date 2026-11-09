@@ -62,3 +62,4 @@ export const EdgeRouterIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

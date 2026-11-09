@@ -39,3 +39,4 @@ export function getDnsCdnEdgeInfrastructureIcon(
 ): InfrastructureIconComponent | undefined {
   return dnsCdnEdgeIconRegistry[slug];
 }
+
