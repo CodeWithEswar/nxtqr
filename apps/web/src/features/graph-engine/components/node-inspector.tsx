@@ -399,12 +399,12 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                 <label className="text-[10px] text-text-secondary block">
                   Description / Purpose
                 </label>
-                <input
-                  type="text"
+                <textarea
                   value={description}
                   onChange={(e) => handleDescriptionChange(e.target.value)}
                   placeholder="System role, client boundaries..."
-                  className="w-full h-8 px-2.5 bg-surface-01 border border-border-default hover:border-border-hover focus:border-border-strong rounded-md text-xs text-foreground placeholder:text-text-disabled outline-none transition-colors"
+                  rows={2}
+                  className="w-full min-h-[56px] py-1.5 px-2.5 bg-surface-01 border border-border-default hover:border-border-hover focus:border-border-strong rounded-md text-xs text-foreground placeholder:text-text-disabled outline-none transition-colors resize-none leading-relaxed precision-rail font-mono"
                 />
               </div>
             </div>
