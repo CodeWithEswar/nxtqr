@@ -90,12 +90,17 @@ export async function GET(request: NextRequest) {
       : NextResponse.redirect(new URL(safeNext, request.url));
 
     const supabase = createServerClient({
-      get: (name) => request.cookies.get(name),
-      set: (name, value, options) => {
-        response.cookies.set({ name, value, ...options });
+      getAll() {
+        return request.cookies.getAll();
       },
-      remove: (name, options) => {
-        response.cookies.set({ name, value: "", ...options });
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          if (!value || options.maxAge === 0) {
+            response.cookies.delete(name);
+          } else {
+            response.cookies.set({ name, value, ...options });
+          }
+        });
       },
     });
 

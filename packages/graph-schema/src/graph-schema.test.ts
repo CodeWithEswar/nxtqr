@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { GraphDocumentSchema, migrateGraphDocument, CURRENT_GRAPH_SCHEMA_VERSION } from "./index";
+import {
+  GraphDocumentSchema,
+  BaseNodeSchema,
+  ClipboardPayloadSchema,
+  migrateGraphDocument,
+  CURRENT_GRAPH_SCHEMA_VERSION,
+} from "./index";
 
 describe("Graph Schema & Migrations", () => {
   it("validates valid graph document structure", () => {
@@ -47,5 +53,29 @@ describe("Graph Schema & Migrations", () => {
     const migrated = migrateGraphDocument(raw);
     expect(migrated.schemaVersion).toBe(CURRENT_GRAPH_SCHEMA_VERSION);
     expect(migrated.title).toBe("RAG Pipeline");
+  });
+
+  it("validates clipboard payload with versioned schema and offset positions", () => {
+    const clipboardData = {
+      version: CURRENT_GRAPH_SCHEMA_VERSION,
+      nodes: [
+        {
+          id: "clip_node_1",
+          type: "process",
+          position: { x: 50, y: 50 },
+          dimensions: { width: 180, height: 80 },
+          data: { label: "Worker" },
+        },
+      ],
+      edges: [],
+    };
+
+    const parsedNode = BaseNodeSchema.parse(clipboardData.nodes[0]);
+    expect(parsedNode.dimensions?.width).toBe(180);
+    expect(parsedNode.dimensions?.height).toBe(80);
+
+    const parsedClipboard = ClipboardPayloadSchema.parse(clipboardData);
+    expect(parsedClipboard.version).toBe(CURRENT_GRAPH_SCHEMA_VERSION);
+    expect(parsedClipboard.nodes).toHaveLength(1);
   });
 });

@@ -1,4 +1,5 @@
 export type VisualizerType =
+  | "generic"
   | "system-design"
   | "rag"
   | "ai-agents"

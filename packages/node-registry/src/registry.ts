@@ -10,6 +10,7 @@ export interface NodeDefinition {
   description: string;
   defaultData: Record<string, unknown>;
   ports: PortDefinition[];
+  iconName?: string;
 }
 
 class NodeRegistryClass {
@@ -34,12 +35,27 @@ class NodeRegistryClass {
   }
 
   public get(visualizerType: VisualizerType, type: string): NodeDefinition | undefined {
-    return this.registry.get(`${visualizerType}:${type}`);
+    const specific = this.registry.get(`${visualizerType}:${type}`);
+    if (specific) return specific;
+    if (visualizerType !== "generic") {
+      return this.registry.get(`generic:${type}`);
+    }
+    return undefined;
   }
 
   public listForVisualizer(visualizerType: VisualizerType): NodeDefinition[] {
-    return Array.from(this.registry.values()).filter(
+    const list = Array.from(this.registry.values()).filter(
       (def) => def.visualizerType === visualizerType,
+    );
+    if (visualizerType !== "generic" && list.length === 0) {
+      return this.listFoundations();
+    }
+    return list;
+  }
+
+  public listFoundations(): NodeDefinition[] {
+    return Array.from(this.registry.values()).filter(
+      (def) => def.visualizerType === "generic",
     );
   }
 

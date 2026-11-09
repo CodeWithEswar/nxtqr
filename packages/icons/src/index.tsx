@@ -769,6 +769,51 @@ export const EditIcon = createIcon("EditIcon", (props) => (
   </svg>
 ));
 
+export const CursorIcon = createIcon("CursorIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M3 3l7 18 3-7 7-3L3 3z" />
+  </svg>
+));
+
+export const HandIcon = createIcon("HandIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5" />
+    <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
+    <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
+    <path d="M18 8a2 2 0 0 1 2 2v4a8 8 0 0 1-8 8H9a8 8 0 0 1-8-8v-3a2 2 0 0 1 3.4-1.4L6 11" />
+  </svg>
+));
+
+export const MaximizeIcon = createIcon("MaximizeIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <polyline points="15 3 21 3 21 9" />
+    <polyline points="9 21 3 21 3 15" />
+    <line x1="21" y1="3" x2="14" y2="10" />
+    <line x1="3" y1="21" x2="10" y2="14" />
+  </svg>
+));
+
 
 
 

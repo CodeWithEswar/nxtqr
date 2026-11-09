@@ -1,6 +1,65 @@
 import type { NodeDefinition } from "./registry";
 
+export const genericFoundationalNodeDefinitions: NodeDefinition[] = [
+  {
+    type: "input",
+    visualizerType: "generic",
+    label: "Generic Input",
+    category: "Foundations",
+    description: "Initial data entrypoint, trigger, or upstream input source.",
+    defaultData: {
+      name: "Input Source",
+      sourceType: "manual",
+    },
+    ports: [
+      { id: "out", name: "Out", type: "output", dataType: "Any" },
+    ],
+  },
+  {
+    type: "process",
+    visualizerType: "generic",
+    label: "Generic Process",
+    category: "Foundations",
+    description: "Data transformation, computation, or operational step.",
+    defaultData: {
+      name: "Processor",
+      concurrency: 1,
+    },
+    ports: [
+      { id: "in", name: "In", type: "input", dataType: "Any" },
+      { id: "out", name: "Out", type: "output", dataType: "Any" },
+    ],
+  },
+  {
+    type: "output",
+    visualizerType: "generic",
+    label: "Generic Output",
+    category: "Foundations",
+    description: "Final graph sink, result receiver, or egress endpoint.",
+    defaultData: {
+      name: "Output Sink",
+      persistResult: true,
+    },
+    ports: [
+      { id: "in", name: "In", type: "input", dataType: "Any" },
+    ],
+  },
+  {
+    type: "group",
+    visualizerType: "generic",
+    label: "Generic Group",
+    category: "Foundations",
+    description: "Logical container boundary for grouping connected nodes.",
+    defaultData: {
+      name: "Node Group",
+      collapsed: false,
+    },
+    ports: [],
+  },
+];
+
 export const standardNodeDefinitions: NodeDefinition[] = [
+  ...genericFoundationalNodeDefinitions,
   {
     type: "input",
     visualizerType: "system-design",

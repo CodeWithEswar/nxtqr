@@ -22,6 +22,25 @@ describe("NodeRegistry", () => {
     expect(dbNode?.ports).toHaveLength(2);
   });
 
+  it("registers and retrieves foundational generic primitive nodes", () => {
+    const foundations = nodeRegistry.listFoundations();
+    expect(foundations.length).toBeGreaterThanOrEqual(4);
+    const types = foundations.map((f) => f.type);
+    expect(types).toContain("input");
+    expect(types).toContain("process");
+    expect(types).toContain("output");
+    expect(types).toContain("group");
+
+    const groupDef = nodeRegistry.get("generic", "group");
+    expect(groupDef).toBeDefined();
+    expect(groupDef?.label).toBe("Generic Group");
+
+    // Fallback: visualizer type falls back to generic if not specialized
+    const fallbackGroup = nodeRegistry.get("system-design", "group");
+    expect(fallbackGroup).toBeDefined();
+    expect(fallbackGroup?.type).toBe("group");
+  });
+
   it("prevents duplicate registration of the same type", () => {
     expect(() => {
       nodeRegistry.register({

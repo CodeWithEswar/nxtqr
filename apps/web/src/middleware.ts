@@ -14,11 +14,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const response = NextResponse.next({
+  let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
+
+  // Clean up any empty or zero-length cookies to prevent header size ballooning (HTTP 431)
+  for (const cookie of request.cookies.getAll()) {
+    if (!cookie.value || cookie.value === "deleted" || cookie.value === '""') {
+      response.cookies.delete(cookie.name);
+    }
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey =
@@ -31,14 +38,19 @@ export async function middleware(request: NextRequest) {
 
   const supabase = createServerClient(
     {
-      get: (name) => request.cookies.get(name),
-      set: (name, value, options) => {
-        request.cookies.set({ name, value, ...options });
-        response.cookies.set({ name, value, ...options });
+      getAll() {
+        return request.cookies.getAll();
       },
-      remove: (name) => {
-        request.cookies.delete(name);
-        response.cookies.delete(name);
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        response = NextResponse.next({
+          request: {
+            headers: request.headers,
+          },
+        });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          response.cookies.set({ name, value, ...options }),
+        );
       },
     },
     supabaseUrl,

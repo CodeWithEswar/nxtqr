@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const VisualizerTypeSchema = z.enum([
+  "generic",
   "system-design",
   "rag",
   "ai-agents",
