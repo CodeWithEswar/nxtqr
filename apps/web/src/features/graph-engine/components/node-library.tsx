@@ -35,11 +35,39 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type DatabaseSubtype = "all" | "relational" | "nosql" | "specialized" | "topology";
 type ComputeSubtype = "all" | "servers" | "services" | "containers" | "serverless-workers" | "batch-jobs";
 type NetworkingSubtype = "all" | "balancers" | "gateways" | "vpc-subnets" | "mesh-discovery" | "security";
 type ClientSubtype = "all" | "web" | "mobile" | "desktop" | "headless" | "iot";
 type DnsEdgeSubtype = "all" | "dns" | "cdn-cache" | "compute" | "routing-proxy";
+
+const DATABASE_SUBTYPES: Record<DatabaseSubtype, string[]> = {
+  all: [],
+  relational: [
+    "relational-database",
+    "postgresql",
+    "mysql",
+    "distributed-sql-database",
+  ],
+  nosql: [
+    "document-database",
+    "key-value-database",
+    "wide-column-database",
+    "graph-database",
+  ],
+  specialized: [
+    "time-series-database",
+    "vector-database",
+    "in-memory-database",
+    "data-warehouse",
+  ],
+  topology: [
+    "database-primary",
+    "read-replica",
+    "database-cluster",
+  ],
+};
 
 const COMPUTE_SUBTYPES: Record<ComputeSubtype, string[]> = {
   all: [],
@@ -100,6 +128,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [databaseSubtype, setDatabaseSubtype] = React.useState<DatabaseSubtype>("all");
   const [computeSubtype, setComputeSubtype] = React.useState<ComputeSubtype>("all");
   const [networkingSubtype, setNetworkingSubtype] = React.useState<NetworkingSubtype>("all");
   const [clientSubtype, setClientSubtype] = React.useState<ClientSubtype>("all");
@@ -135,9 +164,44 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
 
+  // Filter Databases & Persistence items
+  const filteredDatabases = React.useMemo(() => {
+    if (
+      activeTab === "compute" ||
+      activeTab === "networking" ||
+      activeTab === "dns-cdn-edge" ||
+      activeTab === "clients" ||
+      activeTab === "foundations"
+    )
+      return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "databases-and-persistence"
+    );
+
+    if (databaseSubtype !== "all") {
+      const allowed = new Set(DATABASE_SUBTYPES[databaseSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, databaseSubtype, search]);
+
   // Filter Compute & Application Services items
   const filteredCompute = React.useMemo(() => {
-    if (activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
+    if (activeTab === "databases" || activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "compute-and-application-services"
@@ -165,7 +229,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter Networking & Traffic items
   const filteredNetworking = React.useMemo(() => {
-    if (activeTab === "compute" || activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
+    if (activeTab === "databases" || activeTab === "compute" || activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "networking-and-traffic"
@@ -193,7 +257,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter DNS, CDN & Edge items
   const filteredDnsEdge = React.useMemo(() => {
-    if (activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "foundations") return [];
+    if (activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "dns-cdn-edge"
@@ -221,7 +285,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter Clients & UI items
   const filteredClients = React.useMemo(() => {
-    if (activeTab === "compute" || activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "foundations") return [];
+    if (activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "clients-and-user-interfaces"
@@ -249,7 +313,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter foundations items
   const filteredFoundations = React.useMemo(() => {
-    if (activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
+    if (activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
 
     let list = foundationDefinitions;
     if (search.trim()) {
@@ -315,6 +379,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredDatabases.length +
     filteredCompute.length +
     filteredNetworking.length +
     filteredDnsEdge.length +
@@ -350,12 +415,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           )}
         </div>
 
-        {/* Category Tabs */}
-        <div className="grid grid-cols-6 gap-0.5 p-0.5 bg-surface-01 rounded-md border border-border-subtle text-[10px] font-mono">
+        {/* Category Tabs: Precision Scrollable Rail */}
+        <div className="flex items-center gap-1 overflow-x-auto p-1 bg-surface-01 rounded-md border border-border-subtle text-[10px] font-mono precision-rail">
           <button
             type="button"
             onClick={() => setActiveTab("all")}
-            className={`py-1 rounded text-center transition-colors truncate ${
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
               activeTab === "all"
                 ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
                 : "text-text-muted hover:text-foreground"
@@ -365,8 +430,19 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab("databases")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "databases"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Databases
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("compute")}
-            className={`py-1 rounded text-center transition-colors truncate ${
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
               activeTab === "compute"
                 ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
                 : "text-text-muted hover:text-foreground"
@@ -377,7 +453,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           <button
             type="button"
             onClick={() => setActiveTab("networking")}
-            className={`py-1 rounded text-center transition-colors truncate ${
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
               activeTab === "networking"
                 ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
                 : "text-text-muted hover:text-foreground"
@@ -388,7 +464,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           <button
             type="button"
             onClick={() => setActiveTab("dns-cdn-edge")}
-            className={`py-1 rounded text-center transition-colors truncate ${
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
               activeTab === "dns-cdn-edge"
                 ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
                 : "text-text-muted hover:text-foreground"
@@ -399,7 +475,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           <button
             type="button"
             onClick={() => setActiveTab("clients")}
-            className={`py-1 rounded text-center transition-colors truncate ${
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
               activeTab === "clients"
                 ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
                 : "text-text-muted hover:text-foreground"
@@ -410,7 +486,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           <button
             type="button"
             onClick={() => setActiveTab("foundations")}
-            className={`py-1 rounded text-center transition-colors truncate ${
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
               activeTab === "foundations"
                 ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
                 : "text-text-muted hover:text-foreground"
@@ -419,6 +495,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Databases & Persistence */}
+        {activeTab === "databases" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (15)" },
+                { id: "relational", label: "Relational (4)" },
+                { id: "nosql", label: "NoSQL & Graph (4)" },
+                { id: "specialized", label: "Specialized (4)" },
+                { id: "topology", label: "Topology (3)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setDatabaseSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border transition-colors shrink-0 ${
+                  databaseSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: Compute & Application Services */}
         {activeTab === "compute" && (
@@ -543,11 +647,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setDatabaseSubtype("all");
                   setComputeSubtype("all");
                   setNetworkingSubtype("all");
                   setClientSubtype("all");
@@ -562,6 +667,68 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 05: Databases & Persistence */}
+            {filteredDatabases.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Databases & Persistence ({filteredDatabases.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 05
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredDatabases.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <DatabaseIcon className="h-4 w-4 text-text-muted" />
+                          )}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="font-sans text-xs font-semibold text-foreground leading-tight">
+                            {comp.display.name}
+                          </div>
+                          <div className="font-mono text-[9.5px] text-text-muted truncate mt-0.5">
+                            {comp.id}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-disabled truncate leading-relaxed mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+
+                        <PlusIcon className="h-3.5 w-3.5 text-text-disabled group-hover:text-foreground shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 04: Compute & Application Services */}
             {filteredCompute.length > 0 && (
               <div className="space-y-1.5">

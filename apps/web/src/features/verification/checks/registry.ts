@@ -342,5 +342,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-compute",
     },
   },
+  {
+    id: "infra_category_05_databases",
+    category: "frontend",
+    title: "Infrastructure Components: Category 05 Databases & Persistence",
+    description: "Validates 15 colored SVG icons, typed registry definitions, Zod schemas, database connection ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "databases-and-persistence",
+      componentCount: 15,
+      iconsVerified: 15,
+      inspectionRoute: "/verify/infrastructure-databases",
+    },
+  },
 ];
 

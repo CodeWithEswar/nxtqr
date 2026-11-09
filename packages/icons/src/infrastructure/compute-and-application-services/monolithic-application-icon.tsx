@@ -101,3 +101,4 @@ export const MonolithicApplicationIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

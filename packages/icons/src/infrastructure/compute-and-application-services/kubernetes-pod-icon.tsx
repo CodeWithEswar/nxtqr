@@ -86,3 +86,4 @@ export const KubernetesPodIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -53,3 +53,4 @@ export function getComputeAndApplicationServicesInfrastructureIcon(
 ): InfrastructureIconComponent | null {
   return computeAndApplicationServicesIconRegistry[slug] || null;
 }
+

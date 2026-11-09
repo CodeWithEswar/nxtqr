@@ -273,3 +273,4 @@ export const BatchProcessorConfigSchema = SharedInfrastructureConfigSchema.exten
   assumedThroughputRecordsPerSec: z.number().int().min(10).max(1000000).default(10000),
 });
 export type BatchProcessorConfig = z.infer<typeof BatchProcessorConfigSchema>;
+

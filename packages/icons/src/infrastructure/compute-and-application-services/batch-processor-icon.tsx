@@ -105,3 +105,4 @@ export const BatchProcessorIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

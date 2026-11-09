@@ -61,3 +61,4 @@ export const ContainerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

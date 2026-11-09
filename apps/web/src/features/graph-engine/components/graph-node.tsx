@@ -246,5 +246,21 @@ export const nodeTypes = {
   "background-worker": GraphNode,
   "scheduled-job": GraphNode,
   "batch-processor": GraphNode,
+  // Infrastructure Category 05: Databases & Persistence
+  "relational-database": GraphNode,
+  "postgresql": GraphNode,
+  "mysql": GraphNode,
+  "distributed-sql-database": GraphNode,
+  "document-database": GraphNode,
+  "key-value-database": GraphNode,
+  "wide-column-database": GraphNode,
+  "graph-database": GraphNode,
+  "time-series-database": GraphNode,
+  "vector-database": GraphNode,
+  "in-memory-database": GraphNode,
+  "database-primary": GraphNode,
+  "read-replica": GraphNode,
+  "database-cluster": GraphNode,
+  "data-warehouse": GraphNode,
 };
 

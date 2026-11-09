@@ -97,3 +97,4 @@ export const ContainerClusterIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

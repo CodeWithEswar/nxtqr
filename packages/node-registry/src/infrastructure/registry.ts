@@ -20,6 +20,10 @@ import {
   computeAndApplicationServicesCategoryDefinition,
   ALL_COMPUTE_AND_APPLICATION_SERVICES_DEFINITIONS,
 } from "./definitions/compute-and-application-services";
+import {
+  databasesAndPersistenceCategoryDefinition,
+  ALL_DATABASES_AND_PERSISTENCE_DEFINITIONS,
+} from "./definitions/databases-and-persistence";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -51,6 +55,12 @@ export class InfrastructureRegistryClass {
     // 4. Register Compute & Application Services Category (Cat 04)
     this.registerCategory(computeAndApplicationServicesCategoryDefinition);
     for (const def of ALL_COMPUTE_AND_APPLICATION_SERVICES_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 5. Register Databases & Persistence Category (Cat 05)
+    this.registerCategory(databasesAndPersistenceCategoryDefinition);
+    for (const def of ALL_DATABASES_AND_PERSISTENCE_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

@@ -81,3 +81,4 @@ export const ApplicationServerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

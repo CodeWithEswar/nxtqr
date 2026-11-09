@@ -68,3 +68,4 @@ export const KubernetesServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

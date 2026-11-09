@@ -78,3 +78,4 @@ export const BackgroundWorkerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

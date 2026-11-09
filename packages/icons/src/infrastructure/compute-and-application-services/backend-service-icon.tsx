@@ -72,3 +72,4 @@ export const BackendServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

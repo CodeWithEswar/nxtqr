@@ -85,3 +85,4 @@ export const ScheduledJobIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

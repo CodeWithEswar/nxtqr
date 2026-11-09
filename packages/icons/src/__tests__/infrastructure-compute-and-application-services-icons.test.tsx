@@ -80,3 +80,4 @@ describe("Category 04 — Compute & Application Services Infrastructure Icons", 
     expect(html48).toContain('height="48"');
   });
 });
+

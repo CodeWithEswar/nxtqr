@@ -80,3 +80,4 @@ export const VirtualMachineIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+
