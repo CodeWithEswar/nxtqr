@@ -98,8 +98,8 @@ export function EngineeringNode({
         {/* Status indicator */}
         <div className="shrink-0 flex items-center gap-1 font-mono text-[9px] uppercase">
           {status === "executing" && (
-            <span className="inline-flex items-center gap-1 text-accent font-semibold animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+            <span className="inline-flex items-center gap-1 text-foreground font-semibold animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
               RUN
             </span>
           )}

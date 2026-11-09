@@ -48,7 +48,7 @@ export function ExecutionTraceViewer({ className }: { className?: string }) {
       {/* Header & Filter Bar */}
       <div className="p-2.5 sm:p-3 border-b border-subtle-border bg-elevated-surface flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <TerminalIcon className="h-4 w-4 text-accent shrink-0" />
+          <TerminalIcon className="h-4 w-4 text-foreground shrink-0" />
           <span className="text-xs font-mono font-semibold text-foreground">
             <span className="hidden sm:inline">Execution Trace Stream</span>
             <span className="sm:hidden">Trace Stream</span>
@@ -67,7 +67,7 @@ export function ExecutionTraceViewer({ className }: { className?: string }) {
               placeholder="Filter trace..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="text-xs font-mono pl-7 pr-2.5 py-1 rounded-md border border-subtle-border bg-black text-foreground placeholder:text-muted-foreground w-28 sm:w-44 focus:outline-none focus:border-accent"
+              className="text-xs font-mono pl-7 pr-2.5 py-1 rounded-md border border-subtle-border bg-black text-foreground placeholder:text-muted-foreground w-28 sm:w-44 focus:outline-none focus:border-border-strong focus:ring-1 focus:ring-border-strong"
             />
           </div>
 
@@ -80,7 +80,7 @@ export function ExecutionTraceViewer({ className }: { className?: string }) {
                 className={cn(
                   "px-1.5 sm:px-2 py-0.5 text-[10px] font-mono rounded capitalize transition-colors",
                   statusFilter === s
-                    ? "bg-accent text-accent-foreground font-semibold"
+                    ? "border-border-strong bg-surface-04 text-foreground font-semibold shadow-level-3"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -125,12 +125,12 @@ export function ExecutionTraceViewer({ className }: { className?: string }) {
                   className={cn(
                     "p-2 rounded border transition-all cursor-pointer flex items-center justify-between text-xs font-mono select-none",
                     isSelected
-                      ? "border-accent bg-accent/10 text-foreground ring-1 ring-accent"
-                      : "border-border/60 bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
+                      ? "border-border-strong bg-surface-04 text-foreground ring-1 ring-border-default shadow-level-2"
+                      : "border-border/60 bg-elevated-surface text-muted-foreground hover:border-border-hover hover:text-foreground"
                   )}
                 >
                   <div className="flex items-center gap-2 min-w-0 pr-2">
-                    <span className="text-[10px] font-bold text-accent tabular-nums shrink-0">
+                    <span className="text-[10px] font-bold text-foreground tabular-nums shrink-0">
                       #{evt.step.toString().padStart(2, "0")}
                     </span>
                     <span className="text-[10px] text-muted-foreground tabular-nums shrink-0">
@@ -164,7 +164,7 @@ export function ExecutionTraceViewer({ className }: { className?: string }) {
             <>
               <div className="flex items-center justify-between border-b border-subtle-border pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-accent">STEP #{selectedEvent.step}</span>
+                  <span className="font-bold text-foreground">STEP #{selectedEvent.step}</span>
                   <span className="text-muted-foreground">EVENT_DETAILS</span>
                 </div>
                 <Badge variant="outline" className="text-[10px] border-emerald-500/40 text-emerald-400">

@@ -60,7 +60,7 @@ export function EngineeringEdge({
         id={id}
         d={edgePath}
         fill="none"
-        stroke={selected ? "var(--accent)" : isExecuting ? "var(--accent)" : "#3a3a3a"}
+        stroke={selected ? "#a3a3a3" : isExecuting ? "#ffffff" : "#444444"}
         strokeWidth={selected ? 2 : 1.5}
         strokeDasharray={isExecuting ? "5 5" : undefined}
         className={cn(
@@ -83,7 +83,7 @@ export function EngineeringEdge({
             className={cn(
               "px-2 py-0.5 rounded font-mono text-[9px] border transition-colors select-none",
               selected
-                ? "bg-accent/15 border-accent text-accent font-semibold"
+                ? "bg-surface-04 border-border-strong text-foreground font-semibold shadow-level-2"
                 : "bg-surface/90 border-border text-muted-foreground hover:text-foreground"
             )}
           >

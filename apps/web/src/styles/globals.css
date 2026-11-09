@@ -49,13 +49,13 @@
     --muted: var(--surface-03);
     --muted-foreground: #999999;
 
-    /* 04 — MONOCHROME INTERACTION */
-    --accent: #202020;
-    --accent-foreground: #f5f5f5;
-    --accent-hover: #292929;
-    --accent-active: #333333;
+    /* 04 — MONOCHROME INTERACTION (WHITE PRIMARY ACCENT) */
+    --accent: #f5f5f5;
+    --accent-foreground: #000000;
+    --accent-hover: #e5e5e5;
+    --accent-active: #d4d4d4;
     --accent-muted: #141414;
-    --accent-muted-foreground: #999999;
+    --accent-muted-foreground: #858585;
 
     /* Focus is deliberately dark, not white */
     --accent-ring: #404040;
@@ -432,6 +432,12 @@
   }
   .border-border-inset {
     border-color: var(--border-inset) !important;
+  }
+  .border-accent {
+    border-color: var(--border-strong) !important;
+  }
+  .ring-accent {
+    --tw-ring-color: var(--border-strong) !important;
   }
   .bg-surface-04 {
     background-color: var(--surface-04) !important;

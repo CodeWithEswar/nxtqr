@@ -38,3 +38,4 @@ describe("NXTQR Border System & Pure Black Monochrome Standards", () => {
     expect(monochromeTokens.surface04).toBe("#1A1A1A");
   });
 });
+

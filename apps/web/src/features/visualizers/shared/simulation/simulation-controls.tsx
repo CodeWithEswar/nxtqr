@@ -170,7 +170,7 @@ export function SimulationControls({ className }: { className?: string }) {
           <button
             onClick={handleStart}
             disabled={simulationStatus === "completed"}
-            className="px-2.5 sm:px-3 py-1.5 rounded-md border border-accent bg-accent text-accent-foreground hover:opacity-90 disabled:opacity-40 text-xs font-mono font-semibold flex items-center gap-1.5 transition-opacity"
+            className="px-2.5 sm:px-3 py-1.5 rounded-md border border-border-strong bg-foreground text-background hover:bg-foreground/90 disabled:opacity-40 text-xs font-mono font-semibold flex items-center gap-1.5 shadow-level-1 active:shadow-level-3 transition-colors"
           >
             <span className="w-0 h-0 border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent border-l-[7px] border-l-current inline-block" />
             <span>{simulationStatus === "paused" ? "Resume" : "Start"}</span>
@@ -205,7 +205,7 @@ export function SimulationControls({ className }: { className?: string }) {
           <span
             className={cn(
               "w-2 h-2 rounded-full shrink-0",
-              simulationStatus === "running" && "bg-accent animate-pulse",
+              simulationStatus === "running" && "bg-foreground animate-pulse",
               simulationStatus === "completed" && "bg-emerald-400",
               simulationStatus === "paused" && "bg-amber-400",
               simulationStatus === "idle" && "bg-zinc-600"
@@ -218,7 +218,7 @@ export function SimulationControls({ className }: { className?: string }) {
         <div className="px-2 sm:px-2.5 py-1 rounded-md border border-subtle-border bg-black font-mono text-xs text-muted-foreground">
           <span className="hidden sm:inline">STEP: </span>
           <span className="sm:hidden">S: </span>
-          <span className="text-accent font-bold tabular-nums">{currentStep}</span>
+          <span className="text-foreground font-bold tabular-nums">{currentStep}</span>
         </div>
       </div>
 
@@ -232,8 +232,8 @@ export function SimulationControls({ className }: { className?: string }) {
             className={cn(
               "px-1.5 sm:px-2 py-0.5 rounded text-[11px] sm:text-xs font-mono transition-colors",
               playbackSpeed === s
-                ? "bg-accent text-accent-foreground font-bold shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                ? "border border-border-strong bg-surface-04 text-foreground font-bold shadow-level-3"
+                : "border border-transparent text-muted-foreground hover:text-foreground"
             )}
           >
             {s}x
