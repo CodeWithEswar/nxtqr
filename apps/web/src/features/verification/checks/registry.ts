@@ -297,5 +297,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-clients",
     },
   },
+  {
+    id: "infra_category_02_dns_cdn_edge",
+    category: "frontend",
+    title: "Infrastructure Components: Category 02 DNS, CDN & Edge",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, network connection ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "dns-cdn-edge",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-dns-cdn-edge",
+    },
+  },
 ];
 

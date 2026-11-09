@@ -9,8 +9,8 @@ import {
   CloseIcon,
   CheckCircleIcon,
   AlertTriangleIcon,
+  getInfrastructureIcon,
 } from "@nxtqr/icons";
-import { getClientInfrastructureIcon } from "@nxtqr/icons";
 import {
   infrastructureRegistry,
   type InspectorFieldDefinition,
@@ -210,7 +210,7 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
   const ports = selectedNode.ports || (infraDef ? infraDef.ports : []);
   const data = selectedNode.data || {};
   const IconComponent = infraDef
-    ? getClientInfrastructureIcon(infraDef.id)
+    ? getInfrastructureIcon(infraDef.id)
     : null;
 
   // Check which ports have active connections
@@ -280,12 +280,17 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
         {/* Category & Capability Badges */}
         {infraDef && (
           <div className="flex flex-wrap items-center gap-1">
-            <Badge
-              variant="outline"
-              className="font-mono text-[9px] text-text-secondary border-border-subtle bg-surface-01"
-            >
-              Category 01 · Clients
-            </Badge>
+            {(() => {
+              const category = infrastructureRegistry.getCategory(infraDef.categoryId);
+              return (
+                <Badge
+                  variant="outline"
+                  className="font-mono text-[9px] text-text-secondary border-border-subtle bg-surface-01"
+                >
+                  {category ? `Cat 0${category.order} · ${category.name}` : infraDef.categoryId}
+                </Badge>
+              );
+            })()}
             {infraDef.capabilities.map((cap) => (
               <Badge
                 key={cap}

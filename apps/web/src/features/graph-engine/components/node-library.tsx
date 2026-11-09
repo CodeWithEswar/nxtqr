@@ -7,7 +7,7 @@ import {
   type NodeDefinition,
   type InfrastructureComponentDefinition,
 } from "@nxtqr/node-registry";
-import { getClientInfrastructureIcon } from "@nxtqr/icons";
+import { getInfrastructureIcon } from "@nxtqr/icons";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import {
   CpuIcon,
@@ -35,8 +35,9 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "clients" | "foundations" | "domain";
+type CategoryTab = "all" | "dns-cdn-edge" | "clients" | "foundations";
 type ClientSubtype = "all" | "web" | "mobile" | "desktop" | "headless" | "iot";
+type DnsEdgeSubtype = "all" | "dns" | "cdn-cache" | "compute" | "routing-proxy";
 
 const CLIENT_SUBTYPES: Record<ClientSubtype, string[]> = {
   all: [],
@@ -53,6 +54,19 @@ const CLIENT_SUBTYPES: Record<ClientSubtype, string[]> = {
   iot: ["iot-device"],
 };
 
+const DNS_EDGE_SUBTYPES: Record<DnsEdgeSubtype, string[]> = {
+  all: [],
+  dns: ["dns-resolver", "authoritative-dns", "dns-load-balancing"],
+  "cdn-cache": ["cdn", "edge-cache"],
+  compute: ["edge-worker"],
+  "routing-proxy": [
+    "edge-router",
+    "reverse-proxy",
+    "global-traffic-manager",
+    "anycast-network",
+  ],
+};
+
 export interface NodeLibraryProps {
   onNodeAdded?: (node: BaseNode) => void;
   className?: string;
@@ -65,8 +79,9 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   const nodes = useGraphEditorStore((s) => s.nodes);
 
   const [search, setSearch] = React.useState("");
-  const [activeTab, setActiveTab] = React.useState<CategoryTab>("clients");
+  const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
   const [clientSubtype, setClientSubtype] = React.useState<ClientSubtype>("all");
+  const [dnsEdgeSubtype, setDnsEdgeSubtype] = React.useState<DnsEdgeSubtype>("all");
   const searchInputRef = React.useRef<HTMLInputElement>(null);
 
   // Keyboard shortcut: Press "/" to focus search input
@@ -85,7 +100,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   }, []);
 
   // Infrastructure Components
-  const infraComponents = React.useMemo(() => {
+  const allInfraComponents = React.useMemo(() => {
     return infrastructureRegistry.listComponents();
   }, []);
 
@@ -98,19 +113,19 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
 
-  // Filter infrastructure items
-  const filteredInfra = React.useMemo(() => {
-    if (activeTab === "foundations" || activeTab === "domain") return [];
+  // Filter DNS, CDN & Edge items
+  const filteredDnsEdge = React.useMemo(() => {
+    if (activeTab === "clients" || activeTab === "foundations") return [];
 
-    let list = infraComponents;
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "dns-cdn-edge"
+    );
 
-    // Filter by subtype
-    if (clientSubtype !== "all") {
-      const allowed = new Set(CLIENT_SUBTYPES[clientSubtype]);
+    if (dnsEdgeSubtype !== "all") {
+      const allowed = new Set(DNS_EDGE_SUBTYPES[dnsEdgeSubtype]);
       list = list.filter((c) => allowed.has(c.id));
     }
 
-    // Filter by search query
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       list = list.filter(
@@ -124,11 +139,39 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
     }
 
     return list;
-  }, [infraComponents, activeTab, clientSubtype, search]);
+  }, [allInfraComponents, activeTab, dnsEdgeSubtype, search]);
 
-  // Filter legacy/foundations items
+  // Filter Clients & UI items
+  const filteredClients = React.useMemo(() => {
+    if (activeTab === "dns-cdn-edge" || activeTab === "foundations") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "clients-and-user-interfaces"
+    );
+
+    if (clientSubtype !== "all") {
+      const allowed = new Set(CLIENT_SUBTYPES[clientSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, clientSubtype, search]);
+
+  // Filter foundations items
   const filteredFoundations = React.useMemo(() => {
-    if (activeTab === "clients" || activeTab === "domain") return [];
+    if (activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
 
     let list = foundationDefinitions;
     if (search.trim()) {
@@ -145,7 +188,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter domain items
   const filteredDomain = React.useMemo(() => {
-    if (activeTab === "clients" || activeTab === "foundations") return [];
+    if (activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
 
     let list = domainDefinitions;
     if (search.trim()) {
@@ -194,7 +237,10 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
-    filteredInfra.length + filteredFoundations.length + filteredDomain.length;
+    filteredDnsEdge.length +
+    filteredClients.length +
+    filteredFoundations.length +
+    filteredDomain.length;
 
   return (
     <div
@@ -225,44 +271,83 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex items-center gap-1 p-0.5 bg-surface-01 rounded-md border border-border-subtle text-[11px] font-mono">
-          <button
-            type="button"
-            onClick={() => setActiveTab("clients")}
-            className={`flex-1 py-1 rounded text-center transition-colors ${
-              activeTab === "clients"
-                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
-                : "text-text-muted hover:text-foreground"
-            }`}
-          >
-            Clients ({infraComponents.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("foundations")}
-            className={`flex-1 py-1 rounded text-center transition-colors ${
-              activeTab === "foundations"
-                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
-                : "text-text-muted hover:text-foreground"
-            }`}
-          >
-            Foundations
-          </button>
+        <div className="grid grid-cols-4 gap-1 p-0.5 bg-surface-01 rounded-md border border-border-subtle text-[11px] font-mono">
           <button
             type="button"
             onClick={() => setActiveTab("all")}
-            className={`flex-1 py-1 rounded text-center transition-colors ${
+            className={`py-1 rounded text-center transition-colors truncate ${
               activeTab === "all"
                 ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
                 : "text-text-muted hover:text-foreground"
             }`}
           >
-            All
+            All ({allInfraComponents.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("dns-cdn-edge")}
+            className={`py-1 rounded text-center transition-colors truncate ${
+              activeTab === "dns-cdn-edge"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            DNS & Edge
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("clients")}
+            className={`py-1 rounded text-center transition-colors truncate ${
+              activeTab === "clients"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Clients
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("foundations")}
+            className={`py-1 rounded text-center transition-colors truncate ${
+              activeTab === "foundations"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Core
           </button>
         </div>
 
-        {/* Subtype Filter Pills (Only visible when Clients or All is selected) */}
-        {(activeTab === "clients" || activeTab === "all") && (
+        {/* Subtype Filter Pills: DNS, CDN & Edge */}
+        {activeTab === "dns-cdn-edge" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (10)" },
+                { id: "dns", label: "DNS (3)" },
+                { id: "cdn-cache", label: "CDN/Cache (2)" },
+                { id: "compute", label: "Compute (1)" },
+                { id: "routing-proxy", label: "Routing/Proxy (4)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setDnsEdgeSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border transition-colors shrink-0 ${
+                  dnsEdgeSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Subtype Filter Pills: Clients */}
+        {activeTab === "clients" && (
           <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
             {(
               [
@@ -298,12 +383,13 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || clientSubtype !== "all" || activeTab !== "all") && (
+            {(search || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
                   setClientSubtype("all");
+                  setDnsEdgeSubtype("all");
                   setActiveTab("all");
                 }}
                 className="text-[11px] font-mono text-text-secondary hover:text-foreground underline underline-offset-4"
@@ -314,24 +400,24 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
-            {/* 1. Clients & User Interfaces Category */}
-            {filteredInfra.length > 0 && (
+            {/* 1. Category 02: DNS, CDN & Edge Infrastructure */}
+            {filteredDnsEdge.length > 0 && (
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between px-2 pt-1">
                   <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
-                    Clients & UI ({filteredInfra.length})
+                    DNS, CDN & Edge ({filteredDnsEdge.length})
                   </span>
                   <Badge
                     variant="outline"
                     className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
                   >
-                    Cat 01
+                    Cat 02
                   </Badge>
                 </div>
 
                 <div className="space-y-1">
-                  {filteredInfra.map((comp) => {
-                    const IconComponent = getClientInfrastructureIcon(comp.id);
+                  {filteredDnsEdge.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
                     return (
                       <div
                         key={comp.id}
@@ -376,7 +462,69 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
               </div>
             )}
 
-            {/* 2. Foundations Category */}
+            {/* 2. Category 01: Clients & User Interfaces */}
+            {filteredClients.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Clients & UI ({filteredClients.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 01
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredClients.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <CpuIcon className="h-4 w-4 text-text-muted" />
+                          )}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="font-sans text-xs font-semibold text-foreground leading-tight">
+                            {comp.display.name}
+                          </div>
+                          <div className="font-mono text-[9.5px] text-text-muted truncate mt-0.5">
+                            {comp.id}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-disabled truncate leading-relaxed mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+
+                        <PlusIcon className="h-3.5 w-3.5 text-text-disabled group-hover:text-foreground shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 3. Foundations Category */}
             {filteredFoundations.length > 0 && (
               <div className="space-y-1.5">
                 <div className="px-2 pt-1 text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider">
@@ -425,7 +573,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
               </div>
             )}
 
-            {/* 3. Visualizer / Domain Category */}
+            {/* 4. Visualizer / Domain Category */}
             {filteredDomain.length > 0 && (
               <div className="space-y-1.5">
                 <div className="px-2 pt-1 text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider">

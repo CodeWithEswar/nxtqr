@@ -8,6 +8,10 @@ import {
   clientsCategoryDefinition,
   ALL_CLIENT_DEFINITIONS,
 } from "./definitions/clients";
+import {
+  dnsCdnEdgeCategoryDefinition,
+  ALL_DNS_CDN_EDGE_DEFINITIONS,
+} from "./definitions/dns-cdn-edge";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -18,11 +22,15 @@ export class InfrastructureRegistryClass {
   }
 
   private registerDefaults(): void {
-    // 1. Register Clients & User Interfaces Category
+    // 1. Register Clients & User Interfaces Category (Cat 01)
     this.registerCategory(clientsCategoryDefinition);
-
-    // 2. Register all 10 client component definitions
     for (const def of ALL_CLIENT_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 2. Register DNS, CDN & Edge Infrastructure Category (Cat 02)
+    this.registerCategory(dnsCdnEdgeCategoryDefinition);
+    for (const def of ALL_DNS_CDN_EDGE_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

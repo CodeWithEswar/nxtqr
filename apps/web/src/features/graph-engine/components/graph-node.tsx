@@ -11,7 +11,7 @@ import {
   GridIcon,
   CheckCircleIcon,
   SlidersIcon,
-  getClientInfrastructureIcon,
+  getInfrastructureIcon,
 } from "@nxtqr/icons";
 import { nodeRegistry, infrastructureRegistry } from "@nxtqr/node-registry";
 import type { BaseNode, PortDefinition } from "../schemas/graph.schema";
@@ -55,13 +55,19 @@ export const GraphNode = React.memo(function GraphNode({
   }, [nodeType]);
 
   const InfraIcon = React.useMemo(() => {
-    return getClientInfrastructureIcon(infraDef?.display.iconSlug || nodeType);
+    return getInfrastructureIcon(infraDef?.display.iconSlug || nodeType);
   }, [infraDef, nodeType]);
 
   const IconComponent = ICON_MAP[nodeType] || CpuIcon;
   const label = nodeData.label || infraDef?.display.name || nodeDef?.label || "Node";
   const description = nodeData.description || infraDef?.display.description || nodeDef?.description || "";
-  const categoryLabel = infraDef ? "CLIENTS & UI" : (nodeDef?.category || nodeType);
+  const categoryLabel = React.useMemo(() => {
+    if (infraDef) {
+      const cat = infrastructureRegistry.getCategory(infraDef.categoryId);
+      return cat?.name.toUpperCase() || "INFRASTRUCTURE";
+    }
+    return nodeDef?.category?.toUpperCase() || nodeType.toUpperCase();
+  }, [infraDef, nodeDef, nodeType]);
 
   // Merge registered ports with node instance ports
   const ports = React.useMemo(() => {
@@ -201,5 +207,16 @@ export const nodeTypes = {
   "cli-client": GraphNode,
   "iot-device": GraphNode,
   "third-party-client": GraphNode,
+  // Infrastructure Category 02: DNS, CDN & Edge
+  "dns-resolver": GraphNode,
+  "authoritative-dns": GraphNode,
+  "dns-load-balancing": GraphNode,
+  "cdn": GraphNode,
+  "edge-cache": GraphNode,
+  "edge-worker": GraphNode,
+  "edge-router": GraphNode,
+  "reverse-proxy": GraphNode,
+  "global-traffic-manager": GraphNode,
+  "anycast-network": GraphNode,
 };
 
