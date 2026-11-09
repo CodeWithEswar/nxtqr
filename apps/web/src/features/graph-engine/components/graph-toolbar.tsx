@@ -13,6 +13,7 @@ import {
   SlidersIcon,
   PlusIcon,
   LayersIcon,
+  MonitorIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
@@ -38,6 +39,9 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
 
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const toggleNodeLibrary = useGraphEditorStore((s) => s.toggleNodeLibrary);
+
+  const showMinimap = useGraphEditorStore((s) => s.showMinimap);
+  const toggleMinimap = useGraphEditorStore((s) => s.toggleMinimap);
 
   const applyAutoLayout = useGraphEditorStore((s) => s.applyAutoLayout);
 
@@ -137,7 +141,7 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
           <span className="hidden md:inline">Auto Layout</span>
         </Button>
 
-        {/* Viewport controls: Fit View + Snap to Grid */}
+        {/* Viewport controls: Fit View + Snap to Grid + Minimap */}
         <div className="flex items-center bg-surface-02 p-0.5 rounded-md border border-border-subtle">
           <button
             type="button"
@@ -159,6 +163,19 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
             title="Toggle 16px Grid Snap (G)"
           >
             <GridIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={toggleMinimap}
+            className={cn(
+              "h-6 w-6 rounded flex items-center justify-center transition-colors cursor-pointer",
+              showMinimap
+                ? "bg-surface-04 text-foreground shadow-level-1 font-semibold"
+                : "text-text-muted hover:text-foreground hover:bg-surface-03"
+            )}
+            title="Toggle Precision Minimap (M)"
+          >
+            <MonitorIcon className="h-3.5 w-3.5" />
           </button>
         </div>
 

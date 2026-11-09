@@ -133,3 +133,4 @@ export function PanelResizeHandle({
     </div>
   );
 }
+

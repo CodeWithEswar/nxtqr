@@ -52,6 +52,7 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
   const gridType = useGraphEditorStore((s) => s.gridType);
   const snapToGrid = useGraphEditorStore((s) => s.snapToGrid);
   const showMinimap = useGraphEditorStore((s) => s.showMinimap);
+  const toggleMinimap = useGraphEditorStore((s) => s.toggleMinimap);
 
   // Track initial node positions at drag start to group continuous drag into a single history transaction
   const dragStartPositions = React.useRef<Map<string, NodePosition>>(new Map());
@@ -351,20 +352,33 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
 
         {/* Precision Minimap (Pannable, Zoomable, Click-to-center) */}
         {showMinimap && (
-          <MiniMap
-            pannable={true}
-            zoomable={true}
-            nodeStrokeWidth={2}
-            nodeColor={(node) => (node.selected ? "#525252" : "#262626")}
-            nodeStrokeColor={(node) => (node.selected ? "#737373" : "#383838")}
-            maskColor="rgba(0, 0, 0, 0.65)"
-            maskStrokeColor="#404040"
-            maskStrokeWidth={1.5}
-            className="!bg-surface-01 !border !border-border-default !rounded-md !m-3 !shadow-level-2"
-            style={{ width: 140, height: 90 }}
-            onClick={onMinimapClick}
-            ariaLabel="Canvas Navigation Minimap"
-          />
+          <div className="absolute bottom-3 right-3 z-10 rounded-md border border-border-strong bg-surface-02 shadow-level-2 overflow-hidden pointer-events-auto">
+            <div className="flex items-center justify-between px-2 py-0.5 bg-surface-01 border-b border-border-subtle text-[9px] font-mono text-text-muted select-none">
+              <span className="uppercase tracking-wider font-semibold">Minimap</span>
+              <button
+                type="button"
+                onClick={toggleMinimap}
+                className="hover:text-foreground text-text-disabled ml-2 cursor-pointer"
+                title="Hide Minimap (M)"
+              >
+                ✕
+              </button>
+            </div>
+            <MiniMap
+              pannable={true}
+              zoomable={true}
+              nodeStrokeWidth={2}
+              nodeColor={(node) => (node.selected ? "#FFFFFF" : "#60A5FA")}
+              nodeStrokeColor={(node) => (node.selected ? "#FFFFFF" : "#38BDF8")}
+              maskColor="rgba(0, 0, 0, 0.45)"
+              maskStrokeColor="#666666"
+              maskStrokeWidth={1.5}
+              className="!m-0 !border-0 !bg-surface-03"
+              style={{ width: 140, height: 90 }}
+              onClick={onMinimapClick}
+              ariaLabel="Canvas Navigation Minimap"
+            />
+          </div>
         )}
       </ReactFlow>
     </div>

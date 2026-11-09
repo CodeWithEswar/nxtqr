@@ -312,5 +312,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-dns-cdn-edge",
     },
   },
+  {
+    id: "infra_category_03_networking",
+    category: "frontend",
+    title: "Infrastructure Components: Category 03 Networking & Traffic",
+    description: "Validates 12 colored SVG icons, typed registry definitions, Zod schemas, network connection ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "networking-and-traffic",
+      componentCount: 12,
+      iconsVerified: 12,
+      inspectionRoute: "/verify/infrastructure-networking",
+    },
+  },
 ];
 

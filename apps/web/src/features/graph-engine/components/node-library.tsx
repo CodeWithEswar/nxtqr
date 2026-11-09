@@ -35,9 +35,19 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type NetworkingSubtype = "all" | "balancers" | "gateways" | "vpc-subnets" | "mesh-discovery" | "security";
 type ClientSubtype = "all" | "web" | "mobile" | "desktop" | "headless" | "iot";
 type DnsEdgeSubtype = "all" | "dns" | "cdn-cache" | "compute" | "routing-proxy";
+
+const NETWORKING_SUBTYPES: Record<NetworkingSubtype, string[]> = {
+  all: [],
+  balancers: ["load-balancer", "layer-4-load-balancer", "layer-7-load-balancer"],
+  gateways: ["api-gateway", "ingress-controller", "nat-gateway"],
+  "vpc-subnets": ["vpc", "subnet"],
+  "mesh-discovery": ["service-discovery", "service-mesh"],
+  security: ["forward-proxy", "network-firewall"],
+};
 
 const CLIENT_SUBTYPES: Record<ClientSubtype, string[]> = {
   all: [],
@@ -80,6 +90,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [networkingSubtype, setNetworkingSubtype] = React.useState<NetworkingSubtype>("all");
   const [clientSubtype, setClientSubtype] = React.useState<ClientSubtype>("all");
   const [dnsEdgeSubtype, setDnsEdgeSubtype] = React.useState<DnsEdgeSubtype>("all");
   const searchInputRef = React.useRef<HTMLInputElement>(null);
@@ -113,9 +124,37 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
 
+  // Filter Networking & Traffic items
+  const filteredNetworking = React.useMemo(() => {
+    if (activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "networking-and-traffic"
+    );
+
+    if (networkingSubtype !== "all") {
+      const allowed = new Set(NETWORKING_SUBTYPES[networkingSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, networkingSubtype, search]);
+
   // Filter DNS, CDN & Edge items
   const filteredDnsEdge = React.useMemo(() => {
-    if (activeTab === "clients" || activeTab === "foundations") return [];
+    if (activeTab === "networking" || activeTab === "clients" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "dns-cdn-edge"
@@ -143,7 +182,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter Clients & UI items
   const filteredClients = React.useMemo(() => {
-    if (activeTab === "dns-cdn-edge" || activeTab === "foundations") return [];
+    if (activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "clients-and-user-interfaces"
@@ -171,7 +210,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter foundations items
   const filteredFoundations = React.useMemo(() => {
-    if (activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
+    if (activeTab === "networking" || activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
 
     let list = foundationDefinitions;
     if (search.trim()) {
@@ -188,7 +227,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter domain items
   const filteredDomain = React.useMemo(() => {
-    if (activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
+    if (activeTab === "networking" || activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
 
     let list = domainDefinitions;
     if (search.trim()) {
@@ -237,6 +276,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredNetworking.length +
     filteredDnsEdge.length +
     filteredClients.length +
     filteredFoundations.length +
@@ -271,7 +311,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
         </div>
 
         {/* Category Tabs */}
-        <div className="grid grid-cols-4 gap-1 p-0.5 bg-surface-01 rounded-md border border-border-subtle text-[11px] font-mono">
+        <div className="grid grid-cols-5 gap-1 p-0.5 bg-surface-01 rounded-md border border-border-subtle text-[10.5px] font-mono">
           <button
             type="button"
             onClick={() => setActiveTab("all")}
@@ -281,7 +321,18 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
                 : "text-text-muted hover:text-foreground"
             }`}
           >
-            All ({allInfraComponents.length})
+            All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("networking")}
+            className={`py-1 rounded text-center transition-colors truncate ${
+              activeTab === "networking"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Network
           </button>
           <button
             type="button"
@@ -292,7 +343,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
                 : "text-text-muted hover:text-foreground"
             }`}
           >
-            DNS & Edge
+            DNS/Edge
           </button>
           <button
             type="button"
@@ -317,6 +368,35 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Networking & Traffic */}
+        {activeTab === "networking" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (12)" },
+                { id: "balancers", label: "Balancers (3)" },
+                { id: "gateways", label: "Gateways (3)" },
+                { id: "vpc-subnets", label: "VPC/Subnet (2)" },
+                { id: "mesh-discovery", label: "Mesh (2)" },
+                { id: "security", label: "Security (2)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setNetworkingSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border transition-colors shrink-0 ${
+                  networkingSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: DNS, CDN & Edge */}
         {activeTab === "dns-cdn-edge" && (
@@ -383,11 +463,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setNetworkingSubtype("all");
                   setClientSubtype("all");
                   setDnsEdgeSubtype("all");
                   setActiveTab("all");
@@ -400,7 +481,69 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
-            {/* 1. Category 02: DNS, CDN & Edge Infrastructure */}
+            {/* 1. Category 03: Networking & Traffic Infrastructure */}
+            {filteredNetworking.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Networking & Traffic ({filteredNetworking.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 03
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredNetworking.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <CpuIcon className="h-4 w-4 text-text-muted" />
+                          )}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="font-sans text-xs font-semibold text-foreground leading-tight">
+                            {comp.display.name}
+                          </div>
+                          <div className="font-mono text-[9.5px] text-text-muted truncate mt-0.5">
+                            {comp.id}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-disabled truncate leading-relaxed mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+
+                        <PlusIcon className="h-3.5 w-3.5 text-text-disabled group-hover:text-foreground shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 2. Category 02: DNS, CDN & Edge Infrastructure */}
             {filteredDnsEdge.length > 0 && (
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between px-2 pt-1">

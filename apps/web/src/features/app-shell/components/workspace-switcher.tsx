@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
 } from "@nxtqr/ui";
 import { ChevronDownIcon, CheckIcon, FolderIcon, PlusIcon } from "@nxtqr/icons";
+import { useRouter, usePathname } from "next/navigation";
 import { useShellStore } from "../store/shell-store";
 import { cn } from "@nxtqr/utils";
 
@@ -35,12 +36,22 @@ export function WorkspaceSwitcher({
   variant = "button",
   className,
 }: WorkspaceSwitcherProps = {}) {
+  const router = useRouter();
+  const pathname = usePathname();
   const activeWorkspaceId = useShellStore((s) => s.activeWorkspaceId);
-
-  const [currentId, setCurrentId] = React.useState(activeWorkspaceId);
+  const setActiveWorkspace = useShellStore((s) => s.setActiveWorkspace);
 
   const active =
-    LOCAL_WORKSPACES.find((w) => w.id === currentId) ?? LOCAL_WORKSPACES[0];
+    LOCAL_WORKSPACES.find((w) => w.id === activeWorkspaceId) ?? LOCAL_WORKSPACES[0];
+
+  const handleSelect = (w: WorkspaceOption) => {
+    setActiveWorkspace(w.id, w.name);
+    if (w.id === "runtime-verification") {
+      router.push("/verify");
+    } else if (pathname?.startsWith("/verify")) {
+      router.push("/workspace");
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -86,14 +97,14 @@ export function WorkspaceSwitcher({
         {LOCAL_WORKSPACES.map((w) => (
           <DropdownMenuItem
             key={w.id}
-            onClick={() => setCurrentId(w.id)}
+            onClick={() => handleSelect(w)}
             className="flex items-center justify-between text-xs font-mono rounded-md px-2.5 py-2 sm:py-1.5 cursor-pointer hover:bg-surface-04 text-foreground transition-colors min-h-[40px] sm:min-h-0"
           >
             <div className="flex flex-col min-w-0 pr-2">
               <span className="truncate font-medium">{w.name}</span>
               <span className="text-[10px] text-text-muted">{w.role}</span>
             </div>
-            {w.id === currentId && (
+            {w.id === activeWorkspaceId && (
               <CheckIcon className="h-3.5 w-3.5 text-foreground shrink-0 ml-auto" />
             )}
           </DropdownMenuItem>

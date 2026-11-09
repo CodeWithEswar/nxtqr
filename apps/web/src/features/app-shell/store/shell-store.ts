@@ -26,6 +26,7 @@ export interface ShellStoreState {
   activeWorkspaceName: string;
 
   // Actions
+  setActiveWorkspace: (id: string, name: string) => void;
   toggleSidebar: () => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
   setSidebarWidth: (width: number) => void;
@@ -63,6 +64,10 @@ export const useShellStore = create<ShellStoreState>((set, get) => {
 
     activeWorkspaceId: "default",
     activeWorkspaceName: "Engineering Studio",
+
+    setActiveWorkspace: (id: string, name: string) => {
+      set({ activeWorkspaceId: id, activeWorkspaceName: name });
+    },
 
     toggleSidebar: () => {
       const next = !get().sidebarCollapsed;

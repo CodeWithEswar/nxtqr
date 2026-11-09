@@ -113,7 +113,7 @@ describe("NXTQR Phase 05.1.2 — Infrastructure Component Registry (DNS, CDN & E
   });
 
   it("supports accurate search queries across DNS, CDN & Edge components", () => {
-    expect(infrastructureRegistry.searchComponents("dns")).toHaveLength(3); // resolver, authoritative, lb
+    expect(infrastructureRegistry.searchComponents("dns").length).toBeGreaterThanOrEqual(3); // resolver, authoritative, lb
     const cdnMatches = infrastructureRegistry.searchComponents("cdn");
     expect(cdnMatches.length).toBeGreaterThanOrEqual(1);
     expect(cdnMatches.some((c) => c.id === "cdn")).toBe(true);

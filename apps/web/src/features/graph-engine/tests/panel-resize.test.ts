@@ -57,3 +57,4 @@ describe("Graph Editor — Resizable Workspace Panels", () => {
     expect(useGraphEditorStore.getState().inspectorWidth).toBe(320);
   });
 });
+

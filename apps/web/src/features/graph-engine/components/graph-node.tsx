@@ -218,5 +218,18 @@ export const nodeTypes = {
   "reverse-proxy": GraphNode,
   "global-traffic-manager": GraphNode,
   "anycast-network": GraphNode,
+  // Infrastructure Category 03: Networking & Traffic
+  "load-balancer": GraphNode,
+  "layer-4-load-balancer": GraphNode,
+  "layer-7-load-balancer": GraphNode,
+  "api-gateway": GraphNode,
+  "ingress-controller": GraphNode,
+  "forward-proxy": GraphNode,
+  "nat-gateway": GraphNode,
+  "vpc": GraphNode,
+  "subnet": GraphNode,
+  "service-discovery": GraphNode,
+  "service-mesh": GraphNode,
+  "network-firewall": GraphNode,
 };
 

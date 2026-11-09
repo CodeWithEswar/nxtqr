@@ -12,6 +12,10 @@ import {
   dnsCdnEdgeCategoryDefinition,
   ALL_DNS_CDN_EDGE_DEFINITIONS,
 } from "./definitions/dns-cdn-edge";
+import {
+  networkingAndTrafficCategoryDefinition,
+  ALL_NETWORKING_AND_TRAFFIC_DEFINITIONS,
+} from "./definitions/networking-and-traffic";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -31,6 +35,12 @@ export class InfrastructureRegistryClass {
     // 2. Register DNS, CDN & Edge Infrastructure Category (Cat 02)
     this.registerCategory(dnsCdnEdgeCategoryDefinition);
     for (const def of ALL_DNS_CDN_EDGE_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 3. Register Networking & Traffic Infrastructure Category (Cat 03)
+    this.registerCategory(networkingAndTrafficCategoryDefinition);
+    for (const def of ALL_NETWORKING_AND_TRAFFIC_DEFINITIONS) {
       this.registerComponent(def);
     }
   }
