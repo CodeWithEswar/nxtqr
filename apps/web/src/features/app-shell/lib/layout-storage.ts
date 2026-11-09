@@ -82,3 +82,4 @@ export function resetStoredLayoutPreferences(): ShellLayoutPreferences {
   }
   return DEFAULT_LAYOUT_PREFERENCES;
 }
+

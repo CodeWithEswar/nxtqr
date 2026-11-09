@@ -49,3 +49,4 @@ export const panelVariants: Variants = {
     transition: shellMotion.panel,
   },
 };
+

@@ -95,3 +95,4 @@ export function SidebarResizeHandle({ className }: SidebarResizeHandleProps) {
     />
   );
 }
+

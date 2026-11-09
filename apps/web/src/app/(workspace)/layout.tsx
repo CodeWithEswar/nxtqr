@@ -18,3 +18,4 @@ export default function WorkspaceRouteLayout({
 }) {
   return <AppShell>{children}</AppShell>;
 }
+

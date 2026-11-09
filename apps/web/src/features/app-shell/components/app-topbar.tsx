@@ -136,3 +136,4 @@ export function AppTopbar({ children, className }: AppTopbarProps) {
     </header>
   );
 }
+

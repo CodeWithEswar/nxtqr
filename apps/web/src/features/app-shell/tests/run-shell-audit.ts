@@ -92,3 +92,4 @@ assert(useShellStore.getState().sidebarWidth === 248, "Store reset restored defa
 console.log("==================================================");
 console.log(`Results: ${passed} / ${total} tests passed (100%)`);
 console.log("==================================================");
+

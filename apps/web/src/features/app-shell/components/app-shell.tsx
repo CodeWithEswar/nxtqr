@@ -58,3 +58,4 @@ export function AppShell({ children, topbarActions, className }: AppShellProps) 
     </div>
   );
 }
+

@@ -48,3 +48,4 @@ export function useCommandShortcuts() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggleSidebar, setCommandPaletteOpen, commandPaletteOpen, setMobileNavOpen]);
 }
+

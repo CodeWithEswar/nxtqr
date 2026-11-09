@@ -43,3 +43,4 @@ export function AppSidebar({ className }: AppSidebarProps) {
     </aside>
   );
 }
+

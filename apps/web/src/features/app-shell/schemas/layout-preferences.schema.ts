@@ -25,3 +25,4 @@ export const DEFAULT_LAYOUT_PREFERENCES: ShellLayoutPreferences = {
   bottomPanelSize: 25,
   bottomPanelOpen: false,
 };
+

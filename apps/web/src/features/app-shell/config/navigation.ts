@@ -127,3 +127,4 @@ export function matchActiveNavigationItem(
     (item) => item.href !== "/" && pathname.startsWith(item.href)
   );
 }
+

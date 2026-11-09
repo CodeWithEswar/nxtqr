@@ -90,3 +90,4 @@ export function WorkspaceBreadcrumbs({ className }: WorkspaceBreadcrumbsProps) {
     </Breadcrumb>
   );
 }
+
