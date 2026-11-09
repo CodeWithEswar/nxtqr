@@ -35,12 +35,21 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CachingSubtype = "all" | "in-memory" | "distributed" | "policies" | "specialized";
 type DatabaseSubtype = "all" | "relational" | "nosql" | "specialized" | "topology";
 type ComputeSubtype = "all" | "servers" | "services" | "containers" | "serverless-workers" | "batch-jobs";
 type NetworkingSubtype = "all" | "balancers" | "gateways" | "vpc-subnets" | "mesh-discovery" | "security";
 type ClientSubtype = "all" | "web" | "mobile" | "desktop" | "headless" | "iot";
 type DnsEdgeSubtype = "all" | "dns" | "cdn-cache" | "compute" | "routing-proxy";
+
+const CACHING_SUBTYPES: Record<CachingSubtype, string[]> = {
+  all: [],
+  "in-memory": ["redis-cache", "memcached-cache", "application-cache"],
+  distributed: ["distributed-cache", "redis-cache"],
+  policies: ["read-through-cache", "write-through-cache", "write-behind-cache"],
+  specialized: ["session-cache", "query-cache", "rate-limit-store"],
+};
 
 const DATABASE_SUBTYPES: Record<DatabaseSubtype, string[]> = {
   all: [],
@@ -128,6 +137,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [cachingSubtype, setCachingSubtype] = React.useState<CachingSubtype>("all");
   const [databaseSubtype, setDatabaseSubtype] = React.useState<DatabaseSubtype>("all");
   const [computeSubtype, setComputeSubtype] = React.useState<ComputeSubtype>("all");
   const [networkingSubtype, setNetworkingSubtype] = React.useState<NetworkingSubtype>("all");
@@ -164,9 +174,46 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
 
+  // Filter Caching & Performance items
+  const filteredCaching = React.useMemo(() => {
+    if (
+      activeTab === "databases" ||
+      activeTab === "compute" ||
+      activeTab === "networking" ||
+      activeTab === "dns-cdn-edge" ||
+      activeTab === "clients" ||
+      activeTab === "foundations"
+    )
+      return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "caching-and-performance"
+    );
+
+    if (cachingSubtype !== "all") {
+      const allowed = new Set(CACHING_SUBTYPES[cachingSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, cachingSubtype, search]);
+
   // Filter Databases & Persistence items
   const filteredDatabases = React.useMemo(() => {
     if (
+      activeTab === "caching" ||
       activeTab === "compute" ||
       activeTab === "networking" ||
       activeTab === "dns-cdn-edge" ||
@@ -201,7 +248,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter Compute & Application Services items
   const filteredCompute = React.useMemo(() => {
-    if (activeTab === "databases" || activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
+    if (activeTab === "caching" || activeTab === "databases" || activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "compute-and-application-services"
@@ -229,7 +276,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter Networking & Traffic items
   const filteredNetworking = React.useMemo(() => {
-    if (activeTab === "databases" || activeTab === "compute" || activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
+    if (activeTab === "caching" || activeTab === "databases" || activeTab === "compute" || activeTab === "dns-cdn-edge" || activeTab === "clients" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "networking-and-traffic"
@@ -257,7 +304,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter DNS, CDN & Edge items
   const filteredDnsEdge = React.useMemo(() => {
-    if (activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "foundations") return [];
+    if (activeTab === "caching" || activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "dns-cdn-edge"
@@ -285,7 +332,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter Clients & UI items
   const filteredClients = React.useMemo(() => {
-    if (activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "foundations") return [];
+    if (activeTab === "caching" || activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "dns-cdn-edge" || activeTab === "foundations") return [];
 
     let list = allInfraComponents.filter(
       (c) => c.categoryId === "clients-and-user-interfaces"
@@ -313,7 +360,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter foundations items
   const filteredFoundations = React.useMemo(() => {
-    if (activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
+    if (activeTab === "caching" || activeTab === "databases" || activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
 
     let list = foundationDefinitions;
     if (search.trim()) {
@@ -330,7 +377,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   // Filter domain items
   const filteredDomain = React.useMemo(() => {
-    if (activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
+    if (activeTab === "caching" || activeTab === "compute" || activeTab === "networking" || activeTab === "clients" || activeTab === "dns-cdn-edge") return [];
 
     let list = domainDefinitions;
     if (search.trim()) {
@@ -379,6 +426,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredCaching.length +
     filteredDatabases.length +
     filteredCompute.length +
     filteredNetworking.length +
@@ -427,6 +475,17 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             }`}
           >
             All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("caching")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "caching"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Caching
           </button>
           <button
             type="button"
@@ -495,6 +554,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Caching & Performance */}
+        {activeTab === "caching" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (10)" },
+                { id: "in-memory", label: "In-Memory (3)" },
+                { id: "distributed", label: "Distributed (2)" },
+                { id: "policies", label: "Policies (3)" },
+                { id: "specialized", label: "Specialized (3)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setCachingSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border transition-colors shrink-0 ${
+                  cachingSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: Databases & Persistence */}
         {activeTab === "databases" && (
@@ -647,11 +734,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setCachingSubtype("all");
                   setDatabaseSubtype("all");
                   setComputeSubtype("all");
                   setNetworkingSubtype("all");
@@ -667,6 +755,68 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 06: Caching & Performance */}
+            {filteredCaching.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Caching & Performance ({filteredCaching.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 06
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredCaching.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <CpuIcon className="h-4 w-4 text-text-muted" />
+                          )}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="font-sans text-xs font-semibold text-foreground leading-tight">
+                            {comp.display.name}
+                          </div>
+                          <div className="font-mono text-[9.5px] text-text-muted truncate mt-0.5">
+                            {comp.id}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-disabled truncate leading-relaxed mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+
+                        <PlusIcon className="h-3.5 w-3.5 text-text-disabled group-hover:text-foreground shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 05: Databases & Persistence */}
             {filteredDatabases.length > 0 && (
               <div className="space-y-1.5">

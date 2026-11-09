@@ -262,5 +262,16 @@ export const nodeTypes = {
   "read-replica": GraphNode,
   "database-cluster": GraphNode,
   "data-warehouse": GraphNode,
+  // Infrastructure Category 06: Caching & Performance
+  "redis-cache": GraphNode,
+  "memcached-cache": GraphNode,
+  "application-cache": GraphNode,
+  "distributed-cache": GraphNode,
+  "session-cache": GraphNode,
+  "query-cache": GraphNode,
+  "read-through-cache": GraphNode,
+  "write-through-cache": GraphNode,
+  "write-behind-cache": GraphNode,
+  "rate-limit-store": GraphNode,
 };
 

@@ -357,5 +357,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-databases",
     },
   },
+  {
+    id: "infra_category_06_caching",
+    category: "frontend",
+    title: "Infrastructure Components: Category 06 Caching & Performance",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, cache connection semantics, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "caching-and-performance",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-caching",
+    },
+  },
 ];
 

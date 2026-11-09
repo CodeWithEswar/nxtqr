@@ -24,6 +24,10 @@ import {
   databasesAndPersistenceCategoryDefinition,
   ALL_DATABASES_AND_PERSISTENCE_DEFINITIONS,
 } from "./definitions/databases-and-persistence";
+import {
+  cachingAndPerformanceCategoryDefinition,
+  ALL_CACHING_AND_PERFORMANCE_DEFINITIONS,
+} from "./definitions/caching-and-performance";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -61,6 +65,12 @@ export class InfrastructureRegistryClass {
     // 5. Register Databases & Persistence Category (Cat 05)
     this.registerCategory(databasesAndPersistenceCategoryDefinition);
     for (const def of ALL_DATABASES_AND_PERSISTENCE_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 6. Register Caching & Performance Category (Cat 06)
+    this.registerCategory(cachingAndPerformanceCategoryDefinition);
+    for (const def of ALL_CACHING_AND_PERFORMANCE_DEFINITIONS) {
       this.registerComponent(def);
     }
   }
