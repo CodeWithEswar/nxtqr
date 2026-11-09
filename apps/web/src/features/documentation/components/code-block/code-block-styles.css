@@ -78,12 +78,17 @@ code[data-line-numbers] .line::before,
   top: 0;
   width: 2rem;
   text-align: right;
-  color: #525252;
+  color: #737373;
   user-select: none;
   -webkit-user-select: none;
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
   font-size: 0.75rem;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
-  line-height: inherit;
+  line-height: 1.625;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Highlighted line treatment (subtle emphasis, not bright blinding neon) */

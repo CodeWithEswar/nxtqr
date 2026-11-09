@@ -61,11 +61,11 @@ export function QuickStartWalkthrough() {
   };
 
   const stepsList = [
-    { num: 1, title: "1. Instantiate Workspace" },
-    { num: 2, title: "2. Define Nodes" },
-    { num: 3, title: "3. Route Edges" },
-    { num: 4, title: "4. Validate Schema" },
-    { num: 5, title: "5. Run Simulation" },
+    { num: 1, title: "1. Instantiate Workspace", short: "1. Workspace" },
+    { num: 2, title: "2. Define Nodes", short: "2. Nodes" },
+    { num: 3, title: "3. Route Edges", short: "3. Edges" },
+    { num: 4, title: "4. Validate Schema", short: "4. Schema" },
+    { num: 5, title: "5. Run Simulation", short: "5. Simulation" },
   ];
 
   return (
@@ -101,7 +101,10 @@ export function QuickStartWalkthrough() {
                 : "border-border bg-elevated-surface text-muted-foreground hover:border-muted-border hover:text-foreground"
             )}
           >
-            <div className="truncate">{st.title}</div>
+            <div className="truncate">
+              <span className="hidden sm:inline">{st.title}</span>
+              <span className="sm:hidden">{st.short}</span>
+            </div>
           </button>
         ))}
       </div>

@@ -53,13 +53,13 @@ export function CodeCopyButton({ code, className }: CodeCopyButtonProps) {
     >
       {copied ? (
         <>
-          <CheckIcon className="h-3.5 w-3.5 mr-1 text-emerald-400" />
-          <span className="text-emerald-400 font-medium">Copied</span>
+          <CheckIcon className="h-3.5 w-3.5 sm:mr-1 text-emerald-400" />
+          <span className="text-emerald-400 font-medium hidden sm:inline">Copied</span>
         </>
       ) : (
         <>
-          <CopyIcon className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
-          <span>Copy</span>
+          <CopyIcon className="h-3.5 w-3.5 sm:mr-1 text-muted-foreground" />
+          <span className="hidden sm:inline">Copy</span>
         </>
       )}
     </Button>

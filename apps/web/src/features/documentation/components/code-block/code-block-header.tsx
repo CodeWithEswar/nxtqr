@@ -39,22 +39,24 @@ export function CodeBlockHeader({
   return (
     <div
       className={cn(
-        "flex items-center justify-between border-b border-border bg-black/60 px-4 py-2 font-mono text-[11px]",
+        "flex items-center justify-between border-b border-border bg-black/60 px-3 sm:px-4 py-1.5 sm:py-2 font-mono text-[11px]",
         className,
       )}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
         {filename && (
-          <span className="text-foreground/80 font-medium">{filename}</span>
+          <span className="text-foreground/80 font-medium truncate" title={filename}>
+            {filename}
+          </span>
         )}
         {language && (
-          <span className="uppercase text-[9px] tracking-wider text-neutral-500 border border-subtle-border px-1.5 py-0.5 rounded bg-black/40">
+          <span className="uppercase text-[9px] tracking-wider text-neutral-500 border border-subtle-border px-1.5 py-0.5 rounded bg-black/40 shrink-0 hidden sm:inline-block">
             {language}
           </span>
         )}
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
         {allowWrap && onToggleWrap && (
           <CodeWrapButton
             isWrapped={isWrapped}

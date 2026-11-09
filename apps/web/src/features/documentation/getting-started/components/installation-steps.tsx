@@ -10,6 +10,7 @@ import {
   TerminalIcon,
   ChevronDownIcon,
   ExternalLinkIcon,
+  SettingsIcon,
 } from "@nxtqr/icons";
 import Link from "next/link";
 
@@ -162,8 +163,9 @@ export function InstallationSteps() {
           <div className="space-y-4">
             <div className="space-y-1">
               <h4 className="text-sm font-bold font-sans text-foreground flex items-center gap-2">
-                <CheckCircleIcon className="h-4 w-4 text-emerald-400" />
-                Step 1: System Prerequisites
+                <CheckCircleIcon className="h-4 w-4 text-emerald-400 shrink-0" />
+                <span className="hidden sm:inline">Step 1: System Prerequisites</span>
+                <span className="sm:hidden">Step 1: Prerequisites</span>
               </h4>
               <p className="text-xs text-muted-foreground font-sans">
                 Verify that your local environment satisfies the minimum engine specifications:
@@ -203,8 +205,9 @@ git --version`}
           <div className="space-y-4">
             <div className="space-y-1">
               <h4 className="text-sm font-bold font-sans text-foreground flex items-center gap-2">
-                <TerminalIcon className="h-4 w-4 text-accent" />
-                Step 2: Clone & Install Dependencies
+                <TerminalIcon className="h-4 w-4 text-accent shrink-0" />
+                <span className="hidden sm:inline">Step 2: Clone & Install Dependencies</span>
+                <span className="sm:hidden">Step 2: Clone & Install</span>
               </h4>
               <p className="text-xs text-muted-foreground font-sans">
                 Clone the repository and run pnpm to link all 29 monorepo workspaces:
@@ -227,8 +230,10 @@ pnpm install`}
         {activeStep === 3 && (
           <div className="space-y-4">
             <div className="space-y-1">
-              <h4 className="text-sm font-bold font-sans text-foreground">
-                Step 3: Environment Variables Configuration
+              <h4 className="text-sm font-bold font-sans text-foreground flex items-center gap-2">
+                <SettingsIcon className="h-4 w-4 text-accent shrink-0" />
+                <span className="hidden sm:inline">Step 3: Environment Variables Configuration</span>
+                <span className="sm:hidden">Step 3: Environment (.env)</span>
               </h4>
               <p className="text-xs text-muted-foreground font-sans">
                 Create an <code>.env.local</code> file in <code>apps/web/</code>. Never commit secret credentials:
@@ -274,8 +279,10 @@ NODE_ENV=development`}
         {activeStep === 4 && (
           <div className="space-y-4">
             <div className="space-y-1">
-              <h4 className="text-sm font-bold font-sans text-foreground">
-                Step 4: Launching Development Services
+              <h4 className="text-sm font-bold font-sans text-foreground flex items-center gap-2">
+                <TerminalIcon className="h-4 w-4 text-accent shrink-0" />
+                <span className="hidden sm:inline">Step 4: Launching Development Services</span>
+                <span className="sm:hidden">Step 4: Development Run</span>
               </h4>
               <p className="text-xs text-muted-foreground font-sans">
                 Start the Next.js web application and optionally launch background Cloudflare workers:
@@ -300,8 +307,10 @@ pnpm workers:dev`}
         {activeStep === 5 && (
           <div className="space-y-4">
             <div className="space-y-1">
-              <h4 className="text-sm font-bold font-sans text-foreground">
-                Step 5: Automated Verification & Health Checks
+              <h4 className="text-sm font-bold font-sans text-foreground flex items-center gap-2">
+                <CheckCircleIcon className="h-4 w-4 text-emerald-400 shrink-0" />
+                <span className="hidden sm:inline">Step 5: Automated Verification & Health Checks</span>
+                <span className="sm:hidden">Step 5: Verification</span>
               </h4>
               <p className="text-xs text-muted-foreground font-sans">
                 Verify compiler integrity, unit tests, and live architecture diagnostics:
@@ -327,8 +336,11 @@ open http://localhost:3000/verify`}
       {/* Real Troubleshooting Collapsible Drawer */}
       <div className="space-y-2 border-t border-subtle-border pt-4">
         <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider flex items-center justify-between">
-          <span>Troubleshooting & Remediation Guidance</span>
-          <span className="text-[10px] text-muted-foreground">{TROUBLESHOOTING.length} Common Scenarios</span>
+          <span>
+            <span className="hidden sm:inline">Troubleshooting & Remediation Guidance</span>
+            <span className="sm:hidden">Troubleshooting</span>
+          </span>
+          <span className="text-[10px] text-muted-foreground">{TROUBLESHOOTING.length} Scenarios</span>
         </div>
 
         <div className="space-y-1.5">
