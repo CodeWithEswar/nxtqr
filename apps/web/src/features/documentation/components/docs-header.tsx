@@ -70,7 +70,7 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 h-14 w-full border-b border-border bg-black/95 backdrop-blur px-3 sm:px-6 flex items-center justify-between shrink-0 select-none">
+    <header className="sticky top-0 z-50 h-14 w-full border-b border-border-default bg-surface-01 px-3 sm:px-6 flex items-center justify-between shrink-0 select-none shadow-level-1">
       {/* Left: Mobile Trigger, Brand Identity & Desktop Top Navigation */}
       <div className="flex items-center gap-2 sm:gap-6 min-w-0">
         {/* Mobile Sidebar Sheet Trigger */}
@@ -184,11 +184,11 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
           variant="outline"
           size="sm"
           onClick={onSearchClick}
-          className="hidden sm:flex items-center gap-2 h-8 px-3 text-xs text-muted-foreground bg-surface/70 border-border hover:bg-surface hover:text-foreground transition-all duration-140 shadow-level-1"
+          className="hidden sm:flex items-center gap-2 h-8 px-3 text-xs text-muted-foreground bg-surface-01 border-border-default hover:bg-surface-03 hover:text-foreground transition-all duration-140 shadow-level-1"
         >
           <SearchIcon className="h-3.5 w-3.5" />
           <span>Quick search</span>
-          <kbd className="font-mono text-[10px] bg-black/60 border border-subtle-border px-1.5 py-0.5 rounded text-neutral-400">
+          <kbd className="font-mono text-[10px] bg-surface-00 border border-border-subtle px-1.5 py-0.5 rounded-md text-text-muted">
             ⌘K
           </kbd>
         </Button>
@@ -199,7 +199,7 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
           size="icon-sm"
           onClick={onSearchClick}
           aria-label="Quick search"
-          className="flex sm:hidden h-8 w-8 text-muted-foreground bg-surface/70 border-border hover:text-foreground active:bg-secondary-surface active:shadow-level-3 shrink-0"
+          className="flex sm:hidden h-8 w-8 text-muted-foreground bg-surface-01 border-border-default hover:text-foreground active:bg-surface-04 active:shadow-level-3 shrink-0"
         >
           <SearchIcon className="h-3.5 w-3.5" />
         </Button>
@@ -210,7 +210,7 @@ export function DocsHeader({ onSearchClick }: DocsHeaderProps) {
             variant="outline"
             size="sm"
             aria-label="System Diagnostics"
-            className="h-8 px-2 sm:px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface/40 border-border flex items-center gap-1.5 shadow-level-1"
+            className="h-8 px-2 sm:px-2.5 font-mono text-[11px] text-muted-foreground hover:text-foreground bg-surface-01 border-border-default flex items-center gap-1.5 shadow-level-1"
           >
             <ActivityIcon className="h-3.5 w-3.5 text-foreground shrink-0" />
             <span className="hidden sm:inline">Diagnostics</span>

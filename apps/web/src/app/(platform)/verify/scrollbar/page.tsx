@@ -95,7 +95,7 @@ export default function ScrollbarReviewGatePage() {
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Monochrome Scrollbar Tactical Feedback</CardTitle>
+              <CardTitle>Tactile Thumb States</CardTitle>
               <CardDescription>
                 Verify scrollbar thumb states across the unified pure black monochrome standard (Idle, Hover, Active/Drag, Inset Track).
               </CardDescription>
@@ -139,14 +139,9 @@ export default function ScrollbarReviewGatePage() {
         {/* Variant 1: Default (10px) */}
         <Card>
           <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-mono uppercase tracking-wider">
-                Variant 1: Default (10px Rail)
-              </CardTitle>
-              <Badge variant="secondary" className="font-mono text-[10px]">
-                Main App · 10px / 6px radius
-              </Badge>
-            </div>
+            <CardTitle className="text-xs font-mono uppercase tracking-wider">
+              Default Rail (10px)
+            </CardTitle>
             <CardDescription className="text-xs">
               Primary application scroll regions, documents, and large content surfaces.
             </CardDescription>
@@ -184,14 +179,9 @@ export default function ScrollbarReviewGatePage() {
         {/* Variant 2: Compact (7px) */}
         <Card>
           <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-mono uppercase tracking-wider">
-                Variant 2: Compact (7px Rail)
-              </CardTitle>
-              <Badge variant="secondary" className="font-mono text-[10px]">
-                Inspectors & Sidebars · 7px / 4px radius
-              </Badge>
-            </div>
+            <CardTitle className="text-xs font-mono uppercase tracking-wider">
+              Compact Rail (7px)
+            </CardTitle>
             <CardDescription className="text-xs">
               High information density sidebars, property panels, and nested file trees.
             </CardDescription>
@@ -220,14 +210,9 @@ export default function ScrollbarReviewGatePage() {
         {/* Variant 3: Canvas Panel (7px + Overscroll Contain) */}
         <Card>
           <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-mono uppercase tracking-wider">
-                Variant 3: Canvas Panel (7px)
-              </CardTitle>
-              <Badge variant="secondary" className="font-mono text-[10px]">
-                Canvas Protected · overscroll-contain
-              </Badge>
-            </div>
+            <CardTitle className="text-xs font-mono uppercase tracking-wider">
+              Canvas Panel (7px)
+            </CardTitle>
             <CardDescription className="text-xs">
               Floating node palettes and inspectors with overscroll containment preventing canvas
               zoom bleeding.
@@ -260,14 +245,9 @@ export default function ScrollbarReviewGatePage() {
         {/* Variant 4: Data Dense (6px) */}
         <Card>
           <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-mono uppercase tracking-wider">
-                Variant 4: Data Dense (6px Rail)
-              </CardTitle>
-              <Badge variant="secondary" className="font-mono text-[10px]">
-                Logs & Traces · 6px / 3px radius
-              </Badge>
-            </div>
+            <CardTitle className="text-xs font-mono uppercase tracking-wider">
+              Data Dense Rail (6px)
+            </CardTitle>
             <CardDescription className="text-xs">
               Ultra-compact 6px footprint for terminal streams, execution telemetry, and debug logs.
             </CardDescription>
@@ -303,7 +283,7 @@ export default function ScrollbarReviewGatePage() {
       {/* Parity Comparison: shadcn/ui ScrollArea vs Native Overflow */}
       <Card>
         <CardHeader>
-          <CardTitle>Architecture Parity: Radix ScrollArea vs Native Browser Scrollbar</CardTitle>
+          <CardTitle>Radix & Native Parity</CardTitle>
           <CardDescription>
             Demonstrates shared token inheritance and identical tactile solid neumorphism across
             both Radix UI ScrollArea and native browser overflow containers.
@@ -315,9 +295,6 @@ export default function ScrollbarReviewGatePage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="font-semibold text-foreground">Radix UI &lt;ScrollArea&gt;</span>
-                <Badge variant="outline" className="text-[10px]">
-                  Custom Virtual Track
-                </Badge>
               </div>
               <ScrollArea
                 className="h-48 border border-border rounded-md bg-surface p-3"
@@ -352,9 +329,6 @@ export default function ScrollbarReviewGatePage() {
                 <span className="font-semibold text-foreground">
                   Native &lt;div overflow-auto&gt;
                 </span>
-                <Badge variant="outline" className="text-[10px]">
-                  Engine-Level CSS
-                </Badge>
               </div>
               <div className="h-48 border border-border rounded-md bg-surface p-3 overflow-auto scrollbar-compact">
                 <div className="w-[600px] space-y-2 text-xs">
@@ -385,7 +359,7 @@ export default function ScrollbarReviewGatePage() {
       {/* High-Density Data Table Demonstration */}
       <Card>
         <CardHeader>
-          <CardTitle>Data Table Horizontal & Vertical Scroll Affordance</CardTitle>
+          <CardTitle>Data Table Scrolling</CardTitle>
           <CardDescription>
             High-density tabular scrolling using scrollbar-dense without clipped action menus or
             duplicate scrollbars.
@@ -449,7 +423,7 @@ export default function ScrollbarReviewGatePage() {
       {/* Design System Token Matrix */}
       <Card>
         <CardHeader>
-          <CardTitle>NXTQR Precision Rail Design Token Specification</CardTitle>
+          <CardTitle>Token Specification</CardTitle>
           <CardDescription>
             Standardized semantic tokens defined in @nxtqr/design-system and @nxtqr/ui.
           </CardDescription>
