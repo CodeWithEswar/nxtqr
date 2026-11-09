@@ -120,15 +120,17 @@ export class ProjectRepository {
       .from("projects")
       .select("*")
       .eq("id", id)
-      .single();
+      .maybeSingle();
 
+    // Timing-safe non-existence masking: throw identical RESOURCE_NOT_FOUND
+    // if the project does not exist OR if it is private to another user
     if (error || !data) {
-      throw new AppError("RESOURCE_NOT_FOUND", "Project not found.");
+      throw new AppError("RESOURCE_NOT_FOUND", "Project unavailable or not found.");
     }
 
     const project = mapDbRowToProject(data);
     if (project.ownerId !== userId) {
-      throw new AppError("PERMISSION_DENIED", "You do not have permission to view this project.");
+      throw new AppError("RESOURCE_NOT_FOUND", "Project unavailable or not found.");
     }
 
     return project;

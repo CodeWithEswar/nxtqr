@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@nxtqr/database/server";
+import { isProtectedRoute, validateSafeRedirect } from "./lib/routing/route-policy";
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({
@@ -24,9 +25,9 @@ export async function middleware(request: NextRequest) {
         request.cookies.set({ name, value, ...options });
         response.cookies.set({ name, value, ...options });
       },
-      remove: (name, options) => {
-        request.cookies.set({ name, value: "", ...options });
-        response.cookies.set({ name, value: "", ...options });
+      remove: (name) => {
+        request.cookies.delete(name);
+        response.cookies.delete(name);
       },
     },
     supabaseUrl,
@@ -39,19 +40,20 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Protect workspace routes
-  if (pathname.startsWith("/workspace")) {
+  // Layer 1: Edge & Route Interception for protected studio routes
+  if (isProtectedRoute(pathname)) {
     if (!user) {
       const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("next", pathname + request.nextUrl.search);
+      const safeNext = validateSafeRedirect(pathname + request.nextUrl.search, "/workspace");
+      loginUrl.searchParams.set("next", safeNext);
       return NextResponse.redirect(loginUrl);
     }
   }
 
   // Redirect authenticated user away from login page
   if (pathname === "/login" && user) {
-    const rawNext = request.nextUrl.searchParams.get("next") || "/workspace";
-    const safeNext = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/workspace";
+    const rawNext = request.nextUrl.searchParams.get("next");
+    const safeNext = validateSafeRedirect(rawNext, "/workspace");
     return NextResponse.redirect(new URL(safeNext, request.url));
   }
 
@@ -61,7 +63,10 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/workspace/:path*",
+    "/projects/:path*",
+    "/settings/:path*",
+    "/visualizers/:path*",
     "/login",
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

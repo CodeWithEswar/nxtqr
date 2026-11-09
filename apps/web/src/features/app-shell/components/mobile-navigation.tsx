@@ -10,6 +10,7 @@ import {
   SheetTitle,
 } from "@nxtqr/ui";
 import { AppLogo } from "@nxtqr/branding";
+import { AccountTrigger } from "@/features/account";
 import { useShellStore } from "../store/shell-store";
 import { SHELL_NAVIGATION_GROUPS } from "../config/navigation";
 import { cn } from "@nxtqr/utils";
@@ -95,12 +96,9 @@ export function MobileNavigation() {
           ))}
         </nav>
 
-        {/* Footer status */}
+        {/* Footer account trigger */}
         <div className="p-3 border-t border-border-default bg-surface-01">
-          <div className="flex items-center justify-between px-2 py-1.5 rounded-md bg-surface-02 border border-border-subtle text-xs">
-            <span className="font-mono text-[11px] text-text-muted">Engine: Standalone</span>
-            <span className="font-mono text-[10px] text-emerald-400">Online</span>
-          </div>
+          <AccountTrigger />
         </div>
       </SheetContent>
     </Sheet>
