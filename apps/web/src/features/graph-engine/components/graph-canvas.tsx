@@ -6,6 +6,8 @@ import {
   Background,
   BackgroundVariant,
   MiniMap,
+  Controls,
+  useReactFlow,
   type Connection,
   type NodeChange,
   type EdgeChange,
@@ -227,6 +229,16 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
     [selectNodes],
   );
 
+  const { setCenter } = useReactFlow();
+
+  // Minimap click-to-center navigation
+  const onMinimapClick = React.useCallback(
+    (_event: React.MouseEvent, position: { x: number; y: number }) => {
+      setCenter(position.x, position.y, { duration: 250 });
+    },
+    [setCenter],
+  );
+
   // Viewport change persistence
   const onMoveEnd = React.useCallback(
     (_event: unknown, viewport: { x: number; y: number; zoom: number }) => {
@@ -278,15 +290,31 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
           />
         )}
 
-        {/* Precision Minimap */}
+        {/* On-Canvas Precision Viewport Controls */}
+        <Controls
+          showZoom={true}
+          showFitView={true}
+          showInteractive={false}
+          position="bottom-left"
+          className="!m-3 !border !border-border-default !rounded-md !shadow-level-2 overflow-hidden"
+          aria-label="Canvas Viewport Controls"
+        />
+
+        {/* Precision Minimap (Pannable, Zoomable, Click-to-center) */}
         {showMinimap && (
           <MiniMap
+            pannable={true}
+            zoomable={true}
             nodeStrokeWidth={2}
-            nodeColor="#1A1A1A"
-            nodeStrokeColor="#333333"
-            maskColor="rgba(0, 0, 0, 0.75)"
+            nodeColor={(node) => (node.selected ? "#525252" : "#262626")}
+            nodeStrokeColor={(node) => (node.selected ? "#737373" : "#383838")}
+            maskColor="rgba(0, 0, 0, 0.65)"
+            maskStrokeColor="#404040"
+            maskStrokeWidth={1.5}
             className="!bg-surface-01 !border !border-border-default !rounded-md !m-3 !shadow-level-2"
-            style={{ width: 120, height: 80 }}
+            style={{ width: 140, height: 90 }}
+            onClick={onMinimapClick}
+            ariaLabel="Canvas Navigation Minimap"
           />
         )}
       </ReactFlow>

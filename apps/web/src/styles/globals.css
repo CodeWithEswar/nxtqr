@@ -326,46 +326,50 @@
     background: var(--surface-01) !important;
     border: 1px solid var(--border-default) !important;
     border-radius: var(--radius) !important;
-    box-shadow: var(--shadow-level-1);
+    box-shadow: var(--shadow-level-2);
     overflow: hidden;
-    cursor: grab;
+    cursor: crosshair;
   }
 
   .react-flow__minimap-svg {
-    cursor: grab;
+    cursor: crosshair;
   }
 
   .react-flow__minimap-mask {
-    fill: rgba(0, 0, 0, 0.75) !important;
+    fill: rgba(0, 0, 0, 0.65) !important;
     stroke: var(--border-strong) !important;
-    stroke-width: 1px !important;
+    stroke-width: 1.5px !important;
     cursor: grab;
   }
 
-  .react-flow__minimap-node {
-    fill: #262626;
-    stroke: var(--border-subtle);
-  }
-
-  .react-flow__minimap:active,
-  .react-flow__minimap-svg:active,
   .react-flow__minimap-mask:active {
     cursor: grabbing;
   }
 
+  .react-flow__minimap-node {
+    fill: #2e2e2e;
+    stroke: var(--border-subtle);
+  }
+
   /* GRAPH CONTROLS */
   .react-flow__controls {
-    background: var(--surface-02);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-level-1);
+    background: var(--surface-02) !important;
+    border: 1px solid var(--border-default) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow-level-2) !important;
     overflow: hidden;
   }
 
   .react-flow__controls-button {
-    background: var(--surface-02);
-    color: var(--text-secondary);
-    border-color: var(--border-subtle);
+    background: var(--surface-02) !important;
+    color: var(--text-muted) !important;
+    border: none !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    width: 28px !important;
+    height: 28px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     transition:
       background-color var(--duration-fast)
         var(--ease-standard),
@@ -373,13 +377,19 @@
         var(--ease-standard);
   }
 
+  .react-flow__controls-button:last-child {
+    border-bottom: none !important;
+  }
+
   .react-flow__controls-button:hover {
-    background: var(--surface-04);
-    color: var(--text-primary);
+    background: var(--surface-04) !important;
+    color: var(--foreground) !important;
   }
 
   .react-flow__controls-button svg {
-    fill: currentColor;
+    fill: currentColor !important;
+    width: 13px !important;
+    height: 13px !important;
   }
 
   /* GRAPH EDGES */

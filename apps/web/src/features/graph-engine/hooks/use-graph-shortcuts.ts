@@ -9,6 +9,7 @@ export function useGraphShortcuts(): void {
   const pasteClipboard = useGraphEditorStore((s) => s.pasteClipboard);
   const duplicateSelected = useGraphEditorStore((s) => s.duplicateSelected);
   const selectAll = useGraphEditorStore((s) => s.selectAll);
+  const toggleMinimap = useGraphEditorStore((s) => s.toggleMinimap);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -71,6 +72,13 @@ export function useGraphShortcuts(): void {
         return;
       }
 
+      // Toggle Minimap (M key)
+      if (!isModifier && e.key.toLowerCase() === "m") {
+        e.preventDefault();
+        toggleMinimap();
+        return;
+      }
+
       // Delete (Delete or Backspace)
       if (e.key === "Delete" || e.key === "Backspace") {
         e.preventDefault();
@@ -89,6 +97,7 @@ export function useGraphShortcuts(): void {
     pasteClipboard,
     duplicateSelected,
     selectAll,
+    toggleMinimap,
   ]);
 }
 
