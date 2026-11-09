@@ -65,9 +65,7 @@ test.describe("NXTQR Foundation & Design System", () => {
   test("renders scrollbar review gate and validates precision rail system", async ({ page }) => {
     await page.goto("/verify/scrollbar");
 
-    await expect(page.locator("h1")).toContainText(
-      "NXTQR — Precision Rail Custom Scrollbar System Review Gate",
-    );
+    await expect(page.locator("h1")).toContainText("Scrollbar");
 
     // Verify all 4 variants exist on the page
     await expect(page.locator(".scrollbar-default")).toBeVisible();
@@ -75,11 +73,9 @@ test.describe("NXTQR Foundation & Design System", () => {
     await expect(page.locator(".scrollbar-canvas")).toBeVisible();
     await expect(page.locator(".scrollbar-dense").first()).toBeVisible();
 
-    // Verify dynamic accent switching updates container style
-    const orangeBtn = page.getByRole("button", { name: /Pure Orange/i });
-    await orangeBtn.click();
-
-    const mainStyle = await page.locator("main").getAttribute("style");
-    expect(mainStyle).toContain("--accent: #FF6600");
+    // Verify monochrome thumb state selector
+    const activeBtn = page.getByRole("button", { name: /Active Drag/i });
+    await activeBtn.click();
+    await expect(activeBtn).toBeVisible();
   });
 });

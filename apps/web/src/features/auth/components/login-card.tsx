@@ -72,10 +72,24 @@ export function LoginCard({ nextTarget = "/workspace" }: LoginCardProps) {
         </CardContent>
 
         <CardFooter className="pt-3 pb-6 px-6 sm:px-8 border-t border-border-subtle flex flex-col items-center justify-center text-center gap-1.5">
-          <p className="font-sans text-[11px] text-text-muted">
-            By signing in, you accept our platform policies.
+          <p className="font-sans text-[11px] text-text-muted leading-relaxed">
+            By continuing, you agree to the{" "}
+            <Link
+              href="/terms"
+              className="text-text-secondary hover:text-foreground transition-colors underline underline-offset-4"
+            >
+              Terms of Service
+            </Link>{" "}
+            and acknowledge the{" "}
+            <Link
+              href="/privacy"
+              className="text-text-secondary hover:text-foreground transition-colors underline underline-offset-4"
+            >
+              Privacy Policy
+            </Link>
+            .
           </p>
-          <div className="flex items-center gap-3 text-[11px] text-text-muted font-sans">
+          <div className="flex items-center gap-2 text-[10px] text-text-muted font-mono pt-1">
             <Link
               href="/docs"
               className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
@@ -83,19 +97,7 @@ export function LoginCard({ nextTarget = "/workspace" }: LoginCardProps) {
               Documentation
             </Link>
             <span className="text-text-disabled">·</span>
-            <Link
-              href="/privacy"
-              className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
-            >
-              Privacy Policy
-            </Link>
-            <span className="text-text-disabled">·</span>
-            <Link
-              href="/terms"
-              className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
-            >
-              Terms of Service
-            </Link>
+            <span>Enterprise Grade · Pure Monochrome</span>
           </div>
         </CardFooter>
       </Card>

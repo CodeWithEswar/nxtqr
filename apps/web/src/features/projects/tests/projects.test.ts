@@ -40,6 +40,9 @@ describe("NXTQR Phase 03: Project Management Infrastructure", () => {
     });
 
     it("validates project updates with status changes", () => {
+      expect(ProjectStatusSchema.parse("active")).toBe("active");
+      expect(ProjectStatusSchema.parse("archived")).toBe("archived");
+
       const update = {
         name: "Renamed Project",
         status: "archived" as const,
