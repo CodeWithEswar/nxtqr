@@ -122,15 +122,16 @@ export function VerificationHeader({
           {/* Left / Top Row: Back Button, Logo, Concise Title, Version Badge, and Subtitle */}
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
             {backHref && (
-              <Link href={backHref} aria-label={backLabel} className="shrink-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 w-8 sm:h-9 sm:w-9 p-0 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-text-muted hover:text-foreground active:shadow-level-3 shadow-level-1 shrink-0"
-                >
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="h-8 w-8 sm:h-9 sm:w-9 p-0 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 text-text-muted hover:text-foreground active:shadow-level-3 shadow-level-1 shrink-0"
+              >
+                <Link href={backHref} aria-label={backLabel}>
                   <ChevronLeftIcon className="h-4 w-4" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
 
             {logo && <div className="shrink-0">{logo}</div>}
