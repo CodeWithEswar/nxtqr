@@ -93,6 +93,18 @@
     --xy-minimap-mask-stroke-color-default: #262626;
     --xy-minimap-node-background-color-default: #262626;
   }
+
+  .react-flow__minimap,
+  .react-flow__minimap-svg,
+  .react-flow__minimap-mask {
+    cursor: grab;
+  }
+
+  .react-flow__minimap:active,
+  .react-flow__minimap-svg:active,
+  .react-flow__minimap-mask:active {
+    cursor: grabbing;
+  }
 }
 
 @layer utilities {

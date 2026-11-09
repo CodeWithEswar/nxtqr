@@ -6,6 +6,7 @@ import {
   Background,
   MiniMap,
   BackgroundVariant,
+  useReactFlow,
   type Connection,
   type NodeChange,
   type EdgeChange,
@@ -54,6 +55,15 @@ function InnerGraphCanvas({
   const gridType = useGraphEditorStore((state) => state.gridType);
   const snapToGrid = useGraphEditorStore((state) => state.snapToGrid);
   const storeShowMinimap = useGraphEditorStore((state) => state.showMinimap);
+
+  const { setCenter } = useReactFlow();
+
+  const handleMiniMapClick = React.useCallback(
+    (_: React.MouseEvent, position: { x: number; y: number }) => {
+      setCenter(position.x, position.y, { duration: 250 });
+    },
+    [setCenter]
+  );
 
   // Map NXTQR nodes to React Flow format
   const flowNodes = React.useMemo(() => {
@@ -255,11 +265,18 @@ function InnerGraphCanvas({
         {/* MiniMap */}
         {showMinimap && storeShowMinimap && (
           <MiniMap
-            className="!bg-[#0A0A0A] !border !border-subtle-border !rounded-md !shadow-level-2 max-sm:scale-75 max-sm:origin-bottom-right"
+            className="!bg-[#0A0A0A] !border !border-subtle-border !rounded-md !shadow-level-2 max-sm:scale-75 max-sm:origin-bottom-right cursor-grab active:cursor-grabbing"
             bgColor="#0A0A0A"
             maskColor="rgba(0, 0, 0, 0.75)"
             maskStrokeColor="#262626"
             maskStrokeWidth={1}
+            pannable={true}
+            zoomable={true}
+            onClick={handleMiniMapClick}
+            onNodeClick={(_, node) => {
+              selectNode(node.id);
+              setCenter(node.position.x + 80, node.position.y + 40, { duration: 250 });
+            }}
             nodeColor={(node) => {
               if (node.id === selectedNodeId) return "var(--accent)";
               if (node.data?.status === "executing") return "var(--accent)";
