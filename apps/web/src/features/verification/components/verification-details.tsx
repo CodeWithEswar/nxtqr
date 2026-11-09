@@ -12,6 +12,7 @@ import {
   CopyIcon,
   CheckIcon,
   TerminalIcon,
+  CloseIcon,
 } from "@nxtqr/icons";
 import { Button, Badge } from "@nxtqr/ui";
 import { useCanvasUIStore, useWorkspaceUIStore, useGraphEditorStore } from "@nxtqr/state";
@@ -20,12 +21,14 @@ export interface VerificationDetailsProps {
   check: VerificationCheck | null;
   onRecheck: (id: string) => void;
   isRechecking?: boolean;
+  onClose?: () => void;
 }
 
 export function VerificationDetails({
   check,
   onRecheck,
   isRechecking,
+  onClose,
 }: VerificationDetailsProps) {
   const [copied, setCopied] = React.useState(false);
 
@@ -72,39 +75,54 @@ export function VerificationDetails({
   };
 
   return (
-    <div className="rounded-md border border-border-default bg-surface shadow-level-1 flex flex-col overflow-hidden">
+    <div className="rounded-md border border-border-default bg-surface shadow-level-1 flex flex-col h-full overflow-hidden">
       {/* Detail Header */}
-      <div className="p-4 sm:p-5 border-b border-border-subtle bg-surface-02 space-y-3">
+      <div className="p-4 sm:p-5 border-b border-border-subtle bg-surface-02 space-y-3 shrink-0">
         <div className="flex items-start justify-between gap-3">
-          <div className="space-y-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider font-semibold">
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider font-semibold">
                 {check.category}
               </span>
               <span className="text-border-subtle">·</span>
-              <span className="text-[10px] font-mono text-muted-foreground">
+              <span className="text-[10px] font-mono text-text-muted break-all">
                 ID: {check.id}
               </span>
             </div>
-            <h3 className="text-sm font-bold font-sans text-foreground leading-snug">
+            <h3 className="text-sm sm:text-base font-bold font-sans text-foreground leading-snug break-words">
               {check.title}
             </h3>
           </div>
 
-          {/* Re-run button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onRecheck(check.id)}
-            disabled={isRechecking || check.status === "running"}
-            className="h-8 text-xs font-mono gap-1.5 shrink-0 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 shadow-level-1 active:shadow-level-3"
-            title="Re-run this verification check"
-          >
-            <RefreshIcon
-              className={`h-3 w-3 ${isRechecking || check.status === "running" ? "animate-spin" : ""}`}
-            />
-            <span className="hidden sm:inline">Verify</span>
-          </Button>
+          {/* Action cluster: Verify + optional Close (side-by-side, never overlapping) */}
+          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onRecheck(check.id)}
+              disabled={isRechecking || check.status === "running"}
+              className="h-8 px-2.5 text-xs font-mono gap-1.5 rounded-md border-border-default bg-surface-01 hover:bg-surface-03 hover:border-border-hover shadow-level-1 active:shadow-level-3 text-foreground"
+              title="Re-run this verification check"
+            >
+              <RefreshIcon
+                className={`h-3.5 w-3.5 text-foreground ${isRechecking || check.status === "running" ? "animate-spin" : ""}`}
+              />
+              <span className="hidden xs:inline sm:inline">Verify</span>
+            </Button>
+
+            {onClose && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onClose}
+                className="h-8 w-8 p-0 rounded-md border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-03 shadow-level-1 active:shadow-level-3 text-text-muted hover:text-foreground"
+                aria-label="Close diagnostic details"
+                title="Close"
+              >
+                <CloseIcon className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Status Strip */}
@@ -115,19 +133,19 @@ export function VerificationDetails({
               variant="outline"
               className={`text-[10px] uppercase font-bold rounded-md ${
                 check.status === "passed"
-                  ? "border-border-strong text-emerald-400 bg-surface-01"
+                  ? "border-emerald-500/30 text-emerald-400 bg-surface-01"
                   : check.status === "warning"
-                    ? "border-border-strong text-amber-400 bg-surface-01"
+                    ? "border-amber-500/30 text-amber-400 bg-surface-01"
                     : check.status === "failed"
-                      ? "border-border-strong text-red-400 bg-surface-01"
-                      : "border-border-default text-muted-foreground bg-surface-01"
+                      ? "border-red-500/30 text-red-400 bg-surface-01"
+                      : "border-border-default text-text-muted bg-surface-01"
               }`}
             >
               {formatStatusLabel(check.status)}
             </Badge>
           </div>
 
-          <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-text-muted">
             {check.durationMs !== undefined && (
               <span>Latency: <strong className="text-foreground">{formatDuration(check.durationMs)}</strong></span>
             )}
@@ -139,7 +157,7 @@ export function VerificationDetails({
       </div>
 
       {/* Detail Content Body */}
-      <div className="p-4 sm:p-5 space-y-4 text-xs font-mono overflow-y-auto max-h-[calc(100vh-280px)] scrollbar-dense">
+      <div className="p-4 sm:p-5 space-y-4 text-xs font-mono overflow-y-auto flex-1 min-h-0 scrollbar-dense">
         {/* Description */}
         <div className="space-y-1">
           <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">

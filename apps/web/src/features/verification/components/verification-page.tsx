@@ -102,7 +102,7 @@ export function VerificationPage() {
           </div>
 
           {/* Right Column: Diagnostic Evidence & Output Details (5 cols on desktop, sticky) */}
-          <div className="hidden lg:block lg:col-span-5 xl:col-span-5 2xl:col-span-5 lg:sticky lg:top-20 min-w-0">
+          <div className="hidden lg:block lg:col-span-5 xl:col-span-5 2xl:col-span-5 lg:sticky lg:top-20 min-w-0 max-h-[calc(100vh-6rem)]">
             <VerificationDetails
               check={selectedCheck}
               onRecheck={runSingleCheck}
@@ -114,15 +114,26 @@ export function VerificationPage() {
 
       {/* Mobile & Tablet Diagnostic Details Sheet */}
       <Sheet open={mobileDetailOpen} onOpenChange={setMobileDetailOpen}>
-        <SheetContent side="bottom" className="h-[85vh] p-0 bg-surface-01 border-border-strong rounded-t-md">
+        <SheetContent
+          side="bottom"
+          hideCloseButton
+          className="h-[88vh] max-h-[88vh] p-0 bg-surface-01 border-t border-border-strong rounded-t-md flex flex-col overflow-hidden shadow-level-3"
+        >
           <SheetHeader className="sr-only">
             <SheetTitle>Diagnostic Details</SheetTitle>
           </SheetHeader>
-          <div className="h-full overflow-y-auto">
+
+          {/* Premium Bottom Sheet Drag Handle */}
+          <div className="w-full flex justify-center pt-2.5 pb-1.5 shrink-0 bg-surface-02 border-b border-border-subtle/40">
+            <div className="w-10 h-1 rounded-full bg-border-strong" />
+          </div>
+
+          <div className="flex-1 overflow-hidden min-h-0">
             <VerificationDetails
               check={selectedCheck}
               onRecheck={runSingleCheck}
               isRechecking={isRunning}
+              onClose={() => setMobileDetailOpen(false)}
             />
           </div>
         </SheetContent>
