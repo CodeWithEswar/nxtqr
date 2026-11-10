@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useShellStore } from "../store/shell-store";
 import { cn } from "@nxtqr/utils";
+import { ResizeGrip } from "@nxtqr/ui";
 
 export interface SidebarResizeHandleProps {
   className?: string;
@@ -105,22 +106,17 @@ export function SidebarResizeHandle({ className }: SidebarResizeHandleProps) {
       aria-valuemin={208}
       aria-valuemax={360}
       aria-label="Resize sidebar. Use arrow keys to adjust, double click to reset."
+      data-dragging={isDragging}
       onPointerDown={handlePointerDown}
       onDoubleClick={handleDoubleClick}
       onKeyDown={handleKeyDown}
       className={cn(
-        "group absolute inset-y-0 -right-1.5 w-3 cursor-col-resize select-none z-40 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong",
+        "group/resize absolute inset-y-0 -right-2.5 z-40 flex w-5 cursor-col-resize touch-none select-none items-center justify-center focus-visible:outline-none",
         className
       )}
       title="Drag to resize sidebar (double-click to reset)"
     >
-      <div
-        className={cn(
-          "w-0.5 h-full transition-colors",
-          "group-hover:bg-border-strong group-active:bg-border-strong",
-          isDragging ? "bg-border-strong" : "bg-transparent"
-        )}
-      />
+      <ResizeGrip />
     </div>
   );
 }

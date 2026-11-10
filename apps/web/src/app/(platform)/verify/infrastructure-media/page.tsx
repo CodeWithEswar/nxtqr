@@ -81,10 +81,10 @@ export default function InfrastructureMediaVerificationPage() {
               ← Cat 13 Data
             </Link>
             <Link
-              href="/verify/infrastructure-search"
+              href="/verify/infrastructure-devops"
               className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
-              Cat 11 Search
+              Cat 15 DevOps →
             </Link>
             <Link
               href="/workspace"

@@ -112,7 +112,7 @@ describe("NXTQR Brand Identity System", () => {
     it("renders AnimatedLogo with keyframe style definitions and reduced motion queries", () => {
       const html = renderToString(React.createElement(AnimatedLogo, { mode: "entrance" }));
       expect(html).toContain('data-nxtqr-motion="entrance"');
-      expect(html).toContain("nxtqrSettle");
+      expect(html).toContain("nxtqrBrandReveal");
       expect(html).toContain("prefers-reduced-motion: no-preference");
     });
 

@@ -172,8 +172,7 @@ export default function BrandReviewGatePage() {
             <div className="space-y-1">
               <CardTitle className="text-base sm:text-lg">Logo Verification Stage</CardTitle>
               <CardDescription className="text-xs">
-                Inspect variant rendering, color modes, entrance animation, and reduced-motion
-                behavior.
+                Inspect logo variants, entrance motion, the loading reveal, and reduced-motion behavior.
               </CardDescription>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -265,7 +264,7 @@ export default function BrandReviewGatePage() {
             <div
               key={animKey}
               className={`min-w-0 [&_svg]:size-[clamp(40px,10vw,72px)] ${
-                reducedMotionSim ? "[&_*]:!animation-none [&_*]:!transition-none" : ""
+                reducedMotionSim ? "[&_*]:!animate-none [&_*]:!transition-none [&_[data-nxtqr-aperture]]:!opacity-100" : ""
               }`}
             >
               {loadingMode ? (

@@ -52,9 +52,31 @@ test.describe("NXTQR Foundation & Design System", () => {
     await expect(page.locator("h1")).toContainText("Brand Review Gate");
 
     const aperture = page.locator("[data-nxtqr-motion] [data-nxtqr-aperture]");
-    await expect(aperture).toHaveCSS("animation-name", "nxtqrSettle");
+    await expect(aperture).toHaveCSS("animation-name", "nxtqrBrandReveal");
     await page.emulateMedia({ reducedMotion: "reduce" });
     await expect(aperture).toHaveCSS("animation-name", "none");
+    await expect(aperture).toHaveCSS("opacity", "1");
+
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    const reveal = page.locator("[data-nxtqr-reveal]");
+    await expect(async () => {
+      if ((await reveal.count()) === 0) {
+        await page.getByRole("button", { name: "Test Loading" }).click();
+      }
+      await expect(reveal).toHaveCount(1, { timeout: 1000 });
+    }).toPass({ timeout: 10000 });
+    await expect(reveal).toHaveCSS("animation-name", "nxtqrLoadingReveal");
+    await expect(aperture).toHaveCSS("transform", "none");
+
+    const motionToggle = page.getByRole("button", { name: /Motion:/ });
+    await motionToggle.click();
+    await expect(reveal).toHaveCSS("animation-name", "none");
+    await expect(aperture).toHaveCSS("opacity", "1");
+    await motionToggle.click();
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect(reveal).toHaveCSS("animation-name", "none");
+    await expect(reveal).toHaveCSS("opacity", "0");
     await expect(aperture).toHaveCSS("opacity", "1");
 
     await expect(page.locator("body")).toContainText("favicon.ico");

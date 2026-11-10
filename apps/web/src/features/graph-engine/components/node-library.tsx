@@ -35,11 +35,29 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "media" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "cloud" | "devops" | "media" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CloudSubtype = "all" | "regions-zones-networks" | "compute-containers" | "managed-services" | "storage-serverless-iam";
+type DevopsSubtype = "all" | "source-ci-cd" | "build-artifacts-containers" | "deployment-iac" | "flags-config-secrets-release";
 type MediaSubtype = "all" | "realtime-comm" | "media-streaming" | "notifications-chat-presence";
 type DataSubtype = "all" | "pipelines-etl" | "lakes-lakehouse" | "engines-olap" | "ingestion-cdc-orchestration";
 type SearchSubtype = "all" | "engines-indexes" | "query-cache" | "autocomplete-discovery" | "recommendations";
 type ObservabilitySubtype = "all" | "metrics" | "logs" | "traces-apm" | "alerts-health";
+
+const CLOUD_SUBTYPES: Record<CloudSubtype, string[]> = {
+  all: [],
+  "regions-zones-networks": ["cloud-region", "availability-zone", "cloud-network", "cloud-load-balancer"],
+  "compute-containers": ["compute-instance", "managed-kubernetes"],
+  "managed-services": ["managed-database", "managed-queue", "managed-cache"],
+  "storage-serverless-iam": ["cloud-function", "cloud-storage-bucket", "cloud-iam"],
+};
+
+const DEVOPS_SUBTYPES: Record<DevopsSubtype, string[]> = {
+  all: [],
+  "source-ci-cd": ["git-repository", "ci-pipeline", "cd-pipeline"],
+  "build-artifacts-containers": ["build-server", "artifact-registry", "container-registry"],
+  "deployment-iac": ["deployment-controller", "infrastructure-as-code"],
+  "flags-config-secrets-release": ["feature-flag-service", "configuration-service", "secrets-injection-service", "release-manager"],
+};
 
 const MEDIA_SUBTYPES: Record<MediaSubtype, string[]> = {
   all: [],
@@ -224,6 +242,8 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [cloudSubtype, setCloudSubtype] = React.useState<CloudSubtype>("all");
+  const [devopsSubtype, setDevopsSubtype] = React.useState<DevopsSubtype>("all");
   const [mediaSubtype, setMediaSubtype] = React.useState<MediaSubtype>("all");
   const [dataSubtype, setDataSubtype] = React.useState<DataSubtype>("all");
   const [searchSubtype, setSearchSubtype] = React.useState<SearchSubtype>("all");
@@ -267,6 +287,62 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   const domainDefinitions = React.useMemo(() => {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
+
+  // Filter Cloud Infrastructure items
+  const filteredCloud = React.useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "cloud") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "cloud-infrastructure"
+    );
+
+    if (cloudSubtype !== "all") {
+      const allowed = new Set(CLOUD_SUBTYPES[cloudSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, cloudSubtype, search]);
+
+  // Filter DevOps & Deployment items
+  const filteredDevops = React.useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "devops") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "devops-and-deployment"
+    );
+
+    if (devopsSubtype !== "all") {
+      const allowed = new Set(DEVOPS_SUBTYPES[devopsSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, devopsSubtype, search]);
 
   // Filter Media & Real-Time Communication items
   const filteredMedia = React.useMemo(() => {
@@ -700,6 +776,8 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredCloud.length +
+    filteredDevops.length +
     filteredMedia.length +
     filteredData.length +
     filteredSearch.length +
@@ -756,6 +834,28 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             }`}
           >
             All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("cloud")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "cloud"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Cloud
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("devops")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "devops"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            DevOps
           </button>
           <button
             type="button"
@@ -912,6 +1012,62 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Cloud Infrastructure */}
+        {activeTab === "cloud" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (12)" },
+                { id: "regions-zones-networks", label: "Regions, AZ & Net (4)" },
+                { id: "compute-containers", label: "Compute & K8s (2)" },
+                { id: "managed-services", label: "Managed DB, Queue, Cache (3)" },
+                { id: "storage-serverless-iam", label: "Storage, Fn & IAM (3)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setCloudSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border whitespace-nowrap transition-colors shrink-0 ${
+                  cloudSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Subtype Filter Pills: DevOps & Deployment */}
+        {activeTab === "devops" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (12)" },
+                { id: "source-ci-cd", label: "Git & CI/CD (3)" },
+                { id: "build-artifacts-containers", label: "Build & Registries (3)" },
+                { id: "deployment-iac", label: "GitOps & IaC (2)" },
+                { id: "flags-config-secrets-release", label: "Flags, Config & Release (4)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setDevopsSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border whitespace-nowrap transition-colors shrink-0 ${
+                  devopsSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: Media & Real-Time Communication */}
         {activeTab === "media" && (
@@ -1289,11 +1445,13 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || mediaSubtype !== "all" || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || cloudSubtype !== "all" || devopsSubtype !== "all" || mediaSubtype !== "all" || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setCloudSubtype("all");
+                  setDevopsSubtype("all");
                   setMediaSubtype("all");
                   setDataSubtype("all");
                   setSearchSubtype("all");
@@ -1317,6 +1475,130 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 16: Cloud Infrastructure */}
+            {filteredCloud.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Cloud Infrastructure ({filteredCloud.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 16
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredCloud.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <LayersIcon className="w-4 h-4 text-text-muted" />
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <h5 className="font-sans text-xs font-medium text-foreground truncate group-hover:text-text-primary">
+                              {comp.display.name}
+                            </h5>
+                            <span className="font-mono text-[9px] text-text-disabled shrink-0">
+                              {comp.node.variant}
+                            </span>
+                          </div>
+                          <p className="text-[11px] font-mono text-text-muted line-clamp-1 mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Category 15: DevOps & Deployment */}
+            {filteredDevops.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    DevOps & Deployment ({filteredDevops.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 15
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredDevops.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <LayersIcon className="w-4 h-4 text-text-muted" />
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <h5 className="font-sans text-xs font-medium text-foreground truncate group-hover:text-text-primary">
+                              {comp.display.name}
+                            </h5>
+                            <span className="font-mono text-[9px] text-text-disabled shrink-0">
+                              {comp.node.variant}
+                            </span>
+                          </div>
+                          <p className="text-[11px] font-mono text-text-muted line-clamp-1 mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 14: Media & Real-Time Communication */}
             {filteredMedia.length > 0 && (
               <div className="space-y-1.5">

@@ -8,15 +8,20 @@ import { PanelLeftIcon } from "@nxtqr/icons";
 import { useShellStore } from "../store/shell-store";
 
 export interface SidebarHeaderProps {
-  collapsed: boolean;
+  collapsed?: boolean;
 }
 
 export function SidebarHeader({ collapsed }: SidebarHeaderProps) {
+  const storeCollapsed = useShellStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useShellStore((s) => s.toggleSidebar);
+  const isCollapsed = collapsed ?? storeCollapsed;
 
-  if (collapsed) {
+  if (isCollapsed) {
     return (
-      <div className="flex h-12 w-full items-center justify-center border-b border-border-default bg-surface-01 select-none shrink-0">
+      <div
+        key="sidebar-header-collapsed"
+        className="flex h-12 w-full items-center justify-center border-b border-border-default bg-surface-01 select-none shrink-0"
+      >
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
@@ -36,7 +41,10 @@ export function SidebarHeader({ collapsed }: SidebarHeaderProps) {
   }
 
   return (
-    <div className="flex h-12 items-center justify-between px-3 border-b border-border-default bg-surface-01 select-none shrink-0">
+    <div
+      key="sidebar-header-expanded"
+      className="flex h-12 items-center justify-between px-3 border-b border-border-default bg-surface-01 select-none shrink-0"
+    >
       <Link
         href="/workspace"
         className="flex items-center gap-2.5 min-w-0 rounded-md py-1 px-1 -ml-1 hover:bg-surface-02 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong"

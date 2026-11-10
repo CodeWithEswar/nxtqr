@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@nxtqr/utils";
+import { ResizeGrip } from "@nxtqr/ui";
 
 export interface PanelResizeHandleProps {
   side: "left" | "right";
@@ -102,7 +103,7 @@ export function PanelResizeHandle({
     [side, currentWidth, minWidth, maxWidth, onResize]
   );
 
-  const positionClass = side === "right" ? "-right-1.5" : "-left-1.5";
+  const positionClass = side === "right" ? "-right-2.5" : "-left-2.5";
 
   return (
     <div
@@ -113,23 +114,18 @@ export function PanelResizeHandle({
       aria-valuemin={minWidth}
       aria-valuemax={maxWidth}
       aria-label={`${ariaLabel}. Use arrow keys to adjust, double click to reset.`}
+      data-dragging={isDragging}
       onPointerDown={handlePointerDown}
       onDoubleClick={handleDoubleClick}
       onKeyDown={handleKeyDown}
       className={cn(
-        "group absolute inset-y-0 w-3 cursor-col-resize select-none z-40 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong",
+        "group/resize absolute inset-y-0 z-40 flex w-5 cursor-col-resize touch-none select-none items-center justify-center focus-visible:outline-none",
         positionClass,
         className
       )}
       title="Drag to resize panel (double-click to reset)"
     >
-      <div
-        className={cn(
-          "w-0.5 h-full transition-colors",
-          "group-hover:bg-border-strong group-active:bg-border-strong",
-          isDragging ? "bg-border-strong" : "bg-transparent"
-        )}
-      />
+      <ResizeGrip />
     </div>
   );
 }

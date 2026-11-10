@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import { LOGO_GEOMETRY } from "../tokens/branding-tokens";
 import { LogoMark, type LogoMarkProps } from "./logo-mark";
 
 export interface AnimatedLogoProps extends LogoMarkProps {
@@ -6,17 +7,20 @@ export interface AnimatedLogoProps extends LogoMarkProps {
   showFraming?: boolean;
 }
 
+const revealStart = "polygon(0 0, -100% 0, 0 100%, 0 100%) fill-box";
+const revealEnd = "polygon(0 0, 100% 0, 200% 100%, 0 100%) fill-box";
+const revealEase = "cubic-bezier(0.32, 0, 0.22, 1)";
+
 const motionStyles = `
   @media (prefers-reduced-motion: no-preference) {
-    [data-nxtqr-motion] [data-nxtqr-aperture] {
-      transform-box: fill-box;
-      transform-origin: center;
-    }
     [data-nxtqr-motion="entrance"] [data-nxtqr-aperture] {
-      animation: nxtqrSettle 420ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+      animation: nxtqrBrandReveal 620ms ${revealEase} both;
     }
     [data-nxtqr-motion="loading"] [data-nxtqr-aperture] {
-      animation: nxtqrSettle 700ms ease-in-out infinite alternate;
+      opacity: 0.25;
+    }
+    [data-nxtqr-motion="loading"] [data-nxtqr-reveal] {
+      animation: nxtqrLoadingReveal 1600ms ${revealEase} infinite;
     }
     [data-nxtqr-motion="interactive"] [data-nxtqr-aperture] {
       transition: transform 160ms ease-out;
@@ -26,15 +30,22 @@ const motionStyles = `
     }
   }
 
-  @keyframes nxtqrSettle {
-    from { opacity: 0.55; transform: translate(-4px, 4px) scale(0.94); }
-    to { opacity: 1; transform: translate(0, 0) scale(1); }
+  @keyframes nxtqrBrandReveal {
+    from { clip-path: ${revealStart}; }
+    to { clip-path: ${revealEnd}; }
+  }
+
+  @keyframes nxtqrLoadingReveal {
+    0% { clip-path: ${revealStart}; opacity: 1; }
+    45%, 78% { clip-path: ${revealEnd}; opacity: 1; }
+    98%, 100% { clip-path: ${revealEnd}; opacity: 0; }
   }
 `;
 
 export const AnimatedLogo: FC<AnimatedLogoProps> = ({
   size = 48,
   mode = "entrance",
+  colorMode = "current",
   variant = "symbol",
   showFraming = variant === "symbol",
   children,
@@ -42,11 +53,27 @@ export const AnimatedLogo: FC<AnimatedLogoProps> = ({
 }) => (
   <LogoMark
     size={size}
+    colorMode={colorMode}
     variant={showFraming ? "symbol" : "minimal"}
     data-nxtqr-motion={mode}
     {...props}
   >
     <style>{motionStyles}</style>
+    {mode === "loading" && (
+      <path
+        d={LOGO_GEOMETRY.aperturePath}
+        data-nxtqr-reveal=""
+        fill={
+          colorMode === "inverse"
+            ? "#000000"
+            : colorMode === "monochrome"
+              ? "#FFFFFF"
+              : "currentColor"
+        }
+        fillRule="evenodd"
+        opacity={0}
+      />
+    )}
     {children}
   </LogoMark>
 );

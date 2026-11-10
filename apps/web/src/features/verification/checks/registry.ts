@@ -477,5 +477,35 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-media",
     },
   },
+  {
+    id: "infra_category_15_devops",
+    category: "frontend",
+    title: "Infrastructure Components: Category 15 DevOps & Deployment",
+    description: "Validates 12 colored SVG icons, typed registry definitions, Zod schemas, GitOps reconciliation, CI/CD pipeline automation, artifact registries, and progressive releases.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "devops-and-deployment",
+      componentCount: 12,
+      iconsVerified: 12,
+      inspectionRoute: "/verify/infrastructure-devops",
+    },
+  },
+  {
+    id: "infra_category_16_cloud",
+    category: "frontend",
+    title: "Infrastructure Components: Category 16 Cloud Infrastructure",
+    description: "Validates 12 colored SVG icons, typed registry definitions, Zod schemas, cloud regions, availability zones, compute instances, managed services, serverless, storage, VPCs, and IAM.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "cloud-infrastructure",
+      componentCount: 12,
+      iconsVerified: 12,
+      inspectionRoute: "/verify/infrastructure-cloud",
+    },
+  },
 ];
 

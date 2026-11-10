@@ -56,6 +56,14 @@ import {
   mediaAndRealTimeCommunicationCategoryDefinition,
   ALL_MEDIA_AND_REAL_TIME_COMMUNICATION_DEFINITIONS,
 } from "./definitions/media-and-real-time-communication";
+import {
+  devopsAndDeploymentCategoryDefinition,
+  ALL_DEVOPS_AND_DEPLOYMENT_DEFINITIONS,
+} from "./definitions/devops-and-deployment";
+import {
+  cloudInfrastructureCategoryDefinition,
+  ALL_CLOUD_INFRASTRUCTURE_DEFINITIONS,
+} from "./definitions/cloud-infrastructure";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -141,6 +149,18 @@ export class InfrastructureRegistryClass {
     // 14. Register Media & Real-Time Communication Category (Cat 14)
     this.registerCategory(mediaAndRealTimeCommunicationCategoryDefinition);
     for (const def of ALL_MEDIA_AND_REAL_TIME_COMMUNICATION_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 15. Register DevOps & Deployment Category (Cat 15)
+    this.registerCategory(devopsAndDeploymentCategoryDefinition);
+    for (const def of ALL_DEVOPS_AND_DEPLOYMENT_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 16. Register Cloud Infrastructure Category (Cat 16)
+    this.registerCategory(cloudInfrastructureCategoryDefinition);
+    for (const def of ALL_CLOUD_INFRASTRUCTURE_DEFINITIONS) {
       this.registerComponent(def);
     }
   }
