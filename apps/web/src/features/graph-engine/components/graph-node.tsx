@@ -393,5 +393,16 @@ export const nodeTypes = {
   "maps-provider": GraphNode,
   "oauth-integration": GraphNode,
   "third-party-webhook": GraphNode,
+  // Infrastructure Category 18: Distributed Systems Patterns
+  "circuit-breaker": GraphNode,
+  "bulkhead": GraphNode,
+  "retry-controller": GraphNode,
+  "saga-orchestrator": GraphNode,
+  "leader-election": GraphNode,
+  "distributed-lock": GraphNode,
+  "consensus-coordinator": GraphNode,
+  "idempotency-service": GraphNode,
+  "distributed-scheduler": GraphNode,
+  "service-registry": GraphNode,
 };
 

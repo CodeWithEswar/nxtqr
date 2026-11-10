@@ -39,3 +39,4 @@ export function getExternalIntegrationsIcon(
 ): InfrastructureIconComponent | undefined {
   return externalIntegrationsIconRegistry[slug];
 }
+

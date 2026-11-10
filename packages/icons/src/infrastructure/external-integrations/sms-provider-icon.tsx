@@ -64,3 +64,4 @@ export const SmsProviderIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 SmsProviderIcon.displayName = "SmsProviderIcon";
+

@@ -63,3 +63,4 @@ describe("Category 17 — External Integrations Icons", () => {
     }
   });
 });
+

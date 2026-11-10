@@ -98,3 +98,4 @@ export const GrpcServiceIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 GrpcServiceIcon.displayName = "GrpcServiceIcon";
+

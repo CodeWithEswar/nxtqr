@@ -67,3 +67,4 @@ export const MapsProviderIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 MapsProviderIcon.displayName = "MapsProviderIcon";
+

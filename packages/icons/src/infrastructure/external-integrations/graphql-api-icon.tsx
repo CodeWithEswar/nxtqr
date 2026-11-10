@@ -74,3 +74,4 @@ export const GraphqlApiIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 GraphqlApiIcon.displayName = "GraphqlApiIcon";
+

@@ -15,6 +15,7 @@ export * from "./media-and-real-time-communication";
 export * from "./devops-and-deployment";
 export * from "./cloud-infrastructure";
 export * from "./external-integrations";
+export * from "./distributed-systems-patterns";
 
 import type { InfrastructureIconComponent } from "./types";
 import { clientIconRegistry } from "./clients";
@@ -33,6 +34,7 @@ import { mediaAndRealTimeCommunicationIconRegistry } from "./media-and-real-time
 import { devopsAndDeploymentIconRegistry } from "./devops-and-deployment";
 import { cloudInfrastructureIconRegistry } from "./cloud-infrastructure";
 import { externalIntegrationsIconRegistry } from "./external-integrations";
+import { distributedSystemsPatternsIconRegistry } from "./distributed-systems-patterns";
 
 export const allInfrastructureIconRegistry: Record<string, InfrastructureIconComponent> = {
   ...clientIconRegistry,
@@ -51,6 +53,7 @@ export const allInfrastructureIconRegistry: Record<string, InfrastructureIconCom
   ...devopsAndDeploymentIconRegistry,
   ...cloudInfrastructureIconRegistry,
   ...externalIntegrationsIconRegistry,
+  ...distributedSystemsPatternsIconRegistry,
 };
 
 export function getInfrastructureIcon(slug: string): InfrastructureIconComponent | undefined {

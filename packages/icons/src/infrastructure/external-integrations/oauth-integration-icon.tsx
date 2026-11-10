@@ -75,3 +75,4 @@ export const OauthIntegrationIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 OauthIntegrationIcon.displayName = "OauthIntegrationIcon";
+

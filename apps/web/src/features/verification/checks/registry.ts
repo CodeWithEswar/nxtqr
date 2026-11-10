@@ -522,5 +522,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-external",
     },
   },
+  {
+    id: "infra_category_18_patterns",
+    category: "frontend",
+    title: "Infrastructure Components: Category 18 Distributed Systems Patterns",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, circuit breakers, bulkheads, retry controllers, sagas, leader elections, locks, consensus, idempotency, and schedulers.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "distributed-systems-patterns",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-patterns",
+    },
+  },
 ];
 

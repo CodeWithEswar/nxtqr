@@ -35,7 +35,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "external" | "cloud" | "devops" | "media" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "patterns" | "external" | "cloud" | "devops" | "media" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type PatternsSubtype = "all" | "resilience" | "orchestration" | "coordination" | "registry-scheduler";
 type ExternalSubtype = "all" | "apis-protocols" | "payment-commerce" | "messaging-notifications" | "auth-maps-webhooks";
 type CloudSubtype = "all" | "regions-zones-networks" | "compute-containers" | "managed-services" | "storage-serverless-iam";
 type DevopsSubtype = "all" | "source-ci-cd" | "build-artifacts-containers" | "deployment-iac" | "flags-config-secrets-release";
@@ -43,6 +44,14 @@ type MediaSubtype = "all" | "realtime-comm" | "media-streaming" | "notifications
 type DataSubtype = "all" | "pipelines-etl" | "lakes-lakehouse" | "engines-olap" | "ingestion-cdc-orchestration";
 type SearchSubtype = "all" | "engines-indexes" | "query-cache" | "autocomplete-discovery" | "recommendations";
 type ObservabilitySubtype = "all" | "metrics" | "logs" | "traces-apm" | "alerts-health";
+
+const PATTERNS_SUBTYPES: Record<PatternsSubtype, string[]> = {
+  all: [],
+  resilience: ["circuit-breaker", "bulkhead", "retry-controller"],
+  orchestration: ["saga-orchestrator", "idempotency-service"],
+  coordination: ["leader-election", "distributed-lock", "consensus-coordinator"],
+  "registry-scheduler": ["distributed-scheduler", "service-registry"],
+};
 
 const EXTERNAL_SUBTYPES: Record<ExternalSubtype, string[]> = {
   all: [],
@@ -251,6 +260,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [patternsSubtype, setPatternsSubtype] = React.useState<PatternsSubtype>("all");
   const [externalSubtype, setExternalSubtype] = React.useState<ExternalSubtype>("all");
   const [cloudSubtype, setCloudSubtype] = React.useState<CloudSubtype>("all");
   const [devopsSubtype, setDevopsSubtype] = React.useState<DevopsSubtype>("all");
@@ -297,6 +307,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   const domainDefinitions = React.useMemo(() => {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
+
+  // Filter Distributed Systems Patterns items
+  const filteredPatterns = React.useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "patterns") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "distributed-systems-patterns"
+    );
+
+    if (patternsSubtype !== "all") {
+      const allowed = new Set(PATTERNS_SUBTYPES[patternsSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, patternsSubtype, search]);
 
   // Filter External Integrations items
   const filteredExternal = React.useMemo(() => {
@@ -814,6 +852,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredPatterns.length +
     filteredExternal.length +
     filteredCloud.length +
     filteredDevops.length +
@@ -873,6 +912,17 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             }`}
           >
             All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("patterns")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "patterns"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Patterns
           </button>
           <button
             type="button"
@@ -1062,6 +1112,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Distributed Systems Patterns */}
+        {activeTab === "patterns" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (10)" },
+                { id: "resilience", label: "Resilience (3)" },
+                { id: "orchestration", label: "Orchestration (2)" },
+                { id: "coordination", label: "Coordination & Consensus (3)" },
+                { id: "registry-scheduler", label: "Scheduler & Registry (2)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setPatternsSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded text-xs whitespace-nowrap transition-colors shrink-0 ${
+                  patternsSubtype === sub.id
+                    ? "bg-surface-03 text-foreground font-semibold border border-border-strong"
+                    : "text-text-muted hover:text-foreground border border-transparent"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: External Integrations */}
         {activeTab === "external" && (
@@ -1523,11 +1601,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || externalSubtype !== "all" || cloudSubtype !== "all" || devopsSubtype !== "all" || mediaSubtype !== "all" || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || patternsSubtype !== "all" || externalSubtype !== "all" || cloudSubtype !== "all" || devopsSubtype !== "all" || mediaSubtype !== "all" || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setPatternsSubtype("all");
                   setExternalSubtype("all");
                   setCloudSubtype("all");
                   setDevopsSubtype("all");
@@ -1554,6 +1633,63 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 18: Distributed Systems Patterns */}
+            {filteredPatterns.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Distributed Systems Patterns ({filteredPatterns.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 18
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredPatterns.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleCreateInfraNode(comp);
+                          }
+                        }}
+                        className="w-full text-left p-2 rounded-md border border-border-default bg-surface-02 hover:border-border-hover hover:bg-surface-03 transition-colors flex items-center justify-between group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong select-none shadow-level-1"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="p-1 rounded bg-surface-01 text-foreground shrink-0 border border-border-subtle flex items-center justify-center">
+                            {IconComponent ? (
+                              <IconComponent className="h-3.5 w-3.5" />
+                            ) : (
+                              <CpuIcon className="h-3.5 w-3.5" />
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold text-foreground truncate">
+                              {comp.display.name}
+                            </div>
+                            <div className="text-[10px] text-text-muted truncate">
+                              {comp.display.shortName} · {comp.display.description}
+                            </div>
+                          </div>
+                        </div>
+                        <PlusIcon className="h-3.5 w-3.5 text-text-muted group-hover:text-foreground shrink-0 ml-1 transition-colors" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 17: External Integrations */}
             {filteredExternal.length > 0 && (
               <div className="space-y-1.5">

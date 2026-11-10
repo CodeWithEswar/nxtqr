@@ -79,3 +79,4 @@ export const ThirdPartyWebhookIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 ThirdPartyWebhookIcon.displayName = "ThirdPartyWebhookIcon";
+

@@ -83,3 +83,4 @@ export const EmailProviderIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 EmailProviderIcon.displayName = "EmailProviderIcon";
+

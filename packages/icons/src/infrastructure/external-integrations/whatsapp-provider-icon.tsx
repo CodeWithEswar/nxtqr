@@ -69,3 +69,4 @@ export const WhatsappProviderIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 WhatsappProviderIcon.displayName = "WhatsappProviderIcon";
+

@@ -68,6 +68,12 @@ export default function InfrastructureExternalVerificationPage() {
 
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
             <Link
+              href="/verify/infrastructure-patterns"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
+            >
+              Cat 18 Patterns →
+            </Link>
+            <Link
               href="/verify/infrastructure-cloud"
               className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >

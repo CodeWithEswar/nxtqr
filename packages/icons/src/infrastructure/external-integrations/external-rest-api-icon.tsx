@@ -81,3 +81,4 @@ export const ExternalRestApiIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 ExternalRestApiIcon.displayName = "ExternalRestApiIcon";
+

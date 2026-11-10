@@ -83,3 +83,4 @@ export const PaymentGatewayIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 PaymentGatewayIcon.displayName = "PaymentGatewayIcon";
+

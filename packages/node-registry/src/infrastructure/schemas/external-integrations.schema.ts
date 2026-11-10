@@ -342,3 +342,4 @@ export const externalIntegrationsConfigSchema = z.discriminatedUnion("componentT
   thirdPartyWebhookConfigSchema,
 ]);
 export type ExternalIntegrationsConfig = z.infer<typeof externalIntegrationsConfigSchema>;
+

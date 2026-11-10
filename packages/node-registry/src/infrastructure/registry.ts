@@ -68,6 +68,10 @@ import {
   externalIntegrationsCategoryDefinition,
   ALL_EXTERNAL_INTEGRATIONS_DEFINITIONS,
 } from "./definitions/external-integrations";
+import {
+  distributedSystemsPatternsCategoryDefinition,
+  ALL_DISTRIBUTED_SYSTEMS_PATTERNS_DEFINITIONS,
+} from "./definitions/distributed-systems-patterns";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -171,6 +175,12 @@ export class InfrastructureRegistryClass {
     // 17. Register External Integrations Category (Cat 17)
     this.registerCategory(externalIntegrationsCategoryDefinition);
     for (const def of ALL_EXTERNAL_INTEGRATIONS_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 18. Register Distributed Systems Patterns Category (Cat 18)
+    this.registerCategory(distributedSystemsPatternsCategoryDefinition);
+    for (const def of ALL_DISTRIBUTED_SYSTEMS_PATTERNS_DEFINITIONS) {
       this.registerComponent(def);
     }
   }
