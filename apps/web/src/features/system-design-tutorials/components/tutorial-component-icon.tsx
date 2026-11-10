@@ -1,6 +1,22 @@
+import * as React from "react";
 import { CpuIcon, getInfrastructureIcon } from "@nxtqr/icons";
 
-export function TutorialComponentIcon({ slug, size = 16 }: { slug?: string; size?: number }) {
+export interface TutorialComponentIconProps {
+  slug?: string;
+  size?: number;
+  variant?: "colored" | "monochrome";
+  className?: string;
+}
+
+export function TutorialComponentIcon({
+  slug,
+  size = 32,
+  variant = "colored",
+  className = "",
+}: TutorialComponentIconProps) {
   const Icon = slug ? getInfrastructureIcon(slug) : undefined;
-  return Icon ? <Icon size={size} variant="colored" /> : <CpuIcon size={size} />;
+  if (!Icon) {
+    return <CpuIcon size={size} className={className} />;
+  }
+  return <Icon size={size} variant={variant} className={className} />;
 }

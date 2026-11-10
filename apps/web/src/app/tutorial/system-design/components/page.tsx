@@ -138,23 +138,27 @@ export default function ComponentsDirectoryPage() {
                 <Link
                   key={comp.id}
                   href={`/tutorial/system-design/components/${comp.id}`}
-                  className="p-3.5 rounded-md bg-surface-01 border border-border-default hover:border-border-hover hover:bg-surface-02 transition-colors flex flex-col justify-between space-y-3 group"
+                  className="p-4 rounded-md bg-surface-01 border border-border-default hover:border-border-hover hover:bg-surface-02 transition-colors flex flex-col justify-between space-y-3.5 group shadow-level-1"
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="w-8 h-8 rounded bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary group-hover:text-foreground">
-                        <TutorialComponentIcon slug={comp.iconSlug} />
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="w-12 h-12 rounded-md bg-surface-02 border border-border-default group-hover:border-border-strong group-hover:bg-surface-03 transition-all flex items-center justify-center shrink-0 shadow-level-1">
+                        <TutorialComponentIcon
+                          slug={comp.iconSlug}
+                          size={32}
+                          className="transition-transform duration-150 group-hover:scale-105"
+                        />
                       </div>
                       <Badge
                         variant="outline"
-                        className="font-mono text-[9px] px-1.5 py-0 border-border-default text-text-muted truncate max-w-[140px]"
+                        className="font-mono text-[9px] px-2 py-0.5 border-border-default text-text-muted shrink-0 max-w-[140px] truncate"
                       >
                         {comp.categoryName}
                       </Badge>
                     </div>
 
                     <div>
-                      <div className="font-sans text-xs font-semibold text-foreground group-hover:underline truncate">
+                      <div className="font-sans text-sm font-semibold text-foreground group-hover:underline truncate">
                         {comp.name}
                       </div>
                       <div className="font-mono text-[10px] text-text-disabled truncate">
@@ -162,17 +166,17 @@ export default function ComponentsDirectoryPage() {
                       </div>
                     </div>
 
-                    <p className="text-[11px] font-sans text-text-muted line-clamp-2 leading-snug">
+                    <p className="text-xs font-sans text-text-muted line-clamp-2 leading-relaxed">
                       {comp.tagline}
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-border-subtle font-mono text-[9px] text-text-disabled">
-                    <span>
+                  <div className="flex items-center justify-between pt-2.5 border-t border-border-subtle font-mono text-[10px] text-text-disabled">
+                    <span className="text-text-muted">
                       {comp.ports.filter((p) => p.type === "input" || p.type === "bidirectional").length} in •{" "}
                       {comp.ports.filter((p) => p.type === "output" || p.type === "bidirectional").length} out
                     </span>
-                    <span className="text-text-muted group-hover:text-foreground">
+                    <span className="text-text-muted group-hover:text-foreground font-medium transition-colors">
                       View Guide →
                     </span>
                   </div>

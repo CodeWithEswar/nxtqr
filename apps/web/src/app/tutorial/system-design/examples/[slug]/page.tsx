@@ -241,8 +241,8 @@ export default async function ExampleDetailPage({ params }: ExamplePageProps) {
                   href={`/tutorial/system-design/components/${comp.id}`}
                   className="p-3 rounded-md bg-surface-01 border border-border-default hover:border-border-hover hover:bg-surface-02 transition-colors flex items-center gap-3 group"
                 >
-                  <div className="w-8 h-8 rounded bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary group-hover:text-foreground">
-                    <TutorialComponentIcon slug={comp.iconSlug} />
+                  <div className="w-10 h-10 rounded-md bg-surface-02 border border-border-default group-hover:border-border-strong group-hover:bg-surface-03 transition-all flex items-center justify-center shrink-0 shadow-level-1">
+                    <TutorialComponentIcon slug={comp.iconSlug} size={24} className="transition-transform duration-150 group-hover:scale-105" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-sans text-xs font-semibold text-foreground group-hover:underline truncate">

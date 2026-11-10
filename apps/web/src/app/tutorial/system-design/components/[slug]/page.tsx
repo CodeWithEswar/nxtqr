@@ -58,8 +58,8 @@ export default async function ComponentDetailPage({ params }: ComponentPageProps
       <div className="space-y-12 pb-20">
         <header className="space-y-3 border-b border-border-default pb-5 sm:pb-6">
           <div className="flex min-w-0 items-start gap-3">
-            <div className="grid size-11 shrink-0 place-items-center rounded-md border border-border-default bg-surface-02 shadow-level-1 sm:size-12">
-              <TutorialComponentIcon slug={comp.iconSlug} size={28} />
+            <div className="grid size-12 shrink-0 place-items-center rounded-md border border-border-default bg-surface-02 shadow-level-1 sm:size-14">
+              <TutorialComponentIcon slug={comp.iconSlug} size={36} />
             </div>
             <div className="min-w-0">
               <Link href={`/tutorial/system-design/categories/${comp.categoryId}`} className="text-xs text-text-muted hover:text-foreground hover:underline">

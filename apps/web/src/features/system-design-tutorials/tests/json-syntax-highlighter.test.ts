@@ -52,3 +52,4 @@ describe("JsonSyntaxHighlighter Tokenizer", () => {
     expect(nullTokens.find((t) => t.type === "null")?.text).toBe("null");
   });
 });
+

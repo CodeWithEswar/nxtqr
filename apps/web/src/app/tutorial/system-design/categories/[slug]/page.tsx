@@ -105,12 +105,16 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
                   href={`/tutorial/system-design/components/${comp.id}`}
                   className="p-4 rounded-md bg-surface-01 border border-border-default hover:border-border-hover hover:bg-surface-02 transition-colors flex flex-col justify-between space-y-3 group"
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="w-8 h-8 rounded bg-surface-02 border border-border-default flex items-center justify-center text-text-secondary group-hover:text-foreground">
-                        <TutorialComponentIcon slug={comp.iconSlug} />
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="w-12 h-12 rounded-md bg-surface-02 border border-border-default group-hover:border-border-strong group-hover:bg-surface-03 transition-all flex items-center justify-center shrink-0 shadow-level-1">
+                        <TutorialComponentIcon
+                          slug={comp.iconSlug}
+                          size={32}
+                          className="transition-transform duration-150 group-hover:scale-105"
+                        />
                       </div>
-                      <Badge variant="outline" className="font-mono text-[9px] px-1 py-0 border-border-default text-text-muted">
+                      <Badge variant="outline" className="font-mono text-[9px] px-1.5 py-0.5 border-border-default text-text-muted shrink-0">
                         {comp.shortName}
                       </Badge>
                     </div>

@@ -126,8 +126,8 @@ export function TutorialSearchDialog({ open, onOpenChange }: TutorialSearchDialo
                     isSelected ? "bg-surface-03 border border-border-hover" : "hover:bg-surface-02"
                   }`}
                 >
-                  <div className="w-7 h-7 rounded-md bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary">
-                    <TutorialComponentIcon slug={item.iconSlug} />
+                  <div className="w-8 h-8 rounded-md bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary shadow-level-1">
+                    <TutorialComponentIcon slug={item.iconSlug} size={20} />
                   </div>
 
                   <div className="min-w-0 flex-1">
