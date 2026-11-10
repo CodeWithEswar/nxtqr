@@ -76,6 +76,10 @@ import {
   architectureAndDiagramUtilitiesCategoryDefinition,
   ALL_ARCHITECTURE_AND_DIAGRAM_UTILITIES_DEFINITIONS,
 } from "./definitions/architecture-and-diagram-utilities";
+import {
+  protocolAndInterfaceComponentsCategoryDefinition,
+  ALL_PROTOCOL_AND_INTERFACE_COMPONENTS_DEFINITIONS,
+} from "./definitions/protocol-and-interface-components";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -191,6 +195,12 @@ export class InfrastructureRegistryClass {
     // 19. Register Architecture & Diagram Utilities Category (Cat 19)
     this.registerCategory(architectureAndDiagramUtilitiesCategoryDefinition);
     for (const def of ALL_ARCHITECTURE_AND_DIAGRAM_UTILITIES_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 20. Register Protocol & Interface Components Category (Cat 20)
+    this.registerCategory(protocolAndInterfaceComponentsCategoryDefinition);
+    for (const def of ALL_PROTOCOL_AND_INTERFACE_COMPONENTS_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

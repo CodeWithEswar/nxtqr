@@ -552,5 +552,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-utilities",
     },
   },
+  {
+    id: "infra_category_20_protocols",
+    category: "frontend",
+    title: "Infrastructure Components: Category 20 Protocol & Interface Components",
+    description: "Validates 12 colored SVG icons, typed registry definitions, Zod schemas, HTTP, HTTPS, REST, GraphQL, gRPC, WebSocket, TCP, UDP, MQTT, event subscriptions, streaming, and file transfers.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "protocol-and-interface-components",
+      componentCount: 12,
+      iconsVerified: 12,
+      inspectionRoute: "/verify/infrastructure-protocols",
+    },
+  },
 ];
 

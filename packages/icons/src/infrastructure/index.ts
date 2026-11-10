@@ -17,6 +17,7 @@ export * from "./cloud-infrastructure";
 export * from "./external-integrations";
 export * from "./distributed-systems-patterns";
 export * from "./architecture-and-diagram-utilities";
+export * from "./protocol-and-interface-components";
 
 import type { InfrastructureIconComponent } from "./types";
 import { clientIconRegistry } from "./clients";
@@ -37,6 +38,7 @@ import { cloudInfrastructureIconRegistry } from "./cloud-infrastructure";
 import { externalIntegrationsIconRegistry } from "./external-integrations";
 import { distributedSystemsPatternsIconRegistry } from "./distributed-systems-patterns";
 import { architectureAndDiagramUtilitiesIconRegistry } from "./architecture-and-diagram-utilities";
+import { protocolAndInterfaceComponentsIconRegistry } from "./protocol-and-interface-components";
 
 export const allInfrastructureIconRegistry: Record<string, InfrastructureIconComponent> = {
   ...clientIconRegistry,
@@ -57,6 +59,7 @@ export const allInfrastructureIconRegistry: Record<string, InfrastructureIconCom
   ...externalIntegrationsIconRegistry,
   ...distributedSystemsPatternsIconRegistry,
   ...architectureAndDiagramUtilitiesIconRegistry,
+  ...protocolAndInterfaceComponentsIconRegistry,
 };
 
 export function getInfrastructureIcon(slug: string): InfrastructureIconComponent | undefined {

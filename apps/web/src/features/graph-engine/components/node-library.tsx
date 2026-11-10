@@ -35,7 +35,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "utilities" | "patterns" | "external" | "cloud" | "devops" | "media" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "protocols" | "utilities" | "patterns" | "external" | "cloud" | "devops" | "media" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type ProtocolsSubtype = "all" | "apis-endpoints" | "transport-network" | "realtime-messaging" | "streaming-files";
 type UtilitiesSubtype = "all" | "boundaries-containers" | "annotations-docs" | "routing-traffic" | "dependencies-failures";
 type PatternsSubtype = "all" | "resilience" | "orchestration" | "coordination" | "registry-scheduler";
 type ExternalSubtype = "all" | "apis-protocols" | "payment-commerce" | "messaging-notifications" | "auth-maps-webhooks";
@@ -45,6 +46,14 @@ type MediaSubtype = "all" | "realtime-comm" | "media-streaming" | "notifications
 type DataSubtype = "all" | "pipelines-etl" | "lakes-lakehouse" | "engines-olap" | "ingestion-cdc-orchestration";
 type SearchSubtype = "all" | "engines-indexes" | "query-cache" | "autocomplete-discovery" | "recommendations";
 type ObservabilitySubtype = "all" | "metrics" | "logs" | "traces-apm" | "alerts-health";
+
+const PROTOCOLS_SUBTYPES: Record<ProtocolsSubtype, string[]> = {
+  all: [],
+  "apis-endpoints": ["http-endpoint", "https-endpoint", "rest-endpoint", "graphql-endpoint", "grpc-endpoint"],
+  "transport-network": ["tcp-endpoint", "udp-endpoint"],
+  "realtime-messaging": ["websocket-endpoint", "mqtt-broker", "event-subscription"],
+  "streaming-files": ["streaming-endpoint", "file-transfer-endpoint"],
+};
 
 const UTILITIES_SUBTYPES: Record<UtilitiesSubtype, string[]> = {
   all: [],
@@ -269,6 +278,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [protocolsSubtype, setProtocolsSubtype] = React.useState<ProtocolsSubtype>("all");
   const [utilitiesSubtype, setUtilitiesSubtype] = React.useState<UtilitiesSubtype>("all");
   const [patternsSubtype, setPatternsSubtype] = React.useState<PatternsSubtype>("all");
   const [externalSubtype, setExternalSubtype] = React.useState<ExternalSubtype>("all");
@@ -317,6 +327,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   const domainDefinitions = React.useMemo(() => {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
+
+  // Filter Protocol & Interface Components items
+  const filteredProtocols = React.useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "protocols") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "protocol-and-interface-components"
+    );
+
+    if (protocolsSubtype !== "all") {
+      const allowed = new Set(PROTOCOLS_SUBTYPES[protocolsSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, protocolsSubtype, search]);
 
   // Filter Architecture & Diagram Utilities items
   const filteredUtilities = React.useMemo(() => {
@@ -890,6 +928,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredProtocols.length +
     filteredUtilities.length +
     filteredPatterns.length +
     filteredExternal.length +
@@ -951,6 +990,17 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             }`}
           >
             All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("protocols")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "protocols"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Protocols
           </button>
           <button
             type="button"
@@ -1162,6 +1212,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Protocol & Interface Components */}
+        {activeTab === "protocols" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (12)" },
+                { id: "apis-endpoints", label: "APIs & Endpoints (5)" },
+                { id: "transport-network", label: "TCP / UDP (2)" },
+                { id: "realtime-messaging", label: "WebSocket & MQTT (3)" },
+                { id: "streaming-files", label: "Streaming & Files (2)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setProtocolsSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded text-xs whitespace-nowrap transition-colors shrink-0 ${
+                  protocolsSubtype === sub.id
+                    ? "bg-surface-03 text-foreground font-semibold border border-border-strong"
+                    : "text-text-muted hover:text-foreground border border-transparent"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: Architecture & Diagram Utilities */}
         {activeTab === "utilities" && (
@@ -1679,11 +1757,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || utilitiesSubtype !== "all" || patternsSubtype !== "all" || externalSubtype !== "all" || cloudSubtype !== "all" || devopsSubtype !== "all" || mediaSubtype !== "all" || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || protocolsSubtype !== "all" || utilitiesSubtype !== "all" || patternsSubtype !== "all" || externalSubtype !== "all" || cloudSubtype !== "all" || devopsSubtype !== "all" || mediaSubtype !== "all" || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setProtocolsSubtype("all");
                   setUtilitiesSubtype("all");
                   setPatternsSubtype("all");
                   setExternalSubtype("all");
@@ -1712,6 +1791,69 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 20: Protocol & Interface Components */}
+            {filteredProtocols.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Protocols &amp; Interfaces ({filteredProtocols.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 20
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredProtocols.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleCreateInfraNode(comp);
+                          }
+                        }}
+                        className="w-full text-left p-2 rounded-md border border-border-default bg-surface-02 hover:border-border-hover hover:bg-surface-03 transition-colors flex items-center justify-between group cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong select-none shadow-level-1"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="p-1 rounded bg-surface-01 text-foreground shrink-0 border border-border-subtle flex items-center justify-center">
+                            {IconComponent ? (
+                              <IconComponent className="h-3.5 w-3.5" />
+                            ) : (
+                              <CpuIcon className="h-3.5 w-3.5" />
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold text-foreground truncate">
+                              {comp.display.name}
+                            </div>
+                            <div className="text-[10px] text-text-muted truncate">
+                              {comp.display.shortName} · {comp.display.description}
+                            </div>
+                          </div>
+                        </div>
+                        <PlusIcon className="h-3.5 w-3.5 text-text-muted group-hover:text-foreground shrink-0 ml-1 transition-colors" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 19: Architecture & Diagram Utilities */}
             {filteredUtilities.length > 0 && (
               <div className="space-y-1.5">

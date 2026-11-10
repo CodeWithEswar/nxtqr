@@ -415,5 +415,18 @@ export const nodeTypes = {
   "connection-junction": GraphNode,
   "external-dependency": GraphNode,
   "failure-zone": GraphNode,
+  // Infrastructure Category 20: Protocol & Interface Components
+  "http-endpoint": GraphNode,
+  "https-endpoint": GraphNode,
+  "rest-endpoint": GraphNode,
+  "graphql-endpoint": GraphNode,
+  "grpc-endpoint": GraphNode,
+  "websocket-endpoint": GraphNode,
+  "tcp-endpoint": GraphNode,
+  "udp-endpoint": GraphNode,
+  "mqtt-broker": GraphNode,
+  "event-subscription": GraphNode,
+  "streaming-endpoint": GraphNode,
+  "file-transfer-endpoint": GraphNode,
 };
 

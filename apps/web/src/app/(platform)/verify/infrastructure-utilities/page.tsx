@@ -74,6 +74,12 @@ export default function InfrastructureUtilitiesVerificationPage() {
               ← Cat 18 Patterns
             </Link>
             <Link
+              href="/verify/infrastructure-protocols"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
+            >
+              Cat 20 Protocols →
+            </Link>
+            <Link
               href="/verify/infrastructure-external"
               className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
