@@ -7,6 +7,7 @@ import { NodeLibrary } from "./node-library";
 import { NodeInspector } from "./node-inspector";
 import { MobileGraphToolbar } from "./mobile-graph-toolbar";
 import { PanelResizeHandle } from "./panel-resize-handle";
+import { ValidationPanel } from "@/features/system-design/validation";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { useGraphPersistence } from "../hooks/use-graph-persistence";
 import { Badge } from "@nxtqr/ui";
@@ -26,10 +27,15 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const edges = useGraphEditorStore((s) => s.edges);
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const isInspectorOpen = useGraphEditorStore((s) => s.isInspectorOpen);
+  const isValidationOpen = useGraphEditorStore((s) => s.isValidationOpen);
+  const setValidationOpen = useGraphEditorStore((s) => s.setValidationOpen);
+  const setInspectorOpen = useGraphEditorStore((s) => s.setInspectorOpen);
   const nodeLibraryWidth = useGraphEditorStore((s) => s.nodeLibraryWidth);
   const inspectorWidth = useGraphEditorStore((s) => s.inspectorWidth);
+  const validationPanelWidth = useGraphEditorStore((s) => s.validationPanelWidth);
   const setNodeLibraryWidth = useGraphEditorStore((s) => s.setNodeLibraryWidth);
   const setInspectorWidth = useGraphEditorStore((s) => s.setInspectorWidth);
+  const setValidationPanelWidth = useGraphEditorStore((s) => s.setValidationPanelWidth);
   const resetPanelWidths = useGraphEditorStore((s) => s.resetPanelWidths);
 
   React.useEffect(() => {
@@ -110,6 +116,32 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
           {/* Mobile Bottom Floating Action Bar & Drawers */}
           <MobileGraphToolbar />
         </main>
+
+        {/* Right: Desktop Architecture Validation Panel (Resizable / Collapsible) */}
+        {isValidationOpen && (
+          <aside
+            style={{ width: `${validationPanelWidth}px` }}
+            className="hidden md:flex relative border-l border-border-default bg-surface-01 shrink-0 overflow-visible flex-col shadow-level-1 select-none"
+          >
+            <div className="flex-1 overflow-hidden min-h-0">
+              <ValidationPanel
+                onClose={() => setValidationOpen(false)}
+                onOpenInspectorField={() => setInspectorOpen(true)}
+              />
+            </div>
+
+            {/* Resize Handle on Left Edge of Validation Panel */}
+            <PanelResizeHandle
+              side="left"
+              currentWidth={validationPanelWidth}
+              minWidth={260}
+              maxWidth={540}
+              defaultWidth={320}
+              onResize={setValidationPanelWidth}
+              ariaLabel="Resize Architecture Validation panel"
+            />
+          </aside>
+        )}
 
         {/* Right: Desktop Node Inspector (Resizable / Collapsible) */}
         {isInspectorOpen && (

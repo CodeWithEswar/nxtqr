@@ -3,7 +3,7 @@
 import * as React from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@nxtqr/ui";
-import { ChevronRightIcon } from "@nxtqr/icons";
+import { ActivityIcon, ChevronRightIcon, CloseIcon } from "@nxtqr/icons";
 import { cn } from "@nxtqr/utils";
 import type { ArchitectureExample } from "../schemas/tutorial.schema";
 import { TUTORIAL_FLOW_HOP_MS } from "../lib/tutorial-flow";
@@ -50,7 +50,7 @@ export function ArchitectureDiagramView({ example, className }: ArchitectureDiag
   return (
     <div className={cn("min-w-0 space-y-4", className)}>
       <div className="overflow-hidden rounded-md border border-border-default bg-surface-01">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-default px-3 py-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-default px-2 py-1">
           <p className="font-mono text-[11px] tabular-nums text-text-muted">
             {nodes.length} nodes · {edges.length} connections
           </p>
@@ -61,12 +61,13 @@ export function ArchitectureDiagramView({ example, className }: ArchitectureDiag
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="h-9"
+                  className="gap-1.5"
                   onClick={() => {
                     setPlaying(false);
                     setActiveStep(null);
                   }}
                 >
+                  <CloseIcon size={14} />
                   Clear trace
                 </Button>
               )}
@@ -74,7 +75,7 @@ export function ArchitectureDiagramView({ example, className }: ArchitectureDiag
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-9"
+                className="gap-1.5"
                 onClick={() => {
                   if (playing) setPlaying(false);
                   else {
@@ -84,6 +85,7 @@ export function ArchitectureDiagramView({ example, className }: ArchitectureDiag
                   }
                 }}
               >
+                <ActivityIcon size={14} />
                 {playing ? "Pause flow" : "Play flow"}
               </Button>
             </div>

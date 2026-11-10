@@ -50,8 +50,10 @@ export interface GraphEditorState {
   showMinimap: boolean;
   isInspectorOpen: boolean;
   isNodeLibraryOpen: boolean;
+  isValidationOpen: boolean;
   nodeLibraryWidth: number;
   inspectorWidth: number;
+  validationPanelWidth: number;
   autosaveStatus: AutosaveStatus;
 
   // History state indicators
@@ -72,10 +74,13 @@ export interface GraphEditorState {
   toggleMinimap: () => void;
   setInspectorOpen: (open: boolean) => void;
   toggleInspector: () => void;
+  setValidationOpen: (open: boolean) => void;
+  toggleValidation: () => void;
   setNodeLibraryOpen: (open: boolean) => void;
   toggleNodeLibrary: () => void;
   setNodeLibraryWidth: (width: number) => void;
   setInspectorWidth: (width: number) => void;
+  setValidationPanelWidth: (width: number) => void;
   resetPanelWidths: () => void;
   setAutosaveStatus: (status: AutosaveStatus) => void;
 
@@ -217,8 +222,10 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     showMinimap: true,
     isInspectorOpen: true,
     isNodeLibraryOpen: true,
+    isValidationOpen: false,
     nodeLibraryWidth: 280,
     inspectorWidth: 320,
+    validationPanelWidth: 320,
     autosaveStatus: "saved",
 
     canUndo: false,
@@ -254,6 +261,8 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     toggleMinimap: () => set((s) => ({ showMinimap: !s.showMinimap })),
     setInspectorOpen: (open) => set({ isInspectorOpen: open }),
     toggleInspector: () => set((s) => ({ isInspectorOpen: !s.isInspectorOpen })),
+    setValidationOpen: (open) => set({ isValidationOpen: open }),
+    toggleValidation: () => set((s) => ({ isValidationOpen: !s.isValidationOpen })),
     setNodeLibraryOpen: (open) => set({ isNodeLibraryOpen: open }),
     toggleNodeLibrary: () => set((s) => ({ isNodeLibraryOpen: !s.isNodeLibraryOpen })),
     setNodeLibraryWidth: (width) => {
@@ -264,7 +273,11 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
       const clamped = Math.max(260, Math.min(540, width));
       set({ inspectorWidth: clamped });
     },
-    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320 }),
+    setValidationPanelWidth: (width) => {
+      const clamped = Math.max(260, Math.min(540, width));
+      set({ validationPanelWidth: clamped });
+    },
+    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320 }),
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),
 
     selectNode: (id, multi = false) => {

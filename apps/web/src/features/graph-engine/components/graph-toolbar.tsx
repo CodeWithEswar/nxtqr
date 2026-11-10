@@ -17,6 +17,7 @@ import {
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
+import { ValidationSummaryBadge } from "@/features/system-design/validation";
 
 export interface GraphToolbarProps {
   className?: string;
@@ -36,6 +37,9 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
 
   const isInspectorOpen = useGraphEditorStore((s) => s.isInspectorOpen);
   const toggleInspector = useGraphEditorStore((s) => s.toggleInspector);
+
+  const isValidationOpen = useGraphEditorStore((s) => s.isValidationOpen);
+  const toggleValidation = useGraphEditorStore((s) => s.toggleValidation);
 
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const toggleNodeLibrary = useGraphEditorStore((s) => s.toggleNodeLibrary);
@@ -180,6 +184,12 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
         </div>
 
         <div className="h-4 w-px bg-border-subtle mx-1" />
+
+        {/* Validation Panel Toggle */}
+        <ValidationSummaryBadge
+          isOpen={isValidationOpen}
+          onToggle={toggleValidation}
+        />
 
         {/* Inspector Toggle */}
         <Button

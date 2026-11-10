@@ -13,9 +13,13 @@ import {
 
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { GraphCanvasSurface } from "./graph-canvas-surface";
-import { validatePortConnection } from "../domain/port-validator";
 import { useGraphShortcuts } from "../hooks/use-graph-shortcuts";
 import { infrastructureRegistry, nodeRegistry } from "@nxtqr/node-registry";
+import {
+  architectureValidationEngine,
+  type ConnectionValidationResult,
+} from "@nxtqr/architecture-validation";
+import { ConnectionFeedback } from "@/features/system-design/validation";
 import type { BaseEdge, BaseNode, NodePosition } from "../schemas/graph.schema";
 
 export interface GraphCanvasProps {
@@ -157,19 +161,24 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
     [nodes, moveNodesBatch],
   );
 
-  // Connect validation & creation
+  // Connect validation, feedback & accessibility announcement
+  const [feedbackResult, setFeedbackResult] = React.useState<ConnectionValidationResult | null>(null);
+  const [srAnnouncement, setSrAnnouncement] = React.useState<string>("");
+
   const isValidConnection = React.useCallback(
     (connection: any) => {
       if (!connection.source || !connection.target) return false;
-      const result = validatePortConnection({
-        sourceNodeId: connection.source,
-        targetNodeId: connection.target,
-        sourceHandleId: connection.sourceHandle,
-        targetHandleId: connection.targetHandle,
+      const res = architectureValidationEngine.validateConnection(
+        {
+          sourceNodeId: connection.source,
+          targetNodeId: connection.target,
+          sourceHandleId: connection.sourceHandle,
+          targetHandleId: connection.targetHandle,
+        },
         nodes,
         edges,
-      });
-      return result.valid;
+      );
+      return res.valid;
     },
     [nodes, edges],
   );
@@ -177,7 +186,30 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
   const onConnect = React.useCallback(
     (connection: Connection) => {
       if (!connection.source || !connection.target) return;
-      if (!isValidConnection(connection)) return;
+      const res = architectureValidationEngine.validateConnection(
+        {
+          sourceNodeId: connection.source,
+          targetNodeId: connection.target,
+          sourceHandleId: connection.sourceHandle,
+          targetHandleId: connection.targetHandle,
+        },
+        nodes,
+        edges,
+      );
+
+      if (!res.valid) {
+        setFeedbackResult(res);
+        setSrAnnouncement(`Connection rejected: ${res.findings[0]?.message || "Invalid connection"}`);
+        return;
+      }
+
+      if (res.decision === "allowed-with-warnings" || res.decision === "requires-configuration") {
+        setFeedbackResult(res);
+        setSrAnnouncement(`Connection established with note: ${res.findings[0]?.message || ""}`);
+      } else {
+        setFeedbackResult(null);
+        setSrAnnouncement("Connection successfully established.");
+      }
 
       const newEdge: BaseEdge = {
         id: `edge_${crypto.randomUUID().slice(0, 8)}`,
@@ -189,12 +221,17 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
         targetPort: connection.targetHandle || undefined,
         type: "bezier",
         status: "idle",
-        data: {},
+        data: {
+          relationshipKind: res.resolvedRelationship,
+          protocol: res.resolvedProtocolId,
+          security: res.resolvedSecurity,
+          validationDecision: res.decision,
+        },
       };
 
       addEdge(newEdge);
     },
-    [isValidConnection, addEdge],
+    [nodes, edges, addEdge],
   );
 
   // Selection handlers
@@ -349,6 +386,17 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
             />
           </div>
         )}
+
+        {/* Real-Time Contextual Connection Validation Feedback */}
+        <ConnectionFeedback
+          result={feedbackResult}
+          onClose={() => setFeedbackResult(null)}
+        />
+
+        {/* Accessible Screen Reader Live Region */}
+        <div role="status" aria-live="polite" className="sr-only">
+          {srAnnouncement}
+        </div>
       </GraphCanvasSurface>
     </div>
   );

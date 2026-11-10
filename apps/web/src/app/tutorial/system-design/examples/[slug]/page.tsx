@@ -76,7 +76,7 @@ export default async function ExampleDetailPage({ params }: ExamplePageProps) {
               <OpenInVisualizerButton
                 document={example.graphDocument}
                 templateSlug={example.slug}
-                size="default"
+                size="sm"
                 label="Open in Visualizer"
               />
             </div>

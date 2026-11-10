@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@nxtqr/ui";
-import { ExternalLinkIcon } from "@nxtqr/icons";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@nxtqr/ui";
+import { ExternalLinkIcon, SpinnerIcon } from "@nxtqr/icons";
+import { cn } from "@nxtqr/utils";
 import { GraphDocumentSchema, type GraphDocument } from "@nxtqr/graph-schema";
 
 export interface OpenInVisualizerButtonProps {
@@ -13,6 +14,7 @@ export interface OpenInVisualizerButtonProps {
   size?: "default" | "sm" | "lg";
   className?: string;
   label?: string;
+  iconOnly?: boolean;
 }
 
 export function OpenInVisualizerButton({
@@ -22,6 +24,7 @@ export function OpenInVisualizerButton({
   size = "default",
   className = "",
   label = "Open in Visualizer",
+  iconOnly = false,
 }: OpenInVisualizerButtonProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -52,18 +55,35 @@ export function OpenInVisualizerButton({
     }
   }, [document, templateSlug, router]);
 
+  const actionLabel = isLoading ? "Opening visualizer…" : label;
+  const Icon = isLoading ? SpinnerIcon : ExternalLinkIcon;
+  const action = (
+    <Button
+      type="button"
+      variant={variant}
+      size={iconOnly ? "icon-sm" : size}
+      onClick={handleOpen}
+      disabled={isLoading}
+      aria-label={iconOnly ? actionLabel : undefined}
+      className={cn("gap-1.5", iconOnly && "text-text-secondary", className)}
+    >
+      <Icon size={14} className={cn("shrink-0", isLoading && "motion-safe:animate-spin")} />
+      {!iconOnly && <span>{actionLabel}</span>}
+    </Button>
+  );
+
   return (
     <div className="min-w-0">
-      <Button
-        variant={variant}
-        size={size}
-        onClick={handleOpen}
-        disabled={isLoading}
-        className={`gap-2 font-mono text-xs ${className}`}
-      >
-        <ExternalLinkIcon className="w-3.5 h-3.5 text-current shrink-0" />
-        <span>{isLoading ? "Loading Visualizer..." : label}</span>
-      </Button>
+      {iconOnly ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{action}</TooltipTrigger>
+          <TooltipContent side="bottom" align="end">
+            {label}
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        action
+      )}
       {error && (
         <p role="alert" className="mt-1 text-xs text-text-secondary">
           {error}

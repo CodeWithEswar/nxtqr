@@ -29,6 +29,7 @@ import {
 } from "@nxtqr/ui";
 import { NodeLibrary } from "./node-library";
 import { NodeInspector } from "./node-inspector";
+import { ValidationPanel, ValidationSummaryBadge } from "@/features/system-design/validation";
 
 export function MobileGraphToolbar() {
   const toolMode = useGraphEditorStore((s) => s.toolMode);
@@ -53,6 +54,7 @@ export function MobileGraphToolbar() {
   // Mobile Drawer states
   const [libraryOpen, setLibraryOpen] = React.useState(false);
   const [inspectorOpen, setInspectorOpen] = React.useState(false);
+  const [validationOpen, setValidationOpen] = React.useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false);
 
   // Selected node reference for contextual bar
@@ -184,6 +186,12 @@ export function MobileGraphToolbar() {
           </Button>
         </div>
 
+        {/* Mobile Validation Button */}
+        <ValidationSummaryBadge
+          isOpen={validationOpen}
+          onToggle={() => setValidationOpen(!validationOpen)}
+        />
+
         {/* Mobile Popover Menu for Secondary Actions */}
         <Popover open={moreMenuOpen} onOpenChange={setMoreMenuOpen}>
           <PopoverTrigger asChild>
@@ -312,6 +320,28 @@ export function MobileGraphToolbar() {
 
           <div className="flex-1 overflow-hidden min-h-0">
             <NodeInspector onClose={() => setInspectorOpen(false)} />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* 5. Bottom Drawer for Architecture Validation on Mobile */}
+      <Sheet open={validationOpen} onOpenChange={setValidationOpen}>
+        <SheetContent
+          side="bottom"
+          hideCloseButton
+          className="h-[80vh] max-h-[80vh] p-0 bg-surface-01 border-t border-border-strong rounded-t-md flex flex-col overflow-hidden shadow-level-3"
+        >
+          <SheetHeader className="sr-only">
+            <SheetTitle>Architecture Validation</SheetTitle>
+          </SheetHeader>
+
+          {/* Drawer Drag Pill */}
+          <div className="w-full flex justify-center pt-2.5 pb-1.5 shrink-0 bg-surface-02 border-b border-border-subtle/40">
+            <div className="w-10 h-1 rounded-full bg-border-strong" />
+          </div>
+
+          <div className="flex-1 overflow-hidden min-h-0">
+            <ValidationPanel onClose={() => setValidationOpen(false)} />
           </div>
         </SheetContent>
       </Sheet>

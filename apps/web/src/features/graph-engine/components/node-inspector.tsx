@@ -16,6 +16,7 @@ import {
   type InspectorFieldDefinition,
   type InspectorSectionDefinition,
 } from "@nxtqr/node-registry";
+import { architectureValidationEngine } from "@nxtqr/architecture-validation";
 import {
   Button,
   Badge,
@@ -33,10 +34,12 @@ export interface NodeInspectorProps {
 
 export function NodeInspector({ className, onClose }: NodeInspectorProps) {
   const selectedNodeIds = useGraphEditorStore((s) => s.selectedNodeIds);
+  const selectedEdgeIds = useGraphEditorStore((s) => s.selectedEdgeIds);
   const nodes = useGraphEditorStore((s) => s.nodes);
   const edges = useGraphEditorStore((s) => s.edges);
   const updateNodeConfig = useGraphEditorStore((s) => s.updateNodeConfig);
   const deleteSelected = useGraphEditorStore((s) => s.deleteSelected);
+  const deleteEdgeById = useGraphEditorStore((s) => s.deleteEdgeById);
   const duplicateSelected = useGraphEditorStore((s) => s.duplicateSelected);
 
   // Single selection target
@@ -112,7 +115,110 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
     );
   }, [selectedNode, infraDef]);
 
-  // Case 1: Empty Selection
+  // Case 1: Edge Selection
+  if (selectedNodeIds.length === 0 && selectedEdgeIds.length === 1) {
+    const selectedEdge = edges.find((e) => e.id === selectedEdgeIds[0]);
+    if (!selectedEdge) return null;
+
+    const sourceNode = nodes.find((n) => n.id === selectedEdge.source);
+    const targetNode = nodes.find((n) => n.id === selectedEdge.target);
+
+    const edgeValidation = architectureValidationEngine.validateConnection(
+      {
+        sourceNodeId: selectedEdge.source,
+        targetNodeId: selectedEdge.target,
+        sourceHandleId: selectedEdge.sourceHandle ?? selectedEdge.sourcePort,
+        targetHandleId: selectedEdge.targetHandle ?? selectedEdge.targetPort,
+        edgeId: selectedEdge.id,
+      },
+      nodes,
+      edges,
+    );
+
+    const relationship = (selectedEdge.data?.relationshipKind as string) || edgeValidation.resolvedRelationship || "request-response";
+    const protocol = (selectedEdge.data?.protocol as string) || edgeValidation.resolvedProtocolId || "HTTPS";
+    const isError = edgeValidation.decision === "rejected";
+    const isWarning = edgeValidation.decision === "allowed-with-warnings" || edgeValidation.decision === "requires-configuration";
+
+    return (
+      <div className={`flex flex-col h-full bg-surface-01 text-foreground select-none overflow-hidden ${className || ""}`}>
+        <div className="p-3.5 border-b border-border-subtle bg-surface-02 space-y-2 shrink-0">
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider">
+              Connection Inspector
+            </span>
+            <Badge
+              variant="outline"
+              className={`text-[9px] font-mono h-4 px-1 rounded uppercase ${
+                isError
+                  ? "border-rose-900/60 text-rose-400 bg-rose-950/20"
+                  : isWarning
+                    ? "border-amber-900/60 text-amber-400 bg-amber-950/20"
+                    : "border-border-default text-emerald-400 bg-emerald-950/20"
+              }`}
+            >
+              {edgeValidation.decision}
+            </Badge>
+          </div>
+          <h3 className="font-sans text-sm font-bold text-foreground truncate">
+            {sourceNode?.label || selectedEdge.source} → {targetNode?.label || selectedEdge.target}
+          </h3>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 min-h-0 font-mono text-xs">
+          <div className="p-2.5 rounded-md bg-surface-02 border border-border-default space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-text-muted">Protocol</span>
+              <span className="text-foreground font-semibold uppercase">{protocol}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-text-muted">Relationship</span>
+              <span className="text-foreground font-semibold">{relationship}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-text-muted">Source Port</span>
+              <span className="text-text-secondary">{selectedEdge.sourceHandle || "default"}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-text-muted">Target Port</span>
+              <span className="text-text-secondary">{selectedEdge.targetHandle || "default"}</span>
+            </div>
+          </div>
+
+          {/* Validation Findings for this edge */}
+          {edgeValidation.findings.length > 0 && (
+            <div className="space-y-1.5">
+              <span className="text-[10px] text-text-muted uppercase tracking-wider">
+                Architecture Findings
+              </span>
+              {edgeValidation.findings.map((f, idx) => (
+                <div key={idx} className="p-2 rounded-md bg-surface-02 border border-border-default space-y-1">
+                  <span className={`text-[11px] font-semibold ${f.severity === "error" ? "text-rose-400" : "text-amber-400"}`}>
+                    {f.title}
+                  </span>
+                  <p className="font-sans text-[11px] text-text-secondary">{f.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="pt-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => deleteEdgeById(selectedEdge.id)}
+              className="w-full h-8 text-xs font-mono gap-1.5 rounded-md"
+            >
+              <TrashIcon className="h-3.5 w-3.5" />
+              <span>Delete Connection</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Case 2: Empty Selection
   if (selectedNodeIds.length === 0) {
     return (
       <div
@@ -231,6 +337,13 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
       activePortIds.add(edge.targetHandle);
     }
   }
+
+  // Active validation findings for this node
+  const nodeFindings = React.useMemo(() => {
+    if (!selectedNode) return [];
+    const graphRes = architectureValidationEngine.validateGraph(nodes, edges);
+    return graphRes.findingsByNode[selectedNode.id] || [];
+  }, [selectedNode, nodes, edges]);
 
   return (
     <div
@@ -351,6 +464,23 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
 
       {/* Inspector Scrollable Body */}
       <div className="flex-1 overflow-y-auto p-3 space-y-4 precision-rail font-mono text-xs">
+        {/* Node Architecture Findings Alert */}
+        {nodeFindings.length > 0 && (
+          <div className="p-2.5 rounded-md bg-surface-02 border border-border-default space-y-1.5">
+            <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider block font-semibold">
+              Architecture Issues ({nodeFindings.length})
+            </span>
+            {nodeFindings.map((f, idx) => (
+              <div key={idx} className="p-1.5 rounded bg-surface-03 border border-border-subtle space-y-0.5">
+                <span className={`text-[11px] font-semibold block ${f.severity === "error" ? "text-rose-400" : "text-amber-400"}`}>
+                  {f.title}
+                </span>
+                <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* TAB 1: CONFIGURATION & IDENTITY */}
         {activeTab === "config" && (
           <div className="space-y-4">
