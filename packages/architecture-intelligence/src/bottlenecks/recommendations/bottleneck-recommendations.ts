@@ -88,3 +88,4 @@ export const BOTTLENECK_RECOMMENDATION_REGISTRY: Record<string, BottleneckRecomm
     ],
   },
 };
+

@@ -36,4 +36,8 @@ export * from "./rules/rule-registry";
 // Bottleneck Detection Engine (Phase 05.3.3)
 export * from "./bottlenecks";
 
+// Single Point of Failure (SPOF) Detection Engine (Phase 05.3.4)
+export * from "./failure-analysis";
+
+
 

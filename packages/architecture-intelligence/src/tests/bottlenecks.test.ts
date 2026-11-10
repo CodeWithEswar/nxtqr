@@ -120,3 +120,4 @@ describe("Bottleneck Detection Engine", () => {
     expect(spikeReport.findings.length).toBeGreaterThan(0);
   });
 });
+

@@ -11,6 +11,7 @@ import {
   AlertTriangleIcon,
   ActivityIcon,
   CpuIcon,
+  ShieldIcon,
   getInfrastructureIcon,
 } from "@nxtqr/icons";
 import {
@@ -22,8 +23,11 @@ import { architectureValidationEngine } from "@nxtqr/architecture-validation";
 import {
   architectureHealthEngine,
   bottleneckEngine,
+  failureAnalysisEngine,
   type HealthFinding,
   type BottleneckFinding,
+  type FailureFinding,
+  type BlastRadiusReport,
 } from "@nxtqr/architecture-intelligence";
 import {
   Button,
@@ -51,6 +55,7 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
   const duplicateSelected = useGraphEditorStore((s) => s.duplicateSelected);
   const setHealthOpen = useGraphEditorStore((s) => s.setHealthOpen);
   const setBottlenecksOpen = useGraphEditorStore((s) => s.setBottlenecksOpen);
+  const setFailureAnalysisOpen = useGraphEditorStore((s) => s.setFailureAnalysisOpen);
 
   // Single selection target
   const selectedNode = React.useMemo(() => {
@@ -146,6 +151,15 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
     const findings = bReport.findings.filter((f) => f.affectedNodeIds.includes(selectedNode.id));
     const utilization = bReport.nodeUtilization[selectedNode.id] || null;
     return { findings, utilization };
+  }, [selectedNode, nodes, edges]);
+
+  // Active failure analysis & blast radius for this node
+  const nodeFailureProfile = React.useMemo(() => {
+    if (!selectedNode) return { findings: [] as FailureFinding[], blastRadius: null as BlastRadiusReport | null };
+    const fReport = failureAnalysisEngine.analyzeGraph(nodes, edges);
+    const findings = fReport.findings.filter((f) => f.affectedNodeIds.includes(selectedNode.id));
+    const blastRadius = fReport.blastRadiusProfiles[selectedNode.id] || null;
+    return { findings, blastRadius };
   }, [selectedNode, nodes, edges]);
 
   // Case 1: Edge Selection
@@ -596,6 +610,65 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                   </span>
                   <Badge variant="outline" className="text-[8px] font-mono h-3.5 px-1 uppercase border-border-subtle">
                     {f.bottleneckType.replace(/_/g, " ")}
+                  </Badge>
+                </div>
+                <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Node Failure & Resiliency Assessment Summary */}
+        {(nodeFailureProfile.findings.length > 0 || nodeFailureProfile.blastRadius) && (
+          <div className="p-2.5 rounded-md bg-surface-02 border border-border-default space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                <ShieldIcon className="w-3 h-3 text-amber-400" />
+                SPOF & Blast Radius
+              </span>
+              <button
+                type="button"
+                onClick={() => setFailureAnalysisOpen(true)}
+                className="text-[9px] font-mono text-text-muted hover:text-foreground underline transition-colors"
+              >
+                View in Panel
+              </button>
+            </div>
+
+            {nodeFailureProfile.blastRadius && (
+              <div className="p-1.5 rounded bg-surface-03 border border-border-subtle font-mono text-[10px] space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Blast Radius Impact:</span>
+                  <Badge
+                    variant="outline"
+                    className={`text-[8px] font-mono h-3.5 px-1 uppercase ${
+                      nodeFailureProfile.blastRadius.blastRadiusScore >= 70
+                        ? "border-rose-900/60 text-rose-400 bg-rose-950/20"
+                        : nodeFailureProfile.blastRadius.blastRadiusScore >= 35
+                          ? "border-amber-900/60 text-amber-400 bg-amber-950/20"
+                          : "border-border-default text-emerald-400 bg-emerald-950/20"
+                    }`}
+                  >
+                    {nodeFailureProfile.blastRadius.blastRadiusScore}% Impact
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-[9px] text-text-disabled">
+                  <span>Direct: {nodeFailureProfile.blastRadius.directImpactedNodeIds.length} nodes</span>
+                  <span>Indirect: {nodeFailureProfile.blastRadius.indirectImpactedNodeIds.length} nodes</span>
+                </div>
+              </div>
+            )}
+
+            {nodeFailureProfile.findings.map((f: FailureFinding, idx: number) => (
+              <div key={idx} className="p-1.5 rounded bg-surface-03 border border-border-subtle space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className={`text-[11px] font-semibold truncate ${
+                    f.severity === "critical" ? "text-rose-400" : f.severity === "high" ? "text-amber-400" : "text-text-secondary"
+                  }`}>
+                    {f.title}
+                  </span>
+                  <Badge variant="outline" className="text-[8px] font-mono h-3.5 px-1 uppercase border-border-subtle">
+                    {f.classification.replace(/-/g, " ")}
                   </Badge>
                 </div>
                 <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>

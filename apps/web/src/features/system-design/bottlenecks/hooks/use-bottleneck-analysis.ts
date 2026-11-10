@@ -123,3 +123,4 @@ export function useBottleneckAnalysis() {
     isAnalyzing,
   };
 }
+

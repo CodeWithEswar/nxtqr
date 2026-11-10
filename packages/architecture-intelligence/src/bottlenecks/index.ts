@@ -21,3 +21,4 @@ export { ExternalAnalyzer } from "./analyzers/external-analyzer";
 
 // Recommendations
 export * from "./recommendations/bottleneck-recommendations";
+

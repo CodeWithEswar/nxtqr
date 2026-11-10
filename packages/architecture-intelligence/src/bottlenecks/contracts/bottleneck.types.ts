@@ -148,3 +148,4 @@ export interface BottleneckReport {
     executionTimeMs: number;
   };
 }
+

@@ -10,6 +10,7 @@ import { PanelResizeHandle } from "./panel-resize-handle";
 import { ValidationPanel } from "@/features/system-design/validation";
 import { HealthPanel } from "@/features/system-design/health";
 import { BottleneckPanel } from "@/features/system-design/bottlenecks";
+import { FailurePanel } from "@/features/system-design/failure-analysis";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { useGraphPersistence } from "../hooks/use-graph-persistence";
 import { Badge } from "@nxtqr/ui";
@@ -35,17 +36,21 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const setHealthOpen = useGraphEditorStore((s) => s.setHealthOpen);
   const isBottlenecksOpen = useGraphEditorStore((s) => s.isBottlenecksOpen);
   const setBottlenecksOpen = useGraphEditorStore((s) => s.setBottlenecksOpen);
+  const isFailureAnalysisOpen = useGraphEditorStore((s) => s.isFailureAnalysisOpen);
+  const setFailureAnalysisOpen = useGraphEditorStore((s) => s.setFailureAnalysisOpen);
   const setInspectorOpen = useGraphEditorStore((s) => s.setInspectorOpen);
   const nodeLibraryWidth = useGraphEditorStore((s) => s.nodeLibraryWidth);
   const inspectorWidth = useGraphEditorStore((s) => s.inspectorWidth);
   const validationPanelWidth = useGraphEditorStore((s) => s.validationPanelWidth);
   const healthPanelWidth = useGraphEditorStore((s) => s.healthPanelWidth);
   const bottlenecksPanelWidth = useGraphEditorStore((s) => s.bottlenecksPanelWidth);
+  const failureAnalysisPanelWidth = useGraphEditorStore((s) => s.failureAnalysisPanelWidth);
   const setNodeLibraryWidth = useGraphEditorStore((s) => s.setNodeLibraryWidth);
   const setInspectorWidth = useGraphEditorStore((s) => s.setInspectorWidth);
   const setValidationPanelWidth = useGraphEditorStore((s) => s.setValidationPanelWidth);
   const setHealthPanelWidth = useGraphEditorStore((s) => s.setHealthPanelWidth);
   const setBottlenecksPanelWidth = useGraphEditorStore((s) => s.setBottlenecksPanelWidth);
+  const setFailureAnalysisPanelWidth = useGraphEditorStore((s) => s.setFailureAnalysisPanelWidth);
   const resetPanelWidths = useGraphEditorStore((s) => s.resetPanelWidths);
 
   React.useEffect(() => {
@@ -126,6 +131,32 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
           {/* Mobile Bottom Floating Action Bar & Drawers */}
           <MobileGraphToolbar />
         </main>
+
+        {/* Right: Desktop Single Point of Failure (SPOF) Analysis Panel */}
+        {isFailureAnalysisOpen && (
+          <aside
+            style={{ width: `${failureAnalysisPanelWidth}px` }}
+            className="hidden md:flex relative border-l border-border-default bg-surface-01 shrink-0 overflow-visible flex-col shadow-level-1 select-none"
+          >
+            <div className="flex-1 overflow-hidden min-h-0">
+              <FailurePanel
+                onClose={() => setFailureAnalysisOpen(false)}
+                onFocusNode={() => setInspectorOpen(true)}
+              />
+            </div>
+
+            {/* Resize Handle on Left Edge of Failure Analysis Panel */}
+            <PanelResizeHandle
+              side="left"
+              currentWidth={failureAnalysisPanelWidth}
+              minWidth={280}
+              maxWidth={580}
+              defaultWidth={360}
+              onResize={setFailureAnalysisPanelWidth}
+              ariaLabel="Resize SPOF analysis panel"
+            />
+          </aside>
+        )}
 
         {/* Right: Desktop Bottleneck Detection Panel (Resizable / Collapsible) */}
         {isBottlenecksOpen && (

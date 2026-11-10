@@ -105,3 +105,4 @@ export const DEFAULT_WORKLOAD_SCENARIOS: Record<string, WorkloadScenario> = {
     },
   },
 };
+
