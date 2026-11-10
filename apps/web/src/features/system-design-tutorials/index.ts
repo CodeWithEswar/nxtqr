@@ -13,3 +13,4 @@ export * from "./components/component-preview";
 export * from "./components/properties-explorer";
 export * from "./components/open-in-visualizer-button";
 export * from "./components/architecture-diagram-view";
+export * from "./components/json-syntax-highlighter";

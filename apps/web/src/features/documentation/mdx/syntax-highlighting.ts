@@ -115,7 +115,16 @@ export function tokenizeClientCode(code: string): SyntaxToken[][] {
         break;
       }
 
-      // 2. Strings
+      // 2. Object property keys (JSON and JS object literals): "key":
+      const propKeyMatch = remaining.match(/^("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*")\s*(:)/);
+      if (propKeyMatch) {
+        tokens.push({ type: "type", text: propKeyMatch[1] });
+        tokens.push({ type: "operator", text: ":" });
+        remaining = remaining.slice(propKeyMatch[0].length);
+        continue;
+      }
+
+      // 3. Strings
       const stringMatch = remaining.match(/^("[^"]*"|'[^']*'|`[^`]*`)/);
       if (stringMatch) {
         tokens.push({ type: "string", text: stringMatch[1] });

@@ -13,7 +13,9 @@ import {
   SelectContent,
   SelectItem,
 } from "@nxtqr/ui";
-import { CopyIcon, CheckIcon, SlidersIcon } from "@nxtqr/icons";
+import { CopyIcon, CheckIcon, SlidersIcon, TextWrapIcon, TextUnwrapIcon } from "@nxtqr/icons";
+import { cn } from "@nxtqr/utils";
+import { JsonSyntaxHighlighter } from "./json-syntax-highlighter";
 
 export interface PropertiesExplorerProps {
   componentId: string;
@@ -30,6 +32,8 @@ export function PropertiesExplorer({ componentId, className = "" }: PropertiesEx
   });
 
   const [copied, setCopied] = React.useState(false);
+  const [wrapJson, setWrapJson] = React.useState(false);
+  const [showLineNumbers, setShowLineNumbers] = React.useState(false);
 
   // Update state when componentId changes
   React.useEffect(() => {
@@ -196,37 +200,83 @@ export function PropertiesExplorer({ componentId, className = "" }: PropertiesEx
           ))}
         </div>
 
-        {/* Right: Live Generated JSON Spec */}
+        {/* Right: Live Generated JSON Spec with Syntax Highlighting */}
         <div className="flex flex-col rounded-md bg-surface-01 border border-border-default overflow-hidden">
           <div className="h-9 px-3 bg-surface-02 border-b border-border-default flex items-center justify-between shrink-0">
-            <span className="font-mono text-[11px] font-semibold text-text-secondary">
-              runtime_config.json
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopyJson}
-              className="h-6 px-2 text-[10px] font-mono gap-1 text-text-muted hover:text-foreground"
-            >
-              {copied ? (
-                <>
-                  <CheckIcon className="w-3 h-3 text-white" />
-                  <span>Copied</span>
-                </>
-              ) : (
-                <>
-                  <CopyIcon className="w-3 h-3" />
-                  <span>Copy JSON</span>
-                </>
-              )}
-            </Button>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[11px] font-semibold text-text-secondary">
+                runtime_config.json
+              </span>
+              <Badge
+                variant="outline"
+                className="font-mono text-[9px] uppercase px-1.5 py-0 h-4 border-border-default text-text-disabled"
+              >
+                JSON
+              </Badge>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowLineNumbers((prev) => !prev)}
+                aria-label={showLineNumbers ? "Hide line numbers" : "Show line numbers"}
+                title={showLineNumbers ? "Hide line numbers" : "Show line numbers"}
+                className={cn(
+                  "h-6 px-1.5 text-[10px] font-mono gap-1 text-text-muted hover:text-foreground",
+                  showLineNumbers && "bg-surface-03 text-foreground",
+                )}
+              >
+                <span>#</span>
+                <span className="hidden sm:inline">Lines</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setWrapJson((prev) => !prev)}
+                aria-label={wrapJson ? "Unwrap lines" : "Wrap lines"}
+                title={wrapJson ? "Unwrap lines" : "Wrap lines"}
+                className={cn(
+                  "h-6 px-1.5 text-[10px] font-mono gap-1 text-text-muted hover:text-foreground",
+                  wrapJson && "bg-surface-03 text-foreground",
+                )}
+              >
+                {wrapJson ? (
+                  <TextUnwrapIcon className="w-3 h-3" />
+                ) : (
+                  <TextWrapIcon className="w-3 h-3" />
+                )}
+                <span className="hidden sm:inline">{wrapJson ? "Unwrap" : "Wrap"}</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyJson}
+                className="h-6 px-2 text-[10px] font-mono gap-1 text-text-muted hover:text-foreground bg-surface-01 border-border-default"
+              >
+                {copied ? (
+                  <>
+                    <CheckIcon className="w-3 h-3 text-white" />
+                    <span>Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <CopyIcon className="w-3 h-3" />
+                    <span>Copy JSON</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
 
-          <div className="p-3 bg-black flex-1 font-mono text-xs text-text-secondary overflow-auto max-h-[480px]">
-            <pre className="text-[11px] leading-relaxed text-[#c9d1d9]">
-              {JSON.stringify(configValues, null, 2)}
-            </pre>
-          </div>
+          <JsonSyntaxHighlighter
+            data={configValues}
+            wrap={wrapJson}
+            showLineNumbers={showLineNumbers}
+            className="flex-1 max-h-[480px]"
+          />
         </div>
       </div>
     </div>
