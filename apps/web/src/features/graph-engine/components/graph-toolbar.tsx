@@ -21,6 +21,7 @@ import { ValidationSummaryBadge } from "@/features/system-design/validation";
 import { HealthSummaryBadge } from "@/features/system-design/health";
 import { BottleneckSummaryBadge } from "@/features/system-design/bottlenecks";
 import { FailureSummaryBadge } from "@/features/system-design/failure-analysis";
+import { SecuritySummaryBadge } from "@/features/system-design/security-analysis";
 
 export interface GraphToolbarProps {
   className?: string;
@@ -49,6 +50,8 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
   const toggleBottlenecks = useGraphEditorStore((s) => s.toggleBottlenecks);
   const isFailureAnalysisOpen = useGraphEditorStore((s) => s.isFailureAnalysisOpen);
   const toggleFailureAnalysis = useGraphEditorStore((s) => s.toggleFailureAnalysis);
+  const isSecurityOpen = useGraphEditorStore((s) => s.isSecurityOpen);
+  const toggleSecurity = useGraphEditorStore((s) => s.toggleSecurity);
 
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const toggleNodeLibrary = useGraphEditorStore((s) => s.toggleNodeLibrary);
@@ -216,6 +219,12 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
         <FailureSummaryBadge
           isOpen={isFailureAnalysisOpen}
           onToggle={toggleFailureAnalysis}
+        />
+
+        {/* Security Architecture Analysis Toggle */}
+        <SecuritySummaryBadge
+          isOpen={isSecurityOpen}
+          onToggle={toggleSecurity}
         />
 
         {/* Inspector Toggle */}

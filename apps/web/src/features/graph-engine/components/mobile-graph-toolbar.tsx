@@ -33,6 +33,7 @@ import { ValidationPanel, ValidationSummaryBadge } from "@/features/system-desig
 import { HealthPanel, HealthSummaryBadge } from "@/features/system-design/health";
 import { BottleneckPanel, BottleneckSummaryBadge } from "@/features/system-design/bottlenecks";
 import { FailurePanel, FailureSummaryBadge } from "@/features/system-design/failure-analysis";
+import { SecurityPanel, SecuritySummaryBadge } from "@/features/system-design/security-analysis";
 
 export function MobileGraphToolbar() {
   const toolMode = useGraphEditorStore((s) => s.toolMode);
@@ -61,6 +62,7 @@ export function MobileGraphToolbar() {
   const [healthOpen, setHealthOpen] = React.useState(false);
   const [bottlenecksOpen, setBottlenecksOpen] = React.useState(false);
   const [failureOpen, setFailureOpen] = React.useState(false);
+  const [securityOpen, setSecurityOpen] = React.useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false);
 
   // Selected node reference for contextual bar
@@ -214,6 +216,12 @@ export function MobileGraphToolbar() {
         <FailureSummaryBadge
           isOpen={failureOpen}
           onToggle={() => setFailureOpen(!failureOpen)}
+        />
+
+        {/* Mobile Security Button */}
+        <SecuritySummaryBadge
+          isOpen={securityOpen}
+          onToggle={() => setSecurityOpen(!securityOpen)}
         />
 
         {/* Mobile Popover Menu for Secondary Actions */}
@@ -432,6 +440,28 @@ export function MobileGraphToolbar() {
 
           <div className="flex-1 overflow-hidden min-h-0">
             <FailurePanel onClose={() => setFailureOpen(false)} />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* 9. Bottom Drawer for Security Architecture Analysis on Mobile */}
+      <Sheet open={securityOpen} onOpenChange={setSecurityOpen}>
+        <SheetContent
+          side="bottom"
+          hideCloseButton
+          className="h-[80vh] max-h-[80vh] p-0 bg-surface-01 border-t border-border-strong rounded-t-md flex flex-col overflow-hidden shadow-level-3"
+        >
+          <SheetHeader className="sr-only">
+            <SheetTitle>Security Architecture Analysis</SheetTitle>
+          </SheetHeader>
+
+          {/* Drawer Drag Pill */}
+          <div className="w-full flex justify-center pt-2.5 pb-1.5 shrink-0 bg-surface-02 border-b border-border-subtle/40">
+            <div className="w-10 h-1 rounded-full bg-border-strong" />
+          </div>
+
+          <div className="flex-1 overflow-hidden min-h-0">
+            <SecurityPanel onClose={() => setSecurityOpen(false)} />
           </div>
         </SheetContent>
       </Sheet>

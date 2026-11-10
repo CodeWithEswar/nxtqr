@@ -39,5 +39,8 @@ export * from "./bottlenecks";
 // Single Point of Failure (SPOF) Detection Engine (Phase 05.3.4)
 export * from "./failure-analysis";
 
+// Security Architecture Analysis Engine (Phase 05.3.5)
+export * from "./security-analysis";
+
 
 

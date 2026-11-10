@@ -24,10 +24,13 @@ import {
   architectureHealthEngine,
   bottleneckEngine,
   failureAnalysisEngine,
+  securityAnalysisEngine,
   type HealthFinding,
   type BottleneckFinding,
   type FailureFinding,
   type BlastRadiusReport,
+  type SecurityFinding,
+  type NodeSecurityProfile,
 } from "@nxtqr/architecture-intelligence";
 import {
   Button,
@@ -56,6 +59,7 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
   const setHealthOpen = useGraphEditorStore((s) => s.setHealthOpen);
   const setBottlenecksOpen = useGraphEditorStore((s) => s.setBottlenecksOpen);
   const setFailureAnalysisOpen = useGraphEditorStore((s) => s.setFailureAnalysisOpen);
+  const setSecurityOpen = useGraphEditorStore((s) => s.setSecurityOpen);
 
   // Single selection target
   const selectedNode = React.useMemo(() => {
@@ -160,6 +164,15 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
     const findings = fReport.findings.filter((f) => f.affectedNodeIds.includes(selectedNode.id));
     const blastRadius = fReport.blastRadiusProfiles[selectedNode.id] || null;
     return { findings, blastRadius };
+  }, [selectedNode, nodes, edges]);
+
+  // Active security profile & findings for this node
+  const nodeSecurity = React.useMemo(() => {
+    if (!selectedNode) return { findings: [] as SecurityFinding[], profile: null as NodeSecurityProfile | null };
+    const secReport = securityAnalysisEngine.analyzeGraph(nodes, edges);
+    const findings = secReport.findings.filter((f) => f.affectedNodeIds.includes(selectedNode.id));
+    const profile = secReport.nodeProfiles[selectedNode.id] || null;
+    return { findings, profile };
   }, [selectedNode, nodes, edges]);
 
   // Case 1: Edge Selection
@@ -669,6 +682,75 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                   </span>
                   <Badge variant="outline" className="text-[8px] font-mono h-3.5 px-1 uppercase border-border-subtle">
                     {f.classification.replace(/-/g, " ")}
+                  </Badge>
+                </div>
+                <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Node Security Context & Analysis Summary */}
+        {(nodeSecurity.findings.length > 0 || nodeSecurity.profile) && (
+          <div className="p-2.5 rounded-md bg-surface-02 border border-border-default space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                <ShieldIcon className="w-3 h-3 text-emerald-400" />
+                Security Context & Findings
+              </span>
+              <button
+                type="button"
+                onClick={() => setSecurityOpen(true)}
+                className="text-[9px] font-mono text-text-muted hover:text-foreground underline transition-colors"
+              >
+                View in Panel
+              </button>
+            </div>
+
+            {nodeSecurity.profile && (
+              <div className="p-1.5 rounded bg-surface-03 border border-border-subtle font-mono text-[10px] space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Exposure:</span>
+                  <Badge
+                    variant="outline"
+                    className={`text-[8px] font-mono h-3.5 px-1 uppercase ${
+                      nodeSecurity.profile.exposure === "public"
+                        ? "border-amber-900/60 text-amber-400 bg-amber-950/20"
+                        : "border-border-default text-text-secondary bg-surface-02"
+                    }`}
+                  >
+                    {nodeSecurity.profile.exposure}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Trust Level:</span>
+                  <span className="text-text-secondary text-[9px]">{nodeSecurity.profile.trustLevel}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Data Sensitivity:</span>
+                  <span className={`text-[9px] ${
+                    nodeSecurity.profile.dataSensitivity === "restricted"
+                      ? "text-rose-400"
+                      : nodeSecurity.profile.dataSensitivity === "confidential"
+                        ? "text-amber-400"
+                        : "text-text-secondary"
+                  }`}>
+                    {nodeSecurity.profile.dataSensitivity}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {nodeSecurity.findings.map((f: SecurityFinding, idx: number) => (
+              <div key={idx} className="p-1.5 rounded bg-surface-03 border border-border-subtle space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className={`text-[11px] font-semibold truncate ${
+                    f.severity === "critical" ? "text-rose-400" : f.severity === "high" ? "text-amber-400" : "text-text-secondary"
+                  }`}>
+                    {f.title}
+                  </span>
+                  <Badge variant="outline" className="text-[8px] font-mono h-3.5 px-1 uppercase border-border-subtle">
+                    {f.ruleId}
                   </Badge>
                 </div>
                 <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>
