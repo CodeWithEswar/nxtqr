@@ -314,5 +314,16 @@ export const nodeTypes = {
   "certificate-authority": GraphNode,
   "token-service": GraphNode,
   "policy-engine": GraphNode,
+  // Infrastructure Category 10: Observability & Reliability
+  "monitoring-service": GraphNode,
+  "metrics-collector": GraphNode,
+  "log-collector": GraphNode,
+  "log-aggregator": GraphNode,
+  "distributed-tracing": GraphNode,
+  "alert-manager": GraphNode,
+  "health-check-service": GraphNode,
+  "error-tracker": GraphNode,
+  "apm-service": GraphNode,
+  "status-page": GraphNode,
 };
 

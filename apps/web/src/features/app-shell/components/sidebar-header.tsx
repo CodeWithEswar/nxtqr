@@ -24,7 +24,7 @@ export function SidebarHeader({ collapsed }: SidebarHeaderProps) {
               className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface-02 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong"
               title="NXTQR Studio Workspace"
             >
-              <AppLogo variant="symbol" size={22} />
+              <AppLogo variant="minimal" size={22} animated animationMode="interactive" />
             </Link>
           </TooltipTrigger>
           <TooltipContent side="right" className="font-mono text-xs">
@@ -43,7 +43,7 @@ export function SidebarHeader({ collapsed }: SidebarHeaderProps) {
         title="NXTQR Studio Workspace"
       >
         <div className="shrink-0">
-          <AppLogo variant="symbol" size={22} />
+          <AppLogo variant="minimal" size={22} animated animationMode="interactive" />
         </div>
         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
           <span className="font-sans text-xs font-bold tracking-tight text-foreground">

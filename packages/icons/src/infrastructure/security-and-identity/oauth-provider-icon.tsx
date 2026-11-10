@@ -76,3 +76,4 @@ export const OAuthProviderIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

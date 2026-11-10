@@ -71,3 +71,4 @@ export const WebApplicationFirewallIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

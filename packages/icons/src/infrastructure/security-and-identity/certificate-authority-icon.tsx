@@ -69,3 +69,4 @@ export const CertificateAuthorityIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

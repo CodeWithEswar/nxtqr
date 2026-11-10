@@ -76,3 +76,4 @@ export const AuthenticationServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

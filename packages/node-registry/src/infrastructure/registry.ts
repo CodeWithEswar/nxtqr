@@ -40,6 +40,10 @@ import {
   securityAndIdentityCategoryDefinition,
   ALL_SECURITY_AND_IDENTITY_DEFINITIONS,
 } from "./definitions/security-and-identity";
+import {
+  observabilityAndReliabilityCategoryDefinition,
+  ALL_OBSERVABILITY_AND_RELIABILITY_DEFINITIONS,
+} from "./definitions/observability-and-reliability";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -101,6 +105,12 @@ export class InfrastructureRegistryClass {
     // 9. Register Security & Identity Category (Cat 09)
     this.registerCategory(securityAndIdentityCategoryDefinition);
     for (const def of ALL_SECURITY_AND_IDENTITY_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 10. Register Observability & Reliability Category (Cat 10)
+    this.registerCategory(observabilityAndReliabilityCategoryDefinition);
+    for (const def of ALL_OBSERVABILITY_AND_RELIABILITY_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

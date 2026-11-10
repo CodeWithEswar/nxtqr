@@ -64,3 +64,4 @@ export const KeyManagementServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

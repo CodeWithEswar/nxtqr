@@ -8,6 +8,7 @@ export * from "./caching-and-performance";
 export * from "./messaging-and-event-systems";
 export * from "./storage-and-file-systems";
 export * from "./security-and-identity";
+export * from "./observability-and-reliability";
 
 import type { InfrastructureIconComponent } from "./types";
 import { clientIconRegistry } from "./clients";
@@ -19,6 +20,7 @@ import { cachingAndPerformanceIconRegistry } from "./caching-and-performance";
 import { messagingAndEventSystemsIconRegistry } from "./messaging-and-event-systems";
 import { storageAndFileSystemsIconRegistry } from "./storage-and-file-systems";
 import { securityAndIdentityIconRegistry } from "./security-and-identity";
+import { observabilityAndReliabilityIconRegistry } from "./observability-and-reliability";
 
 export const allInfrastructureIconRegistry: Record<string, InfrastructureIconComponent> = {
   ...clientIconRegistry,
@@ -30,6 +32,7 @@ export const allInfrastructureIconRegistry: Record<string, InfrastructureIconCom
   ...messagingAndEventSystemsIconRegistry,
   ...storageAndFileSystemsIconRegistry,
   ...securityAndIdentityIconRegistry,
+  ...observabilityAndReliabilityIconRegistry,
 };
 
 export function getInfrastructureIcon(slug: string): InfrastructureIconComponent | undefined {

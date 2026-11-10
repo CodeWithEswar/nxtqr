@@ -66,3 +66,4 @@ export const RateLimiterIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

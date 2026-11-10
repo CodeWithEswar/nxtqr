@@ -76,3 +76,4 @@ export const SecretsManagerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

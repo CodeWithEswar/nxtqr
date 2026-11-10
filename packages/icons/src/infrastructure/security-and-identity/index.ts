@@ -66,3 +66,4 @@ export const securityAndIdentityIconRegistry: Record<string, InfrastructureIconC
 export function getSecurityAndIdentityInfrastructureIcon(slug: string): InfrastructureIconComponent | undefined {
   return securityAndIdentityIconRegistry[slug];
 }
+

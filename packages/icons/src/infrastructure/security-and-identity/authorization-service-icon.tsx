@@ -80,3 +80,4 @@ export const AuthorizationServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

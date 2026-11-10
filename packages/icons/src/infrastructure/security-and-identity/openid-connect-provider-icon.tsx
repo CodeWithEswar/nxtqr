@@ -69,3 +69,4 @@ export const OpenIDConnectProviderIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

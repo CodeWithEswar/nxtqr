@@ -84,3 +84,4 @@ export const TokenServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

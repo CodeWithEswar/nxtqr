@@ -83,3 +83,4 @@ export const DdosProtectionIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

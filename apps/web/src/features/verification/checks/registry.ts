@@ -417,5 +417,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-security",
     },
   },
+  {
+    id: "infra_category_10_observability",
+    category: "frontend",
+    title: "Infrastructure Components: Category 10 Observability & Reliability",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, telemetry connection semantics, incident routing ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "observability-and-reliability",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-observability",
+    },
+  },
 ];
 

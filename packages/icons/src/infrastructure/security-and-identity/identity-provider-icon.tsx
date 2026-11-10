@@ -63,3 +63,4 @@ export const IdentityProviderIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+
