@@ -25,13 +25,16 @@ import {
   bottleneckEngine,
   failureAnalysisEngine,
   securityAnalysisEngine,
+  scalabilityRecommendationsEngine,
   type HealthFinding,
   type BottleneckFinding,
   type FailureFinding,
   type BlastRadiusReport,
   type SecurityFinding,
   type NodeSecurityProfile,
+  type ScalabilityRecommendation,
 } from "@nxtqr/architecture-intelligence";
+import { PRESET_WORKLOAD_SCENARIOS } from "@/features/system-design/scalability";
 import {
   Button,
   Badge,
@@ -60,6 +63,8 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
   const setBottlenecksOpen = useGraphEditorStore((s) => s.setBottlenecksOpen);
   const setFailureAnalysisOpen = useGraphEditorStore((s) => s.setFailureAnalysisOpen);
   const setSecurityOpen = useGraphEditorStore((s) => s.setSecurityOpen);
+  const setScalabilityOpen = useGraphEditorStore((s) => s.setScalabilityOpen);
+  const activeScenarioId = useGraphEditorStore((s) => s.activeScenarioId);
 
   // Single selection target
   const selectedNode = React.useMemo(() => {
@@ -174,6 +179,19 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
     const profile = secReport.nodeProfiles[selectedNode.id] || null;
     return { findings, profile };
   }, [selectedNode, nodes, edges]);
+
+  // Active scalability recommendations for this node
+  const nodeScalability = React.useMemo(() => {
+    if (!selectedNode) return { recommendations: [] as ScalabilityRecommendation[] };
+    const currentScenario =
+      PRESET_WORKLOAD_SCENARIOS.find((s) => s.id === activeScenarioId) ||
+      PRESET_WORKLOAD_SCENARIOS[0];
+    const scReport = scalabilityRecommendationsEngine.evaluateGraph(nodes, edges, currentScenario);
+    const recommendations = scReport.recommendations.filter(
+      (r) => r.affectedNodeIds.includes(selectedNode.id)
+    );
+    return { recommendations };
+  }, [selectedNode, nodes, edges, activeScenarioId]);
 
   // Case 1: Edge Selection
   if (selectedNodeIds.length === 0 && selectedEdgeIds.length === 1) {
@@ -754,6 +772,49 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                   </Badge>
                 </div>
                 <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Node Scalability Opportunities & Recommendations */}
+        {nodeScalability.recommendations.length > 0 && (
+          <div className="p-2.5 rounded-md bg-surface-02 border border-border-default space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-sky-400 font-mono uppercase tracking-wider font-semibold">
+                Scalability Opportunities ({nodeScalability.recommendations.length})
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setScalabilityOpen(true)}
+                className="h-5 px-1.5 text-[9px] font-mono text-text-muted hover:text-foreground"
+              >
+                Open Planner &rarr;
+              </Button>
+            </div>
+
+            {nodeScalability.recommendations.map((rec: ScalabilityRecommendation, idx: number) => (
+              <div key={idx} className="p-1.5 rounded bg-surface-03 border border-border-subtle space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold truncate text-text-secondary">
+                    {rec.title}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-[8px] font-mono h-3.5 px-1 uppercase border-sky-900/60 text-sky-400 bg-sky-950/20"
+                  >
+                    {rec.strategy.replace(/_/g, " ")}
+                  </Badge>
+                </div>
+                <p className="font-sans text-[11px] text-text-secondary leading-relaxed">
+                  {rec.summary}
+                </p>
+                {rec.benefits.length > 0 && (
+                  <span className="font-mono text-[9px] text-emerald-400 block pt-0.5">
+                    &bull; {rec.benefits[0]}
+                  </span>
+                )}
               </div>
             ))}
           </div>

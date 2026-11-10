@@ -42,5 +42,8 @@ export * from "./failure-analysis";
 // Security Architecture Analysis Engine (Phase 05.3.5)
 export * from "./security-analysis";
 
+// Scalability Recommendations Engine (Phase 05.3.6)
+export * from "./scalability";
+
 
 

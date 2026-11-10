@@ -22,6 +22,7 @@ import { HealthSummaryBadge } from "@/features/system-design/health";
 import { BottleneckSummaryBadge } from "@/features/system-design/bottlenecks";
 import { FailureSummaryBadge } from "@/features/system-design/failure-analysis";
 import { SecuritySummaryBadge } from "@/features/system-design/security-analysis";
+import { ScalabilitySummaryBadge } from "@/features/system-design/scalability";
 
 export interface GraphToolbarProps {
   className?: string;
@@ -52,6 +53,8 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
   const toggleFailureAnalysis = useGraphEditorStore((s) => s.toggleFailureAnalysis);
   const isSecurityOpen = useGraphEditorStore((s) => s.isSecurityOpen);
   const toggleSecurity = useGraphEditorStore((s) => s.toggleSecurity);
+  const isScalabilityOpen = useGraphEditorStore((s) => s.isScalabilityOpen);
+  const toggleScalability = useGraphEditorStore((s) => s.toggleScalability);
 
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const toggleNodeLibrary = useGraphEditorStore((s) => s.toggleNodeLibrary);
@@ -225,6 +228,12 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
         <SecuritySummaryBadge
           isOpen={isSecurityOpen}
           onToggle={toggleSecurity}
+        />
+
+        {/* Scalability Recommendations & What-If Planner Toggle */}
+        <ScalabilitySummaryBadge
+          isOpen={isScalabilityOpen}
+          onToggle={toggleScalability}
         />
 
         {/* Inspector Toggle */}

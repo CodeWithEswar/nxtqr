@@ -7,7 +7,8 @@ export type CommandType =
   | "ADD_EDGE"
   | "DELETE_EDGE"
   | "UPDATE_NODE_CONFIG"
-  | "AUTO_LAYOUT";
+  | "AUTO_LAYOUT"
+  | "APPLY_WHAT_IF_PLAN";
 
 export interface GraphCommandContext {
   getNodes: () => BaseNode[];
@@ -261,6 +262,34 @@ export class AutoLayoutCommand implements GraphCommand {
         return prev ? { ...n, position: prev } : n;
       }),
     );
+  }
+}
+
+/**
+ * 8. ApplyWhatIfPlanCommand: Atomically applies proposed graph changes from a What-If scalability plan
+ */
+export class ApplyWhatIfPlanCommand implements GraphCommand {
+  type: CommandType = "APPLY_WHAT_IF_PLAN";
+  description: string;
+
+  constructor(
+    private prevNodes: BaseNode[],
+    private prevEdges: BaseEdge[],
+    private nextNodes: BaseNode[],
+    private nextEdges: BaseEdge[],
+    planTitle: string,
+  ) {
+    this.description = `Apply What-If Plan: ${planTitle}`;
+  }
+
+  execute(ctx: GraphCommandContext): void {
+    ctx.setNodes(this.nextNodes);
+    ctx.setEdges(this.nextEdges);
+  }
+
+  undo(ctx: GraphCommandContext): void {
+    ctx.setNodes(this.prevNodes);
+    ctx.setEdges(this.prevEdges);
   }
 }
 

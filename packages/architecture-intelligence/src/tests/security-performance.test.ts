@@ -118,3 +118,4 @@ describe("Security Architecture Analysis - Scalability & Performance Benchmarks"
     expect(report.nodeCount).toBe(1003);
   });
 });
+

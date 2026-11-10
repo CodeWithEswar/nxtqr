@@ -15,8 +15,10 @@ import {
   DeleteEdgeCommand,
   UpdateNodeConfigCommand,
   AutoLayoutCommand,
+  ApplyWhatIfPlanCommand,
   type GraphCommandContext,
 } from "../domain/graph-commands";
+import { GraphProposalApplier, type WhatIfPlan } from "@nxtqr/architecture-intelligence";
 import {
   copyGraphSelection,
   getClipboardData,
@@ -55,6 +57,7 @@ export interface GraphEditorState {
   isBottlenecksOpen: boolean;
   isFailureAnalysisOpen: boolean;
   isSecurityOpen: boolean;
+  isScalabilityOpen: boolean;
   nodeLibraryWidth: number;
   inspectorWidth: number;
   validationPanelWidth: number;
@@ -62,6 +65,9 @@ export interface GraphEditorState {
   bottlenecksPanelWidth: number;
   failureAnalysisPanelWidth: number;
   securityPanelWidth: number;
+  scalabilityPanelWidth: number;
+  activeScenarioId: string;
+  activeWhatIfPlan: WhatIfPlan | null;
   autosaveStatus: AutosaveStatus;
 
   // History state indicators
@@ -92,6 +98,8 @@ export interface GraphEditorState {
   toggleFailureAnalysis: () => void;
   setSecurityOpen: (open: boolean) => void;
   toggleSecurity: () => void;
+  setScalabilityOpen: (open: boolean) => void;
+  toggleScalability: () => void;
   setNodeLibraryOpen: (open: boolean) => void;
   toggleNodeLibrary: () => void;
   setNodeLibraryWidth: (width: number) => void;
@@ -101,6 +109,10 @@ export interface GraphEditorState {
   setBottlenecksPanelWidth: (width: number) => void;
   setFailureAnalysisPanelWidth: (width: number) => void;
   setSecurityPanelWidth: (width: number) => void;
+  setScalabilityPanelWidth: (width: number) => void;
+  setActiveScenarioId: (scenarioId: string) => void;
+  setActiveWhatIfPlan: (plan: WhatIfPlan | null) => void;
+  applyWhatIfPlan: (plan: WhatIfPlan) => void;
   resetPanelWidths: () => void;
   setAutosaveStatus: (status: AutosaveStatus) => void;
 
@@ -247,6 +259,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     isBottlenecksOpen: false,
     isFailureAnalysisOpen: false,
     isSecurityOpen: false,
+    isScalabilityOpen: false,
     nodeLibraryWidth: 280,
     inspectorWidth: 320,
     validationPanelWidth: 320,
@@ -254,6 +267,9 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     bottlenecksPanelWidth: 360,
     failureAnalysisPanelWidth: 360,
     securityPanelWidth: 380,
+    scalabilityPanelWidth: 380,
+    activeScenarioId: "normal_traffic",
+    activeWhatIfPlan: null,
     autosaveStatus: "saved",
 
     canUndo: false,
@@ -299,6 +315,8 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     toggleFailureAnalysis: () => set((s) => ({ isFailureAnalysisOpen: !s.isFailureAnalysisOpen })),
     setSecurityOpen: (open) => set({ isSecurityOpen: open }),
     toggleSecurity: () => set((s) => ({ isSecurityOpen: !s.isSecurityOpen })),
+    setScalabilityOpen: (open) => set({ isScalabilityOpen: open }),
+    toggleScalability: () => set((s) => ({ isScalabilityOpen: !s.isScalabilityOpen })),
     setNodeLibraryOpen: (open) => set({ isNodeLibraryOpen: open }),
     toggleNodeLibrary: () => set((s) => ({ isNodeLibraryOpen: !s.isNodeLibraryOpen })),
     setNodeLibraryWidth: (width) => {
@@ -329,7 +347,27 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
       const clamped = Math.max(280, Math.min(600, width));
       set({ securityPanelWidth: clamped });
     },
-    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320, healthPanelWidth: 340, bottlenecksPanelWidth: 360, failureAnalysisPanelWidth: 360, securityPanelWidth: 380 }),
+    setScalabilityPanelWidth: (width) => {
+      const clamped = Math.max(280, Math.min(600, width));
+      set({ scalabilityPanelWidth: clamped });
+    },
+    setActiveScenarioId: (scenarioId) => set({ activeScenarioId: scenarioId }),
+    setActiveWhatIfPlan: (plan) => set({ activeWhatIfPlan: plan }),
+    applyWhatIfPlan: (plan) => {
+      const { nodes, edges } = get();
+      const result = GraphProposalApplier.applyOperations(nodes, edges, plan.operations);
+      const cmd = new ApplyWhatIfPlanCommand(
+        nodes,
+        edges,
+        result.nodes,
+        result.edges,
+        plan.title,
+      );
+      history.execute(cmd, getCommandContext());
+      set({ activeWhatIfPlan: null });
+      syncHistoryState();
+    },
+    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320, healthPanelWidth: 340, bottlenecksPanelWidth: 360, failureAnalysisPanelWidth: 360, securityPanelWidth: 380, scalabilityPanelWidth: 380 }),
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),
 
     selectNode: (id, multi = false) => {

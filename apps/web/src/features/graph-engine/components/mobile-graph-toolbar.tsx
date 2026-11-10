@@ -34,6 +34,7 @@ import { HealthPanel, HealthSummaryBadge } from "@/features/system-design/health
 import { BottleneckPanel, BottleneckSummaryBadge } from "@/features/system-design/bottlenecks";
 import { FailurePanel, FailureSummaryBadge } from "@/features/system-design/failure-analysis";
 import { SecurityPanel, SecuritySummaryBadge } from "@/features/system-design/security-analysis";
+import { ScalabilityPanel, ScalabilitySummaryBadge } from "@/features/system-design/scalability";
 
 export function MobileGraphToolbar() {
   const toolMode = useGraphEditorStore((s) => s.toolMode);
@@ -63,6 +64,7 @@ export function MobileGraphToolbar() {
   const [bottlenecksOpen, setBottlenecksOpen] = React.useState(false);
   const [failureOpen, setFailureOpen] = React.useState(false);
   const [securityOpen, setSecurityOpen] = React.useState(false);
+  const [scalabilityOpen, setScalabilityOpen] = React.useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false);
 
   // Selected node reference for contextual bar
@@ -222,6 +224,12 @@ export function MobileGraphToolbar() {
         <SecuritySummaryBadge
           isOpen={securityOpen}
           onToggle={() => setSecurityOpen(!securityOpen)}
+        />
+
+        {/* Mobile Scalability Button */}
+        <ScalabilitySummaryBadge
+          isOpen={scalabilityOpen}
+          onToggle={() => setScalabilityOpen(!scalabilityOpen)}
         />
 
         {/* Mobile Popover Menu for Secondary Actions */}
@@ -462,6 +470,28 @@ export function MobileGraphToolbar() {
 
           <div className="flex-1 overflow-hidden min-h-0">
             <SecurityPanel onClose={() => setSecurityOpen(false)} />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* 10. Bottom Drawer for Scalability Recommendations & What-If Planner on Mobile */}
+      <Sheet open={scalabilityOpen} onOpenChange={setScalabilityOpen}>
+        <SheetContent
+          side="bottom"
+          hideCloseButton
+          className="h-[80vh] max-h-[80vh] p-0 bg-surface-01 border-t border-border-strong rounded-t-md flex flex-col overflow-hidden shadow-level-3"
+        >
+          <SheetHeader className="sr-only">
+            <SheetTitle>Scalability Recommendations &amp; What-If Planner</SheetTitle>
+          </SheetHeader>
+
+          {/* Drawer Drag Pill */}
+          <div className="w-full flex justify-center pt-2.5 pb-1.5 shrink-0 bg-surface-02 border-b border-border-subtle/40">
+            <div className="w-10 h-1 rounded-full bg-border-strong" />
+          </div>
+
+          <div className="flex-1 overflow-hidden min-h-0">
+            <ScalabilityPanel onClose={() => setScalabilityOpen(false)} />
           </div>
         </SheetContent>
       </Sheet>

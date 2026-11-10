@@ -12,6 +12,7 @@ import { HealthPanel } from "@/features/system-design/health";
 import { BottleneckPanel } from "@/features/system-design/bottlenecks";
 import { FailurePanel } from "@/features/system-design/failure-analysis";
 import { SecurityPanel } from "@/features/system-design/security-analysis";
+import { ScalabilityPanel } from "@/features/system-design/scalability";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { useGraphPersistence } from "../hooks/use-graph-persistence";
 import { Badge } from "@nxtqr/ui";
@@ -41,6 +42,8 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const setFailureAnalysisOpen = useGraphEditorStore((s) => s.setFailureAnalysisOpen);
   const isSecurityOpen = useGraphEditorStore((s) => s.isSecurityOpen);
   const setSecurityOpen = useGraphEditorStore((s) => s.setSecurityOpen);
+  const isScalabilityOpen = useGraphEditorStore((s) => s.isScalabilityOpen);
+  const setScalabilityOpen = useGraphEditorStore((s) => s.setScalabilityOpen);
   const setInspectorOpen = useGraphEditorStore((s) => s.setInspectorOpen);
   const nodeLibraryWidth = useGraphEditorStore((s) => s.nodeLibraryWidth);
   const inspectorWidth = useGraphEditorStore((s) => s.inspectorWidth);
@@ -49,6 +52,7 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const bottlenecksPanelWidth = useGraphEditorStore((s) => s.bottlenecksPanelWidth);
   const failureAnalysisPanelWidth = useGraphEditorStore((s) => s.failureAnalysisPanelWidth);
   const securityPanelWidth = useGraphEditorStore((s) => s.securityPanelWidth);
+  const scalabilityPanelWidth = useGraphEditorStore((s) => s.scalabilityPanelWidth);
   const setNodeLibraryWidth = useGraphEditorStore((s) => s.setNodeLibraryWidth);
   const setInspectorWidth = useGraphEditorStore((s) => s.setInspectorWidth);
   const setValidationPanelWidth = useGraphEditorStore((s) => s.setValidationPanelWidth);
@@ -56,6 +60,7 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const setBottlenecksPanelWidth = useGraphEditorStore((s) => s.setBottlenecksPanelWidth);
   const setFailureAnalysisPanelWidth = useGraphEditorStore((s) => s.setFailureAnalysisPanelWidth);
   const setSecurityPanelWidth = useGraphEditorStore((s) => s.setSecurityPanelWidth);
+  const setScalabilityPanelWidth = useGraphEditorStore((s) => s.setScalabilityPanelWidth);
   const resetPanelWidths = useGraphEditorStore((s) => s.resetPanelWidths);
 
   React.useEffect(() => {
@@ -136,6 +141,32 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
           {/* Mobile Bottom Floating Action Bar & Drawers */}
           <MobileGraphToolbar />
         </main>
+
+        {/* Right: Desktop Scalability Recommendations & What-If Planner Panel */}
+        {isScalabilityOpen && (
+          <aside
+            style={{ width: `${scalabilityPanelWidth}px` }}
+            className="hidden md:flex relative border-l border-border-default bg-surface-01 shrink-0 overflow-visible flex-col shadow-level-1 select-none"
+          >
+            <div className="flex-1 overflow-hidden min-h-0">
+              <ScalabilityPanel
+                onClose={() => setScalabilityOpen(false)}
+                onFocusNode={() => setInspectorOpen(true)}
+              />
+            </div>
+
+            {/* Resize Handle on Left Edge of Scalability Panel */}
+            <PanelResizeHandle
+              side="left"
+              currentWidth={scalabilityPanelWidth}
+              minWidth={280}
+              maxWidth={600}
+              defaultWidth={380}
+              onResize={setScalabilityPanelWidth}
+              ariaLabel="Resize Scalability Recommendations panel"
+            />
+          </aside>
+        )}
 
         {/* Right: Desktop Security Architecture Analysis Panel */}
         {isSecurityOpen && (
