@@ -67,3 +67,4 @@ export const CdcConnectorIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -39,3 +39,4 @@ export function getDataEngineeringAndAnalyticsInfrastructureIcon(
 ): InfrastructureIconComponent | undefined {
   return dataEngineeringAndAnalyticsIconRegistry[slug];
 }
+

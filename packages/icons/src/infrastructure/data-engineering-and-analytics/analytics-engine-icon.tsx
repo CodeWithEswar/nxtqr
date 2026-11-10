@@ -74,3 +74,4 @@ export const AnalyticsEngineIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

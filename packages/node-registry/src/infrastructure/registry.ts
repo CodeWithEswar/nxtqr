@@ -52,6 +52,10 @@ import {
   dataEngineeringAndAnalyticsCategoryDefinition,
   ALL_DATA_ENGINEERING_AND_ANALYTICS_DEFINITIONS,
 } from "./definitions/data-engineering-and-analytics";
+import {
+  mediaAndRealTimeCommunicationCategoryDefinition,
+  ALL_MEDIA_AND_REAL_TIME_COMMUNICATION_DEFINITIONS,
+} from "./definitions/media-and-real-time-communication";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -131,6 +135,12 @@ export class InfrastructureRegistryClass {
     // 13. Register Data Engineering & Analytics Category (Cat 13)
     this.registerCategory(dataEngineeringAndAnalyticsCategoryDefinition);
     for (const def of ALL_DATA_ENGINEERING_AND_ANALYTICS_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 14. Register Media & Real-Time Communication Category (Cat 14)
+    this.registerCategory(mediaAndRealTimeCommunicationCategoryDefinition);
+    for (const def of ALL_MEDIA_AND_REAL_TIME_COMMUNICATION_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

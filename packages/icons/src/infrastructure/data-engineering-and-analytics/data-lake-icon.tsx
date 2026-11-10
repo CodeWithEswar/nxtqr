@@ -84,3 +84,4 @@ export const DataLakeIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

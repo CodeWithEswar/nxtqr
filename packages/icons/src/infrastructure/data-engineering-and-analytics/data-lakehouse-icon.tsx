@@ -73,3 +73,4 @@ export const DataLakehouseIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

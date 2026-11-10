@@ -73,3 +73,4 @@ export const DataIngestionServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

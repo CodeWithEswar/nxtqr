@@ -81,6 +81,12 @@ export default function InfrastructureDataVerificationPage() {
               ← Cat 11 Search
             </Link>
             <Link
+              href="/verify/infrastructure-media"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
+            >
+              Cat 14 Media →
+            </Link>
+            <Link
               href="/verify/infrastructure-observability"
               className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
@@ -523,3 +529,4 @@ export default function InfrastructureDataVerificationPage() {
     </div>
   );
 }
+

@@ -68,3 +68,4 @@ export const WorkflowOrchestratorIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -462,5 +462,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-data",
     },
   },
+  {
+    id: "infra_category_14_media",
+    category: "frontend",
+    title: "Infrastructure Components: Category 14 Media & Real-Time Communication",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, persistent connection semantics, signaling/streaming/push ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "media-and-real-time-communication",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-media",
+    },
+  },
 ];
 

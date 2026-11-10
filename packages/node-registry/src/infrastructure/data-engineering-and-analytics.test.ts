@@ -133,3 +133,4 @@ describe("NXTQR Phase 05.1.13 — Infrastructure Component Registry (Data Engine
     expect(airflowResults.some((c) => c.id === "workflow-orchestrator")).toBe(true);
   });
 });
+

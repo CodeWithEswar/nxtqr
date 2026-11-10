@@ -97,3 +97,4 @@ export const DataPipelineIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -70,3 +70,4 @@ export const EltPipelineIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

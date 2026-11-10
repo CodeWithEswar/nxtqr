@@ -11,6 +11,7 @@ export * from "./security-and-identity";
 export * from "./observability-and-reliability";
 export * from "./search-and-discovery";
 export * from "./data-engineering-and-analytics";
+export * from "./media-and-real-time-communication";
 
 import type { InfrastructureIconComponent } from "./types";
 import { clientIconRegistry } from "./clients";
@@ -25,6 +26,7 @@ import { securityAndIdentityIconRegistry } from "./security-and-identity";
 import { observabilityAndReliabilityIconRegistry } from "./observability-and-reliability";
 import { searchAndDiscoveryIconRegistry } from "./search-and-discovery";
 import { dataEngineeringAndAnalyticsIconRegistry } from "./data-engineering-and-analytics";
+import { mediaAndRealTimeCommunicationIconRegistry } from "./media-and-real-time-communication";
 
 export const allInfrastructureIconRegistry: Record<string, InfrastructureIconComponent> = {
   ...clientIconRegistry,
@@ -39,6 +41,7 @@ export const allInfrastructureIconRegistry: Record<string, InfrastructureIconCom
   ...observabilityAndReliabilityIconRegistry,
   ...searchAndDiscoveryIconRegistry,
   ...dataEngineeringAndAnalyticsIconRegistry,
+  ...mediaAndRealTimeCommunicationIconRegistry,
 };
 
 export function getInfrastructureIcon(slug: string): InfrastructureIconComponent | undefined {

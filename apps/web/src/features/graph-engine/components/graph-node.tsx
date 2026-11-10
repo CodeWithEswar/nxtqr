@@ -345,5 +345,16 @@ export const nodeTypes = {
   "olap-engine": GraphNode,
   "cdc-connector": GraphNode,
   "workflow-orchestrator": GraphNode,
+  // Infrastructure Category 14: Media & Real-Time Communication
+  "websocket-server": GraphNode,
+  "webrtc-signaling-server": GraphNode,
+  "media-server": GraphNode,
+  "video-transcoder": GraphNode,
+  "live-streaming-server": GraphNode,
+  "media-cdn": GraphNode,
+  "notification-gateway": GraphNode,
+  "push-notification-service": GraphNode,
+  "chat-service": GraphNode,
+  "presence-service": GraphNode,
 };
 
