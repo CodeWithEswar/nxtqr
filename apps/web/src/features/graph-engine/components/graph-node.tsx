@@ -325,5 +325,14 @@ export const nodeTypes = {
   "error-tracker": GraphNode,
   "apm-service": GraphNode,
   "status-page": GraphNode,
+  // Infrastructure Category 11: Search & Discovery
+  "search-engine": GraphNode,
+  "full-text-search-index": GraphNode,
+  "search-indexer": GraphNode,
+  "autocomplete-service": GraphNode,
+  "recommendation-engine": GraphNode,
+  "discovery-service": GraphNode,
+  "search-cache": GraphNode,
+  "query-processor": GraphNode,
 };
 

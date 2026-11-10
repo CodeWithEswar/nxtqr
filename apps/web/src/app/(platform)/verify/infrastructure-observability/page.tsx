@@ -87,8 +87,14 @@ export default function InfrastructureObservabilityVerificationPage() {
               Cat 08 Storage
             </Link>
             <Link
+              href="/verify/infrastructure-search"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-foreground font-semibold transition-colors flex-1 sm:flex-initial text-center"
+            >
+              Next: Cat 11 Search →
+            </Link>
+            <Link
               href="/workspace"
-              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-foreground transition-colors flex-1 sm:flex-initial text-center"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
               Studio Canvas
             </Link>

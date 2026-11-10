@@ -35,8 +35,17 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type SearchSubtype = "all" | "engines-indexes" | "query-cache" | "autocomplete-discovery" | "recommendations";
 type ObservabilitySubtype = "all" | "metrics" | "logs" | "traces-apm" | "alerts-health";
+
+const SEARCH_SUBTYPES: Record<SearchSubtype, string[]> = {
+  all: [],
+  "engines-indexes": ["search-engine", "full-text-search-index", "search-indexer"],
+  "query-cache": ["query-processor", "search-cache"],
+  "autocomplete-discovery": ["autocomplete-service", "discovery-service"],
+  recommendations: ["recommendation-engine"],
+};
 type SecuritySubtype = "all" | "auth-idp" | "tokens-keys" | "protection" | "crypto-pki";
 type StorageSubtype = "all" | "object-blob" | "block-file" | "distributed" | "backup-archive" | "gateways-repos";
 type MessagingSubtype = "all" | "queues" | "brokers" | "streaming-pubsub" | "processors-consumers" | "reliability-stores";
@@ -198,6 +207,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [searchSubtype, setSearchSubtype] = React.useState<SearchSubtype>("all");
   const [observabilitySubtype, setObservabilitySubtype] = React.useState<ObservabilitySubtype>("all");
   const [securitySubtype, setSecuritySubtype] = React.useState<SecuritySubtype>("all");
   const [storageSubtype, setStorageSubtype] = React.useState<StorageSubtype>("all");
@@ -238,6 +248,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   const domainDefinitions = React.useMemo(() => {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
+
+  // Filter Search & Discovery items
+  const filteredSearch = React.useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "search") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "search-and-discovery"
+    );
+
+    if (searchSubtype !== "all") {
+      const allowed = new Set(SEARCH_SUBTYPES[searchSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, searchSubtype, search]);
 
   // Filter Observability & Reliability items
   const filteredObservability = React.useMemo(() => {
@@ -587,6 +625,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredSearch.length +
     filteredObservability.length +
     filteredSecurity.length +
     filteredStorage.length +
@@ -640,6 +679,17 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             }`}
           >
             All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("search")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "search"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Search
           </button>
           <button
             type="button"
@@ -763,6 +813,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Search & Discovery */}
+        {activeTab === "search" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (8)" },
+                { id: "engines-indexes", label: "Engines & Indexes (3)" },
+                { id: "query-cache", label: "Query & Cache (2)" },
+                { id: "autocomplete-discovery", label: "Autocomplete & Discovery (2)" },
+                { id: "recommendations", label: "Recommendations (1)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setSearchSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border whitespace-nowrap transition-colors shrink-0 ${
+                  searchSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: Observability & Reliability */}
         {activeTab === "observability" && (
@@ -1057,11 +1135,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setSearchSubtype("all");
                   setObservabilitySubtype("all");
                   setSecuritySubtype("all");
                   setStorageSubtype("all");
@@ -1082,6 +1161,70 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 11: Search & Discovery */}
+            {filteredSearch.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Search & Discovery ({filteredSearch.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 11
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredSearch.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <CpuIcon className="h-4 w-4 text-text-muted" />
+                          )}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="font-sans text-xs font-semibold text-foreground leading-tight">
+                            {comp.display.name}
+                          </div>
+                          <div className="font-mono text-[9.5px] text-text-muted truncate mt-0.5">
+                            {comp.id}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-disabled truncate leading-relaxed mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+
+                        <span className="opacity-0 group-hover:opacity-100 font-mono text-[10px] text-text-muted self-center transition-opacity">
+                          +Add
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 10: Observability & Reliability */}
             {filteredObservability.length > 0 && (
               <div className="space-y-1.5">

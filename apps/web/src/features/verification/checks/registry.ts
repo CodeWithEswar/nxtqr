@@ -432,5 +432,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-observability",
     },
   },
+  {
+    id: "infra_category_11_search",
+    category: "frontend",
+    title: "Infrastructure Components: Category 11 Search & Discovery",
+    description: "Validates 8 colored SVG icons, typed registry definitions, Zod schemas, search pipeline semantics, indexing/retrieval ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "search-and-discovery",
+      componentCount: 8,
+      iconsVerified: 8,
+      inspectionRoute: "/verify/infrastructure-search",
+    },
+  },
 ];
 

@@ -44,6 +44,10 @@ import {
   observabilityAndReliabilityCategoryDefinition,
   ALL_OBSERVABILITY_AND_RELIABILITY_DEFINITIONS,
 } from "./definitions/observability-and-reliability";
+import {
+  searchAndDiscoveryCategoryDefinition,
+  ALL_SEARCH_AND_DISCOVERY_DEFINITIONS,
+} from "./definitions/search-and-discovery";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -111,6 +115,12 @@ export class InfrastructureRegistryClass {
     // 10. Register Observability & Reliability Category (Cat 10)
     this.registerCategory(observabilityAndReliabilityCategoryDefinition);
     for (const def of ALL_OBSERVABILITY_AND_RELIABILITY_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 11. Register Search & Discovery Category (Cat 11)
+    this.registerCategory(searchAndDiscoveryCategoryDefinition);
+    for (const def of ALL_SEARCH_AND_DISCOVERY_DEFINITIONS) {
       this.registerComponent(def);
     }
   }
