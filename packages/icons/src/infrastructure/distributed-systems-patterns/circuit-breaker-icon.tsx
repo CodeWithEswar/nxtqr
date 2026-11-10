@@ -101,3 +101,4 @@ export const CircuitBreakerIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 CircuitBreakerIcon.displayName = "CircuitBreakerIcon";
+

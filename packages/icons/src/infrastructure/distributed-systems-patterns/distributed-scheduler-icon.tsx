@@ -86,3 +86,4 @@ export const DistributedSchedulerIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 DistributedSchedulerIcon.displayName = "DistributedSchedulerIcon";
+

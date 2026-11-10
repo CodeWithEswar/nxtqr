@@ -91,3 +91,4 @@ export const ServiceRegistryIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 ServiceRegistryIcon.displayName = "ServiceRegistryIcon";
+

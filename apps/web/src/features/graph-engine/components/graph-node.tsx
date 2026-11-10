@@ -404,5 +404,16 @@ export const nodeTypes = {
   "idempotency-service": GraphNode,
   "distributed-scheduler": GraphNode,
   "service-registry": GraphNode,
+  // Infrastructure Category 19: Architecture & Diagram Utilities
+  "system-boundary": GraphNode,
+  "service-group": GraphNode,
+  "network-boundary": GraphNode,
+  "trust-boundary": GraphNode,
+  "architecture-note": GraphNode,
+  "decision-annotation": GraphNode,
+  "traffic-label": GraphNode,
+  "connection-junction": GraphNode,
+  "external-dependency": GraphNode,
+  "failure-zone": GraphNode,
 };
 

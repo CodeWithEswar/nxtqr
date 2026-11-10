@@ -1133,3 +1133,4 @@ export const ALL_DISTRIBUTED_SYSTEMS_PATTERNS_DEFINITIONS: readonly Infrastructu
   distributedSchedulerDefinition,
   serviceRegistryDefinition,
 ] as const;
+

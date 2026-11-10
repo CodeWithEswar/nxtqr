@@ -242,3 +242,4 @@ export const distributedSystemsPatternsConfigSchema = z.discriminatedUnion("comp
   serviceRegistryConfigSchema,
 ]);
 export type DistributedSystemsPatternsConfig = z.infer<typeof distributedSystemsPatternsConfigSchema>;
+

@@ -116,3 +116,4 @@ export const ConsensusCoordinatorIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 ConsensusCoordinatorIcon.displayName = "ConsensusCoordinatorIcon";
+

@@ -94,3 +94,4 @@ export const DistributedLockIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 DistributedLockIcon.displayName = "DistributedLockIcon";
+

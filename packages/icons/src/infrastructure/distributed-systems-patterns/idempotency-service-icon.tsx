@@ -116,3 +116,4 @@ export const IdempotencyServiceIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 IdempotencyServiceIcon.displayName = "IdempotencyServiceIcon";
+

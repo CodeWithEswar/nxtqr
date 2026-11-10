@@ -72,6 +72,10 @@ import {
   distributedSystemsPatternsCategoryDefinition,
   ALL_DISTRIBUTED_SYSTEMS_PATTERNS_DEFINITIONS,
 } from "./definitions/distributed-systems-patterns";
+import {
+  architectureAndDiagramUtilitiesCategoryDefinition,
+  ALL_ARCHITECTURE_AND_DIAGRAM_UTILITIES_DEFINITIONS,
+} from "./definitions/architecture-and-diagram-utilities";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -181,6 +185,12 @@ export class InfrastructureRegistryClass {
     // 18. Register Distributed Systems Patterns Category (Cat 18)
     this.registerCategory(distributedSystemsPatternsCategoryDefinition);
     for (const def of ALL_DISTRIBUTED_SYSTEMS_PATTERNS_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 19. Register Architecture & Diagram Utilities Category (Cat 19)
+    this.registerCategory(architectureAndDiagramUtilitiesCategoryDefinition);
+    for (const def of ALL_ARCHITECTURE_AND_DIAGRAM_UTILITIES_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

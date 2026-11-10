@@ -537,5 +537,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-patterns",
     },
   },
+  {
+    id: "infra_category_19_utilities",
+    category: "frontend",
+    title: "Infrastructure Components: Category 19 Architecture & Diagram Utilities",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, system boundaries, service groups, network boundaries, trust boundaries, notes, decisions, traffic labels, junctions, dependencies, and failure zones.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "architecture-and-diagram-utilities",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-utilities",
+    },
+  },
 ];
 

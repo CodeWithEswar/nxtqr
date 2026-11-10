@@ -96,3 +96,4 @@ describe("NXTQR Phase 05.1.18 — Infrastructure Component Registry (Distributed
     }
   });
 });
+

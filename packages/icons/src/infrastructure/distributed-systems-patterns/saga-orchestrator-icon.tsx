@@ -118,3 +118,4 @@ export const SagaOrchestratorIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 SagaOrchestratorIcon.displayName = "SagaOrchestratorIcon";
+

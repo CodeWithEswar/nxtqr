@@ -107,3 +107,4 @@ export const LeaderElectionIcon: React.FC<InfrastructureIconProps> = ({
 };
 
 LeaderElectionIcon.displayName = "LeaderElectionIcon";
+
