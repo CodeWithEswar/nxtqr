@@ -90,3 +90,4 @@ export const RecommendationEngineIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

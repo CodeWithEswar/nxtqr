@@ -15,17 +15,17 @@
 
 ## 2. Visual Theme & Palette
 
-The NXTQR brand identity is built directly on the platform's **Pure Black Monochrome** foundation with user-customizable accent colors:
+The NXTQR brand identity is built directly on the platform's **Pure Black Monochrome** foundation.
 
-| Token                    | Hex             | Role                                    |
-| :----------------------- | :-------------- | :-------------------------------------- |
-| **Main Canvas**          | `#000000`       | Pure Black background base              |
-| **Primary Foreground**   | `#FFFFFF`       | Monogram body, primary wordmark         |
-| **Secondary Foreground** | `#A3A3A3`       | Corner brackets, category subtitle      |
-| **Raised Surface**       | `#0A0A0A`       | Neumorphic containers, buttons, cards   |
-| **Elevated Surface**     | `#141414`       | Dialogs, menus, elevated modals         |
-| **Border**               | `#262626`       | Precision boundary linework             |
-| **User Accent**          | `var(--accent)` | Directed execution trace and pulse node |
+| Token                    | Hex       | Role                                  |
+| :----------------------- | :-------- | :------------------------------------ |
+| **Main Canvas**          | `#000000` | Pure Black background base            |
+| **Primary Foreground**   | `#FFFFFF` | Monogram body, primary wordmark       |
+| **Secondary Foreground** | `#A3A3A3` | Category subtitle                     |
+| **Raised Surface**       | `#080808` | Neumorphic containers, buttons, cards |
+| **Elevated Surface**     | `#141414` | Dialogs, menus, elevated modals       |
+| **Border**               | `#262626` | Precision boundary linework           |
+| **Corner Brackets**      | `#404040` | Framed symbol                         |
 
 ---
 

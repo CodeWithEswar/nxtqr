@@ -81,6 +81,12 @@ export default function InfrastructureSearchVerificationPage() {
               ← Cat 10 Observability
             </Link>
             <Link
+              href="/verify/infrastructure-data"
+              className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
+            >
+              Cat 13 Data →
+            </Link>
+            <Link
               href="/verify/infrastructure-security"
               className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >

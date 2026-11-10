@@ -66,3 +66,4 @@ export const FullTextSearchIndexIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -25,16 +25,12 @@ describe("NXTQR Brand Identity System", () => {
       expect(LOGO_GEOMETRY.viewBox).toBe("0 0 128 128");
       expect(LOGO_GEOMETRY.center.x).toBe(64);
       expect(LOGO_GEOMETRY.center.y).toBe(64);
-      expect(LOGO_GEOMETRY.cornerFraming.radius).toBe(7);
-      expect(LOGO_GEOMETRY.cornerFraming.strokeWidth).toBe(4.5);
+      expect(LOGO_GEOMETRY.cornerFraming.radius).toBe(6);
+      expect(LOGO_GEOMETRY.cornerFraming.strokeWidth).toBe(3.5);
     });
 
-    it("defines the exact folded chrome N ribbon paths", () => {
-      expect(LOGO_GEOMETRY.monogram.leftPillarPath).toBeDefined();
-      expect(LOGO_GEOMETRY.monogram.innerShadowPath).toBeDefined();
-      expect(LOGO_GEOMETRY.monogram.mainRibbonPath).toBeDefined();
-      expect(LOGO_GEOMETRY.monogram.rightPillarPath).toBeDefined();
-      expect(LOGO_GEOMETRY.monogram.laserBeam.y1).toBe(64);
+    it("defines the aperture as a silhouette with a cutout", () => {
+      expect(LOGO_GEOMETRY.aperturePath.match(/M /g)).toHaveLength(2);
     });
   });
 
@@ -61,12 +57,15 @@ describe("NXTQR Brand Identity System", () => {
   });
 
   describe("SVG Generation Utilities", () => {
-    it("generates valid XML SVG string with liquid chrome gradients", () => {
-      const svg = generateSvgMarkup({ colorMode: "accent", showFraming: true });
-      expect(svg).toContain('<svg width="128" height="128" viewBox="0 0 128 128"');
-      expect(svg).toContain("nxtqrChromeDiag");
-      expect(svg).toContain("nxtqrLaserStreak");
-      expect(svg).toContain("nxtqrFlareCore");
+    it("exports the same single path and cutout as the React mark", () => {
+      const svg = generateSvgMarkup({ showFraming: false });
+      const html = renderToString(React.createElement(LogoMark, { variant: "minimal" }));
+      for (const markup of [svg, html]) {
+        expect(markup).toContain('viewBox="12 12 104 104"');
+        expect(markup.match(/<path /g)).toHaveLength(1);
+        expect(markup).toContain(LOGO_GEOMETRY.aperturePath);
+        expect(markup).toContain('fill-rule="evenodd"');
+      }
     });
 
     it("generates full horizontal lockup SVG with wordmark", () => {
@@ -83,7 +82,7 @@ describe("NXTQR Brand Identity System", () => {
       expect(html).toContain('role="img"');
       expect(html).toContain('aria-label="NXTQR Studio"');
       expect(html).toContain("<title>NXTQR Studio</title>");
-      expect(html).toContain("nxtqrChromeDiag");
+      expect(html).toContain('stroke-width="3.5"');
     });
 
     it("renders LogoMark as presentation when unlabelled", () => {
@@ -112,28 +111,20 @@ describe("NXTQR Brand Identity System", () => {
 
     it("renders AnimatedLogo with keyframe style definitions and reduced motion queries", () => {
       const html = renderToString(React.createElement(AnimatedLogo, { mode: "entrance" }));
-      expect(html).toContain("nxtqrBracketDraw");
-      expect(html).toContain("nxtqrBodyReveal");
-      expect(html).toContain("nxtqrTracePulse");
-      expect(html).toContain("nxtqrFlareBurst");
+      expect(html).toContain('data-nxtqr-motion="entrance"');
+      expect(html).toContain("nxtqrSettle");
       expect(html).toContain("prefers-reduced-motion: no-preference");
     });
 
-    it("renders AppIcon in hero, black, white, and red squircle modes", () => {
-      const heroHtml = renderToString(React.createElement(AppIcon, { type: "hero" }));
-      expect(heroHtml).toContain('viewBox="0 0 256 256"');
-      expect(heroHtml).toContain("appIconSquircleBody");
+    it("renders the same aperture on both monochrome icon tiles", () => {
+      const black = renderToString(React.createElement(AppIcon));
+      expect(black).toContain('viewBox="12 12 104 104"');
+      expect(black).toMatch(/<rect[^>]+fill="#000000"/);
+      expect(black).toMatch(/<path[^>]+fill="#FFFFFF"/);
 
-      const blackHtml = renderToString(React.createElement(AppIcon, { type: "black" }));
-      expect(blackHtml).toContain('fill="#0A0A0A"');
-
-      const whiteHtml = renderToString(React.createElement(AppIcon, { type: "white" }));
-      expect(whiteHtml).toContain('fill="#FFFFFF"');
-
-      const redHtml = renderToString(
-        React.createElement(AppIcon, { type: "red", accentColor: "#FF0000" }),
-      );
-      expect(redHtml).toContain('fill="#FF0000"');
+      const white = renderToString(React.createElement(AppIcon, { type: "white" }));
+      expect(white).toMatch(/<rect[^>]+fill="#FFFFFF"/);
+      expect(white).toMatch(/<path[^>]+fill="#000000"/);
     });
   });
 });

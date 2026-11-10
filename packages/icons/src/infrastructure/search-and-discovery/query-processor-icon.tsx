@@ -77,3 +77,4 @@ export const QueryProcessorIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

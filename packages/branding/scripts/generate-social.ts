@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
-import { BRAND_CONSTANTS, LOGO_GEOMETRY } from "../src/tokens/branding-tokens";
+import { BRAND_CONSTANTS } from "../src/tokens/branding-tokens";
 import { WORDMARK_TYPOGRAPHY } from "../src/tokens/typography-fallback";
-import { getSvgGradients, getMonogramMarkup } from "../src/utils/svg-paths";
+import { getLogoMarkup } from "../src/utils/svg-paths";
 
 const rootDir = path.resolve(__dirname, "../../..");
 const webSocialDir = path.join(rootDir, "apps/web/public/branding/social");
@@ -24,11 +24,6 @@ function createEngineeringGraphSvg(width: number, height: number): string {
       <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
         <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#161616" stroke-width="1" />
       </pattern>
-      <radialGradient id="vignette" cx="50%" cy="50%" r="65%">
-        <stop offset="0%" stop-color="#000000" stop-opacity="0" />
-        <stop offset="70%" stop-color="#000000" stop-opacity="0.6" />
-        <stop offset="100%" stop-color="#000000" stop-opacity="0.95" />
-      </radialGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="#000000" />
     <rect width="${width}" height="${height}" fill="url(#grid)" opacity="0.6" />
@@ -55,7 +50,6 @@ function createEngineeringGraphSvg(width: number, height: number): string {
       <circle cx="1080" cy="280" r="5" />
       <circle cx="880" cy="440" r="5" />
     </g>
-    <rect width="${width}" height="${height}" fill="url(#vignette)" />
   `;
 }
 
@@ -66,15 +60,11 @@ function generateOgSvg(): string {
   const graph = createEngineeringGraphSvg(width, height);
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      ${getSvgGradients("#FF0000", false)}
-    </defs>
     ${graph}
 
-    <!-- Center Brand Lockup with Exact Chrome Monogram -->
+    <!-- Center brand lockup -->
     <g transform="translate(536, 130)">
-      <path d="${LOGO_GEOMETRY.cornerFraming.combinedPath}" stroke="#FFFFFF" stroke-width="${LOGO_GEOMETRY.cornerFraming.strokeWidth}" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>
-      ${getMonogramMarkup("#FF0000", true)}
+      ${getLogoMarkup()}
     </g>
 
     <text x="600" y="340" text-anchor="middle" font-family="${WORDMARK_TYPOGRAPHY.fallbackStack}" font-size="64" font-weight="700" letter-spacing="-0.04em" fill="#FFFFFF">
@@ -101,14 +91,10 @@ function generateTwitterSvg(): string {
   const graph = createEngineeringGraphSvg(width, height);
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      ${getSvgGradients("#FF0000", false)}
-    </defs>
     ${graph}
 
     <g transform="translate(536, 120)">
-      <path d="${LOGO_GEOMETRY.cornerFraming.combinedPath}" stroke="#FFFFFF" stroke-width="${LOGO_GEOMETRY.cornerFraming.strokeWidth}" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>
-      ${getMonogramMarkup("#FF0000", true)}
+      ${getLogoMarkup()}
     </g>
 
     <text x="600" y="325" text-anchor="middle" font-family="${WORDMARK_TYPOGRAPHY.fallbackStack}" font-size="60" font-weight="700" letter-spacing="-0.04em" fill="#FFFFFF">
@@ -135,14 +121,10 @@ function generateBannerSvg(): string {
   const graph = createEngineeringGraphSvg(width, height);
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      ${getSvgGradients("#FF0000", false)}
-    </defs>
     ${graph}
 
     <g transform="translate(180, 126)">
-      <path d="${LOGO_GEOMETRY.cornerFraming.combinedPath}" stroke="#FFFFFF" stroke-width="${LOGO_GEOMETRY.cornerFraming.strokeWidth}" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>
-      ${getMonogramMarkup("#FF0000", true)}
+      ${getLogoMarkup()}
     </g>
 
     <g transform="translate(340, 160)">
@@ -165,19 +147,15 @@ function generateAvatarSvg(): string {
   const height = 400;
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      ${getSvgGradients("#FF0000", false)}
-    </defs>
     <rect width="${width}" height="${height}" fill="#000000"/>
     <g transform="translate(72, 72) scale(2)">
-      <path d="${LOGO_GEOMETRY.cornerFraming.combinedPath}" stroke="#FFFFFF" stroke-width="${LOGO_GEOMETRY.cornerFraming.strokeWidth}" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>
-      ${getMonogramMarkup("#FF0000", true)}
+      ${getLogoMarkup()}
     </g>
   </svg>`;
 }
 
 async function run() {
-  console.log("Generating NXTQR Social Branding Assets (Exact Liquid Chrome)...");
+  console.log("Generating NXTQR Social Branding Assets...");
 
   // 1. Open Graph Image (1200x630)
   const ogSvg = generateOgSvg();

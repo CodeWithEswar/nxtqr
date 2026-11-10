@@ -334,5 +334,16 @@ export const nodeTypes = {
   "discovery-service": GraphNode,
   "search-cache": GraphNode,
   "query-processor": GraphNode,
+  // Infrastructure Category 13: Data Engineering & Analytics
+  "etl-pipeline": GraphNode,
+  "elt-pipeline": GraphNode,
+  "data-lake": GraphNode,
+  "data-lakehouse": GraphNode,
+  "data-pipeline": GraphNode,
+  "data-ingestion-service": GraphNode,
+  "analytics-engine": GraphNode,
+  "olap-engine": GraphNode,
+  "cdc-connector": GraphNode,
+  "workflow-orchestrator": GraphNode,
 };
 

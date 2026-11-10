@@ -71,3 +71,4 @@ export const SearchCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

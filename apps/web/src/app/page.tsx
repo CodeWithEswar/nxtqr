@@ -9,7 +9,7 @@ export default function RootVerificationPage() {
       {/* Header bar */}
       <header className="flex items-center justify-between border-b border-border pb-4">
         <div className="flex items-center gap-3">
-          <AppLogo variant="symbol" size={32} />
+          <AppLogo variant="symbol" size={32} animated />
           <div>
             <h1 className="text-sm font-semibold tracking-tight text-foreground">
               NXTQR — Engineering Foundation

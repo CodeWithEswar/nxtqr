@@ -33,9 +33,6 @@ export const LogoWordmark: FC<LogoWordmarkProps> = ({
   } else if (colorMode === "inverse") {
     titleColor = "text-black";
     catColor = "text-neutral-600";
-  } else if (colorMode === "accent") {
-    titleColor = "text-foreground";
-    catColor = "text-accent";
   }
 
   return (

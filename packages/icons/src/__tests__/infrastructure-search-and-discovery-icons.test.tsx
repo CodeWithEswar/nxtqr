@@ -67,3 +67,4 @@ describe("Category 11 — Search & Discovery Infrastructure Icons", () => {
     }
   });
 });
+

@@ -68,3 +68,4 @@ export const AutocompleteServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

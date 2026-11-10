@@ -49,15 +49,14 @@ test.describe("NXTQR Foundation & Design System", () => {
   test("renders brand review gate and validates interactive logo system", async ({ page }) => {
     await page.goto("/verify/brand");
 
-    await expect(page.locator("h1")).toContainText(
-      "NXTQR — Brand Identity & Concrete Logo Review Gate",
-    );
+    await expect(page.locator("h1")).toContainText("Brand Review Gate");
 
-    // Verify SVG logo presence
-    const logoSymbol = page.locator("svg").first();
-    await expect(logoSymbol).toBeVisible();
+    const aperture = page.locator("[data-nxtqr-motion] [data-nxtqr-aperture]");
+    await expect(aperture).toHaveCSS("animation-name", "nxtqrSettle");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect(aperture).toHaveCSS("animation-name", "none");
+    await expect(aperture).toHaveCSS("opacity", "1");
 
-    // Verify asset table contains verified production assets
     await expect(page.locator("body")).toContainText("favicon.ico");
     await expect(page.locator("body")).toContainText("opengraph-image.png");
   });

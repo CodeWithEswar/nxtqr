@@ -77,3 +77,4 @@ export const DiscoveryServiceIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

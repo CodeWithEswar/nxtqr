@@ -62,3 +62,4 @@ export const SearchIndexerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -34,7 +34,7 @@ export function MobileNavigation() {
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 min-w-0"
             >
-              <AppLogo variant="symbol" size={22} />
+              <AppLogo variant="minimal" size={22} animated animationMode="interactive" />
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="font-sans text-xs font-bold tracking-tight text-foreground">
                   NXTQR
@@ -113,4 +113,3 @@ export function MobileNavigation() {
     </Sheet>
   );
 }
-

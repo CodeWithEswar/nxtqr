@@ -35,9 +35,18 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type DataSubtype = "all" | "pipelines-etl" | "lakes-lakehouse" | "engines-olap" | "ingestion-cdc-orchestration";
 type SearchSubtype = "all" | "engines-indexes" | "query-cache" | "autocomplete-discovery" | "recommendations";
 type ObservabilitySubtype = "all" | "metrics" | "logs" | "traces-apm" | "alerts-health";
+
+const DATA_SUBTYPES: Record<DataSubtype, string[]> = {
+  all: [],
+  "pipelines-etl": ["etl-pipeline", "elt-pipeline", "data-pipeline"],
+  "lakes-lakehouse": ["data-lake", "data-lakehouse"],
+  "engines-olap": ["analytics-engine", "olap-engine"],
+  "ingestion-cdc-orchestration": ["data-ingestion-service", "cdc-connector", "workflow-orchestrator"],
+};
 
 const SEARCH_SUBTYPES: Record<SearchSubtype, string[]> = {
   all: [],
@@ -207,6 +216,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [dataSubtype, setDataSubtype] = React.useState<DataSubtype>("all");
   const [searchSubtype, setSearchSubtype] = React.useState<SearchSubtype>("all");
   const [observabilitySubtype, setObservabilitySubtype] = React.useState<ObservabilitySubtype>("all");
   const [securitySubtype, setSecuritySubtype] = React.useState<SecuritySubtype>("all");
@@ -248,6 +258,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   const domainDefinitions = React.useMemo(() => {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
+
+  // Filter Data Engineering & Analytics items
+  const filteredData = React.useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "data") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "data-engineering-and-analytics"
+    );
+
+    if (dataSubtype !== "all") {
+      const allowed = new Set(DATA_SUBTYPES[dataSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, dataSubtype, search]);
 
   // Filter Search & Discovery items
   const filteredSearch = React.useMemo(() => {
@@ -625,6 +663,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredData.length +
     filteredSearch.length +
     filteredObservability.length +
     filteredSecurity.length +
@@ -679,6 +718,17 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             }`}
           >
             All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("data")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "data"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Data
           </button>
           <button
             type="button"
@@ -813,6 +863,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Data Engineering & Analytics */}
+        {activeTab === "data" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (10)" },
+                { id: "pipelines-etl", label: "Pipelines & ETL (3)" },
+                { id: "lakes-lakehouse", label: "Lakes & Lakehouse (2)" },
+                { id: "engines-olap", label: "Engines & OLAP (2)" },
+                { id: "ingestion-cdc-orchestration", label: "Ingestion & CDC (3)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setDataSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border whitespace-nowrap transition-colors shrink-0 ${
+                  dataSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: Search & Discovery */}
         {activeTab === "search" && (
@@ -1135,11 +1213,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setDataSubtype("all");
                   setSearchSubtype("all");
                   setObservabilitySubtype("all");
                   setSecuritySubtype("all");
@@ -1161,6 +1240,67 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 13: Data Engineering & Analytics */}
+            {filteredData.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Data Engineering & Analytics ({filteredData.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 13
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredData.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <LayersIcon className="w-4 h-4 text-text-muted" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-xs font-mono font-medium text-foreground truncate">
+                              {comp.display.name}
+                            </span>
+                            <span className="text-[9px] font-mono text-text-muted shrink-0">
+                              {comp.display.shortName}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-text-secondary line-clamp-1 mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 11: Search & Discovery */}
             {filteredSearch.length > 0 && (
               <div className="space-y-1.5">

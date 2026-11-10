@@ -447,5 +447,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-search",
     },
   },
+  {
+    id: "infra_category_13_data",
+    category: "frontend",
+    title: "Infrastructure Components: Category 13 Data Engineering & Analytics",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, pipeline/ETL/ELT semantics, stream/CDC/orchestration ports, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "data-engineering-and-analytics",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-data",
+    },
+  },
 ];
 

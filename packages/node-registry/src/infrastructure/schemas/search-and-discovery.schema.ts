@@ -180,3 +180,4 @@ export const QueryProcessorConfigSchema = SharedInfrastructureConfigSchema.exten
   queryRateAssumption: z.string().default("8000 req/sec"),
 });
 export type QueryProcessorConfig = z.infer<typeof QueryProcessorConfigSchema>;
+

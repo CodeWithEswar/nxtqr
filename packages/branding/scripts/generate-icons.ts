@@ -61,41 +61,28 @@ function createIcoBuffer(png32: Buffer, png16: Buffer): Buffer {
 }
 
 async function run() {
-  console.log("Generating NXTQR Brand Icons System (Exact Liquid Chrome & Squircle)...");
+  console.log("Generating NXTQR SVG logos and app icons...");
 
-  // Master Framed Monogram on Pure Black (solid neumorphic base)
-  const masterSvgDark = generateSvgMarkup({
-    width: 512,
-    height: 512,
-    colorMode: "accent",
-    accentColor: "#FF0000",
-    background: "#000000",
-    showFraming: true,
-  });
+  const masterSvgDark = generateAppIconTileSvg({ size: 512, opaque: true });
+  const masterSvgLight = generateAppIconTileSvg({ size: 512, type: "white", opaque: true });
+  const faviconSvg = generateAppIconTileSvg({ size: 128 });
 
-  // Master Inverse on Pure White
-  const masterSvgLight = generateSvgMarkup({
-    width: 512,
-    height: 512,
-    colorMode: "inverse",
-    accentColor: "#FF0000",
-    background: "#FFFFFF",
-    showFraming: true,
-  });
+  const logoAssets = {
+    "logo-primary.svg": generateSvgMarkup({ includeWordmark: true }),
+    "logo-symbol.svg": generateSvgMarkup(),
+    "logo-minimal.svg": generateSvgMarkup({ showFraming: false }),
+    "logo-inverse.svg": generateSvgMarkup({ colorMode: "inverse", background: "#FFFFFF" }),
+    "logo-monochrome.svg": generateSvgMarkup({ colorMode: "current" }),
+  };
 
-  // Master Transparent Monogram (for favicon)
-  const masterSvgTransparent = generateSvgMarkup({
-    width: 128,
-    height: 128,
-    colorMode: "accent",
-    accentColor: "#FF0000",
-    background: null,
-    showFraming: true,
-  });
+  for (const [name, svg] of Object.entries(logoAssets)) {
+    fs.writeFileSync(path.join(__dirname, "../src/svg", name), svg);
+    fs.writeFileSync(path.join(rootDir, "apps/web/public/branding/logos", name), svg);
+  }
 
   // 1. Write Favicon SVG
-  writeToLocations("favicon.svg", masterSvgTransparent);
-  fs.writeFileSync(path.join(webAppDir, "icon.svg"), masterSvgTransparent);
+  writeToLocations("favicon.svg", faviconSvg);
+  fs.writeFileSync(path.join(webAppDir, "icon.svg"), faviconSvg);
 
   // 2. Generate standard raster PNG icons
   const sizes = [16, 32, 48, 192, 512];
@@ -107,8 +94,8 @@ async function run() {
     writeToLocations(`icon-${s}.png`, pngBuf);
   }
 
-  // 3. Apple Touch Icon (180x180, pure black squircle tile)
-  const appleSvg = generateAppIconTileSvg({ size: 180, type: "black", accentColor: "#FF0000" });
+  // 3. Apple Touch Icon (180x180, opaque black tile)
+  const appleSvg = generateAppIconTileSvg({ size: 180, opaque: true });
   const appleTouchBuf = await sharp(Buffer.from(appleSvg))
     .resize(180, 180)
     .png({ compressionLevel: 9 })
@@ -144,34 +131,25 @@ async function run() {
   const inv512 = await sharp(Buffer.from(masterSvgLight)).resize(512, 512).png().toBuffer();
   writeToLocations("icon-inverse-512.png", inv512);
 
-  // 7. Signature App Icon Tiles (Hero, Black, White, Red)
-  const heroTileBuf = await sharp(
-    Buffer.from(generateAppIconTileSvg({ size: 512, type: "hero", accentColor: "#FF0000" })),
-  )
+  // 7. Signature App Icon Tiles (Hero, Black, White)
+  const heroTileBuf = await sharp(Buffer.from(generateAppIconTileSvg({ size: 512, type: "hero" })))
     .png()
     .toBuffer();
   writeToLocations("app-icon-hero.png", heroTileBuf);
 
   const blackTileBuf = await sharp(
-    Buffer.from(generateAppIconTileSvg({ size: 256, type: "black", accentColor: "#FF0000" })),
+    Buffer.from(generateAppIconTileSvg({ size: 256, type: "black" })),
   )
     .png()
     .toBuffer();
   writeToLocations("app-icon-black.png", blackTileBuf);
 
   const whiteTileBuf = await sharp(
-    Buffer.from(generateAppIconTileSvg({ size: 256, type: "white", accentColor: "#FF0000" })),
+    Buffer.from(generateAppIconTileSvg({ size: 256, type: "white" })),
   )
     .png()
     .toBuffer();
   writeToLocations("app-icon-white.png", whiteTileBuf);
-
-  const redTileBuf = await sharp(
-    Buffer.from(generateAppIconTileSvg({ size: 256, type: "red", accentColor: "#FF0000" })),
-  )
-    .png()
-    .toBuffer();
-  writeToLocations("app-icon-red.png", redTileBuf);
 
   console.log("Brand icon system generated successfully.");
 }

@@ -1,61 +1,13 @@
 # NXTQR Logo System & Vector Geometry
 
-## 1. Master ViewBox & Coordinate Architecture
+The NXTQR mark represents a system in motion. Two terminals stand for components, the 45° channel shows the flow between them, and the outer silhouette frames the connection like a studio viewport. The terminals and channel share a single cutout so they stay legible at favicon size. Softened corners use the same geometry in every export.
 
-All NXTQR logo symbol assets utilize a standard coordinate space:
+The framed mark uses `viewBox="0 0 128 128"`. Four symmetric `#404040` brackets span `(18, 18)` to `(110, 110)` with a 6-unit radius, 3.5-unit stroke and round joins. The compact mark uses `viewBox="12 12 104 104"` to bring the same silhouette closer to the edge in the sidebar, mobile navigation and favicon.
 
-```
-viewBox="0 0 128 128"
-Center: (64, 64)
-```
-
-```
-       (18,18)                 (110,18)
-          ┌──               ──┐
-          │                   │
-               ╭──╮   ╭──╮
-               │  │   │  │
-               │  ╰───╯  │
-               │  ╭───╮  │
-               │  │   │  │
-               ╰──╯   ╰──╯
-          │                   │
-          └──               ──┘
-       (18,110)                (110,110)
-```
-
----
-
-## 2. Geometric Elements
-
-### 2.1 Precision Corner Framing
-
-- **Coordinates:** Four symmetric L-brackets spanning from `(18, 18)` to `(110, 110)`.
-- **Corner Radius:** 6px (`rounded-md` standard).
-- **Stroke Width:** 3.5px with round line joins (`stroke-linejoin="round"`) and round end-caps.
-- **Arm Length:** 18px along each coordinate axis.
-- **Semantics:** Suggests an engineering viewport selection or canvas focus.
-
-### 2.2 Continuous Geometric N Ribbon
-
-- **Bounds:** Left `x = 34`, Right `x = 94`, Top `y = 30`, Bottom `y = 98` (Width = 60px, Height = 68px).
-- **Optical Balance:** Centered horizontally (`center.x = 64`) with 15px clearance to corner brackets.
-- **Facets:** Features subtle undercut facets at `opacity="0.35"` providing solid depth without glassmorphism.
-
-### 2.3 Directed Execution Laser Beam
-
-- **Trajectory:** Crosses the center axis at `y = 64` from `x = 26` to `x = 102`.
-- **Accent Pulse:** Features an optical node at `(64, 64)` (`r = 3.5`).
-- **Semantic Mapping:** Driven by `var(--accent)` (e.g. Pure Red, Pure Orange, Pure Blue).
-
----
-
-## 3. Logo Variants
-
-| Variant        | Components                          | Primary Use Case                                |
-| :------------- | :---------------------------------- | :---------------------------------------------- |
-| **`full`**     | Monogram + Wordmark + Category      | Application headers, docs, desktop auth         |
-| **`symbol`**   | Framed N Monogram                   | Collapsed sidebars, app icons, browser tabs     |
-| **`minimal`**  | Unframed N Monogram                 | Dense telemetry tables, micro-indicators (16px) |
-| **`wordmark`** | Styled Text + Category              | Compact navigation strips, marketing footers    |
-| **`stacked`**  | Centered Symbol + Centered Wordmark | Modal dialogs, social previews, splash screens  |
+| Variant    | Composition                                     |
+| :--------- | :---------------------------------------------- |
+| `full`     | Framed mark with wordmark and optional category |
+| `symbol`   | Framed mark                                     |
+| `minimal`  | Compact mark                                    |
+| `wordmark` | Wordmark with optional category                 |
+| `stacked`  | Framed mark above the wordmark                  |

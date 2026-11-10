@@ -1068,3 +1068,4 @@ export const ALL_SEARCH_AND_DISCOVERY_DEFINITIONS: InfrastructureComponentDefini
   searchCacheDefinition,
   queryProcessorDefinition,
 ];
+
