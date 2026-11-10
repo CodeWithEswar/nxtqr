@@ -95,7 +95,7 @@ function ComponentRow({
           className="grid size-8 shrink-0 place-items-center rounded-md border border-border-default bg-surface-02 text-text-secondary group-hover:text-foreground"
         >
           {InfrastructureIcon ? (
-            <InfrastructureIcon size={18} variant="monochrome" />
+            <InfrastructureIcon size={18} variant="colored" />
           ) : (
             <Icon className="size-4" />
           )}

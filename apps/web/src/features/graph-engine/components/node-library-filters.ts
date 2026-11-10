@@ -202,6 +202,28 @@ export const COMPONENT_TYPES: Record<string, readonly ComponentTypeFilter[] | un
     },
     { id: "recommendations", label: "Recommendations", componentIds: ["recommendation-engine"] },
   ],
+  "ai-and-machine-learning": [
+    {
+      id: "serving-compute",
+      label: "Serving & Compute",
+      componentIds: ["model-serving", "gpu-cluster", "inference-cache"],
+    },
+    {
+      id: "features-embeddings",
+      label: "Features & Embeddings",
+      componentIds: ["feature-store", "vector-embedding-pipeline"],
+    },
+    {
+      id: "training-registry",
+      label: "Training & Registry",
+      componentIds: ["fine-tuning-job", "model-registry"],
+    },
+    {
+      id: "safety-orchestration",
+      label: "Safety & Orchestration",
+      componentIds: ["evaluation-gateway", "guardrail-proxy", "agent-orchestrator"],
+    },
+  ],
   "observability-and-reliability": [
     { id: "metrics", label: "Metrics", componentIds: ["monitoring-service", "metrics-collector"] },
     { id: "logs", label: "Logs", componentIds: ["log-collector", "log-aggregator"] },

@@ -1,9 +1,10 @@
+import { TutorialComponentIcon } from "@/features/system-design-tutorials/components/tutorial-component-icon";
 import * as React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { TutorialShell, tutorialRegistry } from "@/features/system-design-tutorials";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
-import { getInfrastructureIcon, CpuIcon, ChevronRightIcon } from "@nxtqr/icons";
+import { ChevronRightIcon } from "@nxtqr/icons";
 import { Badge } from "@nxtqr/ui";
 
 interface CategoryPageProps {
@@ -96,7 +97,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {components.map((comp) => {
-              const IconComponent = getInfrastructureIcon(comp.iconSlug) || CpuIcon;
+
 
               return (
                 <Link
@@ -107,7 +108,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="w-8 h-8 rounded bg-surface-02 border border-border-default flex items-center justify-center text-text-secondary group-hover:text-foreground">
-                        <IconComponent className="w-4 h-4" />
+                        <TutorialComponentIcon slug={comp.iconSlug} />
                       </div>
                       <Badge variant="outline" className="font-mono text-[9px] px-1 py-0 border-border-default text-text-muted">
                         {comp.shortName}

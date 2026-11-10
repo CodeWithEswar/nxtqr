@@ -3,115 +3,153 @@
 import * as React from "react";
 import Link from "next/link";
 import { AppLogo } from "@nxtqr/branding";
-import { Button, Badge } from "@nxtqr/ui";
-import { SearchIcon, MenuIcon, ExternalLinkIcon } from "@nxtqr/icons";
+import { ChevronRightIcon, SearchIcon, MenuIcon, ExternalLinkIcon } from "@nxtqr/icons";
+import { cn } from "@nxtqr/utils";
 import { TutorialSearchDialog } from "./tutorial-search-dialog";
+
+const tutorialHome = "/tutorial/system-design";
 
 export interface TutorialHeaderProps {
   onToggleMobileMenu?: () => void;
   breadcrumbs?: { label: string; href?: string }[];
 }
 
+const control =
+  "inline-flex h-10 items-center justify-center gap-2 rounded-lg border text-xs font-medium outline-none transition-colors duration-200 focus-visible:ring-1 focus-visible:ring-white/40 lg:h-8";
+
+const secondaryControl = cn(
+  control,
+  "border-white/10 bg-white/[0.03] text-white/65 hover:border-white/20 hover:bg-white/[0.07] hover:text-white active:bg-white/[0.1]",
+);
+
 export function TutorialHeader({ onToggleMobileMenu, breadcrumbs }: TutorialHeaderProps) {
   const [searchOpen, setSearchOpen] = React.useState(false);
 
+  const trail =
+    breadcrumbs?.filter((crumb) => crumb.href !== tutorialHome && crumb.label !== "Tutorial") ?? [];
+
+  // Short heading for small screens: the current page (last crumb)
+  const current = trail[trail.length - 1];
+
   return (
-    <>
-      <header className="h-12 w-full bg-surface-01 border-b border-border-default px-4 flex items-center justify-between shrink-0 select-none z-30">
-        {/* Left: Brand + Section + Breadcrumbs */}
-        <div className="flex items-center gap-3 min-w-0">
-          {onToggleMobileMenu && (
-            <button
-              onClick={onToggleMobileMenu}
-              className="md:hidden p-1.5 rounded text-text-muted hover:text-foreground hover:bg-surface-02"
-              aria-label="Open navigation menu"
-            >
-              <MenuIcon className="w-4 h-4" />
-            </button>
-          )}
-
-          <Link href="/tutorial/system-design" className="flex items-center gap-2 shrink-0">
-            <AppLogo size={22} />
-            <div className="flex items-center gap-1.5 font-sans">
-              <span className="text-xs font-bold tracking-tight text-foreground">NXTQR</span>
-              <span className="text-text-disabled">/</span>
-              <span className="text-xs font-semibold text-text-secondary">System Design</span>
-            </div>
-          </Link>
-
-          <Badge
-            variant="outline"
-            className="hidden sm:inline-flex font-mono text-[10px] px-1.5 py-0 border-border-default text-text-muted"
-          >
-            Engineering Reference
-          </Badge>
-
-          {breadcrumbs && breadcrumbs.length > 0 && (
-            <div className="hidden lg:flex items-center gap-1.5 text-xs text-text-muted min-w-0 pl-2 border-l border-border-subtle">
-              {breadcrumbs.map((bc, idx) => (
-                <React.Fragment key={idx}>
-                  {idx > 0 && <span className="text-text-disabled">/</span>}
-                  {bc.href ? (
-                    <Link
-                      href={bc.href}
-                      className="hover:text-foreground truncate transition-colors font-sans"
-                    >
-                      {bc.label}
-                    </Link>
-                  ) : (
-                    <span className="text-foreground truncate font-semibold font-sans">
-                      {bc.label}
-                    </span>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Right: Search & Actions */}
-        <div className="flex items-center gap-2">
-          {/* Search Trigger Button */}
+    <header className="sticky top-0 z-30 flex h-14 w-full shrink-0 items-center justify-between gap-2 border-b border-white/10 bg-black/90 pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))] backdrop-blur-md supports-[backdrop-filter]:bg-black/75 sm:gap-4 sm:pl-[max(1rem,env(safe-area-inset-left))] sm:pr-[max(1rem,env(safe-area-inset-right))] lg:h-12">
+      {/* Left: menu, brand, adaptive heading */}
+      <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+        {onToggleMobileMenu && (
           <button
-            onClick={() => setSearchOpen(true)}
-            className="flex items-center gap-2 h-7 px-2.5 rounded-md bg-surface-02 border border-border-default hover:border-border-hover text-text-muted hover:text-text-secondary font-mono text-xs transition-colors"
+            type="button"
+            className={cn(secondaryControl, "w-10 shrink-0 px-0 lg:hidden")}
+            aria-label="Open tutorial navigation"
+            aria-haspopup="dialog"
+            onClick={onToggleMobileMenu}
           >
-            <SearchIcon className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline text-[11px]">Find a component...</span>
-            <kbd className="hidden sm:inline px-1 rounded bg-surface-03 border border-border-default text-[9px] text-text-muted">
-              ⌘K
-            </kbd>
+            <MenuIcon className="size-4" />
           </button>
+        )}
 
-          {/* Quick links */}
-          <div className="hidden md:flex items-center gap-1 pl-2 border-l border-border-subtle">
-            <Link href="/tutorial/system-design/components">
-              <Button variant="ghost" size="sm" className="h-7 text-xs font-sans text-text-muted hover:text-foreground">
-                All 223 Components
-              </Button>
-            </Link>
-            <Link href="/tutorial/system-design/examples">
-              <Button variant="ghost" size="sm" className="h-7 text-xs font-sans text-text-muted hover:text-foreground">
-                Architectures
-              </Button>
-            </Link>
-          </div>
+        <Link
+          href={tutorialHome}
+          aria-label="NXTQR System Design"
+          className="flex min-w-0 shrink items-center gap-2.5 rounded-md outline-none transition-opacity duration-200 hover:opacity-85 focus-visible:ring-1 focus-visible:ring-white/40"
+        >
+          <AppLogo size={24} variant="minimal" className="shrink-0" />
+          <span className="flex min-w-0 items-center gap-2.5 whitespace-nowrap">
+            <span className="hidden font-sans text-sm font-semibold tracking-tight text-white md:inline">
+              NXTQR
+            </span>
+            <span
+              aria-hidden="true"
+              className="hidden h-4 w-px bg-white/15 md:block"
+            />
+            {/* Heading scales down and truncates as space shrinks */}
+            <span className="truncate font-sans text-[13px] font-semibold tracking-tight text-white md:font-normal md:text-white/60 sm:text-sm">
+              System Design
+            </span>
+          </span>
+        </Link>
 
-          <Link href="/workspace">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs font-mono gap-1 text-text-secondary hover:text-foreground border-border-default"
+        {/* sm to xl: short heading, just the current page */}
+        {current && (
+          <div className="hidden min-w-0 items-center gap-2 sm:flex xl:hidden">
+            <ChevronRightIcon className="size-3 shrink-0 text-white/30" />
+            <span
+              aria-current="page"
+              className="truncate font-sans text-xs text-white/60"
+              title={current.label}
             >
-              <span>Workspace</span>
-              <ExternalLinkIcon className="w-3 h-3" />
-            </Button>
-          </Link>
-        </div>
-      </header>
+              {current.label}
+            </span>
+          </div>
+        )}
 
-      {/* Global Command Search Dialog */}
+        {/* xl and up: full breadcrumb */}
+        {trail.length > 0 && (
+          <nav aria-label="Breadcrumb" className="hidden min-w-0 xl:block">
+            <ol className="flex min-w-0 items-center gap-2 font-sans text-xs text-white/40">
+              {trail.map((crumb, i) => {
+                const isLast = i === trail.length - 1;
+                return (
+                  <li key={`${crumb.label}-${i}`} className="flex min-w-0 items-center gap-2">
+                    <ChevronRightIcon className="size-3 shrink-0 text-white/25" />
+                    {crumb.href && !isLast ? (
+                      <Link
+                        href={crumb.href}
+                        className="truncate rounded-md outline-none transition-colors duration-200 hover:text-white focus-visible:ring-1 focus-visible:ring-white/40"
+                      >
+                        {crumb.label}
+                      </Link>
+                    ) : (
+                      <span
+                        aria-current={isLast ? "page" : undefined}
+                        className={cn("truncate", isLast && "text-white/80")}
+                      >
+                        {crumb.label}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
+        )}
+      </div>
+
+      {/* Right: search and workspace */}
+      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+        <button
+          type="button"
+          aria-label="Search tutorials"
+          aria-haspopup="dialog"
+          aria-keyshortcuts="Control+K Meta+K"
+          onClick={() => setSearchOpen(true)}
+          className={cn(
+            secondaryControl,
+            "w-10 px-0 font-sans sm:w-auto sm:px-3 lg:min-w-[10.5rem] lg:justify-between",
+          )}
+        >
+          <span className="flex items-center gap-2">
+            <SearchIcon className="size-4 text-white/45 lg:size-3.5" />
+            <span className="hidden sm:inline">Search</span>
+          </span>
+          <kbd className="hidden rounded border border-white/10 bg-black px-1.5 py-0.5 font-sans text-[10px] leading-none text-white/40 lg:inline-block">
+            ⌘K
+          </kbd>
+        </button>
+
+        <Link
+          href="/workspace"
+          aria-label="Open workspace"
+          className={cn(
+            control,
+            "w-10 border-transparent px-0 font-sans text-white/60 hover:bg-white/[0.06] hover:text-white md:w-auto md:px-3",
+          )}
+        >
+          <ExternalLinkIcon className="size-4 lg:size-3.5" />
+          <span className="hidden md:inline">Workspace</span>
+        </Link>
+      </div>
+
       <TutorialSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
-    </>
+    </header>
   );
 }

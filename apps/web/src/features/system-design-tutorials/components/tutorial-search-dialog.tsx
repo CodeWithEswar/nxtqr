@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, Input, Badge } from "@nxtqr/ui";
-import { SearchIcon, CloseIcon, getInfrastructureIcon, CpuIcon } from "@nxtqr/icons";
+import { Dialog, DialogContent, DialogTitle, Input, Badge, Button } from "@nxtqr/ui";
+import { SearchIcon, CloseIcon } from "@nxtqr/icons";
+import { TutorialComponentIcon } from "./tutorial-component-icon";
 import { searchSystemDesign, type SearchResultItem } from "../lib/search-index";
 
 export interface TutorialSearchDialogProps {
@@ -66,7 +67,8 @@ export function TutorialSearchDialog({ open, onOpenChange }: TutorialSearchDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 bg-surface-01 border border-border-default rounded-md overflow-hidden text-foreground shadow-level-2">
+      <DialogContent aria-describedby={undefined} hideCloseButton className="max-w-2xl p-0 bg-surface-01 border border-border-default rounded-md overflow-hidden text-foreground shadow-level-2">
+        <DialogTitle className="sr-only">Search system design tutorials</DialogTitle>
         {/* Search Input Bar */}
         <div className="flex items-center px-4 py-3 border-b border-border-default bg-surface-02">
           <SearchIcon className="w-4 h-4 text-text-muted shrink-0 mr-3" />
@@ -76,16 +78,14 @@ export function TutorialSearchDialog({ open, onOpenChange }: TutorialSearchDialo
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Search 223 components, 20 categories, examples (LB, CDN, Kafka, TinyURL)..."
-            className="flex-1 bg-transparent border-0 focus-visible:ring-0 text-sm font-sans placeholder:text-text-disabled h-8"
+            aria-label="Search components, concepts and examples"
+            placeholder="Search the reference…"
+            className="h-9 min-w-0 flex-1 border-border-default bg-surface-01 font-sans text-base placeholder:text-text-muted sm:text-sm"
           />
           {query && (
-            <button
-              onClick={() => handleQueryChange("")}
-              className="p-1 rounded hover:bg-surface-03 text-text-muted hover:text-foreground"
-            >
-              <CloseIcon className="w-3.5 h-3.5" />
-            </button>
+            <Button type="button" variant="ghost" size="icon-sm" aria-label="Clear search" onClick={() => handleQueryChange("")}>
+              <CloseIcon className="size-3.5" />
+            </Button>
           )}
           <span className="ml-2 px-1.5 py-0.5 rounded bg-surface-03 border border-border-default font-mono text-[10px] text-text-muted">
             ESC
@@ -116,7 +116,6 @@ export function TutorialSearchDialog({ open, onOpenChange }: TutorialSearchDialo
           ) : (
             results.map((item, index) => {
               const isSelected = index === selectedIndex;
-              const IconComponent = item.iconSlug ? getInfrastructureIcon(item.iconSlug) || CpuIcon : CpuIcon;
 
               return (
                 <div
@@ -127,8 +126,8 @@ export function TutorialSearchDialog({ open, onOpenChange }: TutorialSearchDialo
                     isSelected ? "bg-surface-03 border border-border-hover" : "hover:bg-surface-02"
                   }`}
                 >
-                  <div className="w-7 h-7 rounded bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary">
-                    <IconComponent className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-md bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary">
+                    <TutorialComponentIcon slug={item.iconSlug} />
                   </div>
 
                   <div className="min-w-0 flex-1">

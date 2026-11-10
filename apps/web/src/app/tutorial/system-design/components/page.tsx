@@ -1,10 +1,12 @@
 "use client";
 
+import { TutorialComponentIcon } from "@/features/system-design-tutorials/components/tutorial-component-icon";
+
 import * as React from "react";
 import Link from "next/link";
 import { TutorialShell, tutorialRegistry } from "@/features/system-design-tutorials";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
-import { getInfrastructureIcon, CpuIcon, SearchIcon, CloseIcon } from "@nxtqr/icons";
+import { CpuIcon, SearchIcon, CloseIcon } from "@nxtqr/icons";
 import { Input, Badge, Button } from "@nxtqr/ui";
 
 export default function ComponentsDirectoryPage() {
@@ -117,7 +119,7 @@ export default function ComponentsDirectoryPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {filteredComponents.map((comp) => {
-              const IconComponent = getInfrastructureIcon(comp.iconSlug) || CpuIcon;
+
 
               return (
                 <Link
@@ -128,7 +130,7 @@ export default function ComponentsDirectoryPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="w-8 h-8 rounded bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary group-hover:text-foreground">
-                        <IconComponent className="w-4 h-4" />
+                        <TutorialComponentIcon slug={comp.iconSlug} />
                       </div>
                       <Badge
                         variant="outline"

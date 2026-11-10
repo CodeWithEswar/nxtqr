@@ -3,8 +3,19 @@ import { tutorialRegistry } from "../lib/tutorial-registry";
 import { getAllExamples, getExampleBySlug, getExamplesForComponent } from "../lib/examples-registry";
 import { getAllConcepts, getConceptBySlug } from "../lib/concepts-registry";
 import { searchSystemDesign } from "../lib/search-index";
-import { GraphDocumentSchema, BaseNodeSchema, BaseEdgeSchema } from "@nxtqr/graph-schema";
+import { GraphDocumentSchema, BaseNodeSchema, BaseEdgeSchema, type BaseNode, type BaseEdge } from "@nxtqr/graph-schema";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
+import { getInfrastructureIcon } from "@nxtqr/icons";
+
+function expectBoundEdges(nodes: BaseNode[], edges: BaseEdge[]) {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  for (const edge of edges) {
+    const source = byId.get(edge.source)?.ports?.find((port) => port.id === edge.sourceHandle);
+    const target = byId.get(edge.target)?.ports?.find((port) => port.id === edge.targetHandle);
+    expect(source && source.type !== "input", edge.id).toBe(true);
+    expect(target && target.type !== "output", edge.id).toBe(true);
+  }
+}
 
 describe("System Design Tutorial Registry", () => {
   it("indexes all infrastructure components from the node registry", () => {
@@ -27,17 +38,12 @@ describe("System Design Tutorial Registry", () => {
       expect(t.problemSolved).toBeTruthy();
       expect(t.ports.length).toBeGreaterThanOrEqual(1);
 
-      // Verify all 3 preview scenarios
-      expect(t.previewNodes.isolated.length).toBeGreaterThanOrEqual(1);
-      expect(t.previewNodes.connected.length).toBeGreaterThanOrEqual(3);
-      expect(t.previewNodes.architecture.length).toBeGreaterThanOrEqual(4);
-
-      // Validate preview nodes schema
-      for (const node of t.previewNodes.connected) {
-        expect(() => BaseNodeSchema.parse(node)).not.toThrow();
-      }
-      for (const edge of t.previewEdges.connected) {
-        expect(() => BaseEdgeSchema.parse(edge)).not.toThrow();
+      expect(getInfrastructureIcon(t.iconSlug), t.id).toBeDefined();
+      expect(t.previewNodes.isolated).toHaveLength(1);
+      for (const scenario of ["isolated", "connected", "architecture"] as const) {
+        for (const node of t.previewNodes[scenario]) expect(BaseNodeSchema.safeParse(node).success).toBe(true);
+        for (const edge of t.previewEdges[scenario]) expect(BaseEdgeSchema.safeParse(edge).success).toBe(true);
+        expectBoundEdges(t.previewNodes[scenario], t.previewEdges[scenario]);
       }
     }
   });
@@ -85,6 +91,12 @@ describe("System Design Tutorial Registry", () => {
       expect(() => GraphDocumentSchema.parse(ex.graphDocument)).not.toThrow();
       expect(ex.graphDocument.nodes.length).toBeGreaterThanOrEqual(5);
       expect(ex.graphDocument.edges.length).toBeGreaterThanOrEqual(4);
+      expectBoundEdges(ex.graphDocument.nodes, ex.graphDocument.edges);
+      const edgeIds = new Set(ex.graphDocument.edges.map((edge) => edge.id));
+      for (const step of ex.flowSteps) {
+        expect(step.edgeIds.length).toBeGreaterThan(0);
+        expect(step.edgeIds.every((id) => edgeIds.has(id)), ex.slug).toBe(true);
+      }
     }
   });
 

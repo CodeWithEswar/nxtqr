@@ -1,3 +1,4 @@
+import { TutorialComponentIcon } from "@/features/system-design-tutorials/components/tutorial-component-icon";
 import * as React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -9,7 +10,7 @@ import {
   getExampleBySlug,
 } from "@/features/system-design-tutorials";
 import { Badge } from "@nxtqr/ui";
-import { ChevronRightIcon, LayersIcon, getInfrastructureIcon, CpuIcon } from "@nxtqr/icons";
+import { ChevronRightIcon, LayersIcon } from "@nxtqr/icons";
 
 interface ConceptPageProps {
   params: Promise<{ slug: string }>;
@@ -111,7 +112,7 @@ export default async function ConceptDetailPage({ params }: ConceptPageProps) {
               {concept.relatedComponentIds.map((cId) => {
                 const comp = tutorialRegistry.getComponentTutorial(cId);
                 if (!comp) return null;
-                const IconComponent = getInfrastructureIcon(comp.iconSlug) || CpuIcon;
+
 
                 return (
                   <Link
@@ -120,7 +121,7 @@ export default async function ConceptDetailPage({ params }: ConceptPageProps) {
                     className="p-3 rounded-md bg-surface-01 border border-border-default hover:border-border-hover hover:bg-surface-02 transition-colors flex items-center gap-3 group"
                   >
                     <div className="w-8 h-8 rounded bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary group-hover:text-foreground">
-                      <IconComponent className="w-4 h-4" />
+                      <TutorialComponentIcon slug={comp.iconSlug} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="font-sans text-xs font-semibold text-foreground group-hover:underline truncate">

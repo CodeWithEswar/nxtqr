@@ -2,11 +2,7 @@
 
 import * as React from "react";
 import {
-  ReactFlow,
-  Background,
-  BackgroundVariant,
   MiniMap,
-  Controls,
   useReactFlow,
   type Connection,
   type NodeChange,
@@ -14,11 +10,9 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
 } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
 
 import { useGraphEditorStore } from "../store/graph-editor-store";
-import { nodeTypes } from "./graph-node";
-import { edgeTypes } from "./graph-edge";
+import { GraphCanvasSurface } from "./graph-canvas-surface";
 import { validatePortConnection } from "../domain/port-validator";
 import { useGraphShortcuts } from "../hooks/use-graph-shortcuts";
 import { infrastructureRegistry, nodeRegistry } from "@nxtqr/node-registry";
@@ -297,11 +291,10 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
 
   return (
     <div className={`relative h-full w-full bg-black ${className || ""}`}>
-      <ReactFlow
+      <GraphCanvasSurface
         nodes={flowNodes}
         edges={flowEdges}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
+        gridType={gridType}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeDragStart={onNodeDragStart}
@@ -325,31 +318,7 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
         maxZoom={3.0}
         snapToGrid={snapToGrid}
         snapGrid={[16, 16]}
-        // Strict Pure Black styling
-        colorMode="dark"
-        proOptions={{ hideAttribution: true }}
-        className="nxtqr-graph-canvas"
       >
-        {/* Subtle Engineering Grid Background */}
-        {gridType !== "none" && (
-          <Background
-            variant={gridType === "lines" ? BackgroundVariant.Lines : BackgroundVariant.Dots}
-            gap={20}
-            size={1.5}
-            color="#202020"
-          />
-        )}
-
-        {/* On-Canvas Precision Viewport Controls */}
-        <Controls
-          showZoom={true}
-          showFitView={true}
-          showInteractive={false}
-          position="bottom-left"
-          className="!m-3 !border !border-border-default !rounded-md !shadow-level-2 overflow-hidden"
-          aria-label="Canvas Viewport Controls"
-        />
-
         {/* Precision Minimap (Pannable, Zoomable, Click-to-center) */}
         {showMinimap && (
           <div className="absolute bottom-3 right-3 z-10 rounded-md border border-border-strong bg-surface-02 shadow-level-2 overflow-hidden pointer-events-auto">
@@ -380,7 +349,7 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
             />
           </div>
         )}
-      </ReactFlow>
+      </GraphCanvasSurface>
     </div>
   );
 }

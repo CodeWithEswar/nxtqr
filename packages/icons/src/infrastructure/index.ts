@@ -10,6 +10,7 @@ export * from "./storage-and-file-systems";
 export * from "./security-and-identity";
 export * from "./observability-and-reliability";
 export * from "./search-and-discovery";
+export * from "./ai-and-machine-learning";
 export * from "./data-engineering-and-analytics";
 export * from "./media-and-real-time-communication";
 export * from "./devops-and-deployment";
@@ -31,6 +32,7 @@ import { storageAndFileSystemsIconRegistry } from "./storage-and-file-systems";
 import { securityAndIdentityIconRegistry } from "./security-and-identity";
 import { observabilityAndReliabilityIconRegistry } from "./observability-and-reliability";
 import { searchAndDiscoveryIconRegistry } from "./search-and-discovery";
+import { aiAndMachineLearningIconRegistry } from "./ai-and-machine-learning";
 import { dataEngineeringAndAnalyticsIconRegistry } from "./data-engineering-and-analytics";
 import { mediaAndRealTimeCommunicationIconRegistry } from "./media-and-real-time-communication";
 import { devopsAndDeploymentIconRegistry } from "./devops-and-deployment";
@@ -52,6 +54,7 @@ export const allInfrastructureIconRegistry: Record<string, InfrastructureIconCom
   ...securityAndIdentityIconRegistry,
   ...observabilityAndReliabilityIconRegistry,
   ...searchAndDiscoveryIconRegistry,
+  ...aiAndMachineLearningIconRegistry,
   ...dataEngineeringAndAnalyticsIconRegistry,
   ...mediaAndRealTimeCommunicationIconRegistry,
   ...devopsAndDeploymentIconRegistry,

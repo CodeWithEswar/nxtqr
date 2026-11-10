@@ -1,3 +1,4 @@
+import { TutorialComponentIcon } from "@/features/system-design-tutorials/components/tutorial-component-icon";
 import * as React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -10,7 +11,7 @@ import {
   tutorialRegistry,
 } from "@/features/system-design-tutorials";
 import { Badge } from "@nxtqr/ui";
-import { ChevronRightIcon, CheckCircleIcon, ShieldIcon, CpuIcon, getInfrastructureIcon } from "@nxtqr/icons";
+import { ChevronRightIcon, CheckCircleIcon, ShieldIcon } from "@nxtqr/icons";
 
 interface ExamplePageProps {
   params: Promise<{ slug: string }>;
@@ -76,7 +77,7 @@ export default async function ExampleDetailPage({ params }: ExamplePageProps) {
                 document={example.graphDocument}
                 templateSlug={example.slug}
                 size="default"
-                label="Open Blueprint in Visualizer"
+                label="Open in Visualizer"
               />
             </div>
           </div>
@@ -114,7 +115,7 @@ export default async function ExampleDetailPage({ params }: ExamplePageProps) {
         <section id="diagram" className="space-y-4">
           <div className="space-y-1">
             <h2 className="text-xl font-sans font-bold text-foreground">
-              Interactive Topology Diagram
+              Architecture canvas
             </h2>
             <p className="text-xs text-text-muted font-sans">
               Inspect all components, zoom and pan, or select any request step below to highlight the active path trace.
@@ -158,49 +159,6 @@ export default async function ExampleDetailPage({ params }: ExamplePageProps) {
                 ))}
               </ul>
             </div>
-          </div>
-        </section>
-
-        {/* 3. Detailed Request Flow Sequence */}
-        <section id="request-flow" className="space-y-4">
-          <div className="space-y-1">
-            <h2 className="text-xl font-sans font-bold text-foreground">
-              End-to-End Request Flow Sequence
-            </h2>
-            <p className="text-xs text-text-muted font-sans">
-              Step-by-step trace of packets and transactions moving through the architecture.
-            </p>
-          </div>
-
-          <div className="overflow-x-auto rounded-md border border-border-default">
-            <table className="w-full text-left font-sans text-xs">
-              <thead className="bg-surface-02 font-mono text-[10px] uppercase text-text-muted border-b border-border-default">
-                <tr>
-                  <th className="py-2.5 px-3">Step</th>
-                  <th className="py-2.5 px-3">From</th>
-                  <th className="py-2.5 px-3">To</th>
-                  <th className="py-2.5 px-3">Protocol</th>
-                  <th className="py-2.5 px-3">Action & Mechanics</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-subtle bg-surface-01">
-                {example.flowSteps.map((st) => (
-                  <tr key={st.step} className="hover:bg-surface-02 transition-colors">
-                    <td className="py-2.5 px-3 font-mono font-bold text-foreground">
-                      {st.step}
-                    </td>
-                    <td className="py-2.5 px-3 font-medium text-text-secondary">{st.from}</td>
-                    <td className="py-2.5 px-3 font-medium text-text-secondary">{st.to}</td>
-                    <td className="py-2.5 px-3">
-                      <Badge variant="outline" className="font-mono text-[9px] px-1 py-0 border-border-default text-text-muted">
-                        {st.protocol}
-                      </Badge>
-                    </td>
-                    <td className="py-2.5 px-3 text-text-muted leading-relaxed">{st.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </section>
 
@@ -275,7 +233,7 @@ export default async function ExampleDetailPage({ params }: ExamplePageProps) {
             {example.featuredComponentIds.map((cId) => {
               const comp = tutorialRegistry.getComponentTutorial(cId);
               if (!comp) return null;
-              const IconComponent = getInfrastructureIcon(comp.iconSlug) || CpuIcon;
+
 
               return (
                 <Link
@@ -284,7 +242,7 @@ export default async function ExampleDetailPage({ params }: ExamplePageProps) {
                   className="p-3 rounded-md bg-surface-01 border border-border-default hover:border-border-hover hover:bg-surface-02 transition-colors flex items-center gap-3 group"
                 >
                   <div className="w-8 h-8 rounded bg-surface-02 border border-border-default flex items-center justify-center shrink-0 text-text-secondary group-hover:text-foreground">
-                    <IconComponent className="w-4 h-4" />
+                    <TutorialComponentIcon slug={comp.iconSlug} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-sans text-xs font-semibold text-foreground group-hover:underline truncate">

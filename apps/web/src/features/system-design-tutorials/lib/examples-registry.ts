@@ -56,6 +56,39 @@ function createHelperEdge(
   };
 }
 
+function bindExamplePorts(nodes: BaseNode[], edges: BaseEdge[]): BaseEdge[] {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+
+  return edges.map((edge) => {
+    const outputs = byId.get(edge.source)?.ports?.filter((port) => port.type !== "input") ?? [];
+    const inputs = byId.get(edge.target)?.ports?.filter((port) => port.type !== "output") ?? [];
+    const namedSource = outputs.find((port) => port.id === edge.sourceHandle);
+    const namedTarget = inputs.find((port) => port.id === edge.targetHandle);
+    const source =
+      namedSource ??
+      outputs.find((port) =>
+        port.dataType && (namedTarget ? [namedTarget] : inputs).some((input) => input.dataType === port.dataType),
+      ) ??
+      outputs[0];
+    const target =
+      namedTarget ??
+      inputs.find((port) => source?.dataType && port.dataType === source.dataType) ??
+      inputs[0];
+
+    if (!source || !target) {
+      throw new Error(`Architecture edge ${edge.id} needs an output and an input port.`);
+    }
+
+    return {
+      ...edge,
+      sourceHandle: source.id,
+      sourcePort: source.id,
+      targetHandle: target.id,
+      targetPort: target.id,
+    };
+  });
+}
+
 // 1. URL Shortener (TinyURL)
 const urlShortenerNodes: BaseNode[] = [
   createHelperNode("web-browser", "node_client", "Web & API Clients", 50, 180),
@@ -269,12 +302,12 @@ const cdnSecEdges: BaseEdge[] = [
 // 10. Enterprise RAG AI Knowledge Assistant
 const ragNodes: BaseNode[] = [
   createHelperNode("desktop-application", "rag_user", "Knowledge Worker", 50, 180),
-  createHelperNode("api-gateway", "rag_gw", "AI Gateway & Prompt Filter", 280, 180),
-  createHelperNode("redis-cache", "rag_cache", "Semantic Embeddings Cache (Redis)", 540, 90),
-  createHelperNode("backend-service", "rag_orchestrator", "RAG Pipeline Orchestrator", 540, 270),
+  createHelperNode("guardrail-proxy", "rag_gw", "AI Safety & Guardrail Gateway", 280, 180),
+  createHelperNode("inference-cache", "rag_cache", "Semantic Inference Cache", 540, 90),
+  createHelperNode("agent-orchestrator", "rag_orchestrator", "RAG Agent Orchestrator", 540, 270),
   createHelperNode("vector-database", "rag_vector_db", "Pinecone / Milvus Vector Store", 820, 270),
-  createHelperNode("object-storage", "rag_docs", "Enterprise PDF & Doc Lake (S3)", 820, 390),
-  createHelperNode("external-rest-api", "rag_llm", "Large Language Model (Claude / Gemini)", 1100, 270),
+  createHelperNode("vector-embedding-pipeline", "rag_embed", "Document Chunking & Embedding", 820, 390),
+  createHelperNode("model-serving", "rag_llm", "Foundation Model Serving (vLLM)", 1100, 270),
 ];
 
 const ragEdges: BaseEdge[] = [
@@ -282,7 +315,7 @@ const ragEdges: BaseEdge[] = [
   createHelperEdge("r2", "rag_gw", "rag_cache", "Check Semantic Vector Hit"),
   createHelperEdge("r3", "rag_gw", "rag_orchestrator", "On Cache Miss: Execute RAG"),
   createHelperEdge("r4", "rag_orchestrator", "rag_vector_db", "Top-K Cosine Similarity Search"),
-  createHelperEdge("r5", "rag_vector_db", "rag_docs", "Retrieve Document Chunks"),
+  createHelperEdge("r5", "rag_orchestrator", "rag_embed", "Retrieve Document Chunks"),
   createHelperEdge("r6", "rag_orchestrator", "rag_llm", "Prompt + Grounded Context Injection"),
   createHelperEdge("r7", "rag_llm", "rag_orchestrator", "Synthesized Answer with Citations"),
   createHelperEdge("r8", "rag_orchestrator", "rag_cache", "Store Query Embedding & Response"),
@@ -301,7 +334,7 @@ const uploadNodes: BaseNode[] = [
 
 const uploadEdges: BaseEdge[] = [
   createHelperEdge("u1", "up_client", "up_api", "1. Request Presigned Multipart URLs"),
-  createHelperEdge("u2", "up_api", "up_s3", "Generate Chunk Keys"),
+  createHelperEdge("u2", "up_api", "up_s3", "Initialize Multipart Upload"),
   createHelperEdge("u3", "up_client", "up_s3", "2. Direct Parallel Chunk Uploads (5MB ea)"),
   createHelperEdge("u4", "up_s3", "up_event", "3. ObjectCreated Event"),
   createHelperEdge("u5", "up_event", "up_scanner", "Trigger Security Scan"),
@@ -360,11 +393,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "Web Client", to: "DNS Server", protocol: "DNS", description: "Client queries anycast DNS to find nearest edge load balancer IP." },
-      { step: 2, from: "Web Client", to: "Rate Limiter", protocol: "HTTPS", description: "Client sends POST /shorten or GET /{hash}. Rate limiter verifies token bucket." },
-      { step: 3, from: "Rate Limiter", to: "Load Balancer", protocol: "TCP", description: "Legitimate requests are forwarded across stateless application servers." },
-      { step: 4, from: "API Service", to: "Distributed Cache", protocol: "RESP", description: "Service checks Redis cache for hash. On cache hit (90%+), returns HTTP 301 instantly." },
-      { step: 5, from: "API Service", to: "Relational DB", protocol: "PostgreSQL", description: "On cache miss, queries database by primary key, populates cache with TTL, and redirects." },
+      { step: 1, edgeIds: ["e1"], from: "Web Client", to: "DNS Server", protocol: "DNS", description: "Client queries anycast DNS to find nearest edge load balancer IP." },
+      { step: 2, edgeIds: ["e2"], from: "Web Client", to: "Rate Limiter", protocol: "HTTPS", description: "Client sends POST /shorten or GET /{hash}. Rate limiter verifies token bucket." },
+      { step: 3, edgeIds: ["e3","e4"], from: "Rate Limiter", to: "Load Balancer", protocol: "TCP", description: "Legitimate requests are forwarded across stateless application servers." },
+      { step: 4, edgeIds: ["e5"], from: "API Service", to: "Distributed Cache", protocol: "RESP", description: "Service checks Redis cache for hash. On cache hit (90%+), returns HTTP 301 instantly." },
+      { step: 5, edgeIds: ["e6"], from: "API Service", to: "Relational DB", protocol: "PostgreSQL", description: "On cache miss, queries database by primary key, populates cache with TTL, and redirects." },
     ],
     keyDecisions: [
       {
@@ -390,7 +423,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "URL Shortener Architecture (TinyURL)",
       nodes: urlShortenerNodes,
-      edges: urlShortenerEdges,
+      edges: bindExamplePorts(urlShortenerNodes, urlShortenerEdges),
       viewport: { x: 0, y: 0, zoom: 0.85 },
       metadata: { slug: "url-shortener", category: "Web & API Systems" },
     },
@@ -429,11 +462,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "Shopper", to: "API Gateway", protocol: "HTTPS", description: "Submits checkout payload with client-generated Idempotency-Key." },
-      { step: 2, from: "API Gateway", to: "Checkout Service", protocol: "gRPC", description: "Gateway authenticates JWT and forwards to Order Service." },
-      { step: 3, from: "Checkout Service", to: "Saga Orchestrator", protocol: "Temporal", description: "Spawns CheckoutSaga state machine with defined compensation steps." },
-      { step: 4, from: "Saga Orchestrator", to: "Circuit Breaker", protocol: "HTTPS", description: "Executes credit card charge through circuit breaker to isolate third-party latency." },
-      { step: 5, from: "Saga Orchestrator", to: "Kafka Events", protocol: "Kafka", description: "Publishes OrderCreated event for downstream warehouse, inventory, and notifications." },
+      { step: 1, edgeIds: ["ec1"], from: "Shopper", to: "API Gateway", protocol: "HTTPS", description: "Submits checkout payload with client-generated Idempotency-Key." },
+      { step: 2, edgeIds: ["ec2"], from: "API Gateway", to: "Checkout Service", protocol: "gRPC", description: "Gateway authenticates JWT and forwards to Order Service." },
+      { step: 3, edgeIds: ["ec3"], from: "Checkout Service", to: "Saga Orchestrator", protocol: "Temporal", description: "Spawns CheckoutSaga state machine with defined compensation steps." },
+      { step: 4, edgeIds: ["ec4","ec5"], from: "Saga Orchestrator", to: "Circuit Breaker", protocol: "HTTPS", description: "Executes credit card charge through circuit breaker to isolate third-party latency." },
+      { step: 5, edgeIds: ["ec6"], from: "Saga Orchestrator", to: "Kafka Events", protocol: "Kafka", description: "Publishes OrderCreated event for downstream warehouse, inventory, and notifications." },
     ],
     keyDecisions: [
       {
@@ -453,7 +486,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "E-Commerce Checkout & Distributed Saga",
       nodes: ecommerceNodes,
-      edges: ecommerceEdges,
+      edges: bindExamplePorts(ecommerceNodes, ecommerceEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "ecommerce-platform", category: "Financial & Commerce" },
     },
@@ -492,11 +525,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "Clients", to: "TCP Load Balancer", protocol: "TCP/WSS", description: "Establish persistent bidirectional TLS WebSocket connections." },
-      { step: 2, from: "WS Gateway", to: "Presence Service", protocol: "gRPC", description: "Registers client connection and publishes presence heartbeats." },
-      { step: 3, from: "WS Gateway", to: "Redis Pub/Sub", protocol: "RESP", description: "Publishes message payload to user/room channel topic." },
-      { step: 4, from: "Redis Pub/Sub", to: "Peer WS Gateway", protocol: "RESP", description: "Delivers payload to whichever gateway holds the recipient's active socket." },
-      { step: 5, from: "WS Gateway", to: "Message Queue", protocol: "AMQP", description: "Asynchronously flushes chat history to ScyllaDB without blocking socket I/O." },
+      { step: 1, edgeIds: ["ch1","ch2","ch3","ch4"], from: "Clients", to: "TCP Load Balancer", protocol: "TCP/WSS", description: "Establish persistent bidirectional TLS WebSocket connections." },
+      { step: 2, edgeIds: ["ch5"], from: "WS Gateway", to: "Presence Service", protocol: "gRPC", description: "Registers client connection and publishes presence heartbeats." },
+      { step: 3, edgeIds: ["ch6"], from: "WS Gateway", to: "Redis Pub/Sub", protocol: "RESP", description: "Publishes message payload to user/room channel topic." },
+      { step: 4, edgeIds: ["ch7"], from: "Redis Pub/Sub", to: "Peer WS Gateway", protocol: "RESP", description: "Delivers payload to whichever gateway holds the recipient's active socket." },
+      { step: 5, edgeIds: ["ch8","ch9"], from: "WS Gateway", to: "Message Queue", protocol: "AMQP", description: "Asynchronously flushes chat history to ScyllaDB without blocking socket I/O." },
     ],
     keyDecisions: [
       {
@@ -516,7 +549,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Real-Time Chat & Presence System",
       nodes: chatNodes,
-      edges: chatEdges,
+      edges: bindExamplePorts(chatNodes, chatEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "realtime-chat", category: "Real-Time & Communication" },
     },
@@ -555,10 +588,10 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "TV / Mobile", to: "Edge CDN", protocol: "HTTPS", description: "Requests master manifest file (.m3u8) indicating available bitrates." },
-      { step: 2, from: "Edge CDN", to: "S3 Origin", protocol: "HTTPS", description: "On cache miss, pulls video chunks (.ts / .m4s) from object storage." },
-      { step: 3, from: "Client", to: "API Gateway", protocol: "HTTPS", description: "Periodically reports playback telemetry and syncs watch progress." },
-      { step: 4, from: "Transcoder", to: "Object Storage", protocol: "S3 API", description: "Encodes ingested video chunks in parallel and saves segmented files." },
+      { step: 1, edgeIds: ["v1","v2"], from: "TV / Mobile", to: "Edge CDN", protocol: "HTTPS", description: "Requests master manifest file (.m3u8) indicating available bitrates." },
+      { step: 2, edgeIds: ["v3"], from: "Edge CDN", to: "S3 Origin", protocol: "HTTPS", description: "On cache miss, pulls video chunks (.ts / .m4s) from object storage." },
+      { step: 3, edgeIds: ["v4","v5"], from: "Client", to: "API Gateway", protocol: "HTTPS", description: "Periodically reports playback telemetry and syncs watch progress." },
+      { step: 4, edgeIds: ["v7"], from: "Transcoder", to: "Object Storage", protocol: "S3 API", description: "Encodes ingested video chunks in parallel and saves segmented files." },
     ],
     keyDecisions: [
       {
@@ -577,7 +610,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Global Video Streaming Architecture",
       nodes: videoNodes,
-      edges: videoEdges,
+      edges: bindExamplePorts(videoNodes, videoEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "video-streaming", category: "Media & Streaming" },
     },
@@ -616,11 +649,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "Author", to: "Ingress Gateway", protocol: "HTTPS", description: "Author publishes post payload." },
-      { step: 2, from: "Post Service", to: "MongoDB", protocol: "WiredTiger", description: "Stores complete post document." },
-      { step: 3, from: "Post Service", to: "Kafka Fanout", protocol: "Kafka", description: "Publishes PostCreated event with author ID." },
-      { step: 4, from: "Fanout Workers", to: "Graph DB", protocol: "Bolt/Cypher", description: "Queries follower list. If < 25k followers, pushes PostID to all followers' Redis timelines." },
-      { step: 5, from: "Follower", to: "Read Service", protocol: "HTTPS", description: "Fetches timeline: merges pre-computed Redis timeline with active celebrity posts on read." },
+      { step: 1, edgeIds: ["f1"], from: "Author", to: "Ingress Gateway", protocol: "HTTPS", description: "Author publishes post payload." },
+      { step: 2, edgeIds: ["f5"], from: "Post Service", to: "MongoDB", protocol: "WiredTiger", description: "Stores complete post document." },
+      { step: 3, edgeIds: ["f6"], from: "Post Service", to: "Kafka Fanout", protocol: "Kafka", description: "Publishes PostCreated event with author ID." },
+      { step: 4, edgeIds: ["f8","f9"], from: "Fanout Workers", to: "Graph DB", protocol: "Bolt/Cypher", description: "Queries follower list. If < 25k followers, pushes PostID to all followers' Redis timelines." },
+      { step: 5, edgeIds: ["f2","f4","f10"], from: "Follower", to: "Read Service", protocol: "HTTPS", description: "Fetches timeline: merges pre-computed Redis timeline with active celebrity posts on read." },
     ],
     keyDecisions: [
       {
@@ -639,7 +672,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Social Feed with Hybrid Fanout",
       nodes: feedNodes,
-      edges: feedEdges,
+      edges: bindExamplePorts(feedNodes, feedEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "social-feed", category: "Web & API Systems" },
     },
@@ -678,11 +711,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "Microservice", to: "Notification Gateway", protocol: "gRPC", description: "Sends notification payload with channel preference and priority tier (P0/P1)." },
-      { step: 2, from: "Gateway", to: "Idempotency Service", protocol: "RESP", description: "Deduplicates notification to prevent user alert spam." },
-      { step: 3, from: "Gateway", to: "Priority Queues", protocol: "RabbitMQ/SQS", description: "P0 (OTP) enters dedicated high-priority queue; P1 enters bulk queue." },
-      { step: 4, from: "Queue Workers", to: "External Providers", protocol: "HTTPS", description: "Dispatches to APNs, FCM, Twilio, or SendGrid." },
-      { step: 5, from: "Workers", to: "DLQ", protocol: "AMQP", description: "Failing dispatches are routed to DLQ after 3 exponential backoff retries." },
+      { step: 1, edgeIds: ["n1"], from: "Microservice", to: "Notification Gateway", protocol: "gRPC", description: "Sends notification payload with channel preference and priority tier (P0/P1)." },
+      { step: 2, edgeIds: ["n2"], from: "Gateway", to: "Idempotency Service", protocol: "RESP", description: "Deduplicates notification to prevent user alert spam." },
+      { step: 3, edgeIds: ["n3","n4"], from: "Deduplication Service", to: "Priority Queues", protocol: "RabbitMQ/SQS", description: "P0 (OTP) enters dedicated high-priority queue; P1 enters bulk queue." },
+      { step: 4, edgeIds: ["n5","n6","n7"], from: "Delivery Queues", to: "External Providers", protocol: "HTTPS", description: "Dispatches to APNs, FCM, Twilio, or SendGrid." },
+      { step: 5, edgeIds: ["n8","n9"], from: "Delivery Providers", to: "DLQ", protocol: "AMQP", description: "Failing dispatches are routed to DLQ after 3 exponential backoff retries." },
     ],
     keyDecisions: [
       {
@@ -701,7 +734,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Multi-Channel Notification Gateway",
       nodes: notifyNodes,
-      edges: notifyEdges,
+      edges: bindExamplePorts(notifyNodes, notifyEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "notification-gateway", category: "Messaging & Notifications" },
     },
@@ -740,11 +773,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "App Service", to: "Idempotency Service", protocol: "gRPC", description: "Acquires distributed lock for order mutation with 120s TTL." },
-      { step: 2, from: "Idempotency Service", to: "Ledger Service", protocol: "gRPC", description: "Creates pending transaction record in Postgres ledger table." },
-      { step: 3, from: "Ledger Service", to: "Circuit Breaker", protocol: "TLS", description: "Attempts PSP call through circuit breaker. If PSP is returning 5xx, trips open." },
-      { step: 4, from: "Circuit Breaker", to: "Payment Gateway", protocol: "HTTPS", description: "Performs mTLS authorization with Stripe/Adyen." },
-      { step: 5, from: "Ledger Service", to: "DLQ", protocol: "Kafka", description: "On ambiguous network timeout, enqueues to reconciliation queue for background status verification." },
+      { step: 1, edgeIds: ["p1"], from: "App Service", to: "Idempotency Service", protocol: "gRPC", description: "Acquires distributed lock for order mutation with 120s TTL." },
+      { step: 2, edgeIds: ["p2","p3"], from: "Idempotency Service", to: "Ledger Service", protocol: "gRPC", description: "Creates pending transaction record in Postgres ledger table." },
+      { step: 3, edgeIds: ["p4"], from: "Ledger Service", to: "Circuit Breaker", protocol: "TLS", description: "Attempts PSP call through circuit breaker. If PSP is returning 5xx, trips open." },
+      { step: 4, edgeIds: ["p5"], from: "Circuit Breaker", to: "Payment Gateway", protocol: "HTTPS", description: "Performs mTLS authorization with Stripe/Adyen." },
+      { step: 5, edgeIds: ["p8"], from: "Circuit Breaker", to: "DLQ", protocol: "Kafka", description: "On ambiguous network timeout, enqueues to reconciliation queue for background status verification." },
     ],
     keyDecisions: [
       {
@@ -763,7 +796,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Fault-Tolerant Payment Processing & Ledger",
       nodes: paymentNodes,
-      edges: paymentEdges,
+      edges: bindExamplePorts(paymentNodes, paymentEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "payment-processing", category: "Financial & Commerce" },
     },
@@ -802,11 +835,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "Sensors", to: "MQTT Broker", protocol: "MQTT", description: "Publish telemetry payload over lightweight TCP/TLS connection." },
-      { step: 2, from: "MQTT Broker", to: "Kafka Cluster", protocol: "Kafka Bridge", description: "Forwards binary telemetry batches to partitioned Kafka topics." },
-      { step: 3, from: "Kafka", to: "Apache Flink", protocol: "Stream", description: "Computes tumbling and sliding window averages per device ID." },
-      { step: 4, from: "Flink", to: "Timescale / InfluxDB", protocol: "TSDB", description: "Stores high-resolution raw metrics with 30-day retention." },
-      { step: 5, from: "Flink", to: "ClickHouse", protocol: "Bulk Insert", description: "Appends compressed columnar batches for long-term analytical queries." },
+      { step: 1, edgeIds: ["i1"], from: "Sensors", to: "MQTT Broker", protocol: "MQTT", description: "Publish telemetry payload over lightweight TCP/TLS connection." },
+      { step: 2, edgeIds: ["i2"], from: "MQTT Broker", to: "Kafka Cluster", protocol: "Kafka Bridge", description: "Forwards binary telemetry batches to partitioned Kafka topics." },
+      { step: 3, edgeIds: ["i3"], from: "Kafka", to: "Apache Flink", protocol: "Stream", description: "Computes tumbling and sliding window averages per device ID." },
+      { step: 4, edgeIds: ["i4"], from: "Flink", to: "Timescale / InfluxDB", protocol: "TSDB", description: "Stores high-resolution raw metrics with 30-day retention." },
+      { step: 5, edgeIds: ["i5"], from: "Flink", to: "ClickHouse", protocol: "Bulk Insert", description: "Appends compressed columnar batches for long-term analytical queries." },
     ],
     keyDecisions: [
       {
@@ -825,7 +858,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "IoT Telemetry Streaming Architecture",
       nodes: iotNodes,
-      edges: iotEdges,
+      edges: bindExamplePorts(iotNodes, iotEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "iot-telemetry-pipeline", category: "Data & Analytics" },
     },
@@ -864,11 +897,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "User", to: "Geo-DNS", protocol: "DNS", description: "BGP Anycast routes user packets to nearest physical PoP." },
-      { step: 2, from: "User", to: "Edge CDN", protocol: "HTTPS / TLS 1.3", description: "Terminates TLS handshake with sub-millisecond crypto offload." },
-      { step: 3, from: "Edge CDN", to: "Web Application Firewall", protocol: "Internal", description: "Inspects headers and request body against OWASP rule sets." },
-      { step: 4, from: "WAF", to: "Origin Load Balancer", protocol: "mTLS", description: "Authenticates via mutual TLS client certificates through private cloud interconnect." },
-      { step: 5, from: "Load Balancer", to: "Kubernetes Origin", protocol: "HTTP/2", description: "Dispatches validated traffic to internal backend containers." },
+      { step: 1, edgeIds: ["s1"], from: "User", to: "Geo-DNS", protocol: "DNS", description: "BGP Anycast routes user packets to nearest physical PoP." },
+      { step: 2, edgeIds: ["s2"], from: "User", to: "Edge CDN", protocol: "HTTPS / TLS 1.3", description: "Terminates TLS handshake with sub-millisecond crypto offload." },
+      { step: 3, edgeIds: ["s3"], from: "Edge CDN", to: "Web Application Firewall", protocol: "Internal", description: "Inspects headers and request body against OWASP rule sets." },
+      { step: 4, edgeIds: ["s4"], from: "WAF", to: "Origin Load Balancer", protocol: "mTLS", description: "Authenticates via mutual TLS client certificates through private cloud interconnect." },
+      { step: 5, edgeIds: ["s6"], from: "Load Balancer", to: "Kubernetes Origin", protocol: "HTTP/2", description: "Dispatches validated traffic to internal backend containers." },
     ],
     keyDecisions: [
       {
@@ -887,7 +920,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Global CDN & Zero-Trust Security",
       nodes: cdnSecNodes,
-      edges: cdnSecEdges,
+      edges: bindExamplePorts(cdnSecNodes, cdnSecEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "global-cdn-security", category: "Security & Networking" },
     },
@@ -926,11 +959,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "User", to: "AI Gateway", protocol: "HTTPS", description: "Submits natural language prompt." },
-      { step: 2, from: "AI Gateway", to: "Semantic Cache", protocol: "RESP", description: "Checks if vector cosine similarity > 0.95 with prior cached question. If so, returns cached response instantly." },
-      { step: 3, from: "Orchestrator", to: "Vector DB", protocol: "gRPC", description: "Computes query embedding and retrieves top-5 most relevant document chunks." },
-      { step: 4, from: "Orchestrator", to: "Object Storage", protocol: "S3 API", description: "Pulls original document metadata and text snippets." },
-      { step: 5, from: "Orchestrator", to: "LLM Provider", protocol: "HTTPS", description: "Constructs augmented prompt (System Prompt + Retrieved Chunks + User Question) and streams answer back." },
+      { step: 1, edgeIds: ["r1"], from: "User", to: "AI Gateway", protocol: "HTTPS", description: "Submits natural language prompt." },
+      { step: 2, edgeIds: ["r2"], from: "AI Gateway", to: "Semantic Cache", protocol: "RESP", description: "Checks if vector cosine similarity > 0.95 with prior cached question. If so, returns cached response instantly." },
+      { step: 3, edgeIds: ["r3","r4"], from: "Orchestrator", to: "Vector DB", protocol: "gRPC", description: "Computes query embedding and retrieves top-5 most relevant document chunks." },
+      { step: 4, edgeIds: ["r5"], from: "Orchestrator", to: "Object Storage", protocol: "S3 API", description: "Pulls original document metadata and text snippets." },
+      { step: 5, edgeIds: ["r6","r7"], from: "Orchestrator", to: "LLM Provider", protocol: "HTTPS", description: "Constructs augmented prompt (System Prompt + Retrieved Chunks + User Question) and streams answer back." },
     ],
     keyDecisions: [
       {
@@ -949,16 +982,17 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Enterprise RAG AI Architecture",
       nodes: ragNodes,
-      edges: ragEdges,
+      edges: bindExamplePorts(ragNodes, ragEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "enterprise-rag-ai", category: "AI & Machine Learning" },
     },
     featuredComponentIds: [
+      "agent-orchestrator",
+      "model-serving",
       "vector-database",
-      "redis-cache",
-      "api-gateway",
-      "object-storage",
-      "external-rest-api",
+      "inference-cache",
+      "guardrail-proxy",
+      "vector-embedding-pipeline",
     ],
   },
   {
@@ -988,11 +1022,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "Client", to: "Upload API", protocol: "HTTPS", description: "Requests multipart upload session with file size and chunk count." },
-      { step: 2, from: "Upload API", to: "Client", protocol: "JSON", description: "Returns presigned S3 URLs for each 5MB chunk." },
-      { step: 3, from: "Client", to: "S3 Storage", protocol: "HTTPS PUT", description: "Uploads chunks directly to S3 in parallel." },
-      { step: 4, from: "S3", to: "Event Bus", protocol: "EventBridge", description: "Emits ObjectCreated event when all chunks are assembled." },
-      { step: 5, from: "Event Bus", to: "Virus Scanner & Transcoder", protocol: "Queue", description: "Triggers background scanning and post-processing workers." },
+      { step: 1, edgeIds: ["u1"], from: "Client", to: "Upload API", protocol: "HTTPS", description: "Requests multipart upload session with file size and chunk count." },
+      { step: 2, edgeIds: ["u2"], from: "Upload API", to: "S3 Storage", protocol: "S3 API", description: "Initializes the multipart upload and prepares presigned URLs for the client." },
+      { step: 3, edgeIds: ["u3"], from: "Client", to: "S3 Storage", protocol: "HTTPS PUT", description: "Uploads chunks directly to S3 in parallel." },
+      { step: 4, edgeIds: ["u4"], from: "S3", to: "Event Bus", protocol: "EventBridge", description: "Emits ObjectCreated event when all chunks are assembled." },
+      { step: 5, edgeIds: ["u5","u6"], from: "Event Bus", to: "Virus Scanner & Transcoder", protocol: "Queue", description: "Triggers background scanning and post-processing workers." },
     ],
     keyDecisions: [
       {
@@ -1011,7 +1045,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Resumable Large File Upload Architecture",
       nodes: uploadNodes,
-      edges: uploadEdges,
+      edges: bindExamplePorts(uploadNodes, uploadEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "distributed-file-upload", category: "Storage & File Systems" },
     },
@@ -1050,11 +1084,11 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       ],
     },
     flowSteps: [
-      { step: 1, from: "Ingress", to: "Service Sidecar", protocol: "mTLS", description: "Routes external traffic to target service's Envoy sidecar." },
-      { step: 2, from: "Sidecar", to: "Service Registry", protocol: "xDS API", description: "Queries healthy endpoints from Consul / Kubernetes CoreDNS." },
-      { step: 3, from: "Sidecar", to: "Downstream Service", protocol: "gRPC / mTLS", description: "Forwards RPC with circuit breaker protection and connection pooling." },
-      { step: 4, from: "Sidecar", to: "OpenTelemetry / Jaeger", protocol: "OTLP", description: "Emits span with trace ID, latency, and response code." },
-      { step: 5, from: "Sidecar", to: "Prometheus", protocol: "Metrics", description: "Exposes p50/p95/p99 latency histograms and error rate counters." },
+      { step: 1, edgeIds: ["m2"], from: "Ingress", to: "Order Service", protocol: "mTLS", description: "Forwards the authorized request to the order service." },
+      { step: 2, edgeIds: ["m3"], from: "Order Service", to: "Service Registry", protocol: "xDS API", description: "Queries healthy endpoints from Consul / Kubernetes CoreDNS." },
+      { step: 3, edgeIds: ["m4"], from: "Order Service", to: "Sidecar Circuit Breaker", protocol: "gRPC / mTLS", description: "Sends the outbound call through the sidecar for circuit breaker protection." },
+      { step: 4, edgeIds: ["m6"], from: "Order Service", to: "OpenTelemetry / Jaeger", protocol: "OTLP", description: "Emits span with trace ID, latency, and response code." },
+      { step: 5, edgeIds: ["m7"], from: "Sidecar", to: "Prometheus", protocol: "Metrics", description: "Exposes p50/p95/p99 latency histograms and error rate counters." },
     ],
     keyDecisions: [
       {
@@ -1073,7 +1107,7 @@ export const ARCHITECTURE_EXAMPLES: ArchitectureExample[] = [
       visualizerType: "generic",
       title: "Microservices Service Mesh Architecture",
       nodes: meshNodes,
-      edges: meshEdges,
+      edges: bindExamplePorts(meshNodes, meshEdges),
       viewport: { x: 0, y: 0, zoom: 0.8 },
       metadata: { slug: "microservices-service-mesh", category: "DevOps & Observability" },
     },

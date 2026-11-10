@@ -49,6 +49,10 @@ import {
   ALL_SEARCH_AND_DISCOVERY_DEFINITIONS,
 } from "./definitions/search-and-discovery";
 import {
+  aiAndMachineLearningCategoryDefinition,
+  ALL_AI_AND_MACHINE_LEARNING_DEFINITIONS,
+} from "./definitions/ai-and-machine-learning";
+import {
   dataEngineeringAndAnalyticsCategoryDefinition,
   ALL_DATA_ENGINEERING_AND_ANALYTICS_DEFINITIONS,
 } from "./definitions/data-engineering-and-analytics";
@@ -153,6 +157,12 @@ export class InfrastructureRegistryClass {
     // 11. Register Search & Discovery Category (Cat 11)
     this.registerCategory(searchAndDiscoveryCategoryDefinition);
     for (const def of ALL_SEARCH_AND_DISCOVERY_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 12. Register AI & Machine Learning Infrastructure Category (Cat 12)
+    this.registerCategory(aiAndMachineLearningCategoryDefinition);
+    for (const def of ALL_AI_AND_MACHINE_LEARNING_DEFINITIONS) {
       this.registerComponent(def);
     }
 

@@ -4,7 +4,7 @@ import type {
   TutorialPortInfo,
   TutorialScenario,
 } from "../schemas/tutorial.schema";
-import { getExamplesForComponent } from "./examples-registry";
+import { getAllExamples, getExamplesForComponent } from "./examples-registry";
 import { type BaseNode, type BaseEdge } from "@nxtqr/graph-schema";
 
 // Custom detailed technical enrichment for key infrastructure components
@@ -281,6 +281,86 @@ const COMPONENT_ENRICHMENTS: Record<string, ComponentEnrichment> = {
       },
     ],
   },
+
+  "model-serving": {
+    classification: "Inference Acceleration & Serving Runtime",
+    tagline: "Low-latency foundation model inference runtime leveraging continuous batching, PagedAttention, and tensor parallelism across GPU clusters.",
+    problemSolved:
+      "Standard naive model execution runs sequential inference, wasting over 80% of GPU compute and VRAM due to fixed batch padding and fragmentation of Key-Value (KV) cache tensors. Model serving runtimes partition and page the KV-cache, continuously batching incoming requests at each iteration step to maximize GPU utilization and tokens-per-second throughput.",
+    howItWorksSteps: [
+      { step: 1, title: "Tokenization & Request Intake", description: "Converts client prompt strings into token integer arrays, applying ChatML / Alpaca system prompt templates." },
+      { step: 2, title: "PagedAttention Memory Allocation", description: "Dynamically allocates non-contiguous virtual memory blocks for attention key/values, eliminating memory fragmentation." },
+      { step: 3, title: "Continuous Iteration Batching", description: "Injects incoming requests into the current decode step without waiting for older generation sequences to complete." },
+      { step: 4, title: "Parallel Tensor Forward Pass", description: "Executes distributed matrix multiplications across GPU tensor cores via NVLink high-speed interconnects.", latency: "15-30ms" },
+      { step: 5, title: "Token Streaming & Detokenization", description: "Streams generated output tokens progressively back to the client via Server-Sent Events (SSE).", latency: "10-20ms per token" },
+    ],
+    whenToUse: [
+      "When hosting self-hosted open-weights LLMs (Llama, Mistral, DeepSeek) at production scale.",
+      "When requiring strict sub-50ms Time-to-First-Token (TTFT) and high token generation throughput.",
+      "When deploying multi-GPU tensor parallelism for models whose parameters exceed a single GPU's VRAM.",
+    ],
+    whenToAvoid: [
+      "When third-party managed serverless model APIs (OpenAI, Anthropic, Gemini) satisfy data privacy and latency requirements at lower operational complexity.",
+      "For lightweight statistical models (e.g. Scikit-learn, XGBoost) where lightweight CPU microservices suffice.",
+    ],
+    tradeoffs: [
+      {
+        dimension: "Precision vs Throughput",
+        choiceA: "bfloat16 Full Precision",
+        choiceB: "FP8 / INT4 Quantized (AWQ/GPTQ)",
+        analysis: "BF16 preserves full mathematical precision for nuanced reasoning tasks but requires 2 bytes per parameter (140GB VRAM for a 70B model). FP8/INT4 halves or quarters VRAM consumption and doubles throughput with negligible perplexity degradation.",
+        recommendedContext: "Use BF16 for high-stakes clinical/financial reasoning; use FP8/AWQ for general conversational and customer-facing RAG workloads.",
+      },
+    ],
+    failureModes: [
+      {
+        name: "KV-Cache OOM Under Thundering Herd Traffic",
+        trigger: "Concurrent long-context prompt submissions exhausting available GPU VRAM allocation.",
+        impact: "Request rejection or degraded Time-to-First-Token due to preemption.",
+        mitigation: "Configure max-num-seqs bounds, enable prompt caching, and auto-scale serving replicas across GPU pools.",
+      },
+    ],
+  },
+
+  "agent-orchestrator": {
+    classification: "Autonomous Cognition & Tool Orchestration",
+    tagline: "Cognitive planning engine coordinating iterative reasoning loops, dynamic tool calling, persistent state checkpoints, and human approval gates.",
+    problemSolved:
+      "Standard single-shot LLM prompts fail on multi-step engineering workflows requiring database queries, external API execution, and iterative error recovery. Agent Orchestrators govern structured execution graphs (e.g., LangGraph, ReAct), managing state checkpoints, validating tool arguments against schemas, handling execution errors gracefully, and pausing for human approval when invoking high-risk actions.",
+    howItWorksSteps: [
+      { step: 1, title: "Goal Deconstruction & Planning", description: "Deconstructs the user goal into a directed acyclic plan with intermediate sub-goals and tool requirements." },
+      { step: 2, title: "Tool Selection & Argument Generation", description: "Prompts the foundation model with tool JSON schemas, extracting structured tool call signatures." },
+      { step: 3, title: "Sandboxed Tool Execution", description: "Dispatches RPC or API calls to external services, databases, or terminal environments within strict execution sandboxes." },
+      { step: 4, title: "Observation Feedback & Replanning", description: "Injects tool outputs back into the agent context scratchpad to evaluate progress and adapt next steps." },
+      { step: 5, title: "Checkpoint Persistence & Delivery", description: "Persists conversational thread state to PostgreSQL and streams final synthesized artifacts to the user." },
+    ],
+    whenToUse: [
+      "Building autonomous coding, data analysis, or customer support agents that interact with external APIs.",
+      "Workflows requiring dynamic branching, retry loops, and schema-validated tool calling.",
+      "Enterprise operations where critical actions (e.g. payments, deletions) require human-in-the-loop review.",
+    ],
+    whenToAvoid: [
+      "Simple single-turn question-answering or summarization tasks that require no external tools.",
+      "Hard real-time systems where multi-turn LLM reasoning latency (>2 seconds) is unacceptable.",
+    ],
+    tradeoffs: [
+      {
+        dimension: "Autonomous Execution vs Human Governance",
+        choiceA: "Full Autonomous ReAct Loop",
+        choiceB: "Human-in-the-Loop Interrupt Gates",
+        analysis: "Full autonomy minimizes human friction and executes high-speed workflows, but risks unintended side-effects on destructive operations. Interrupt gates guarantee compliance and safety at the expense of requiring synchronous human review.",
+        recommendedContext: "Use full autonomy for read-only analytical queries and drafting; require human review before write operations, financial transactions, or code merges.",
+      },
+    ],
+    failureModes: [
+      {
+        name: "Infinite ReAct Loop / Tool Thrashing",
+        trigger: "Agent repeatedly calling failing tools with identical arguments without making forward progress.",
+        impact: "Token quota depletion, latency timeouts, and user frustration.",
+        mitigation: "Enforce strict maxExecutionSteps bounds, error reflection prompts, and circuit breakers on consecutive tool failures.",
+      },
+    ],
+  },
 };
 
 // Generic systematic generator for any of the 223 components
@@ -366,145 +446,78 @@ export class TutorialRegistryClass {
         compatibleTypes: p.dataType ? [p.dataType] : ["Any"],
       }));
 
-      // Synthesize 3 interactive preview scenarios
-      const previewNodes: Record<TutorialScenario, BaseNode[]> = {
-        isolated: [
-          infrastructureRegistry.createInfrastructureNode(comp.id, {
-            id: `isolated_${comp.id}`,
-            label: comp.display.name,
-            position: { x: 280, y: 140 },
-          }),
-        ],
-        connected: [
-          {
-            id: `caller_${comp.id}`,
-            type: "web-browser",
-            label: "Calling Client",
-            position: { x: 50, y: 140 },
-            dimensions: { width: 180, height: 70 },
-            status: "idle",
-            data: { name: "Client Ingress" },
-            ports: [{ id: "out", name: "Out", type: "output", dataType: "Any" }],
-          },
-          infrastructureRegistry.createInfrastructureNode(comp.id, {
-            id: `target_${comp.id}`,
-            label: comp.display.name,
-            position: { x: 320, y: 140 },
-          }),
-          {
-            id: `dep_${comp.id}`,
-            type: "relational-database",
-            label: "Downstream Target",
-            position: { x: 620, y: 140 },
-            dimensions: { width: 180, height: 70 },
-            status: "idle",
-            data: { name: "Downstream Target" },
-            ports: [{ id: "in", name: "In", type: "input", dataType: "Any" }],
-          },
-        ],
-        architecture: [
-          {
-            id: `arch_client_${comp.id}`,
-            type: "web-browser",
-            label: "Web Clients",
-            position: { x: 40, y: 140 },
-            dimensions: { width: 160, height: 70 },
-            status: "idle",
-            data: { name: "Web Clients" },
-            ports: [{ id: "out", name: "Out", type: "output", dataType: "Any" }],
-          },
-          infrastructureRegistry.createInfrastructureNode(comp.id, {
-            id: `arch_core_${comp.id}`,
-            label: comp.display.name,
-            position: { x: 280, y: 140 },
-          }),
-          {
-            id: `arch_cache_${comp.id}`,
-            type: "redis-cache",
-            label: "Fast Cache",
-            position: { x: 540, y: 70 },
-            dimensions: { width: 170, height: 70 },
-            status: "idle",
-            data: { name: "Fast Cache" },
-            ports: [
-              { id: "in", name: "In", type: "input", dataType: "Any" },
-              { id: "out", name: "Out", type: "output", dataType: "Any" },
-            ],
-          },
-          {
-            id: `arch_store_${comp.id}`,
-            type: "relational-database",
-            label: "Primary Database",
-            position: { x: 540, y: 220 },
-            dimensions: { width: 170, height: 70 },
-            status: "idle",
-            data: { name: "Primary Database" },
-            ports: [{ id: "in", name: "In", type: "input", dataType: "Any" }],
-          },
-        ],
-      };
+      const isolated = infrastructureRegistry.createInfrastructureNode(comp.id, {
+        id: `preview_${comp.id}`,
+        position: { x: 320, y: 120 },
+      });
+      const connectedNodes = [isolated];
+      const connectedEdges: BaseEdge[] = [];
+      const input = comp.ports.find((port) => port.type !== "output");
+      const output = comp.ports.find((port) => port.type !== "input");
 
+      if (input) {
+        const id = `upstream_${comp.id}`;
+        connectedNodes.unshift({
+          id,
+          type: "input",
+          label: "Upstream",
+          position: { x: 0, y: 120 },
+          ports: [{ id: "out", name: input.name, type: "output", dataType: input.dataType }],
+          data: {},
+        });
+        connectedEdges.push({
+          id: `${id}_link`,
+          source: id,
+          target: isolated.id,
+          sourceHandle: "out",
+          sourcePort: "out",
+          targetHandle: input.id,
+          targetPort: input.id,
+          type: "bezier",
+          label: input.name,
+          data: {},
+        });
+      }
+
+      if (output) {
+        const id = `downstream_${comp.id}`;
+        connectedNodes.push({
+          id,
+          type: "output",
+          label: "Downstream",
+          position: { x: 640, y: 120 },
+          ports: [{ id: "in", name: output.name, type: "input", dataType: output.dataType }],
+          data: {},
+        });
+        connectedEdges.push({
+          id: `${id}_link`,
+          source: isolated.id,
+          target: id,
+          sourceHandle: output.id,
+          sourcePort: output.id,
+          targetHandle: "in",
+          targetPort: "in",
+          type: "bezier",
+          label: output.name,
+          data: {},
+        });
+      }
+
+      const examples = getExamplesForComponent(comp.id);
+      const architecture = (examples.find((example) =>
+        example.graphDocument.nodes.some((node) => node.type === comp.id),
+      ) ?? getAllExamples().find((example) =>
+        example.graphDocument.nodes.some((node) => node.type === comp.id),
+      ))?.graphDocument;
+      const previewNodes: Record<TutorialScenario, BaseNode[]> = {
+        isolated: [isolated],
+        connected: connectedEdges.length ? connectedNodes : [],
+        architecture: architecture?.nodes ?? [],
+      };
       const previewEdges: Record<TutorialScenario, BaseEdge[]> = {
         isolated: [],
-        connected: [
-          {
-            id: `edge_c1_${comp.id}`,
-            source: `caller_${comp.id}`,
-            target: `target_${comp.id}`,
-            sourceHandle: "out",
-            targetHandle: comp.ports.find((p) => p.type === "input" || p.type === "bidirectional")?.id || "in",
-            type: "bezier",
-            status: "idle",
-            label: "Request Ingress",
-            data: {},
-          },
-          {
-            id: `edge_c2_${comp.id}`,
-            source: `target_${comp.id}`,
-            target: `dep_${comp.id}`,
-            sourceHandle: comp.ports.find((p) => p.type === "output" || p.type === "bidirectional")?.id || "out",
-            targetHandle: "in",
-            type: "bezier",
-            status: "idle",
-            label: "Egress Traffic",
-            data: {},
-          },
-        ],
-        architecture: [
-          {
-            id: `edge_a1_${comp.id}`,
-            source: `arch_client_${comp.id}`,
-            target: `arch_core_${comp.id}`,
-            sourceHandle: "out",
-            targetHandle: comp.ports.find((p) => p.type === "input" || p.type === "bidirectional")?.id || "in",
-            type: "bezier",
-            status: "idle",
-            label: "HTTPS Ingress",
-            data: {},
-          },
-          {
-            id: `edge_a2_${comp.id}`,
-            source: `arch_core_${comp.id}`,
-            target: `arch_cache_${comp.id}`,
-            sourceHandle: comp.ports.find((p) => p.type === "output" || p.type === "bidirectional")?.id || "out",
-            targetHandle: "in",
-            type: "bezier",
-            status: "idle",
-            label: "Check Cache",
-            data: {},
-          },
-          {
-            id: `edge_a3_${comp.id}`,
-            source: `arch_core_${comp.id}`,
-            target: `arch_store_${comp.id}`,
-            sourceHandle: comp.ports.find((p) => p.type === "output" || p.type === "bidirectional")?.id || "out",
-            targetHandle: "in",
-            type: "bezier",
-            status: "idle",
-            label: "Store / Miss",
-            data: {},
-          },
-        ],
+        connected: connectedEdges,
+        architecture: architecture?.edges ?? [],
       };
 
       // Find compatible peers in the same or adjacent categories
@@ -513,8 +526,6 @@ export class TutorialRegistryClass {
         .filter((c) => c.id !== comp.id)
         .slice(0, 4)
         .map((c) => c.id);
-
-      const examples = getExamplesForComponent(comp.id);
 
       const tutorial: ComponentTutorial = {
         id: comp.id,

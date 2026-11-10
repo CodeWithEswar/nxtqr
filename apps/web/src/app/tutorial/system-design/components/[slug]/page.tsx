@@ -6,12 +6,11 @@ import {
   tutorialRegistry,
   ComponentPreview,
   PropertiesExplorer,
-  OpenInVisualizerButton,
 } from "@/features/system-design-tutorials";
 import { getExamplesForComponent } from "@/features/system-design-tutorials";
-import { getInfrastructureIcon, CpuIcon, CheckCircleIcon, CloseIcon, ChevronRightIcon, ActivityIcon } from "@nxtqr/icons";
+import { CheckCircleIcon, CloseIcon, ChevronRightIcon, ActivityIcon } from "@nxtqr/icons";
 import { Badge, Button } from "@nxtqr/ui";
-import { CURRENT_GRAPH_SCHEMA_VERSION, type GraphDocument } from "@nxtqr/graph-schema";
+import { TutorialComponentIcon } from "@/features/system-design-tutorials/components/tutorial-component-icon";
 
 interface ComponentPageProps {
   params: Promise<{ slug: string }>;
@@ -32,7 +31,6 @@ export default async function ComponentDetailPage({ params }: ComponentPageProps
     notFound();
   }
 
-  const IconComponent = getInfrastructureIcon(comp.iconSlug) || CpuIcon;
   const examples = getExamplesForComponent(comp.id);
 
   // Table of Contents navigation items
@@ -47,17 +45,6 @@ export default async function ComponentDetailPage({ params }: ComponentPageProps
     ...(examples.length > 0 ? [{ id: "examples", label: "Architecture Blueprints" }] : []),
   ];
 
-  const isolatedDoc: GraphDocument = {
-    id: `doc_component_${comp.id}`,
-    schemaVersion: CURRENT_GRAPH_SCHEMA_VERSION,
-    visualizerType: "generic",
-    title: `${comp.name} Isolated Template`,
-    nodes: comp.previewNodes.connected,
-    edges: comp.previewEdges.connected,
-    viewport: { x: 0, y: 0, zoom: 1.0 },
-    metadata: { componentId: comp.id },
-  };
-
   return (
     <TutorialShell
       breadcrumbs={[
@@ -69,51 +56,20 @@ export default async function ComponentDetailPage({ params }: ComponentPageProps
       relatedComponentIds={comp.relatedComponentIds}
     >
       <div className="space-y-12 pb-20">
-        {/* Component Header */}
-        <div className="space-y-4 border-b border-border-default pb-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-md bg-surface-02 border border-border-default flex items-center justify-center text-text-secondary shrink-0 shadow-level-1">
-                <IconComponent className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-sans font-bold text-foreground">
-                    {comp.name}
-                  </h1>
-                  <Badge variant="outline" className="font-mono text-[10px] px-1.5 border-border-default text-text-muted">
-                    {comp.shortName}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <Link
-                    href={`/tutorial/system-design/categories/${comp.categoryId}`}
-                    className="font-mono text-xs text-text-muted hover:text-text-secondary hover:underline"
-                  >
-                    {comp.categoryName}
-                  </Link>
-                  <span className="text-text-disabled">•</span>
-                  <span className="font-sans text-xs text-text-disabled">
-                    {comp.classification}
-                  </span>
-                </div>
-              </div>
+        <header className="space-y-3 border-b border-border-default pb-5 sm:pb-6">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="grid size-11 shrink-0 place-items-center rounded-md border border-border-default bg-surface-02 shadow-level-1 sm:size-12">
+              <TutorialComponentIcon slug={comp.iconSlug} size={28} />
             </div>
-
-            <div className="flex items-center gap-2">
-              <OpenInVisualizerButton
-                document={isolatedDoc}
-                templateSlug={comp.id}
-                size="sm"
-                label="Open in Visualizer"
-              />
+            <div className="min-w-0">
+              <Link href={`/tutorial/system-design/categories/${comp.categoryId}`} className="text-xs text-text-muted hover:text-foreground hover:underline">
+                {comp.categoryName}
+              </Link>
+              <h1 className="mt-0.5 break-words text-xl font-semibold tracking-tight sm:text-2xl">{comp.name}</h1>
             </div>
           </div>
-
-          <p className="text-sm font-sans text-text-secondary leading-relaxed max-w-3xl pt-2">
-            {comp.tagline}
-          </p>
-        </div>
+          <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">{comp.tagline}</p>
+        </header>
 
         {/* 1. Overview & Problem Solved */}
         <section id="overview" className="space-y-4">
@@ -143,10 +99,10 @@ export default async function ComponentDetailPage({ params }: ComponentPageProps
         <section id="live-preview" className="space-y-4">
           <div className="space-y-1">
             <h2 className="text-xl font-sans font-bold text-foreground">
-              Interactive Topology Preview
+              Interactive preview
             </h2>
             <p className="text-xs text-text-muted font-sans">
-              Switch between isolated card inspection, connected ingress/egress, and full architectural context.
+              Inspect the component and trace its connections. Available scenarios depend on its ports and published examples.
             </p>
           </div>
 

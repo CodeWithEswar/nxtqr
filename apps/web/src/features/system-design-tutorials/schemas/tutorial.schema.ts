@@ -94,6 +94,7 @@ export const ArchitectureFlowStepSchema = z.object({
   from: z.string(),
   to: z.string(),
   protocol: z.string(),
+  edgeIds: z.array(z.string()).min(1),
   description: z.string(),
 });
 export type ArchitectureFlowStep = z.infer<typeof ArchitectureFlowStepSchema>;
