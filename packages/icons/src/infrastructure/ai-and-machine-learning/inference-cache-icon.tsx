@@ -64,3 +64,4 @@ export const InferenceCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

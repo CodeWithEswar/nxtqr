@@ -74,3 +74,4 @@ export const FineTuningJobIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

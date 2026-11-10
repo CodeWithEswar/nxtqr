@@ -14,6 +14,7 @@ import { cn } from "@nxtqr/utils";
 import type { TutorialScenario } from "../schemas/tutorial.schema";
 import { OpenInVisualizerButton } from "./open-in-visualizer-button";
 import type { TutorialLayout } from "./tutorial-canvas";
+import { orderTutorialFlow, TUTORIAL_FLOW_HOP_MS } from "../lib/tutorial-flow";
 
 const TutorialCanvas = dynamic(
   () => import("./tutorial-canvas").then((module) => module.TutorialCanvas),
@@ -65,9 +66,18 @@ export function ComponentPreview({
   const nodes = previewNodes[activeScenario];
   const edges = previewEdges[activeScenario];
   const activeEdgeIds = React.useMemo(
-    () => (showFlow ? edges.map((edge) => edge.id) : []),
+    () => (showFlow ? orderTutorialFlow(edges) : []),
     [edges, showFlow],
   );
+
+  React.useEffect(() => {
+    if (activeEdgeIds.length === 0) return;
+    const timer = window.setTimeout(
+      () => setShowFlow(false),
+      activeEdgeIds.length * TUTORIAL_FLOW_HOP_MS + 200,
+    );
+    return () => window.clearTimeout(timer);
+  }, [activeEdgeIds]);
 
   const document: GraphDocument = {
     id: `doc_preview_${componentId}_${activeScenario}`,
@@ -137,7 +147,13 @@ export function ComponentPreview({
   );
 
   return (
-    <Dialog open={expanded} onOpenChange={setExpanded}>
+    <Dialog
+      open={expanded}
+      onOpenChange={(open) => {
+        setShowFlow(false);
+        setExpanded(open);
+      }}
+    >
       <div
         className={cn(
           "overflow-hidden rounded-md border border-border-default bg-surface-01",

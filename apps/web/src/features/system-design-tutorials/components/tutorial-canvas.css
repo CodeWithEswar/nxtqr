@@ -1,20 +1,43 @@
+.tutorial-canvas {
+  --tutorial-flow-route-stroke: #858585;
+}
+
 .tutorial-canvas .tutorial-flow-trace {
   fill: none;
-  stroke: #d4d4d4;
-  stroke-width: 2;
+  stroke: #e5e5e5;
+  stroke-width: 2.5;
   stroke-linecap: round;
-  stroke-dasharray: 3 17;
+  stroke-dasharray: 6 120;
+  opacity: 0;
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  .tutorial-canvas {
+    --tutorial-flow-route-stroke: #555555;
+  }
+
   .tutorial-canvas .tutorial-flow-trace {
-    animation: tutorial-flow-travel 850ms linear 3;
+    animation-name: tutorial-flow-travel;
+    animation-duration: var(--tutorial-flow-hop-duration);
+    animation-timing-function: linear;
+    animation-fill-mode: both;
   }
 }
 
 @keyframes tutorial-flow-travel {
-  to {
-    stroke-dashoffset: -20;
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 6;
+  }
+
+  12%,
+  88% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -100;
   }
 }

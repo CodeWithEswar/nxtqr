@@ -81,3 +81,4 @@ export const ModelServingIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

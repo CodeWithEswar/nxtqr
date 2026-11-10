@@ -73,3 +73,4 @@ export const GpuClusterIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

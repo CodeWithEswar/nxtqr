@@ -2,7 +2,17 @@
 
 import * as React from "react";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
-import { Button, Input, Switch, Badge } from "@nxtqr/ui";
+import {
+  Button,
+  Input,
+  Switch,
+  Badge,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@nxtqr/ui";
 import { CopyIcon, CheckIcon, SlidersIcon } from "@nxtqr/icons";
 
 export interface PropertiesExplorerProps {
@@ -136,17 +146,21 @@ export function PropertiesExplorer({ componentId, className = "" }: PropertiesEx
                           />
                         </div>
                       ) : field.type === "select" && field.options ? (
-                        <select
-                          value={String(val)}
-                          onChange={(e) => handleFieldChange(field.path, e.target.value)}
-                          className="h-7 px-2 bg-surface-03 border border-border-default rounded font-mono text-xs text-foreground focus:outline-none focus:border-border-hover"
+                        <Select
+                          value={val !== undefined && val !== null ? String(val) : undefined}
+                          onValueChange={(selectedVal) => handleFieldChange(field.path, selectedVal)}
                         >
-                          {field.options.map((opt) => (
-                            <option key={opt.value} value={opt.value} className="bg-surface-02">
-                              {opt.label} ({opt.value})
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger className="h-7 w-full px-2.5 font-mono text-xs bg-surface-03 border-border-default hover:border-border-hover text-foreground">
+                            <SelectValue placeholder={`Select ${field.label}`} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2">
+                            {field.options.map((opt) => (
+                              <SelectItem key={String(opt.value)} value={String(opt.value)}>
+                                {opt.label} ({opt.value})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       ) : field.type === "number" ? (
                         <Input
                           type="number"

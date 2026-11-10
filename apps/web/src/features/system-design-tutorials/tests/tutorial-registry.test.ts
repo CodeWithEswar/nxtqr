@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { tutorialRegistry } from "../lib/tutorial-registry";
+import { orderTutorialFlow } from "../lib/tutorial-flow";
 import { getAllExamples, getExampleBySlug, getExamplesForComponent } from "../lib/examples-registry";
 import { getAllConcepts, getConceptBySlug } from "../lib/concepts-registry";
 import { searchSystemDesign } from "../lib/search-index";
@@ -18,6 +19,19 @@ function expectBoundEdges(nodes: BaseNode[], edges: BaseEdge[]) {
 }
 
 describe("System Design Tutorial Registry", () => {
+  it("traces directed hops in order and visits a loop only once", () => {
+    expect(
+      orderTutorialFlow([
+        { id: "second", source: "gateway", target: "service" },
+        { id: "first", source: "client", target: "gateway" },
+        { id: "return", source: "service", target: "gateway" },
+        { id: "branch", source: "gateway", target: "queue" },
+        { id: "loop-a", source: "worker", target: "store" },
+        { id: "loop-b", source: "store", target: "worker" },
+      ]),
+    ).toEqual(["first", "second", "return", "branch", "loop-a", "loop-b"]);
+  });
+
   it("indexes all infrastructure components from the node registry", () => {
     const tutorials = tutorialRegistry.getAllComponentTutorials();
     const registeredCount = infrastructureRegistry.listComponents().length;

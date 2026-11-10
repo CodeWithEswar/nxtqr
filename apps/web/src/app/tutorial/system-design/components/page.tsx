@@ -7,7 +7,16 @@ import Link from "next/link";
 import { TutorialShell, tutorialRegistry } from "@/features/system-design-tutorials";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
 import { CpuIcon, SearchIcon, CloseIcon } from "@nxtqr/icons";
-import { Input, Badge, Button } from "@nxtqr/ui";
+import {
+  Input,
+  Badge,
+  Button,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@nxtqr/ui";
 
 export default function ComponentsDirectoryPage() {
   const allTutorials = React.useMemo(() => tutorialRegistry.getAllComponentTutorials(), []);
@@ -81,18 +90,22 @@ export default function ComponentsDirectoryPage() {
               )}
             </div>
 
-            <select
+            <Select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="h-8 px-2.5 rounded-md bg-surface-02 border border-border-default text-xs font-mono text-foreground focus:outline-none focus:border-border-hover shrink-0"
+              onValueChange={(val) => setSelectedCategory(val)}
             >
-              <option value="all">All Categories (20)</option>
-              {allCategories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="h-8 w-56 px-2.5 rounded-md bg-surface-02 border border-border-default text-xs font-mono text-foreground hover:border-border-hover shrink-0">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2">
+                <SelectItem value="all">All Categories ({allCategories.length})</SelectItem>
+                {allCategories.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="font-mono text-xs text-text-muted shrink-0">

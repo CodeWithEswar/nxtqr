@@ -87,3 +87,4 @@ export const AgentOrchestratorIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

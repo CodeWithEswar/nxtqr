@@ -61,3 +61,4 @@ export const EvaluationGatewayIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

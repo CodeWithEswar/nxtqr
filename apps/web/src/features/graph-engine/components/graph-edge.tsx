@@ -26,6 +26,8 @@ export const GraphEdge = React.memo(function GraphEdge({
 }: EdgeProps) {
   const edgeType = data?.edgeType ?? "bezier";
   const flowActive = data?.flowActive === true;
+  const pulseDelay = typeof data?.flowPulseDelay === "number" ? data.flowPulseDelay : undefined;
+  const traceKey = typeof data?.traceKey === "string" ? data.traceKey : undefined;
   const tutorialWire = data?.tutorialWire === true;
   const routeTop = typeof data?.routeTop === "number" ? data.routeTop : undefined;
 
@@ -85,13 +87,26 @@ export const GraphEdge = React.memo(function GraphEdge({
         markerEnd={markerEnd}
         style={{
           ...style,
-          stroke: flowActive ? "#858585" : selected ? "#737373" : (style.stroke ?? "#333333"),
-          strokeWidth: flowActive || selected ? 2 : (style.strokeWidth ?? 1.5),
+          stroke: flowActive
+            ? "var(--tutorial-flow-route-stroke, #858585)"
+            : selected
+              ? "#737373"
+              : (style.stroke ?? "#333333"),
+          strokeWidth: selected ? 2 : (style.strokeWidth ?? 1.5),
           transition: "stroke 0.15s ease, stroke-width 0.15s ease",
         }}
       />
 
-      {flowActive && <path aria-hidden={true} d={edgePath} className="tutorial-flow-trace" />}
+      {pulseDelay !== undefined && (
+        <path
+          key={traceKey}
+          aria-hidden={true}
+          d={edgePath}
+          pathLength={100}
+          className="tutorial-flow-trace"
+          style={{ animationDelay: `${pulseDelay}ms` }}
+        />
+      )}
 
       {/* Optional Directed Edge Label */}
       {label && (

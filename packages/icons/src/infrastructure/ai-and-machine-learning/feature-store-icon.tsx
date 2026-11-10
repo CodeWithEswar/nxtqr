@@ -78,3 +78,4 @@ export const FeatureStoreIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

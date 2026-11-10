@@ -93,3 +93,4 @@ export const VectorEmbeddingPipelineIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

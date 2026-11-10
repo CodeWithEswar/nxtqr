@@ -72,3 +72,4 @@ export const ModelRegistryIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

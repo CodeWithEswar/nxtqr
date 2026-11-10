@@ -6,6 +6,7 @@ import { Button } from "@nxtqr/ui";
 import { ChevronRightIcon } from "@nxtqr/icons";
 import { cn } from "@nxtqr/utils";
 import type { ArchitectureExample } from "../schemas/tutorial.schema";
+import { TUTORIAL_FLOW_HOP_MS } from "../lib/tutorial-flow";
 
 const TutorialCanvas = dynamic(
   () => import("./tutorial-canvas").then((module) => module.TutorialCanvas),
@@ -30,17 +31,21 @@ export interface ArchitectureDiagramViewProps {
 export function ArchitectureDiagramView({ example, className }: ArchitectureDiagramViewProps) {
   const [activeStep, setActiveStep] = React.useState<number | null>(null);
   const [playing, setPlaying] = React.useState(false);
+  const [traceRun, setTraceRun] = React.useState(0);
   const { nodes, edges } = example.graphDocument;
   const { flowSteps } = example;
 
   React.useEffect(() => {
     if (!playing || activeStep === null) return;
-    const timer = window.setTimeout(() => {
-      if (activeStep + 1 < flowSteps.length) setActiveStep(activeStep + 1);
-      else setPlaying(false);
-    }, 1450);
+    const timer = window.setTimeout(
+      () => {
+        if (activeStep + 1 < flowSteps.length) setActiveStep(activeStep + 1);
+        else setPlaying(false);
+      },
+      Math.max(1450, flowSteps[activeStep].edgeIds.length * TUTORIAL_FLOW_HOP_MS + 200),
+    );
     return () => window.clearTimeout(timer);
-  }, [activeStep, flowSteps.length, playing]);
+  }, [activeStep, flowSteps, playing]);
 
   return (
     <div className={cn("min-w-0 space-y-4", className)}>
@@ -73,6 +78,7 @@ export function ArchitectureDiagramView({ example, className }: ArchitectureDiag
                 onClick={() => {
                   if (playing) setPlaying(false);
                   else {
+                    setTraceRun((run) => run + 1);
                     setActiveStep(0);
                     setPlaying(true);
                   }
@@ -88,6 +94,7 @@ export function ArchitectureDiagramView({ example, className }: ArchitectureDiag
           nodes={nodes}
           edges={edges}
           activeEdgeIds={activeStep === null ? undefined : flowSteps[activeStep]?.edgeIds}
+          traceKey={`${traceRun}:${activeStep}`}
         />
       </div>
 

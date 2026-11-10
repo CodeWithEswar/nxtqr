@@ -62,3 +62,4 @@ export const GuardrailProxyIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

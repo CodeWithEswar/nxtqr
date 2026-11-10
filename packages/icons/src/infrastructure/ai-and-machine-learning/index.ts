@@ -36,3 +36,4 @@ export const aiAndMachineLearningIconRegistry: Record<string, InfrastructureIcon
   "guardrail-proxy": GuardrailProxyIcon,
   "agent-orchestrator": AgentOrchestratorIcon,
 };
+

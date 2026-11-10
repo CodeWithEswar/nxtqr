@@ -19,10 +19,14 @@ import { Button } from "@nxtqr/ui";
 import { RefreshIcon } from "@nxtqr/icons";
 import type { GraphNodeData } from "@/features/graph-engine/components/graph-node";
 import { GraphCanvasSurface } from "@/features/graph-engine/components/graph-canvas-surface";
+import { TUTORIAL_FLOW_HOP_MS } from "../lib/tutorial-flow";
 import "./tutorial-canvas.css";
 
 const fitOptions = { padding: 0.15, minZoom: 0.12, maxZoom: 1.1 };
 const emptyIds: readonly string[] = [];
+const pulseStyle = {
+  "--tutorial-flow-hop-duration": `${TUTORIAL_FLOW_HOP_MS}ms`,
+} as React.CSSProperties;
 
 export type TutorialLayout = Readonly<Record<string, XYPosition>>;
 const emptyLayout: TutorialLayout = {};
@@ -32,6 +36,7 @@ interface TutorialCanvasProps {
   nodes: BaseNode[];
   edges: BaseEdge[];
   activeEdgeIds?: readonly string[];
+  traceKey?: string;
   highlightedType?: string;
   layout?: TutorialLayout;
   setLayout?: React.Dispatch<React.SetStateAction<TutorialLayout>>;
@@ -57,6 +62,7 @@ export function TutorialCanvas({
   nodes,
   edges,
   activeEdgeIds = emptyIds,
+  traceKey,
   highlightedType,
   layout: controlledLayout,
   setLayout: setControlledLayout,
@@ -65,7 +71,10 @@ export function TutorialCanvas({
   const [localLayout, setLocalLayout] = React.useState<TutorialLayout>(emptyLayout);
   const layout = controlledLayout ?? localLayout;
   const setLayout = setControlledLayout ?? setLocalLayout;
-  const active = React.useMemo(() => new Set(activeEdgeIds), [activeEdgeIds]);
+  const active = React.useMemo(
+    () => new Map(activeEdgeIds.map((id, index) => [id, index])),
+    [activeEdgeIds],
+  );
   const focusIds = React.useMemo(
     () => [
       ...new Set(
@@ -131,7 +140,8 @@ export function TutorialCanvas({
   const flowEdges = React.useMemo<Edge[]>(() => {
     const positions = new Map(flowNodes.map((node) => [node.id, node.position]));
     return edges.map((edge) => {
-      const flowActive = active.has(edge.id);
+      const hop = active.get(edge.id);
+      const flowActive = hop !== undefined;
       const edgeType = edge.type === "straight" ? "straight" : "smoothstep";
       const source = positions.get(edge.source);
       const target = positions.get(edge.target);
@@ -145,17 +155,24 @@ export function TutorialCanvas({
         targetHandle: edge.targetHandle ?? edge.targetPort,
         label: active.size === 0 || flowActive ? edge.label : undefined,
         selectable: false,
-        data: { edgeType, flowActive, tutorialWire: true, routeTop },
+        data: {
+          edgeType,
+          flowActive,
+          tutorialWire: true,
+          routeTop,
+          flowPulseDelay: hop === undefined ? undefined : hop * TUTORIAL_FLOW_HOP_MS,
+          traceKey,
+        },
         markerEnd: {
           type: MarkerType.ArrowClosed,
-          color: flowActive ? "#858585" : "#555555",
+          color: "#555555",
           width: 12,
           height: 12,
         },
         style: { stroke: "#555555" },
       };
     });
-  }, [active, edges, flowNodes]);
+  }, [active, edges, flowNodes, traceKey]);
 
   const handleNodesChange = React.useCallback(
     (changes: NodeChange<Node<GraphNodeData>>[]) => {
@@ -186,6 +203,7 @@ export function TutorialCanvas({
     <div
       role="region"
       aria-label={label}
+      style={pulseStyle}
       className={cn(
         "tutorial-canvas relative h-[clamp(17rem,46vh,30rem)] min-w-0 bg-black",
         className,
