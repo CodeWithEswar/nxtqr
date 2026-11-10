@@ -402,5 +402,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-storage",
     },
   },
+  {
+    id: "infra_category_09_security",
+    category: "frontend",
+    title: "Infrastructure Components: Category 09 Security & Identity",
+    description: "Validates 14 colored SVG icons, typed registry definitions, Zod schemas, trust boundaries, policy-aware connection semantics, and React Flow node integration.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "security-and-identity",
+      componentCount: 14,
+      iconsVerified: 14,
+      inspectionRoute: "/verify/infrastructure-security",
+    },
+  },
 ];
 

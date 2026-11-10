@@ -35,7 +35,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type SecuritySubtype = "all" | "auth-idp" | "tokens-keys" | "protection" | "crypto-pki";
 type StorageSubtype = "all" | "object-blob" | "block-file" | "distributed" | "backup-archive" | "gateways-repos";
 type MessagingSubtype = "all" | "queues" | "brokers" | "streaming-pubsub" | "processors-consumers" | "reliability-stores";
 type CachingSubtype = "all" | "in-memory" | "distributed" | "policies" | "specialized";
@@ -44,6 +45,32 @@ type ComputeSubtype = "all" | "servers" | "services" | "containers" | "serverles
 type NetworkingSubtype = "all" | "balancers" | "gateways" | "vpc-subnets" | "mesh-discovery" | "security";
 type ClientSubtype = "all" | "web" | "mobile" | "desktop" | "headless" | "iot";
 type DnsEdgeSubtype = "all" | "dns" | "cdn-cache" | "compute" | "routing-proxy";
+
+const SECURITY_SUBTYPES: Record<SecuritySubtype, string[]> = {
+  all: [],
+  "auth-idp": [
+    "authentication-service",
+    "authorization-service",
+    "identity-provider",
+    "oauth-provider",
+    "openid-connect-provider",
+    "policy-engine",
+  ],
+  "tokens-keys": [
+    "token-service",
+    "api-key-service",
+    "secrets-manager",
+  ],
+  protection: [
+    "web-application-firewall",
+    "ddos-protection",
+    "rate-limiter",
+  ],
+  "crypto-pki": [
+    "key-management-service",
+    "certificate-authority",
+  ],
+};
 
 const STORAGE_SUBTYPES: Record<StorageSubtype, string[]> = {
   all: [],
@@ -162,6 +189,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [securitySubtype, setSecuritySubtype] = React.useState<SecuritySubtype>("all");
   const [storageSubtype, setStorageSubtype] = React.useState<StorageSubtype>("all");
   const [messagingSubtype, setMessagingSubtype] = React.useState<MessagingSubtype>("all");
   const [cachingSubtype, setCachingSubtype] = React.useState<CachingSubtype>("all");
@@ -201,9 +229,49 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
 
+  // Filter Security & Identity items
+  const filteredSecurity = React.useMemo(() => {
+    if (
+      activeTab === "storage" ||
+      activeTab === "messaging" ||
+      activeTab === "caching" ||
+      activeTab === "databases" ||
+      activeTab === "compute" ||
+      activeTab === "networking" ||
+      activeTab === "dns-cdn-edge" ||
+      activeTab === "clients" ||
+      activeTab === "foundations"
+    )
+      return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "security-and-identity"
+    );
+
+    if (securitySubtype !== "all") {
+      const allowed = new Set(SECURITY_SUBTYPES[securitySubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, securitySubtype, search]);
+
   // Filter Storage & File Systems items
   const filteredStorage = React.useMemo(() => {
     if (
+      activeTab === "security" ||
       activeTab === "messaging" ||
       activeTab === "caching" ||
       activeTab === "databases" ||
@@ -533,6 +601,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredSecurity.length +
     filteredStorage.length +
     filteredMessaging.length +
     filteredCaching.length +
@@ -584,6 +653,17 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             }`}
           >
             All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("security")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "security"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            Security
           </button>
           <button
             type="button"
@@ -685,6 +765,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: Security & Identity */}
+        {activeTab === "security" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (14)" },
+                { id: "auth-idp", label: "Auth & IdP (6)" },
+                { id: "tokens-keys", label: "Tokens & Secrets (3)" },
+                { id: "protection", label: "WAF & Defense (3)" },
+                { id: "crypto-pki", label: "Crypto & PKI (2)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setSecuritySubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border transition-colors shrink-0 ${
+                  securitySubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: Storage & File Systems */}
         {activeTab === "storage" && (
@@ -923,11 +1031,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setSecuritySubtype("all");
                   setStorageSubtype("all");
                   setMessagingSubtype("all");
                   setCachingSubtype("all");
@@ -946,6 +1055,68 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 09: Security & Identity */}
+            {filteredSecurity.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    Security & Identity ({filteredSecurity.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 09
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredSecurity.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="h-7 w-7 rounded-md bg-surface-02 border border-border-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          {IconComponent ? (
+                            <IconComponent size={20} variant="colored" />
+                          ) : (
+                            <CpuIcon className="h-4 w-4 text-text-muted" />
+                          )}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="font-sans text-xs font-semibold text-foreground leading-tight">
+                            {comp.display.name}
+                          </div>
+                          <div className="font-mono text-[9.5px] text-text-muted truncate mt-0.5">
+                            {comp.id}
+                          </div>
+                          <p className="font-sans text-[10px] text-text-disabled truncate leading-relaxed mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+
+                        <PlusIcon className="h-3.5 w-3.5 text-text-disabled group-hover:text-foreground shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 08: Storage & File Systems */}
             {filteredStorage.length > 0 && (
               <div className="space-y-1.5">

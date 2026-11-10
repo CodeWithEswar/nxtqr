@@ -36,6 +36,10 @@ import {
   storageAndFileSystemsCategoryDefinition,
   ALL_STORAGE_AND_FILE_SYSTEMS_DEFINITIONS,
 } from "./definitions/storage-and-file-systems";
+import {
+  securityAndIdentityCategoryDefinition,
+  ALL_SECURITY_AND_IDENTITY_DEFINITIONS,
+} from "./definitions/security-and-identity";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -91,6 +95,12 @@ export class InfrastructureRegistryClass {
     // 8. Register Storage & File Systems Category (Cat 08)
     this.registerCategory(storageAndFileSystemsCategoryDefinition);
     for (const def of ALL_STORAGE_AND_FILE_SYSTEMS_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 9. Register Security & Identity Category (Cat 09)
+    this.registerCategory(securityAndIdentityCategoryDefinition);
+    for (const def of ALL_SECURITY_AND_IDENTITY_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

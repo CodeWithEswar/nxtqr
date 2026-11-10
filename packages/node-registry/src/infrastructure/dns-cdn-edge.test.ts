@@ -121,7 +121,8 @@ describe("NXTQR Phase 05.1.2 — Infrastructure Component Registry (DNS, CDN & E
     expect(workerMatches.some((c) => c.id === "edge-worker")).toBe(true);
     expect(infrastructureRegistry.searchComponents("edge-worker")).toHaveLength(1);
     expect(infrastructureRegistry.searchComponents("reverse-proxy")).toHaveLength(1);
-    expect(infrastructureRegistry.searchComponents("anycast")).toHaveLength(1);
+    expect(infrastructureRegistry.searchComponents("anycast").length).toBeGreaterThanOrEqual(1);
+    expect(infrastructureRegistry.searchComponents("anycast").some((c) => c.id === "anycast-network")).toBe(true);
     expect(infrastructureRegistry.searchComponents("traffic-manager")).toHaveLength(1);
     expect(infrastructureRegistry.searchComponents("bgp")).toHaveLength(1); // keyword in Anycast
     expect(infrastructureRegistry.searchComponents("v8-isolate")).toHaveLength(1); // keyword in Edge Worker

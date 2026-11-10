@@ -299,5 +299,20 @@ export const nodeTypes = {
   "archive-storage": GraphNode,
   "storage-gateway": GraphNode,
   "content-repository": GraphNode,
+  // Infrastructure Category 09: Security & Identity
+  "authentication-service": GraphNode,
+  "authorization-service": GraphNode,
+  "identity-provider": GraphNode,
+  "oauth-provider": GraphNode,
+  "openid-connect-provider": GraphNode,
+  "api-key-service": GraphNode,
+  "secrets-manager": GraphNode,
+  "key-management-service": GraphNode,
+  "web-application-firewall": GraphNode,
+  "ddos-protection": GraphNode,
+  "rate-limiter": GraphNode,
+  "certificate-authority": GraphNode,
+  "token-service": GraphNode,
+  "policy-engine": GraphNode,
 };
 
