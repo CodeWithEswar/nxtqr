@@ -259,28 +259,22 @@ export function MobileGraphToolbar() {
         <SheetContent
           side="bottom"
           hideCloseButton
-          className="h-[80vh] max-h-[80vh] p-0 bg-surface-01 border-t border-border-strong rounded-t-md flex flex-col overflow-hidden shadow-level-3"
+          aria-describedby={undefined}
+          className="flex h-[85dvh] flex-col gap-0 overflow-hidden rounded-t-md border-t border-border-strong bg-surface-01 p-0 pb-[env(safe-area-inset-bottom)] shadow-level-2"
         >
-          <SheetHeader className="sr-only">
-            <SheetTitle>Node Library</SheetTitle>
-          </SheetHeader>
-
-          {/* Drawer Drag Pill */}
-          <div className="w-full flex justify-center pt-2.5 pb-1.5 shrink-0 bg-surface-02 border-b border-border-subtle/40">
-            <div className="w-10 h-1 rounded-full bg-border-strong" />
-          </div>
-
-          <div className="flex items-center justify-between px-3 py-2 border-b border-border-subtle bg-surface-02">
-            <span className="font-sans text-xs font-bold text-foreground">Add Node</span>
+          <SheetHeader className="flex-row items-center justify-between space-y-0 border-b border-border-subtle bg-surface-02 px-3 py-2">
+            <SheetTitle>Component picker</SheetTitle>
             <Button
+              type="button"
               variant="ghost"
-              size="icon-sm"
+              size="icon"
+              aria-label="Close component picker"
               onClick={() => setLibraryOpen(false)}
-              className="h-6 w-6 rounded-md text-text-muted hover:text-foreground"
+              className="size-10 text-text-muted hover:text-foreground"
             >
-              <CloseIcon className="h-3.5 w-3.5" />
+              <CloseIcon aria-hidden={true} className="size-4" />
             </Button>
-          </div>
+          </SheetHeader>
 
           <div className="flex-1 overflow-hidden min-h-0">
             <NodeLibrary onNodeAdded={() => setLibraryOpen(false)} />

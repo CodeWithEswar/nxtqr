@@ -83,11 +83,8 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
             style={{ width: `${nodeLibraryWidth}px` }}
             className="hidden md:flex relative border-r border-border-default bg-surface-01 shrink-0 overflow-visible flex-col shadow-level-1 select-none"
           >
-            <div className="h-8 px-3 border-b border-border-subtle bg-surface-02 flex items-center justify-between text-[11px] font-mono font-semibold text-text-muted uppercase tracking-wider shrink-0">
-              <span>Node Palette</span>
-              <Badge variant="outline" className="text-[9px] font-mono rounded-md h-4 px-1 text-text-disabled">
-                Foundations
-              </Badge>
+            <div className="flex h-9 shrink-0 items-center border-b border-border-subtle bg-surface-02 px-3 text-xs font-semibold">
+              Component picker
             </div>
             <div className="flex-1 overflow-hidden min-h-0">
               <NodeLibrary />

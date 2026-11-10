@@ -5,6 +5,9 @@ import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { AnimatedLogo } from "@nxtqr/branding";
 
+import { useGraphEditorStore } from "@/features/graph-engine";
+import { getExampleBySlug } from "@/features/system-design-tutorials";
+
 const GraphEditor = dynamic(
   () => import("@/features/graph-engine").then((m) => m.GraphEditor),
   {
@@ -26,6 +29,32 @@ const GraphEditor = dynamic(
 function WorkspaceContent() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get("project");
+  const templateSlug = searchParams.get("template");
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Check for sessionStorage imported graph document from tutorials
+    const storedDoc = window.sessionStorage.getItem("nxtqr_import_document");
+    if (storedDoc) {
+      try {
+        const parsed = JSON.parse(storedDoc);
+        window.sessionStorage.removeItem("nxtqr_import_document");
+        useGraphEditorStore.getState().loadDocument(parsed);
+        return;
+      } catch (e) {
+        console.error("[Workspace] Failed to parse sessionStorage template doc:", e);
+      }
+    }
+
+    // Fallback: If template query parameter provided, load architecture example
+    if (templateSlug) {
+      const example = getExampleBySlug(templateSlug);
+      if (example) {
+        useGraphEditorStore.getState().loadDocument(example.graphDocument);
+      }
+    }
+  }, [templateSlug]);
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden bg-black">
