@@ -11,22 +11,22 @@ export interface SidebarHeaderProps {
   collapsed?: boolean;
 }
 
-export function SidebarHeader({ collapsed }: SidebarHeaderProps) {
+export function SidebarHeader({ collapsed }: SidebarHeaderProps = {}) {
   const storeCollapsed = useShellStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useShellStore((s) => s.toggleSidebar);
-  const isCollapsed = collapsed ?? storeCollapsed;
+  const isCollapsed = collapsed !== undefined ? collapsed : storeCollapsed;
 
   if (isCollapsed) {
     return (
       <div
         key="sidebar-header-collapsed"
-        className="flex h-12 w-full items-center justify-center border-b border-border-default bg-surface-01 select-none shrink-0"
+        className="flex h-12 w-full items-center justify-center border-b border-border-default bg-surface-01 select-none shrink-0 overflow-hidden"
       >
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
               href="/workspace"
-              className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface-02 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong"
+              className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface-02 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong shrink-0"
               title="NXTQR Studio Workspace"
             >
               <AppLogo variant="minimal" size={22} animated animationMode="interactive" />
@@ -43,21 +43,21 @@ export function SidebarHeader({ collapsed }: SidebarHeaderProps) {
   return (
     <div
       key="sidebar-header-expanded"
-      className="flex h-12 items-center justify-between px-3 border-b border-border-default bg-surface-01 select-none shrink-0"
+      className="flex h-12 items-center justify-between px-3 border-b border-border-default bg-surface-01 select-none shrink-0 overflow-hidden"
     >
       <Link
         href="/workspace"
-        className="flex items-center gap-2.5 min-w-0 rounded-md py-1 px-1 -ml-1 hover:bg-surface-02 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong"
+        className="flex items-center gap-2.5 min-w-0 rounded-md py-1 px-1 -ml-1 hover:bg-surface-02 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong overflow-hidden"
         title="NXTQR Studio Workspace"
       >
         <div className="shrink-0">
           <AppLogo variant="minimal" size={22} animated animationMode="interactive" />
         </div>
         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-          <span className="font-sans text-xs font-bold tracking-tight text-foreground">
+          <span className="font-sans text-xs font-bold tracking-tight text-foreground truncate">
             NXTQR
           </span>
-          <span className="font-mono text-[9px] font-semibold text-text-muted px-1.5 py-0.5 rounded-md border border-border-subtle bg-surface-02 uppercase tracking-wider">
+          <span className="font-mono text-[9px] font-semibold text-text-muted px-1.5 py-0.5 rounded-md border border-border-subtle bg-surface-02 uppercase tracking-wider shrink-0">
             STUDIO
           </span>
         </div>

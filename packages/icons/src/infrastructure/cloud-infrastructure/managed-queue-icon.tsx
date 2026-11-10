@@ -102,3 +102,4 @@ export const ManagedQueueIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

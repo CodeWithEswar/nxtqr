@@ -55,3 +55,4 @@ export const CloudIamIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -35,13 +35,22 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
-type CategoryTab = "all" | "cloud" | "devops" | "media" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type CategoryTab = "all" | "external" | "cloud" | "devops" | "media" | "data" | "search" | "observability" | "security" | "storage" | "messaging" | "caching" | "databases" | "compute" | "networking" | "dns-cdn-edge" | "clients" | "foundations";
+type ExternalSubtype = "all" | "apis-protocols" | "payment-commerce" | "messaging-notifications" | "auth-maps-webhooks";
 type CloudSubtype = "all" | "regions-zones-networks" | "compute-containers" | "managed-services" | "storage-serverless-iam";
 type DevopsSubtype = "all" | "source-ci-cd" | "build-artifacts-containers" | "deployment-iac" | "flags-config-secrets-release";
 type MediaSubtype = "all" | "realtime-comm" | "media-streaming" | "notifications-chat-presence";
 type DataSubtype = "all" | "pipelines-etl" | "lakes-lakehouse" | "engines-olap" | "ingestion-cdc-orchestration";
 type SearchSubtype = "all" | "engines-indexes" | "query-cache" | "autocomplete-discovery" | "recommendations";
 type ObservabilitySubtype = "all" | "metrics" | "logs" | "traces-apm" | "alerts-health";
+
+const EXTERNAL_SUBTYPES: Record<ExternalSubtype, string[]> = {
+  all: [],
+  "apis-protocols": ["external-rest-api", "graphql-api", "grpc-service"],
+  "payment-commerce": ["payment-gateway"],
+  "messaging-notifications": ["email-provider", "sms-provider", "whatsapp-provider"],
+  "auth-maps-webhooks": ["maps-provider", "oauth-integration", "third-party-webhook"],
+};
 
 const CLOUD_SUBTYPES: Record<CloudSubtype, string[]> = {
   all: [],
@@ -242,6 +251,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
 
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<CategoryTab>("all");
+  const [externalSubtype, setExternalSubtype] = React.useState<ExternalSubtype>("all");
   const [cloudSubtype, setCloudSubtype] = React.useState<CloudSubtype>("all");
   const [devopsSubtype, setDevopsSubtype] = React.useState<DevopsSubtype>("all");
   const [mediaSubtype, setMediaSubtype] = React.useState<MediaSubtype>("all");
@@ -287,6 +297,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   const domainDefinitions = React.useMemo(() => {
     return nodeRegistry.listForVisualizer(visualizerType as any);
   }, [visualizerType]);
+
+  // Filter External Integrations items
+  const filteredExternal = React.useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "external") return [];
+
+    let list = allInfraComponents.filter(
+      (c) => c.categoryId === "external-integrations"
+    );
+
+    if (externalSubtype !== "all") {
+      const allowed = new Set(EXTERNAL_SUBTYPES[externalSubtype]);
+      list = list.filter((c) => allowed.has(c.id));
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (c) =>
+          c.id.toLowerCase().includes(q) ||
+          c.display.name.toLowerCase().includes(q) ||
+          c.display.shortName.toLowerCase().includes(q) ||
+          c.display.description.toLowerCase().includes(q) ||
+          c.display.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allInfraComponents, activeTab, externalSubtype, search]);
 
   // Filter Cloud Infrastructure items
   const filteredCloud = React.useMemo(() => {
@@ -776,6 +814,7 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
   };
 
   const totalResults =
+    filteredExternal.length +
     filteredCloud.length +
     filteredDevops.length +
     filteredMedia.length +
@@ -834,6 +873,17 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             }`}
           >
             All
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("external")}
+            className={`px-2 py-1 rounded text-center whitespace-nowrap transition-colors shrink-0 ${
+              activeTab === "external"
+                ? "bg-surface-03 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground"
+            }`}
+          >
+            External
           </button>
           <button
             type="button"
@@ -1012,6 +1062,34 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             Core
           </button>
         </div>
+
+        {/* Subtype Filter Pills: External Integrations */}
+        {activeTab === "external" && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-0.5 precision-rail text-[10px] font-mono">
+            {(
+              [
+                { id: "all", label: "All (10)" },
+                { id: "apis-protocols", label: "REST, GraphQL, gRPC (3)" },
+                { id: "payment-commerce", label: "Payments (1)" },
+                { id: "messaging-notifications", label: "Email, SMS, WhatsApp (3)" },
+                { id: "auth-maps-webhooks", label: "Maps, OAuth, Webhooks (3)" },
+              ] as const
+            ).map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => setExternalSubtype(sub.id)}
+                className={`px-2 py-0.5 rounded border whitespace-nowrap transition-colors shrink-0 ${
+                  externalSubtype === sub.id
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold"
+                    : "border-border-subtle text-text-muted hover:text-foreground bg-surface-01"
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Subtype Filter Pills: Cloud Infrastructure */}
         {activeTab === "cloud" && (
@@ -1445,11 +1523,12 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
             <p className="text-text-muted text-xs font-mono">
               No matching components found.
             </p>
-            {(search || cloudSubtype !== "all" || devopsSubtype !== "all" || mediaSubtype !== "all" || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
+            {(search || externalSubtype !== "all" || cloudSubtype !== "all" || devopsSubtype !== "all" || mediaSubtype !== "all" || dataSubtype !== "all" || searchSubtype !== "all" || observabilitySubtype !== "all" || securitySubtype !== "all" || storageSubtype !== "all" || messagingSubtype !== "all" || cachingSubtype !== "all" || databaseSubtype !== "all" || computeSubtype !== "all" || networkingSubtype !== "all" || clientSubtype !== "all" || dnsEdgeSubtype !== "all" || activeTab !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
+                  setExternalSubtype("all");
                   setCloudSubtype("all");
                   setDevopsSubtype("all");
                   setMediaSubtype("all");
@@ -1475,6 +1554,62 @@ export function NodeLibrary({ onNodeAdded, className }: NodeLibraryProps) {
           </div>
         ) : (
           <>
+            {/* Category 17: External Integrations */}
+            {filteredExternal.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-2 pt-1">
+                  <span className="text-[10px] uppercase font-mono font-semibold text-text-muted tracking-wider truncate">
+                    External Integrations ({filteredExternal.length})
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[9px] text-text-muted border-border-subtle shrink-0"
+                  >
+                    Cat 17
+                  </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  {filteredExternal.map((comp) => {
+                    const IconComponent = getInfrastructureIcon(comp.id);
+                    return (
+                      <div
+                        key={comp.id}
+                        role="button"
+                        tabIndex={0}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("application/nxtqr-node-type", comp.id);
+                          e.dataTransfer.setData("application/nxtqr-is-infra", "true");
+                          e.dataTransfer.effectAllowed = "copyMove";
+                        }}
+                        onClick={() => handleCreateInfraNode(comp)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateInfraNode(comp)}
+                        className="group flex items-start gap-2.5 p-2 rounded-md border border-border-default hover:border-border-hover bg-surface-01 hover:bg-surface-02 cursor-pointer transition-all duration-140 shadow-level-1 active:shadow-level-3"
+                      >
+                        {/* Colored SVG Icon */}
+                        <div className="p-1 rounded bg-surface-02 border border-border-subtle group-hover:border-border-hover transition-colors shrink-0">
+                          {IconComponent && <IconComponent size={16} />}
+                        </div>
+
+                        {/* Metadata */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-xs font-medium text-foreground truncate group-hover:text-foreground">
+                              {comp.display.name}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-text-muted line-clamp-1 leading-tight mt-0.5">
+                            {comp.display.description}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Category 16: Cloud Infrastructure */}
             {filteredCloud.length > 0 && (
               <div className="space-y-1.5">

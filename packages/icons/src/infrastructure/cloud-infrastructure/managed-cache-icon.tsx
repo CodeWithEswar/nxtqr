@@ -70,3 +70,4 @@ export const ManagedCacheIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

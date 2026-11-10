@@ -507,5 +507,20 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/infrastructure-cloud",
     },
   },
+  {
+    id: "infra_category_17_external",
+    category: "frontend",
+    title: "Infrastructure Components: Category 17 External Integrations",
+    description: "Validates 10 colored SVG icons, typed registry definitions, Zod schemas, external REST/GraphQL/gRPC APIs, payment gateways, messaging providers, maps, OAuth PKCE, and webhook ingestion.",
+    verificationType: "contract_check",
+    status: "not_run",
+    dependencies: ["@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      categorySlug: "external-integrations",
+      componentCount: 10,
+      iconsVerified: 10,
+      inspectionRoute: "/verify/infrastructure-external",
+    },
+  },
 ];
 

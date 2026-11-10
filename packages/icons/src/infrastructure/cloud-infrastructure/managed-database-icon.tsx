@@ -68,3 +68,4 @@ export const ManagedDatabaseIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -66,3 +66,4 @@ export const ManagedKubernetesIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

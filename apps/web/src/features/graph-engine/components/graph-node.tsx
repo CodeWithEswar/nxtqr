@@ -382,5 +382,16 @@ export const nodeTypes = {
   "cloud-load-balancer": GraphNode,
   "cloud-network": GraphNode,
   "cloud-iam": GraphNode,
+  // Infrastructure Category 17: External Integrations
+  "external-rest-api": GraphNode,
+  "graphql-api": GraphNode,
+  "grpc-service": GraphNode,
+  "payment-gateway": GraphNode,
+  "email-provider": GraphNode,
+  "sms-provider": GraphNode,
+  "whatsapp-provider": GraphNode,
+  "maps-provider": GraphNode,
+  "oauth-integration": GraphNode,
+  "third-party-webhook": GraphNode,
 };
 

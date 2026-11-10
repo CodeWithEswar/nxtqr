@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Badge,
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@nxtqr/ui";
+import { Badge } from "@nxtqr/ui";
 import { CopyIcon } from "@nxtqr/icons";
 import {
   getInfrastructureIcon,
@@ -340,10 +333,10 @@ export default function InfrastructureDevopsVerificationPage() {
                             port.type === "input" ? "bg-sky-400" : "bg-emerald-400"
                           }`}
                         />
-                        <span className="text-foreground">{port.label}</span>
+                        <span className="text-foreground">{port.name}</span>
                       </div>
                       <span className="text-text-disabled text-[10px] uppercase">
-                        {port.position} ({port.maxConnections})
+                        {port.type} ({port.capacity || "any"})
                       </span>
                     </div>
                   ))}
@@ -443,3 +436,4 @@ export default function InfrastructureDevopsVerificationPage() {
     </div>
   );
 }
+

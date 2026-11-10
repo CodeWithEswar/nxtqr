@@ -86,3 +86,4 @@ export const CloudStorageBucketIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

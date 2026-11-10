@@ -23,7 +23,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
     <aside
       style={{ width: `${effectiveWidth}px` }}
       className={cn(
-        "relative hidden md:flex flex-col h-full bg-surface-01 border-r border-border-default select-none shrink-0",
+        "relative hidden md:flex flex-col h-full bg-surface-01 border-r border-border-default select-none shrink-0 overflow-hidden",
         !isDragging && "transition-[width] duration-200 ease-out",
         className
       )}

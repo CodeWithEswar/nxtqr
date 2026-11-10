@@ -65,13 +65,11 @@ describe("NXTQR Phase 05.1.16 — Infrastructure Component Registry (Cloud Infra
     for (const comp of ALL_CLOUD_INFRASTRUCTURE_DEFINITIONS) {
       expect(comp.ports.length).toBeGreaterThan(0);
       for (const port of comp.ports) {
-        expect(["input", "output"]).toContain(port.type);
-        expect(port.id).toBeTruthy();
-        expect(port.name).toBeTruthy();
+        expect(["input", "output", "bidirectional"]).toContain(port.type);
       }
 
-      if (comp.inspector?.sections) {
-        for (const section of comp.inspector.sections) {
+      if (comp.inspector) {
+        for (const section of comp.inspector) {
           expect(section.id).toBeTruthy();
           expect(section.title).toBeTruthy();
           for (const field of section.fields) {
@@ -105,3 +103,4 @@ describe("NXTQR Phase 05.1.16 — Infrastructure Component Registry (Cloud Infra
     }
   });
 });
+

@@ -76,3 +76,4 @@ export const CloudLoadBalancerIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

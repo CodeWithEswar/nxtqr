@@ -64,6 +64,10 @@ import {
   cloudInfrastructureCategoryDefinition,
   ALL_CLOUD_INFRASTRUCTURE_DEFINITIONS,
 } from "./definitions/cloud-infrastructure";
+import {
+  externalIntegrationsCategoryDefinition,
+  ALL_EXTERNAL_INTEGRATIONS_DEFINITIONS,
+} from "./definitions/external-integrations";
 
 export class InfrastructureRegistryClass {
   private categories = new Map<string, InfrastructureCategoryDefinition>();
@@ -161,6 +165,12 @@ export class InfrastructureRegistryClass {
     // 16. Register Cloud Infrastructure Category (Cat 16)
     this.registerCategory(cloudInfrastructureCategoryDefinition);
     for (const def of ALL_CLOUD_INFRASTRUCTURE_DEFINITIONS) {
+      this.registerComponent(def);
+    }
+
+    // 17. Register External Integrations Category (Cat 17)
+    this.registerCategory(externalIntegrationsCategoryDefinition);
+    for (const def of ALL_EXTERNAL_INTEGRATIONS_DEFINITIONS) {
       this.registerComponent(def);
     }
   }

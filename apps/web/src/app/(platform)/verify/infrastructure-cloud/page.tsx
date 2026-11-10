@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Badge,
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@nxtqr/ui";
+import { Badge } from "@nxtqr/ui";
 import { CopyIcon } from "@nxtqr/icons";
 import {
   getInfrastructureIcon,
@@ -81,10 +74,10 @@ export default function InfrastructureCloudVerificationPage() {
               ← Cat 15 DevOps
             </Link>
             <Link
-              href="/verify/infrastructure-media"
+              href="/verify/infrastructure-external"
               className="px-2.5 sm:px-3 py-1.5 rounded-md bg-surface-02 hover:bg-surface-03 border border-border-default text-xs font-mono text-text-muted hover:text-foreground transition-colors flex-1 sm:flex-initial text-center"
             >
-              Cat 14 Media
+              Cat 17 External →
             </Link>
             <Link
               href="/workspace"
@@ -340,10 +333,10 @@ export default function InfrastructureCloudVerificationPage() {
                             port.type === "input" ? "bg-sky-400" : "bg-emerald-400"
                           }`}
                         />
-                        <span className="text-foreground">{port.label}</span>
+                        <span className="text-foreground">{port.name}</span>
                       </div>
                       <span className="text-text-disabled text-[10px] uppercase">
-                        {port.position} ({port.maxConnections})
+                        {port.type} ({port.capacity || "any"})
                       </span>
                     </div>
                   ))}
@@ -510,3 +503,4 @@ export default function InfrastructureCloudVerificationPage() {
     </div>
   );
 }
+

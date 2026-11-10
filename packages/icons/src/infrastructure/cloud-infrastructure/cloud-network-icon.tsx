@@ -86,3 +86,4 @@ export const CloudNetworkIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

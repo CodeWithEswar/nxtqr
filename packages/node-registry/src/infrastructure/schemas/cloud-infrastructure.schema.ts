@@ -271,3 +271,4 @@ export const cloudInfrastructureComponentSchema = z.discriminatedUnion("componen
 ]);
 
 export type CloudInfrastructureComponentConfig = z.infer<typeof cloudInfrastructureComponentSchema>;
+

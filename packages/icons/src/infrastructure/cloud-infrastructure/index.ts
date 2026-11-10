@@ -45,3 +45,4 @@ export function getCloudInfrastructureIcon(
 ): InfrastructureIconComponent | undefined {
   return cloudInfrastructureIconRegistry[slug];
 }
+

@@ -66,3 +66,4 @@ export const AvailabilityZoneIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+
