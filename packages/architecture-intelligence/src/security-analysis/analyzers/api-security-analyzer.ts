@@ -63,3 +63,4 @@ export class ApiSecurityAnalyzer implements ISecurityAnalyzer {
     return findings;
   }
 }
+

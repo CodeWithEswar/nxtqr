@@ -187,3 +187,4 @@ export function toHealthRecommendation(rec: SecurityRemediation): HealthRecommen
     suggestedComponentTypes: rec.suggestedComponentTypes,
   };
 }
+

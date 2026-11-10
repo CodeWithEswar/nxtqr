@@ -56,3 +56,4 @@ export class AuthorizationAnalyzer implements ISecurityAnalyzer {
     return findings;
   }
 }
+

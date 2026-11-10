@@ -103,3 +103,4 @@ export class SPOFAnalyzer {
     return findings;
   }
 }
+

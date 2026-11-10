@@ -61,3 +61,4 @@ export class ThirdPartyAnalyzer implements ISecurityAnalyzer {
     return findings;
   }
 }
+

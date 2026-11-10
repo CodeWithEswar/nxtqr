@@ -61,3 +61,4 @@ export class SecretsAnalyzer implements ISecurityAnalyzer {
     return findings;
   }
 }
+

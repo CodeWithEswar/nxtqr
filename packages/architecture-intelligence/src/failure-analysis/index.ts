@@ -12,3 +12,4 @@ export * from "./analyzers/shared-dependencies-analyzer";
 export * from "./analyzers/failover-analyzer";
 export * from "./analyzers/database-availability-analyzer";
 export * from "./analyzers/messaging-network-analyzer";
+

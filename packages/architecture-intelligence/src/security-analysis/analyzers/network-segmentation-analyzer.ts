@@ -60,3 +60,4 @@ export class NetworkSegmentationAnalyzer implements ISecurityAnalyzer {
     return findings;
   }
 }
+

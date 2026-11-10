@@ -118,3 +118,4 @@ export class SensitiveDataAnalyzer implements ISecurityAnalyzer {
     return findings;
   }
 }
+

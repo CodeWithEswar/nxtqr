@@ -63,3 +63,4 @@ export class AuthenticationAnalyzer implements ISecurityAnalyzer {
     return findings;
   }
 }
+
