@@ -25,3 +25,4 @@ export const DEFAULT_SCORING_POLICY: ScoringPolicy = {
     low: 0.5,
   },
 };
+

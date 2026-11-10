@@ -57,3 +57,4 @@ export function hasPath(
   const { reachableNodes } = computeReachability([sourceId], adjList);
   return reachableNodes.has(targetId);
 }
+

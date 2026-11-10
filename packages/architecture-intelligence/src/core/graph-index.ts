@@ -204,3 +204,4 @@ export class GraphIndex {
     return this.articulationResult.articulationPoints.has(nodeId);
   }
 }
+

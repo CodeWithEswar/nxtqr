@@ -67,3 +67,4 @@ export class FindingAggregator {
     return result;
   }
 }
+

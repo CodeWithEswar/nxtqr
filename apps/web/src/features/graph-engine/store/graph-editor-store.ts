@@ -52,10 +52,12 @@ export interface GraphEditorState {
   isNodeLibraryOpen: boolean;
   isValidationOpen: boolean;
   isHealthOpen: boolean;
+  isBottlenecksOpen: boolean;
   nodeLibraryWidth: number;
   inspectorWidth: number;
   validationPanelWidth: number;
   healthPanelWidth: number;
+  bottlenecksPanelWidth: number;
   autosaveStatus: AutosaveStatus;
 
   // History state indicators
@@ -80,12 +82,15 @@ export interface GraphEditorState {
   toggleValidation: () => void;
   setHealthOpen: (open: boolean) => void;
   toggleHealth: () => void;
+  setBottlenecksOpen: (open: boolean) => void;
+  toggleBottlenecks: () => void;
   setNodeLibraryOpen: (open: boolean) => void;
   toggleNodeLibrary: () => void;
   setNodeLibraryWidth: (width: number) => void;
   setInspectorWidth: (width: number) => void;
   setValidationPanelWidth: (width: number) => void;
   setHealthPanelWidth: (width: number) => void;
+  setBottlenecksPanelWidth: (width: number) => void;
   resetPanelWidths: () => void;
   setAutosaveStatus: (status: AutosaveStatus) => void;
 
@@ -229,10 +234,12 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     isNodeLibraryOpen: true,
     isValidationOpen: false,
     isHealthOpen: false,
+    isBottlenecksOpen: false,
     nodeLibraryWidth: 280,
     inspectorWidth: 320,
     validationPanelWidth: 320,
     healthPanelWidth: 340,
+    bottlenecksPanelWidth: 360,
     autosaveStatus: "saved",
 
     canUndo: false,
@@ -272,6 +279,8 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     toggleValidation: () => set((s) => ({ isValidationOpen: !s.isValidationOpen })),
     setHealthOpen: (open) => set({ isHealthOpen: open }),
     toggleHealth: () => set((s) => ({ isHealthOpen: !s.isHealthOpen })),
+    setBottlenecksOpen: (open) => set({ isBottlenecksOpen: open }),
+    toggleBottlenecks: () => set((s) => ({ isBottlenecksOpen: !s.isBottlenecksOpen })),
     setNodeLibraryOpen: (open) => set({ isNodeLibraryOpen: open }),
     toggleNodeLibrary: () => set((s) => ({ isNodeLibraryOpen: !s.isNodeLibraryOpen })),
     setNodeLibraryWidth: (width) => {
@@ -290,7 +299,11 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
       const clamped = Math.max(260, Math.min(540, width));
       set({ healthPanelWidth: clamped });
     },
-    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320, healthPanelWidth: 340 }),
+    setBottlenecksPanelWidth: (width) => {
+      const clamped = Math.max(280, Math.min(600, width));
+      set({ bottlenecksPanelWidth: clamped });
+    },
+    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320, healthPanelWidth: 340, bottlenecksPanelWidth: 360 }),
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),
 
     selectNode: (id, multi = false) => {

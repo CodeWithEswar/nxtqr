@@ -126,3 +126,4 @@ export const ScoringPolicySchema = z.object({
   minComponentsForScoring: z.number(),
   confidenceMultipliers: z.record(HealthConfidenceSchema, z.number()),
 });
+

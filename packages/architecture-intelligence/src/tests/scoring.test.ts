@@ -120,3 +120,4 @@ describe("Health Scoring Model", () => {
     expect(overall.overallGrade).toBe("A");
   });
 });
+

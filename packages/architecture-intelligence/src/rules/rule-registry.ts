@@ -372,3 +372,4 @@ export const RECOMMENDATION_REGISTRY: Record<string, HealthRecommendation> = {
     actionableStep: "Add an Alert Manager or Notification Service connected from the monitoring node.",
   },
 };
+

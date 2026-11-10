@@ -32,3 +32,8 @@ export * from "./scoring/score-calculator";
 
 // Rules & Recommendations
 export * from "./rules/rule-registry";
+
+// Bottleneck Detection Engine (Phase 05.3.3)
+export * from "./bottlenecks";
+
+

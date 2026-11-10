@@ -10,6 +10,7 @@ import {
   CheckCircleIcon,
   AlertTriangleIcon,
   ActivityIcon,
+  CpuIcon,
   getInfrastructureIcon,
 } from "@nxtqr/icons";
 import {
@@ -18,7 +19,12 @@ import {
   type InspectorSectionDefinition,
 } from "@nxtqr/node-registry";
 import { architectureValidationEngine } from "@nxtqr/architecture-validation";
-import { architectureHealthEngine, type HealthFinding } from "@nxtqr/architecture-intelligence";
+import {
+  architectureHealthEngine,
+  bottleneckEngine,
+  type HealthFinding,
+  type BottleneckFinding,
+} from "@nxtqr/architecture-intelligence";
 import {
   Button,
   Badge,
@@ -44,6 +50,7 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
   const deleteEdgeById = useGraphEditorStore((s) => s.deleteEdgeById);
   const duplicateSelected = useGraphEditorStore((s) => s.duplicateSelected);
   const setHealthOpen = useGraphEditorStore((s) => s.setHealthOpen);
+  const setBottlenecksOpen = useGraphEditorStore((s) => s.setBottlenecksOpen);
 
   // Single selection target
   const selectedNode = React.useMemo(() => {
@@ -130,6 +137,15 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
     if (!selectedNode) return [];
     const healthReport = architectureHealthEngine.assessGraph(nodes, edges);
     return healthReport.findingsByNode[selectedNode.id] || [];
+  }, [selectedNode, nodes, edges]);
+
+  // Active bottleneck findings & utilization for this node
+  const nodeBottlenecks = React.useMemo(() => {
+    if (!selectedNode) return { findings: [] as BottleneckFinding[], utilization: null };
+    const bReport = bottleneckEngine.analyzeGraph(nodes, edges);
+    const findings = bReport.findings.filter((f) => f.affectedNodeIds.includes(selectedNode.id));
+    const utilization = bReport.nodeUtilization[selectedNode.id] || null;
+    return { findings, utilization };
   }, [selectedNode, nodes, edges]);
 
   // Case 1: Edge Selection
@@ -517,6 +533,69 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                   </span>
                   <Badge variant="outline" className="text-[8px] font-mono h-3.5 px-1 uppercase border-border-subtle">
                     {f.dimension}
+                  </Badge>
+                </div>
+                <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Node Bottlenecks & Capacity Summary */}
+        {(nodeBottlenecks.findings.length > 0 || nodeBottlenecks.utilization) && (
+          <div className="p-2.5 rounded-md bg-surface-02 border border-border-default space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                <CpuIcon className="w-3 h-3 text-amber-400" />
+                Capacity & Bottlenecks
+              </span>
+              <button
+                type="button"
+                onClick={() => setBottlenecksOpen(true)}
+                className="text-[9px] font-mono text-text-muted hover:text-foreground underline transition-colors"
+              >
+                View in Panel
+              </button>
+            </div>
+
+            {nodeBottlenecks.utilization && (
+              <div className="p-1.5 rounded bg-surface-03 border border-border-subtle font-mono text-[10px] space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Demand vs Capacity:</span>
+                  <span className="text-foreground font-semibold">
+                    {nodeBottlenecks.utilization.demandRps.toLocaleString()} / {nodeBottlenecks.utilization.declaredCapacityRps?.toLocaleString() ?? "—"} req/s
+                  </span>
+                </div>
+                {nodeBottlenecks.utilization.utilizationRatio !== undefined && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-text-muted">Utilization:</span>
+                    <Badge
+                      variant="outline"
+                      className={`text-[8px] font-mono h-3.5 px-1 uppercase ${
+                        nodeBottlenecks.utilization.utilizationRatio > 1.0
+                          ? "border-rose-900/60 text-rose-400 bg-rose-950/20"
+                          : nodeBottlenecks.utilization.utilizationRatio >= 0.8
+                            ? "border-amber-900/60 text-amber-400 bg-amber-950/20"
+                            : "border-border-default text-emerald-400 bg-emerald-950/20"
+                      }`}
+                    >
+                      {Math.round(nodeBottlenecks.utilization.utilizationRatio * 100)}%
+                    </Badge>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {nodeBottlenecks.findings.map((f: BottleneckFinding, idx: number) => (
+              <div key={idx} className="p-1.5 rounded bg-surface-03 border border-border-subtle space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className={`text-[11px] font-semibold truncate ${
+                    f.severity === "critical" ? "text-rose-400" : f.severity === "high" ? "text-amber-400" : "text-text-secondary"
+                  }`}>
+                    {f.title}
+                  </span>
+                  <Badge variant="outline" className="text-[8px] font-mono h-3.5 px-1 uppercase border-border-subtle">
+                    {f.bottleneckType.replace(/_/g, " ")}
                   </Badge>
                 </div>
                 <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>

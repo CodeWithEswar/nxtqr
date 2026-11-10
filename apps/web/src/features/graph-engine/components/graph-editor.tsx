@@ -9,6 +9,7 @@ import { MobileGraphToolbar } from "./mobile-graph-toolbar";
 import { PanelResizeHandle } from "./panel-resize-handle";
 import { ValidationPanel } from "@/features/system-design/validation";
 import { HealthPanel } from "@/features/system-design/health";
+import { BottleneckPanel } from "@/features/system-design/bottlenecks";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { useGraphPersistence } from "../hooks/use-graph-persistence";
 import { Badge } from "@nxtqr/ui";
@@ -32,15 +33,19 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const setValidationOpen = useGraphEditorStore((s) => s.setValidationOpen);
   const isHealthOpen = useGraphEditorStore((s) => s.isHealthOpen);
   const setHealthOpen = useGraphEditorStore((s) => s.setHealthOpen);
+  const isBottlenecksOpen = useGraphEditorStore((s) => s.isBottlenecksOpen);
+  const setBottlenecksOpen = useGraphEditorStore((s) => s.setBottlenecksOpen);
   const setInspectorOpen = useGraphEditorStore((s) => s.setInspectorOpen);
   const nodeLibraryWidth = useGraphEditorStore((s) => s.nodeLibraryWidth);
   const inspectorWidth = useGraphEditorStore((s) => s.inspectorWidth);
   const validationPanelWidth = useGraphEditorStore((s) => s.validationPanelWidth);
   const healthPanelWidth = useGraphEditorStore((s) => s.healthPanelWidth);
+  const bottlenecksPanelWidth = useGraphEditorStore((s) => s.bottlenecksPanelWidth);
   const setNodeLibraryWidth = useGraphEditorStore((s) => s.setNodeLibraryWidth);
   const setInspectorWidth = useGraphEditorStore((s) => s.setInspectorWidth);
   const setValidationPanelWidth = useGraphEditorStore((s) => s.setValidationPanelWidth);
   const setHealthPanelWidth = useGraphEditorStore((s) => s.setHealthPanelWidth);
+  const setBottlenecksPanelWidth = useGraphEditorStore((s) => s.setBottlenecksPanelWidth);
   const resetPanelWidths = useGraphEditorStore((s) => s.resetPanelWidths);
 
   React.useEffect(() => {
@@ -121,6 +126,32 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
           {/* Mobile Bottom Floating Action Bar & Drawers */}
           <MobileGraphToolbar />
         </main>
+
+        {/* Right: Desktop Bottleneck Detection Panel (Resizable / Collapsible) */}
+        {isBottlenecksOpen && (
+          <aside
+            style={{ width: `${bottlenecksPanelWidth}px` }}
+            className="hidden md:flex relative border-l border-border-default bg-surface-01 shrink-0 overflow-visible flex-col shadow-level-1 select-none"
+          >
+            <div className="flex-1 overflow-hidden min-h-0">
+              <BottleneckPanel
+                onClose={() => setBottlenecksOpen(false)}
+                onFocusNode={() => setInspectorOpen(true)}
+              />
+            </div>
+
+            {/* Resize Handle on Left Edge of Bottlenecks Panel */}
+            <PanelResizeHandle
+              side="left"
+              currentWidth={bottlenecksPanelWidth}
+              minWidth={280}
+              maxWidth={580}
+              defaultWidth={360}
+              onResize={setBottlenecksPanelWidth}
+              ariaLabel="Resize Bottleneck Detection panel"
+            />
+          </aside>
+        )}
 
         {/* Right: Desktop Architecture Health Analysis Panel (Resizable / Collapsible) */}
         {isHealthOpen && (

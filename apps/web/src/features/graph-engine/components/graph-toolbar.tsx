@@ -19,6 +19,7 @@ import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
 import { ValidationSummaryBadge } from "@/features/system-design/validation";
 import { HealthSummaryBadge } from "@/features/system-design/health";
+import { BottleneckSummaryBadge } from "@/features/system-design/bottlenecks";
 
 export interface GraphToolbarProps {
   className?: string;
@@ -43,6 +44,8 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
   const toggleValidation = useGraphEditorStore((s) => s.toggleValidation);
   const isHealthOpen = useGraphEditorStore((s) => s.isHealthOpen);
   const toggleHealth = useGraphEditorStore((s) => s.toggleHealth);
+  const isBottlenecksOpen = useGraphEditorStore((s) => s.isBottlenecksOpen);
+  const toggleBottlenecks = useGraphEditorStore((s) => s.toggleBottlenecks);
 
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const toggleNodeLibrary = useGraphEditorStore((s) => s.toggleNodeLibrary);
@@ -198,6 +201,12 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
         <HealthSummaryBadge
           isOpen={isHealthOpen}
           onToggle={toggleHealth}
+        />
+
+        {/* Bottleneck Detection Toggle */}
+        <BottleneckSummaryBadge
+          isOpen={isBottlenecksOpen}
+          onToggle={toggleBottlenecks}
         />
 
         {/* Inspector Toggle */}

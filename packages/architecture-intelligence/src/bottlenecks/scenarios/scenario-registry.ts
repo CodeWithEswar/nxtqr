@@ -1,0 +1,107 @@
+import type { WorkloadScenario } from "../contracts/bottleneck.types";
+
+export const DEFAULT_WORKLOAD_SCENARIOS: Record<string, WorkloadScenario> = {
+  normal_traffic: {
+    id: "normal_traffic",
+    name: "Normal Traffic (Baseline)",
+    description: "Standard operating traffic under regular daytime conditions.",
+    isDefault: true,
+    parameters: {
+      activeUsers: 10000,
+      concurrentUsers: 500,
+      ingressRps: 1000,
+      peakMultiplier: 1.0,
+      readRatio: 0.8,
+      avgRequestSizeBytes: 2048, // 2 KB
+      avgResponseSizeBytes: 16384, // 16 KB
+      cacheHitRate: 0.85,
+      fanOutFactor: 1.0,
+      retryAmplificationFactor: 1.02,
+    },
+  },
+  peak_traffic: {
+    id: "peak_traffic",
+    name: "Peak Traffic (2.5x Load)",
+    description: "High concurrency during daily peak hours or scheduled marketing events.",
+    parameters: {
+      activeUsers: 25000,
+      concurrentUsers: 2000,
+      ingressRps: 2500,
+      peakMultiplier: 2.5,
+      readRatio: 0.85,
+      avgRequestSizeBytes: 2048,
+      avgResponseSizeBytes: 16384,
+      cacheHitRate: 0.80,
+      fanOutFactor: 1.2,
+      retryAmplificationFactor: 1.05,
+    },
+  },
+  traffic_spike: {
+    id: "traffic_spike",
+    name: "Traffic Spike (5.0x Burst)",
+    description: "Severe surge scenario testing breaking points and circuit breaker / queue absorption.",
+    parameters: {
+      activeUsers: 50000,
+      concurrentUsers: 5000,
+      ingressRps: 5000,
+      peakMultiplier: 5.0,
+      readRatio: 0.90,
+      avgRequestSizeBytes: 2048,
+      avgResponseSizeBytes: 16384,
+      cacheHitRate: 0.70,
+      fanOutFactor: 1.5,
+      retryAmplificationFactor: 1.15,
+    },
+  },
+  read_heavy: {
+    id: "read_heavy",
+    name: "Read-Heavy Workload (95% Reads)",
+    description: "Catalog browsing and search workload putting maximum pressure on caching and read replicas.",
+    parameters: {
+      activeUsers: 20000,
+      concurrentUsers: 1500,
+      ingressRps: 3000,
+      peakMultiplier: 1.5,
+      readRatio: 0.95,
+      avgRequestSizeBytes: 1024,
+      avgResponseSizeBytes: 32768,
+      cacheHitRate: 0.90,
+      fanOutFactor: 1.1,
+      retryAmplificationFactor: 1.01,
+    },
+  },
+  write_heavy: {
+    id: "write_heavy",
+    name: "Write-Heavy Ingestion (70% Writes)",
+    description: "Telemetry ingestion or financial transactional workloads bypassing cache directly to storage.",
+    parameters: {
+      activeUsers: 5000,
+      concurrentUsers: 800,
+      ingressRps: 1500,
+      peakMultiplier: 1.5,
+      readRatio: 0.30,
+      avgRequestSizeBytes: 8192,
+      avgResponseSizeBytes: 2048,
+      cacheHitRate: 0.40,
+      fanOutFactor: 1.0,
+      retryAmplificationFactor: 1.08,
+    },
+  },
+  batch_processing: {
+    id: "batch_processing",
+    name: "Batch Processing & Heavy Payloads",
+    description: "Large data payloads and heavy processing times testing queue saturation and connection limits.",
+    parameters: {
+      activeUsers: 500,
+      concurrentUsers: 50,
+      ingressRps: 200,
+      peakMultiplier: 1.0,
+      readRatio: 0.50,
+      avgRequestSizeBytes: 524288, // 512 KB
+      avgResponseSizeBytes: 1048576, // 1 MB
+      cacheHitRate: 0.10,
+      fanOutFactor: 2.0,
+      retryAmplificationFactor: 1.0,
+    },
+  },
+};

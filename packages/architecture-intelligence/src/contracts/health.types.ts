@@ -131,3 +131,4 @@ export interface HealthAnalyzer {
   description: string;
   analyze(context: AnalyzerContext): Promise<DimensionAssessment> | DimensionAssessment;
 }
+

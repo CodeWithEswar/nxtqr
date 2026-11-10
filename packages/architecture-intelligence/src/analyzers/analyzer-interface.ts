@@ -3,3 +3,4 @@ import type { AnalyzerContext, DimensionAssessment } from "../contracts/health.t
 export interface IAnalyzer {
   analyze(context: AnalyzerContext): DimensionAssessment;
 }
+

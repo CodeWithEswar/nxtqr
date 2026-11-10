@@ -10,8 +10,8 @@ describe("Architecture Analyzers", () => {
       { id: "service", type: "container-service", position: { x: 200, y: 0 }, data: {} },
     ];
     const edges: BaseEdge[] = [
-      { id: "e1", source: "client", target: "gateway" },
-      { id: "e2", source: "gateway", target: "service" },
+      { id: "e1", source: "client", target: "gateway", data: {} },
+      { id: "e2", source: "gateway", target: "service", data: {} },
     ];
 
     const report = architectureHealthEngine.assessGraph(nodes, edges);
@@ -29,7 +29,7 @@ describe("Architecture Analyzers", () => {
       { id: "db", type: "relational-database", position: { x: 200, y: 0 }, data: {} },
     ];
     const edges: BaseEdge[] = [
-      { id: "e_leak", source: "browser", target: "db" },
+      { id: "e_leak", source: "browser", target: "db", data: {} },
     ];
 
     const report = architectureHealthEngine.assessGraph(nodes, edges);
@@ -63,8 +63,8 @@ describe("Architecture Analyzers", () => {
       { id: "payments", type: "container-service", position: { x: 100, y: 0 }, data: {} },
     ];
     const edges: BaseEdge[] = [
-      { id: "e1", source: "orders", target: "payments" },
-      { id: "e2", source: "payments", target: "orders" },
+      { id: "e1", source: "orders", target: "payments", data: {} },
+      { id: "e2", source: "payments", target: "orders", data: {} },
     ];
 
     const report = architectureHealthEngine.assessGraph(nodes, edges);
@@ -90,3 +90,4 @@ describe("Architecture Analyzers", () => {
     expect(obs).toBeDefined();
   });
 });
+
