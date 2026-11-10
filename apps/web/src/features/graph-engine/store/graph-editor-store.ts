@@ -51,9 +51,11 @@ export interface GraphEditorState {
   isInspectorOpen: boolean;
   isNodeLibraryOpen: boolean;
   isValidationOpen: boolean;
+  isHealthOpen: boolean;
   nodeLibraryWidth: number;
   inspectorWidth: number;
   validationPanelWidth: number;
+  healthPanelWidth: number;
   autosaveStatus: AutosaveStatus;
 
   // History state indicators
@@ -76,11 +78,14 @@ export interface GraphEditorState {
   toggleInspector: () => void;
   setValidationOpen: (open: boolean) => void;
   toggleValidation: () => void;
+  setHealthOpen: (open: boolean) => void;
+  toggleHealth: () => void;
   setNodeLibraryOpen: (open: boolean) => void;
   toggleNodeLibrary: () => void;
   setNodeLibraryWidth: (width: number) => void;
   setInspectorWidth: (width: number) => void;
   setValidationPanelWidth: (width: number) => void;
+  setHealthPanelWidth: (width: number) => void;
   resetPanelWidths: () => void;
   setAutosaveStatus: (status: AutosaveStatus) => void;
 
@@ -223,9 +228,11 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     isInspectorOpen: true,
     isNodeLibraryOpen: true,
     isValidationOpen: false,
+    isHealthOpen: false,
     nodeLibraryWidth: 280,
     inspectorWidth: 320,
     validationPanelWidth: 320,
+    healthPanelWidth: 340,
     autosaveStatus: "saved",
 
     canUndo: false,
@@ -263,6 +270,8 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     toggleInspector: () => set((s) => ({ isInspectorOpen: !s.isInspectorOpen })),
     setValidationOpen: (open) => set({ isValidationOpen: open }),
     toggleValidation: () => set((s) => ({ isValidationOpen: !s.isValidationOpen })),
+    setHealthOpen: (open) => set({ isHealthOpen: open }),
+    toggleHealth: () => set((s) => ({ isHealthOpen: !s.isHealthOpen })),
     setNodeLibraryOpen: (open) => set({ isNodeLibraryOpen: open }),
     toggleNodeLibrary: () => set((s) => ({ isNodeLibraryOpen: !s.isNodeLibraryOpen })),
     setNodeLibraryWidth: (width) => {
@@ -277,7 +286,11 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
       const clamped = Math.max(260, Math.min(540, width));
       set({ validationPanelWidth: clamped });
     },
-    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320 }),
+    setHealthPanelWidth: (width) => {
+      const clamped = Math.max(260, Math.min(540, width));
+      set({ healthPanelWidth: clamped });
+    },
+    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320, healthPanelWidth: 340 }),
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),
 
     selectNode: (id, multi = false) => {

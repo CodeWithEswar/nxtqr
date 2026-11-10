@@ -18,6 +18,7 @@ import {
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
 import { ValidationSummaryBadge } from "@/features/system-design/validation";
+import { HealthSummaryBadge } from "@/features/system-design/health";
 
 export interface GraphToolbarProps {
   className?: string;
@@ -40,6 +41,8 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
 
   const isValidationOpen = useGraphEditorStore((s) => s.isValidationOpen);
   const toggleValidation = useGraphEditorStore((s) => s.toggleValidation);
+  const isHealthOpen = useGraphEditorStore((s) => s.isHealthOpen);
+  const toggleHealth = useGraphEditorStore((s) => s.toggleHealth);
 
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const toggleNodeLibrary = useGraphEditorStore((s) => s.toggleNodeLibrary);
@@ -189,6 +192,12 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
         <ValidationSummaryBadge
           isOpen={isValidationOpen}
           onToggle={toggleValidation}
+        />
+
+        {/* Health Analysis Panel Toggle */}
+        <HealthSummaryBadge
+          isOpen={isHealthOpen}
+          onToggle={toggleHealth}
         />
 
         {/* Inspector Toggle */}

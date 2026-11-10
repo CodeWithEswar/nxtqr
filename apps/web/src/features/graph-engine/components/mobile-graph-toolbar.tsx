@@ -30,6 +30,7 @@ import {
 import { NodeLibrary } from "./node-library";
 import { NodeInspector } from "./node-inspector";
 import { ValidationPanel, ValidationSummaryBadge } from "@/features/system-design/validation";
+import { HealthPanel, HealthSummaryBadge } from "@/features/system-design/health";
 
 export function MobileGraphToolbar() {
   const toolMode = useGraphEditorStore((s) => s.toolMode);
@@ -55,6 +56,7 @@ export function MobileGraphToolbar() {
   const [libraryOpen, setLibraryOpen] = React.useState(false);
   const [inspectorOpen, setInspectorOpen] = React.useState(false);
   const [validationOpen, setValidationOpen] = React.useState(false);
+  const [healthOpen, setHealthOpen] = React.useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false);
 
   // Selected node reference for contextual bar
@@ -190,6 +192,12 @@ export function MobileGraphToolbar() {
         <ValidationSummaryBadge
           isOpen={validationOpen}
           onToggle={() => setValidationOpen(!validationOpen)}
+        />
+
+        {/* Mobile Health Button */}
+        <HealthSummaryBadge
+          isOpen={healthOpen}
+          onToggle={() => setHealthOpen(!healthOpen)}
         />
 
         {/* Mobile Popover Menu for Secondary Actions */}
@@ -342,6 +350,28 @@ export function MobileGraphToolbar() {
 
           <div className="flex-1 overflow-hidden min-h-0">
             <ValidationPanel onClose={() => setValidationOpen(false)} />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* 6. Bottom Drawer for Architecture Health on Mobile */}
+      <Sheet open={healthOpen} onOpenChange={setHealthOpen}>
+        <SheetContent
+          side="bottom"
+          hideCloseButton
+          className="h-[80vh] max-h-[80vh] p-0 bg-surface-01 border-t border-border-strong rounded-t-md flex flex-col overflow-hidden shadow-level-3"
+        >
+          <SheetHeader className="sr-only">
+            <SheetTitle>Architecture Health</SheetTitle>
+          </SheetHeader>
+
+          {/* Drawer Drag Pill */}
+          <div className="w-full flex justify-center pt-2.5 pb-1.5 shrink-0 bg-surface-02 border-b border-border-subtle/40">
+            <div className="w-10 h-1 rounded-full bg-border-strong" />
+          </div>
+
+          <div className="flex-1 overflow-hidden min-h-0">
+            <HealthPanel onClose={() => setHealthOpen(false)} />
           </div>
         </SheetContent>
       </Sheet>

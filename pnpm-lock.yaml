@@ -203,6 +203,9 @@ importers:
       '@nxtqr/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
+      '@nxtqr/architecture-intelligence':
+        specifier: workspace:*
+        version: link:../../packages/architecture-intelligence
       '@nxtqr/architecture-validation':
         specifier: workspace:*
         version: link:../../packages/architecture-validation
@@ -391,6 +394,34 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
+
+  packages/architecture-intelligence:
+    dependencies:
+      '@nxtqr/architecture-validation':
+        specifier: workspace:*
+        version: link:../architecture-validation
+      '@nxtqr/graph-schema':
+        specifier: workspace:*
+        version: link:../graph-schema
+      '@nxtqr/node-registry':
+        specifier: workspace:*
+        version: link:../node-registry
+      '@nxtqr/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      '@nxtqr/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.7
+        version: 3.2.7(@types/debug@4.1.13)(@types/node@22.20.5)(jiti@1.21.7)(supports-color@10.2.2)(tsx@4.23.15)(yaml@2.9.1)
 
   packages/architecture-validation:
     dependencies:

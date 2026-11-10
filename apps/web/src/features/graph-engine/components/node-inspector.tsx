@@ -9,6 +9,7 @@ import {
   CloseIcon,
   CheckCircleIcon,
   AlertTriangleIcon,
+  ActivityIcon,
   getInfrastructureIcon,
 } from "@nxtqr/icons";
 import {
@@ -17,6 +18,7 @@ import {
   type InspectorSectionDefinition,
 } from "@nxtqr/node-registry";
 import { architectureValidationEngine } from "@nxtqr/architecture-validation";
+import { architectureHealthEngine, type HealthFinding } from "@nxtqr/architecture-intelligence";
 import {
   Button,
   Badge,
@@ -41,6 +43,7 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
   const deleteSelected = useGraphEditorStore((s) => s.deleteSelected);
   const deleteEdgeById = useGraphEditorStore((s) => s.deleteEdgeById);
   const duplicateSelected = useGraphEditorStore((s) => s.duplicateSelected);
+  const setHealthOpen = useGraphEditorStore((s) => s.setHealthOpen);
 
   // Single selection target
   const selectedNode = React.useMemo(() => {
@@ -120,6 +123,13 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
     if (!selectedNode) return [];
     const graphRes = architectureValidationEngine.validateGraph(nodes, edges);
     return graphRes.findingsByNode[selectedNode.id] || [];
+  }, [selectedNode, nodes, edges]);
+
+  // Active health findings for this node
+  const nodeHealthFindings = React.useMemo(() => {
+    if (!selectedNode) return [];
+    const healthReport = architectureHealthEngine.assessGraph(nodes, edges);
+    return healthReport.findingsByNode[selectedNode.id] || [];
   }, [selectedNode, nodes, edges]);
 
   // Case 1: Edge Selection
@@ -476,6 +486,40 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                   {f.title}
                 </span>
                 <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Node Health Assessment Summary */}
+        {nodeHealthFindings.length > 0 && (
+          <div className="p-2.5 rounded-md bg-surface-02 border border-border-default space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                <ActivityIcon className="w-3 h-3 text-amber-400" />
+                Health Findings ({nodeHealthFindings.length})
+              </span>
+              <button
+                type="button"
+                onClick={() => setHealthOpen(true)}
+                className="text-[9px] font-mono text-text-muted hover:text-foreground underline transition-colors"
+              >
+                View in Panel
+              </button>
+            </div>
+            {nodeHealthFindings.map((f: HealthFinding, idx: number) => (
+              <div key={idx} className="p-1.5 rounded bg-surface-03 border border-border-subtle space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className={`text-[11px] font-semibold truncate ${
+                    f.severity === "critical" ? "text-rose-400" : f.severity === "high" ? "text-amber-400" : "text-text-secondary"
+                  }`}>
+                    {f.title}
+                  </span>
+                  <Badge variant="outline" className="text-[8px] font-mono h-3.5 px-1 uppercase border-border-subtle">
+                    {f.dimension}
+                  </Badge>
+                </div>
+                <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>
               </div>
             ))}
           </div>

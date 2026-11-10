@@ -8,6 +8,7 @@ import { NodeInspector } from "./node-inspector";
 import { MobileGraphToolbar } from "./mobile-graph-toolbar";
 import { PanelResizeHandle } from "./panel-resize-handle";
 import { ValidationPanel } from "@/features/system-design/validation";
+import { HealthPanel } from "@/features/system-design/health";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { useGraphPersistence } from "../hooks/use-graph-persistence";
 import { Badge } from "@nxtqr/ui";
@@ -29,13 +30,17 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
   const isInspectorOpen = useGraphEditorStore((s) => s.isInspectorOpen);
   const isValidationOpen = useGraphEditorStore((s) => s.isValidationOpen);
   const setValidationOpen = useGraphEditorStore((s) => s.setValidationOpen);
+  const isHealthOpen = useGraphEditorStore((s) => s.isHealthOpen);
+  const setHealthOpen = useGraphEditorStore((s) => s.setHealthOpen);
   const setInspectorOpen = useGraphEditorStore((s) => s.setInspectorOpen);
   const nodeLibraryWidth = useGraphEditorStore((s) => s.nodeLibraryWidth);
   const inspectorWidth = useGraphEditorStore((s) => s.inspectorWidth);
   const validationPanelWidth = useGraphEditorStore((s) => s.validationPanelWidth);
+  const healthPanelWidth = useGraphEditorStore((s) => s.healthPanelWidth);
   const setNodeLibraryWidth = useGraphEditorStore((s) => s.setNodeLibraryWidth);
   const setInspectorWidth = useGraphEditorStore((s) => s.setInspectorWidth);
   const setValidationPanelWidth = useGraphEditorStore((s) => s.setValidationPanelWidth);
+  const setHealthPanelWidth = useGraphEditorStore((s) => s.setHealthPanelWidth);
   const resetPanelWidths = useGraphEditorStore((s) => s.resetPanelWidths);
 
   React.useEffect(() => {
@@ -116,6 +121,32 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
           {/* Mobile Bottom Floating Action Bar & Drawers */}
           <MobileGraphToolbar />
         </main>
+
+        {/* Right: Desktop Architecture Health Analysis Panel (Resizable / Collapsible) */}
+        {isHealthOpen && (
+          <aside
+            style={{ width: `${healthPanelWidth}px` }}
+            className="hidden md:flex relative border-l border-border-default bg-surface-01 shrink-0 overflow-visible flex-col shadow-level-1 select-none"
+          >
+            <div className="flex-1 overflow-hidden min-h-0">
+              <HealthPanel
+                onClose={() => setHealthOpen(false)}
+                onFocusNode={() => setInspectorOpen(true)}
+              />
+            </div>
+
+            {/* Resize Handle on Left Edge of Health Panel */}
+            <PanelResizeHandle
+              side="left"
+              currentWidth={healthPanelWidth}
+              minWidth={280}
+              maxWidth={560}
+              defaultWidth={340}
+              onResize={setHealthPanelWidth}
+              ariaLabel="Resize Architecture Health panel"
+            />
+          </aside>
+        )}
 
         {/* Right: Desktop Architecture Validation Panel (Resizable / Collapsible) */}
         {isValidationOpen && (
