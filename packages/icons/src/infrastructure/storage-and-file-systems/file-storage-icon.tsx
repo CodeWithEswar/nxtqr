@@ -93,3 +93,4 @@ export const FileStorageIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

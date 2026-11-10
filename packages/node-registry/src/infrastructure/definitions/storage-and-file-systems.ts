@@ -1528,3 +1528,4 @@ export const ALL_STORAGE_AND_FILE_SYSTEMS_DEFINITIONS: InfrastructureComponentDe
   storageGatewayDefinition,
   contentRepositoryDefinition,
 ];
+

@@ -83,3 +83,4 @@ export const BlobStorageIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

@@ -96,3 +96,4 @@ export const ContentRepositoryIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

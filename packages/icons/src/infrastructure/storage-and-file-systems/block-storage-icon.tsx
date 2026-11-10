@@ -139,3 +139,4 @@ export const BlockStorageIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

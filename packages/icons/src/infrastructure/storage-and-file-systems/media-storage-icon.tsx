@@ -85,3 +85,4 @@ export const MediaStorageIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+

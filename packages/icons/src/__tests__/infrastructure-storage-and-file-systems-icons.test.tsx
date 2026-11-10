@@ -78,3 +78,4 @@ describe("Category 08 — Storage & File Systems Infrastructure Icons", () => {
     }
   });
 });
+

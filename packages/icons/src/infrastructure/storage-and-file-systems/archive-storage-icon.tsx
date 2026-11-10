@@ -102,3 +102,4 @@ export const ArchiveStorageIcon: React.FC<InfrastructureIconProps> = ({
     </svg>
   );
 };
+
