@@ -115,6 +115,13 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
     );
   }, [selectedNode, infraDef]);
 
+  // Active validation findings for this node
+  const nodeFindings = React.useMemo(() => {
+    if (!selectedNode) return [];
+    const graphRes = architectureValidationEngine.validateGraph(nodes, edges);
+    return graphRes.findingsByNode[selectedNode.id] || [];
+  }, [selectedNode, nodes, edges]);
+
   // Case 1: Edge Selection
   if (selectedNodeIds.length === 0 && selectedEdgeIds.length === 1) {
     const selectedEdge = edges.find((e) => e.id === selectedEdgeIds[0]);
@@ -337,13 +344,6 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
       activePortIds.add(edge.targetHandle);
     }
   }
-
-  // Active validation findings for this node
-  const nodeFindings = React.useMemo(() => {
-    if (!selectedNode) return [];
-    const graphRes = architectureValidationEngine.validateGraph(nodes, edges);
-    return graphRes.findingsByNode[selectedNode.id] || [];
-  }, [selectedNode, nodes, edges]);
 
   return (
     <div
