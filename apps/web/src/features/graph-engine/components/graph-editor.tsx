@@ -13,6 +13,7 @@ import { BottleneckPanel } from "@/features/system-design/bottlenecks";
 import { FailurePanel } from "@/features/system-design/failure-analysis";
 import { SecurityPanel } from "@/features/system-design/security-analysis";
 import { ScalabilityPanel } from "@/features/system-design/scalability";
+import { EnginePanelHost } from "./engine-panel-host";
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { useGraphPersistence } from "../hooks/use-graph-persistence";
 import { Badge } from "@nxtqr/ui";
@@ -168,6 +169,9 @@ function InnerGraphEditor({ projectId, className, fitViewOnMount }: GraphEditorP
             />
           </aside>
         )}
+
+        {/* Right: Unified Architecture Intelligence Host Panel (Phases 05.3.1 - 05.3.30) */}
+        <EnginePanelHost projectId={projectId} />
 
         {/* Right: Desktop Security Architecture Analysis Panel */}
         {isSecurityOpen && (

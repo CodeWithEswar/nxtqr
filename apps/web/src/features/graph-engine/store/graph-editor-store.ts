@@ -58,6 +58,7 @@ export interface GraphEditorState {
   isFailureAnalysisOpen: boolean;
   isSecurityOpen: boolean;
   isScalabilityOpen: boolean;
+  activeEngineId: string | null;
   nodeLibraryWidth: number;
   inspectorWidth: number;
   validationPanelWidth: number;
@@ -66,6 +67,7 @@ export interface GraphEditorState {
   failureAnalysisPanelWidth: number;
   securityPanelWidth: number;
   scalabilityPanelWidth: number;
+  enginePanelWidth: number;
   activeScenarioId: string;
   activeWhatIfPlan: WhatIfPlan | null;
   autosaveStatus: AutosaveStatus;
@@ -100,6 +102,9 @@ export interface GraphEditorState {
   toggleSecurity: () => void;
   setScalabilityOpen: (open: boolean) => void;
   toggleScalability: () => void;
+  setActiveEngineId: (engineId: string | null) => void;
+  toggleEngineId: (engineId: string) => void;
+  setEnginePanelWidth: (width: number) => void;
   setNodeLibraryOpen: (open: boolean) => void;
   toggleNodeLibrary: () => void;
   setNodeLibraryWidth: (width: number) => void;
@@ -260,6 +265,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     isFailureAnalysisOpen: false,
     isSecurityOpen: false,
     isScalabilityOpen: false,
+    activeEngineId: null,
     nodeLibraryWidth: 280,
     inspectorWidth: 320,
     validationPanelWidth: 320,
@@ -268,6 +274,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     failureAnalysisPanelWidth: 360,
     securityPanelWidth: 380,
     scalabilityPanelWidth: 380,
+    enginePanelWidth: 460,
     activeScenarioId: "normal_traffic",
     activeWhatIfPlan: null,
     autosaveStatus: "saved",
@@ -317,6 +324,41 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     toggleSecurity: () => set((s) => ({ isSecurityOpen: !s.isSecurityOpen })),
     setScalabilityOpen: (open) => set({ isScalabilityOpen: open }),
     toggleScalability: () => set((s) => ({ isScalabilityOpen: !s.isScalabilityOpen })),
+    setActiveEngineId: (engineId) => {
+      if (engineId === "validation") {
+        set({ isValidationOpen: true, activeEngineId: engineId });
+      } else if (engineId === "health") {
+        set({ isHealthOpen: true, activeEngineId: engineId });
+      } else if (engineId === "bottlenecks") {
+        set({ isBottlenecksOpen: true, activeEngineId: engineId });
+      } else if (engineId === "failure-analysis") {
+        set({ isFailureAnalysisOpen: true, activeEngineId: engineId });
+      } else if (engineId === "security-analysis") {
+        set({ isSecurityOpen: true, activeEngineId: engineId });
+      } else if (engineId === "scalability") {
+        set({ isScalabilityOpen: true, activeEngineId: engineId });
+      } else {
+        set({ activeEngineId: engineId });
+      }
+    },
+    toggleEngineId: (engineId) => {
+      const current = get().activeEngineId;
+      if (current === engineId) {
+        set({ activeEngineId: null });
+        if (engineId === "validation") set({ isValidationOpen: false });
+        if (engineId === "health") set({ isHealthOpen: false });
+        if (engineId === "bottlenecks") set({ isBottlenecksOpen: false });
+        if (engineId === "failure-analysis") set({ isFailureAnalysisOpen: false });
+        if (engineId === "security-analysis") set({ isSecurityOpen: false });
+        if (engineId === "scalability") set({ isScalabilityOpen: false });
+      } else {
+        get().setActiveEngineId(engineId);
+      }
+    },
+    setEnginePanelWidth: (width) => {
+      const clamped = Math.max(320, Math.min(840, width));
+      set({ enginePanelWidth: clamped });
+    },
     setNodeLibraryOpen: (open) => set({ isNodeLibraryOpen: open }),
     toggleNodeLibrary: () => set((s) => ({ isNodeLibraryOpen: !s.isNodeLibraryOpen })),
     setNodeLibraryWidth: (width) => {
@@ -367,7 +409,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
       set({ activeWhatIfPlan: null });
       syncHistoryState();
     },
-    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320, healthPanelWidth: 340, bottlenecksPanelWidth: 360, failureAnalysisPanelWidth: 360, securityPanelWidth: 380, scalabilityPanelWidth: 380 }),
+    resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320, healthPanelWidth: 340, bottlenecksPanelWidth: 360, failureAnalysisPanelWidth: 360, securityPanelWidth: 380, scalabilityPanelWidth: 380, enginePanelWidth: 460 }),
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),
 
     selectNode: (id, multi = false) => {

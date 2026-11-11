@@ -35,6 +35,7 @@ import { BottleneckPanel, BottleneckSummaryBadge } from "@/features/system-desig
 import { FailurePanel, FailureSummaryBadge } from "@/features/system-design/failure-analysis";
 import { SecurityPanel, SecuritySummaryBadge } from "@/features/system-design/security-analysis";
 import { ScalabilityPanel, ScalabilitySummaryBadge } from "@/features/system-design/scalability";
+import { ArchitectureEnginesMenu } from "@/features/system-design/components/architecture-engines-menu";
 
 export function MobileGraphToolbar() {
   const toolMode = useGraphEditorStore((s) => s.toolMode);
@@ -231,6 +232,9 @@ export function MobileGraphToolbar() {
           isOpen={scalabilityOpen}
           onToggle={() => setScalabilityOpen(!scalabilityOpen)}
         />
+
+        {/* Complete Architecture Intelligence Engines Menu */}
+        <ArchitectureEnginesMenu />
 
         {/* Mobile Popover Menu for Secondary Actions */}
         <Popover open={moreMenuOpen} onOpenChange={setMoreMenuOpen}>

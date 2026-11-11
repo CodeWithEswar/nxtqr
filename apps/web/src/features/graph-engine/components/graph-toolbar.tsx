@@ -14,6 +14,7 @@ import {
   PlusIcon,
   LayersIcon,
   MonitorIcon,
+  CloseIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
@@ -23,6 +24,8 @@ import { BottleneckSummaryBadge } from "@/features/system-design/bottlenecks";
 import { FailureSummaryBadge } from "@/features/system-design/failure-analysis";
 import { SecuritySummaryBadge } from "@/features/system-design/security-analysis";
 import { ScalabilitySummaryBadge } from "@/features/system-design/scalability";
+import { ArchitectureEnginesMenu } from "@/features/system-design/components/architecture-engines-menu";
+import { getFeatureById } from "@/features/system-design/feature-registry";
 
 export interface GraphToolbarProps {
   className?: string;
@@ -55,6 +58,20 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
   const toggleSecurity = useGraphEditorStore((s) => s.toggleSecurity);
   const isScalabilityOpen = useGraphEditorStore((s) => s.isScalabilityOpen);
   const toggleScalability = useGraphEditorStore((s) => s.toggleScalability);
+  const activeEngineId = useGraphEditorStore((s) => s.activeEngineId);
+  const toggleEngineId = useGraphEditorStore((s) => s.toggleEngineId);
+
+  const activeSecondaryFeature = React.useMemo(() => {
+    if (!activeEngineId) return null;
+    if (
+      ["validation", "health", "bottlenecks", "failure-analysis", "security-analysis", "scalability"].includes(
+        activeEngineId
+      )
+    ) {
+      return null;
+    }
+    return getFeatureById(activeEngineId) || null;
+  }, [activeEngineId]);
 
   const isNodeLibraryOpen = useGraphEditorStore((s) => s.isNodeLibraryOpen);
   const toggleNodeLibrary = useGraphEditorStore((s) => s.toggleNodeLibrary);
@@ -235,6 +252,25 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
           isOpen={isScalabilityOpen}
           onToggle={toggleScalability}
         />
+
+        {/* Active Secondary Engine Quick Pill */}
+        {activeSecondaryFeature && (
+          <button
+            type="button"
+            onClick={() => toggleEngineId(activeSecondaryFeature.id)}
+            className="h-7 px-2 text-[11px] font-mono rounded-md gap-1.5 border border-border-strong bg-surface-04 text-foreground shadow-level-3 font-semibold flex items-center transition-colors cursor-pointer"
+            title={`Close ${activeSecondaryFeature.name} panel`}
+          >
+            <span className="truncate max-w-[120px]">{activeSecondaryFeature.shortName}</span>
+            <span className="text-[9px] font-mono px-1 py-0.5 rounded bg-surface-03 border border-border-default text-text-secondary">
+              OPEN
+            </span>
+            <CloseIcon className="h-3 w-3 text-text-muted hover:text-foreground" />
+          </button>
+        )}
+
+        {/* Complete Architecture Intelligence Engines Menu (30 Production Engines) */}
+        <ArchitectureEnginesMenu />
 
         {/* Inspector Toggle */}
         <Button
