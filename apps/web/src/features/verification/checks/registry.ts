@@ -668,5 +668,22 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-simulation",
     },
   },
+  {
+    id: "architecture_observability",
+    category: "architecture",
+    title: "Phase 05.3.16: Architecture Observability & Telemetry Mapping Engine",
+    description: "Production-grade telemetry gateway mapping real monitoring data (Prometheus metrics, OpenTelemetry distributed traces & logs, synthetic mock telemetry) to visual architecture components. Strictly segregates observed telemetry from modeled assumptions, enforces SSRF safeguards and server-side secret isolation, normalizes counter rates with restart resets, computes linear-interpolated histogram quantiles, evaluates service health states and SLO error budgets, detects topology drifts (unmapped dependencies, missing modeled traffic), provides interactive trace waterfall and correlated structured logs, and integrates with AI Assistant Tool #19 (get_observability_telemetry).",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-observability",
+      supportedTelemetrySources: ["prometheus", "opentelemetry", "mock"],
+      ssrfProtectionActive: true,
+      serviceMappingConfidences: ["confirmed", "suggested", "ambiguous", "unmapped", "stale"],
+      aiAssistantToolRegistered: "get_observability_telemetry (Tool #19)",
+      inspectionRoute: "/verify/architecture-observability",
+    },
+  },
 ];
 

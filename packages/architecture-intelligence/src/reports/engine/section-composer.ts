@@ -13,6 +13,7 @@ import type {
   EvidenceReference,
   HealthSection,
   OverviewSection,
+  ObservabilitySection,
   RecommendationsSection,
   ReliabilitySection,
   ReportAudience,
@@ -680,6 +681,66 @@ export class SectionComposer {
             },
           };
           sections.push(simulationSection);
+          break;
+        }
+
+        case "observability": {
+          const obsData = analysisContext?.observability;
+          const healthMap = obsData?.healthIndicators || {};
+          let healthyCount = 0;
+          let degradedCount = 0;
+          let criticalCount = 0;
+          let unknownCount = 0;
+
+          for (const health of Object.values(healthMap)) {
+            if (health.state === "healthy") healthyCount++;
+            else if (health.state === "degraded") degradedCount++;
+            else if (health.state === "critical") criticalCount++;
+            else unknownCount++;
+          }
+
+          const topDriftFindings =
+            obsData?.driftFindings?.slice(0, 5).map((d) => ({
+              type: d.type,
+              title: d.title,
+              severity: d.severity,
+              evidence: d.evidence,
+            })) || [];
+
+          const observedVsModeledDeltas =
+            obsData?.comparisons?.slice(0, 5).map((c) => {
+              const node = nodes.find((n) => n.id === c.componentId);
+              return {
+                componentLabel: (node?.data?.label as string) || c.componentId,
+                observedRps: c.observedRps,
+                modeledRps: c.modeledRps,
+                observedLatencyP95Ms: c.observedLatencyP95Ms,
+                modeledLatencyP95Ms: c.modeledLatencyP95Ms,
+              };
+            }) || [];
+
+          const observabilitySection: ObservabilitySection = {
+            id: `sec-observability`,
+            kind: "observability",
+            title: "Architecture Observability & Telemetry Mapping",
+            description:
+              "Authorized monitoring telemetry, real-time component health, topology drift detection, and observed vs modeled calibration.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "observability"),
+            content: {
+              telemetrySource: obsData?.sourceName || "Synthetic Mock Telemetry",
+              totalMonitoredComponents: Object.keys(healthMap).length || nodes.length,
+              healthyCount,
+              degradedCount,
+              criticalCount,
+              unknownCount,
+              topologyDriftCount: obsData?.driftFindings?.length || 0,
+              topDriftFindings,
+              observedVsModeledDeltas,
+            },
+          };
+          sections.push(observabilitySection);
           break;
         }
 

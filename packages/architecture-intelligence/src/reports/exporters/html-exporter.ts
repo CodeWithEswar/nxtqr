@@ -226,6 +226,81 @@ export class HtmlExporter {
           break;
         }
 
+        case "observability": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="cost-summary-box">
+              <div class="cost-stat">
+                <span class="label">Telemetry Source:</span>
+                <span class="value">${escapeHtml(c.telemetrySource)}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Monitored Components:</span>
+                <span class="value">${c.totalMonitoredComponents}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Healthy:</span>
+                <span class="value">${c.healthyCount}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Degraded:</span>
+                <span class="value">${c.degradedCount}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Critical:</span>
+                <span class="value">${c.criticalCount}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Unknown:</span>
+                <span class="value">${c.unknownCount}</span>
+              </div>
+            </div>
+            ${
+              c.topDriftFindings.length > 0
+                ? `<h4>Topology Drift Findings</h4>
+                <ul>
+                  ${c.topDriftFindings
+                    .map(
+                      (d) =>
+                        `<li><strong>[${d.severity.toUpperCase()}] ${escapeHtml(d.title)}</strong> (${escapeHtml(d.type)})<br/><em>Evidence:</em> ${escapeHtml(d.evidence)}</li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+            ${
+              c.observedVsModeledDeltas.length > 0
+                ? `<h4>Observed vs Modeled Telemetry Comparison</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Component</th>
+                      <th class="num">Observed RPS</th>
+                      <th class="num">Modeled RPS</th>
+                      <th class="num">Observed P95</th>
+                      <th class="num">Modeled P95</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.observedVsModeledDeltas
+                      .map(
+                        (d) => `<tr>
+                        <td><strong>${escapeHtml(d.componentLabel)}</strong></td>
+                        <td class="num">${d.observedRps !== undefined ? `${d.observedRps} req/s` : "N/A"}</td>
+                        <td class="num">${d.modeledRps !== undefined ? `${d.modeledRps} req/s` : "N/A"}</td>
+                        <td class="num">${d.observedLatencyP95Ms !== undefined ? `${d.observedLatencyP95Ms} ms` : "N/A"}</td>
+                        <td class="num">${d.modeledLatencyP95Ms !== undefined ? `${d.modeledLatencyP95Ms} ms` : "N/A"}</td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

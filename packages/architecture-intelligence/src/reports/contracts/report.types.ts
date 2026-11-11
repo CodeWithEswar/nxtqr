@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -40,6 +40,7 @@ export type ReportSectionKind =
   | "capacity"
   | "cost"
   | "simulation"
+  | "observability"
   | "adrs"
   | "text";
 
@@ -349,6 +350,32 @@ export interface SimulationSection extends BaseReportSection {
   };
 }
 
+export interface ObservabilitySection extends BaseReportSection {
+  kind: "observability";
+  content: {
+    telemetrySource: string;
+    totalMonitoredComponents: number;
+    healthyCount: number;
+    degradedCount: number;
+    criticalCount: number;
+    unknownCount: number;
+    topologyDriftCount: number;
+    topDriftFindings: Array<{
+      type: string;
+      title: string;
+      severity: string;
+      evidence: string;
+    }>;
+    observedVsModeledDeltas: Array<{
+      componentLabel: string;
+      observedRps?: number;
+      modeledRps?: number;
+      observedLatencyP95Ms?: number;
+      modeledLatencyP95Ms?: number;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -384,6 +411,7 @@ export type ReportSection =
   | CapacitySection
   | CostSection
   | SimulationSection
+  | ObservabilitySection
   | ADRsSection
   | TextSection;
 

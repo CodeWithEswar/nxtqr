@@ -311,6 +311,39 @@ export class MarkdownExporter {
           break;
         }
 
+        case "observability": {
+          const content = section.content;
+          lines.push(`Telemetry Source: **${content.telemetrySource}**`);
+          lines.push(`- Monitored Components: **${content.totalMonitoredComponents}**`);
+          lines.push(`- Health Breakdown: **${content.healthyCount}** Healthy, **${content.degradedCount}** Degraded, **${content.criticalCount}** Critical, **${content.unknownCount}** Unknown`);
+          lines.push(`- Detected Topology Drifts: **${content.topologyDriftCount}**`);
+          lines.push("");
+
+          if (content.topDriftFindings.length > 0) {
+            lines.push("### Topology Drift Findings");
+            for (const d of content.topDriftFindings) {
+              lines.push(`- **[${d.severity.toUpperCase()}] ${d.title}** (${d.type})`);
+              lines.push(`  *Evidence:* ${d.evidence}`);
+            }
+            lines.push("");
+          }
+
+          if (content.observedVsModeledDeltas.length > 0) {
+            lines.push("### Observed vs Modeled Telemetry Comparison");
+            lines.push("| Component | Observed RPS | Modeled RPS | Observed P95 | Modeled P95 |");
+            lines.push("| :--- | :---: | :---: | :---: | :---: |");
+            for (const delta of content.observedVsModeledDeltas) {
+              const obsRps = delta.observedRps !== undefined ? `${delta.observedRps} req/s` : "N/A";
+              const modRps = delta.modeledRps !== undefined ? `${delta.modeledRps} req/s` : "N/A";
+              const obsLat = delta.observedLatencyP95Ms !== undefined ? `${delta.observedLatencyP95Ms} ms` : "N/A";
+              const modLat = delta.modeledLatencyP95Ms !== undefined ? `${delta.modeledLatencyP95Ms} ms` : "N/A";
+              lines.push(`| **${delta.componentLabel}** | ${obsRps} | ${modRps} | ${obsLat} | ${modLat} |`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

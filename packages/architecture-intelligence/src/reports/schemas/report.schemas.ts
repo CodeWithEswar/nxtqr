@@ -23,6 +23,7 @@ export const ReportEvidenceReferenceSchema = z.object({
     "capacity",
     "cost",
     "simulation",
+    "observability",
     "adr",
     "doc",
   ]),
@@ -53,6 +54,7 @@ export const ReportSectionKindSchema = z.enum([
   "capacity",
   "cost",
   "simulation",
+  "observability",
   "adrs",
   "text",
 ]);
@@ -407,6 +409,36 @@ export const SimulationSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const ObservabilitySectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("observability"),
+  content: z.object({
+    telemetrySource: z.string(),
+    totalMonitoredComponents: z.number().int().min(0),
+    healthyCount: z.number().int().min(0),
+    degradedCount: z.number().int().min(0),
+    criticalCount: z.number().int().min(0),
+    unknownCount: z.number().int().min(0),
+    topologyDriftCount: z.number().int().min(0),
+    topDriftFindings: z.array(
+      z.object({
+        type: z.string(),
+        title: z.string(),
+        severity: z.string(),
+        evidence: z.string(),
+      })
+    ),
+    observedVsModeledDeltas: z.array(
+      z.object({
+        componentLabel: z.string(),
+        observedRps: z.number().optional(),
+        modeledRps: z.number().optional(),
+        observedLatencyP95Ms: z.number().optional(),
+        modeledLatencyP95Ms: z.number().optional(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -442,6 +474,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   CapacitySectionSchema,
   CostSectionSchema,
   SimulationSectionSchema,
+  ObservabilitySectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

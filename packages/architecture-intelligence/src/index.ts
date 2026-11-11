@@ -77,6 +77,9 @@ export * from "./reviews";
 // Architecture Simulation & Failure Testing Engine (Phase 05.3.15)
 export * from "./simulation";
 
+// Architecture Observability & Telemetry Mapping Engine (Phase 05.3.16)
+export * from "./observability";
+
 
 
 

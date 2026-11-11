@@ -17,6 +17,11 @@ import type { ArchitectureComparisonResult } from "../../comparison/contracts/co
 import type { CapacityPlanningReport } from "../../capacity-planning/contracts/capacity.types";
 import type { CostEstimate, CostOptimizationOpportunity } from "../../cost/contracts/cost.types";
 import type { SimulationResult } from "../../simulation/contracts/simulation.types";
+import type {
+  ServiceHealthIndicator,
+  TopologyDriftFinding,
+  ObservedVsModeledComparison,
+} from "../../observability/contracts/observability.types";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -31,6 +36,12 @@ export interface ReportAnalysisContext {
   cost?: CostEstimate;
   costOptimizations?: CostOptimizationOpportunity[];
   simulation?: SimulationResult;
+  observability?: {
+    sourceName?: string;
+    healthIndicators: Record<string, ServiceHealthIndicator>;
+    driftFindings: TopologyDriftFinding[];
+    comparisons: ObservedVsModeledComparison[];
+  };
 }
 
 export interface GenerateReportInput {
