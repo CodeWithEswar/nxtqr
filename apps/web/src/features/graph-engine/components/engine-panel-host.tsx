@@ -147,6 +147,25 @@ const UnifiedRecommendationList = dynamic(
   { ssr: false, loading: () => <EngineLoading name="Recommendations" /> }
 );
 
+const ExecutionWorkspace = dynamic(
+  () =>
+    import("@/features/system-design/execution").then((m) => {
+      return function ExecutionWorkspaceWrapper() {
+        return (
+          <div className="flex flex-col h-full overflow-hidden p-3 gap-3">
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              <m.ExecutionInspector />
+            </div>
+            <div className="h-64 shrink-0 overflow-hidden rounded-md border border-border-default">
+              <m.ExecutionTimeline />
+            </div>
+          </div>
+        );
+      };
+    }),
+  { ssr: false, loading: () => <EngineLoading name="Interactive Execution" /> }
+);
+
 function EngineHeaderIcon({ iconName, className }: { iconName: string; className?: string }) {
   switch (iconName) {
     case "ShieldIcon":
@@ -385,6 +404,10 @@ export function EnginePanelHost({ projectId }: EnginePanelHostProps) {
           <div className="p-3">
             <UnifiedRecommendationList />
           </div>
+        )}
+
+        {activeEngineId === "execution" && (
+          <ExecutionWorkspace />
         )}
       </div>
 

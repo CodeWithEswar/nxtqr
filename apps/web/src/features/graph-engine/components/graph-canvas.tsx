@@ -24,6 +24,15 @@ import {
 } from "@nxtqr/architecture-validation";
 import { ConnectionFeedback } from "@/features/system-design/validation";
 import type { BaseEdge, BaseNode, NodeDimensions, NodePosition } from "../schemas/graph.schema";
+import {
+  ExecutionToolbar,
+  ExecutionOverlay,
+  ExecutionTimeline,
+  ExecutionInspector,
+  ExecutionConfigDialog,
+  useExecutionPlayback,
+  useExecutionStore,
+} from "@/features/system-design/execution";
 
 export interface GraphCanvasProps {
   className?: string;
@@ -33,6 +42,20 @@ export interface GraphCanvasProps {
 function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   // Bind global keyboard shortcuts (Undo, Redo, Copy, Paste, Delete, Select All)
   useGraphShortcuts();
+
+  // Bind interactive architecture execution keyboard shortcuts (Space, ArrowRight, ArrowLeft, Escape)
+  useExecutionPlayback();
+
+  const isExecutionModeActive = useExecutionStore((s) => s.isExecutionModeActive);
+  const isTimelineOpen = useExecutionStore((s) => s.isTimelineOpen);
+  const isConfigDialogOpen = useExecutionStore((s) => s.isConfigDialogOpen);
+  const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
+  const activeNodeIds = useExecutionStore(
+    (s) => s.playbackState.currentFrame?.activeNodeIds || []
+  );
+  const activeEdgeIds = useExecutionStore(
+    (s) => s.playbackState.currentFrame?.activeEdgeIds || []
+  );
 
   const nodes = useGraphEditorStore((s) => s.nodes);
   const edges = useGraphEditorStore((s) => s.edges);
@@ -80,48 +103,56 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
   // Map NXTQR nodes to React Flow format
   const flowNodes = React.useMemo(() => {
-    return nodes.map((n) => ({
-      id: n.id,
-      type: showcaseComponent ? "custom" : n.type || "generic",
-      position: n.position,
-      measured: nodeMeasurements.get(n.id),
-      selected: selectedNodeIds.includes(n.id),
-      data: {
-        label: n.label,
-        description: n.description,
-        nodeType: n.type || "process",
-        status: n.status || "idle",
-        ports: n.ports,
-        ...n.data,
-        ...(showcaseComponent && {
-          portLayout: verticalShowcase ? "vertical" : "horizontal",
-          showcase: true,
-          highlighted: n.type === showcaseComponent,
-        }),
-      } satisfies GraphNodeData,
-    }));
-  }, [nodeMeasurements, nodes, selectedNodeIds, showcaseComponent, verticalShowcase]);
+    return nodes.map((n) => {
+      const isExecutionActive = activeNodeIds.includes(n.id);
+      return {
+        id: n.id,
+        type: showcaseComponent ? "custom" : n.type || "generic",
+        position: n.position,
+        measured: nodeMeasurements.get(n.id),
+        selected: selectedNodeIds.includes(n.id) || isExecutionActive,
+        data: {
+          label: n.label,
+          description: n.description,
+          nodeType: n.type || "process",
+          status: n.status || "idle",
+          ports: n.ports,
+          ...n.data,
+          ...(isExecutionActive && { highlighted: true }),
+          ...(showcaseComponent && {
+            portLayout: verticalShowcase ? "vertical" : "horizontal",
+            showcase: true,
+            highlighted: n.type === showcaseComponent || isExecutionActive,
+          }),
+        } satisfies GraphNodeData,
+      };
+    });
+  }, [nodeMeasurements, nodes, selectedNodeIds, activeNodeIds, showcaseComponent, verticalShowcase]);
 
   // Map NXTQR edges to React Flow format
   const flowEdges = React.useMemo(() => {
-    return edges.map((e) => ({
-      id: e.id,
-      source: e.source,
-      target: e.target,
-      sourceHandle: e.sourceHandle ?? e.sourcePort,
-      targetHandle: e.targetHandle ?? e.targetPort,
-      type: e.type || "bezier",
-      selected: selectedEdgeIds.includes(e.id),
-      data: {
+    return edges.map((e) => {
+      const isFlowActive = activeEdgeIds.includes(e.id);
+      return {
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        sourceHandle: e.sourceHandle ?? e.sourcePort,
+        targetHandle: e.targetHandle ?? e.targetPort,
+        type: e.type || "bezier",
+        selected: selectedEdgeIds.includes(e.id) || isFlowActive,
+        data: {
+          label: e.label,
+          edgeType: e.type,
+          ...e.data,
+          flowActive: isFlowActive,
+          ...(showcaseComponent && { showcaseWire: true }),
+        },
         label: e.label,
-        edgeType: e.type,
-        ...e.data,
-        ...(showcaseComponent && { showcaseWire: true }),
-      },
-      label: e.label,
-      markerEnd: showcaseComponent ? showcaseEdgeMarker : undefined,
-    }));
-  }, [edges, selectedEdgeIds, showcaseComponent]);
+        markerEnd: showcaseComponent ? showcaseEdgeMarker : undefined,
+      };
+    });
+  }, [edges, selectedEdgeIds, activeEdgeIds, showcaseComponent]);
 
   // Node Changes (Dragging, Selection)
   const onNodesChange = React.useCallback(
@@ -402,6 +433,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
         snapToGrid={snapToGrid}
         snapGrid={[16, 16]}
       >
+        {/* Interactive Architecture Execution Dynamic Traveling Marker & Overlays */}
+        <ExecutionOverlay />
+
         {/* Precision Minimap (Pannable, Zoomable, Click-to-center) */}
         {showMinimap && (
           <div className="absolute bottom-3 right-3 z-10 rounded-md border border-border-strong bg-surface-02 shadow-level-2 overflow-hidden pointer-events-auto">
@@ -444,6 +478,24 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
           {srAnnouncement}
         </div>
       </GraphCanvasSurface>
+
+      {/* Interactive Execution Controls Toolbar (Floating Centered) */}
+      <ExecutionToolbar className="absolute top-3 left-1/2 -translate-x-1/2 z-30 pointer-events-auto" />
+
+      {/* Synchronized Event Timeline (Bottom-Left Drawer) */}
+      {isExecutionModeActive && isTimelineOpen && (
+        <ExecutionTimeline className="absolute bottom-12 left-3 w-80 md:w-96 max-h-72 z-30 pointer-events-auto" />
+      )}
+
+      {/* Contextual Execution Step Inspector (Floating Right) */}
+      {isExecutionModeActive && isExecutionInspectorOpen && (
+        <div className="absolute top-14 right-3 w-80 md:w-88 max-h-[70vh] z-30 pointer-events-auto">
+          <ExecutionInspector />
+        </div>
+      )}
+
+      {/* Execution Run Configuration Modal */}
+      {isConfigDialogOpen && <ExecutionConfigDialog />}
     </div>
   );
 }

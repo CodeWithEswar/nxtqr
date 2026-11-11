@@ -1,0 +1,251 @@
+"use client";
+
+import * as React from "react";
+import {
+  PlayIcon,
+  PauseIcon,
+  RefreshIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
+  CloseIcon,
+  SlidersIcon,
+  ActivityIcon,
+} from "@nxtqr/icons";
+import { Button } from "@nxtqr/ui";
+import { cn } from "@nxtqr/utils";
+import { useExecutionStore } from "../store/execution-store";
+import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
+import type { PlaybackSpeed } from "@nxtqr/architecture-execution";
+
+export interface ExecutionToolbarProps {
+  className?: string;
+}
+
+const SPEED_OPTIONS: PlaybackSpeed[] = [0.25, 0.5, 1, 2, 4];
+
+export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
+  const nodes = useGraphEditorStore((s) => s.nodes);
+  const edges = useGraphEditorStore((s) => s.edges);
+
+  const isExecutionModeActive = useExecutionStore((s) => s.isExecutionModeActive);
+  const isTimelineOpen = useExecutionStore((s) => s.isTimelineOpen);
+  const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
+  const playbackState = useExecutionStore((s) => s.playbackState);
+  const runExecution = useExecutionStore((s) => s.runExecution);
+  const pause = useExecutionStore((s) => s.pause);
+  const resume = useExecutionStore((s) => s.resume);
+  const stop = useExecutionStore((s) => s.stop);
+  const restart = useExecutionStore((s) => s.restart);
+  const nextStep = useExecutionStore((s) => s.nextStep);
+  const previousStep = useExecutionStore((s) => s.previousStep);
+  const seekToStep = useExecutionStore((s) => s.seekToStep);
+  const setSpeed = useExecutionStore((s) => s.setSpeed);
+  const toggleTimeline = useExecutionStore((s) => s.toggleTimeline);
+  const toggleConfigDialog = useExecutionStore((s) => s.toggleConfigDialog);
+  const toggleExecutionInspector = useExecutionStore((s) => s.toggleExecutionInspector);
+
+  const isPlaying = playbackState.status === "playing";
+  const isCompleted = playbackState.status === "completed";
+  const currentStep = playbackState.currentStepIndex + 1;
+  const totalSteps = playbackState.totalSteps || 1;
+
+  const handleRunOrTogglePlay = () => {
+    if (!isExecutionModeActive || playbackState.status === "idle" || playbackState.status === "stopped") {
+      runExecution(nodes, edges);
+    } else if (isPlaying) {
+      pause();
+    } else {
+      resume();
+    }
+  };
+
+  return (
+    <div
+      role="toolbar"
+      aria-label="Interactive Architecture Execution Controls"
+      className={cn(
+        "flex items-center gap-1.5 p-1 rounded-md bg-surface-02 border border-border-default shadow-level-2 select-none z-30 transition-all duration-200",
+        className
+      )}
+    >
+      {/* 1. Mode Indicator / Badge */}
+      <div className="flex items-center gap-1.5 px-2 py-0.5 border-r border-border-subtle shrink-0">
+        <span
+          className={cn(
+            "w-2 h-2 rounded-full transition-colors",
+            isExecutionModeActive
+              ? isPlaying
+                ? "bg-emerald-400 animate-pulse"
+                : isCompleted
+                  ? "bg-neutral-400"
+                  : "bg-amber-400"
+              : "bg-text-disabled"
+          )}
+          aria-hidden="true"
+        />
+        <span className="font-mono text-[10px] uppercase tracking-wider text-text-secondary font-semibold">
+          Guided Flow
+        </span>
+      </div>
+
+      {/* 2. Primary Run / Play / Pause Control */}
+      <Button
+        variant={isPlaying ? "outline" : "default"}
+        size="sm"
+        onClick={handleRunOrTogglePlay}
+        title={
+          !isExecutionModeActive
+            ? "Run Architecture Request Flow (Space)"
+            : isPlaying
+              ? "Pause Execution (Space)"
+              : "Resume Execution (Space)"
+        }
+        className={cn(
+          "h-7 px-2.5 text-xs font-mono font-medium rounded-md gap-1.5 transition-colors",
+          !isPlaying && "bg-foreground text-background hover:bg-neutral-200 border-transparent",
+          isPlaying && "border-border-default hover:bg-surface-03 text-foreground"
+        )}
+      >
+        {isPlaying ? (
+          <>
+            <PauseIcon className="w-3.5 h-3.5" />
+            <span>Pause</span>
+          </>
+        ) : (
+          <>
+            <PlayIcon className="w-3.5 h-3.5" />
+            <span>{!isExecutionModeActive ? "Run Flow" : isCompleted ? "Replay" : "Resume"}</span>
+          </>
+        )}
+      </Button>
+
+      {/* 3. Step Controls (Active Mode Only) */}
+      {isExecutionModeActive && (
+        <>
+          <div className="flex items-center gap-0.5 border-l border-border-subtle pl-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={previousStep}
+              disabled={playbackState.currentStepIndex <= 0}
+              title="Previous Execution Step (← Left Arrow)"
+              className="h-7 w-7 p-0 text-text-secondary hover:text-foreground hover:bg-surface-03 rounded-md disabled:opacity-40"
+            >
+              <ChevronLeftIcon className="w-3.5 h-3.5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={nextStep}
+              disabled={playbackState.currentStepIndex >= totalSteps - 1}
+              title="Next Execution Step (→ Right Arrow)"
+              className="h-7 w-7 p-0 text-text-secondary hover:text-foreground hover:bg-surface-03 rounded-md disabled:opacity-40"
+            >
+              <ChevronRightIcon className="w-3.5 h-3.5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={restart}
+              title="Restart Execution from Step 1"
+              className="h-7 w-7 p-0 text-text-secondary hover:text-foreground hover:bg-surface-03 rounded-md"
+            >
+              <RefreshIcon className="w-3 h-3" />
+            </Button>
+          </div>
+
+          {/* 4. Interactive Scrubber / Step Counter */}
+          <div className="flex items-center gap-2 px-2 border-l border-border-subtle">
+            <span className="font-mono text-[10px] text-text-muted whitespace-nowrap">
+              Step <span className="text-foreground font-semibold">{currentStep}</span>/{totalSteps}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={Math.max(0, totalSteps - 1)}
+              value={playbackState.currentStepIndex}
+              onChange={(e) => seekToStep(Number(e.target.value))}
+              aria-label="Seek Execution Step"
+              className="w-20 h-1 bg-surface-04 rounded appearance-none cursor-pointer accent-foreground"
+            />
+          </div>
+
+          {/* 5. Speed Multiplier Dropdown */}
+          <div className="flex items-center gap-0.5 border-l border-border-subtle pl-1.5">
+            {SPEED_OPTIONS.map((spd) => (
+              <button
+                key={spd}
+                type="button"
+                onClick={() => setSpeed(spd)}
+                title={`Playback speed ${spd}x`}
+                className={cn(
+                  "px-1.5 py-0.5 rounded text-[10px] font-mono transition-colors",
+                  playbackState.speed === spd
+                    ? "bg-surface-04 text-foreground font-semibold border border-border-strong shadow-level-3"
+                    : "text-text-muted hover:text-text-secondary hover:bg-surface-03"
+                )}
+              >
+                {spd}x
+              </button>
+            ))}
+          </div>
+
+          {/* 6. Timeline & Inspector Toggles */}
+          <div className="flex items-center gap-1 border-l border-border-subtle pl-1.5">
+            <Button
+              variant={isTimelineOpen ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => toggleTimeline()}
+              title="Toggle Execution Timeline"
+              className={cn(
+                "h-7 px-2 text-[10px] font-mono rounded-md gap-1",
+                isTimelineOpen && "bg-surface-04 border border-border-strong text-foreground shadow-level-3"
+              )}
+            >
+              <ActivityIcon className="w-3 h-3" />
+              <span className="hidden sm:inline">Timeline</span>
+            </Button>
+
+            <Button
+              variant={isExecutionInspectorOpen ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => toggleExecutionInspector()}
+              title="Toggle Step Inspector"
+              className={cn(
+                "h-7 px-2 text-[10px] font-mono rounded-md gap-1",
+                isExecutionInspectorOpen && "bg-surface-04 border border-border-strong text-foreground shadow-level-3"
+              )}
+            >
+              <SlidersIcon className="w-3 h-3" />
+              <span className="hidden sm:inline">Inspector</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={stop}
+              title="Stop & Exit Execution (Esc)"
+              className="h-7 w-7 p-0 text-text-muted hover:text-foreground hover:bg-surface-03 rounded-md"
+            >
+              <CloseIcon className="w-3.5 h-3.5" />
+            </Button>
+          </div>
+        </>
+      )}
+
+      {/* 7. Request Config Dialog Trigger */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => toggleConfigDialog()}
+        title="Configure Request & Route Branching"
+        className="h-7 px-2 text-text-muted hover:text-foreground hover:bg-surface-03 rounded-md font-mono text-[10px] gap-1 border-l border-border-subtle ml-0.5"
+      >
+        <SlidersIcon className="w-3 h-3" />
+        <span className="hidden md:inline">Config</span>
+      </Button>
+    </div>
+  );
+}

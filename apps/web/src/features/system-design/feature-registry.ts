@@ -28,11 +28,11 @@ export const ARCHITECTURE_FEATURE_CATEGORIES: Array<{
   label: string;
   count: number;
 }> = [
-  { id: "all", label: "All Engines", count: 29 },
+  { id: "all", label: "All Engines", count: 30 },
   { id: "diagnostics", label: "Diagnostics & Health", count: 7 },
   { id: "infrastructure", label: "Cloud & Topology", count: 7 },
   { id: "governance", label: "Governance & Quality", count: 6 },
-  { id: "operations", label: "Operations & Modernization", count: 6 },
+  { id: "operations", label: "Operations & Modernization", count: 7 },
   { id: "intelligence", label: "Intelligence & AI", count: 3 },
 ];
 
@@ -335,6 +335,17 @@ export const ARCHITECTURE_FEATURES: ArchitectureFeature[] = [
     badgeLabel: "Diff Viewer",
     badgeTag: "SIMULATION",
     iconName: "SlidersIcon",
+  },
+  {
+    id: "execution",
+    name: "Interactive Architecture Execution & Run Visualizer",
+    shortName: "Execution",
+    category: "operations",
+    phase: "Phase 05.4.1",
+    description: "Step-by-step model-based execution flows, animated packets, virtual timing, and contextual inspectors.",
+    badgeLabel: "Flow Active",
+    badgeTag: "SIMULATION",
+    iconName: "PlayIcon",
   },
 
   // 5. Intelligence, Orchestration & AI (3)

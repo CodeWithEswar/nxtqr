@@ -45,6 +45,7 @@ describe("Architecture Intelligence Suite — Feature Registry & Engine Logic", 
     expect(ids).toContain("readiness");
     expect(ids).toContain("ai-assistant");
     expect(ids).toContain("recommendations");
+    expect(ids).toContain("execution");
   });
 
   it("should categorize engines accurately", () => {
@@ -60,7 +61,7 @@ describe("Architecture Intelligence Suite — Feature Registry & Engine Logic", 
     expect(governance.length).toBe(6);
 
     const operations = getFeaturesByCategory("operations");
-    expect(operations.length).toBe(6);
+    expect(operations.length).toBe(7);
 
     const intelligence = getFeaturesByCategory("intelligence");
     expect(intelligence.length).toBe(3);

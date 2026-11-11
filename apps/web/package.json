@@ -13,6 +13,7 @@
     "@monaco-editor/react": "^4.6.0",
     "@nxtqr/analytics": "workspace:*",
     "@nxtqr/api-client": "workspace:*",
+    "@nxtqr/architecture-execution": "workspace:*",
     "@nxtqr/architecture-intelligence": "workspace:*",
     "@nxtqr/architecture-validation": "workspace:*",
     "@nxtqr/auth": "workspace:*",
