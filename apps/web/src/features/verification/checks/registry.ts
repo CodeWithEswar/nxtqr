@@ -599,5 +599,22 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/tutorial-system-design",
     },
   },
+  {
+    id: "architecture_reports",
+    category: "architecture",
+    title: "Phase 05.3.12: Architecture Reports & Documentation Generator",
+    description: "Transforms the visualizer into a technical documentation and reporting workspace. Generates reproducible, evidence-backed reports from 11 analysis engines, ADRs, 9 templates, and multi-format exports (PDF, Markdown, HTML, JSON, DOCX).",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/node-registry", "@nxtqr/icons"],
+    evidence: {
+      route: "/verify/architecture-reports",
+      analysisEnginesIntegrated: 11,
+      templatesCount: 9,
+      exportFormats: ["pdf", "markdown", "html", "json", "docx"],
+      sectionKindsCount: 18,
+      inspectionRoute: "/verify/architecture-reports",
+    },
+  },
 ];
 

@@ -13,6 +13,10 @@ import { DEFAULT_CAPACITY_SCENARIOS } from "../../capacity-planning/scenarios/ca
 import { architectureCostEngine } from "../../cost/engine/cost-engine";
 import type { CloudProviderId } from "../../cost/contracts/pricing.types";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
+import { architectureReportEngine } from "../../reports/engine/report-engine";
+import { ReportExportCoordinator } from "../../reports/exporters";
+import type { ReportAudience } from "../../reports/contracts/report.types";
+import type { ReportExportFormat } from "../../reports/contracts/export.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -533,6 +537,79 @@ export class ArchitectureToolRegistry {
             savings: o.estimatedMonthlySavings,
             summary: o.summary,
           })),
+        };
+      },
+    });
+
+    // 16. generate_architecture_report
+    this.registerTool({
+      name: "generate_architecture_report",
+      description: "Generates a structured, evidence-backed architecture report and technical documentation in Markdown, HTML, JSON, PDF, or DOCX formats.",
+      parameters: {
+        type: "object",
+        properties: {
+          templateId: {
+            type: "string",
+            description: "Template ID (e.g. 'architecture_overview', 'detailed_technical_architecture', 'architecture_review', 'security_architecture_review', 'reliability_resilience_review', 'scalability_capacity_plan', 'architecture_comparison', 'architecture_improvement_plan', 'custom_report'). Default is 'architecture_overview'.",
+          },
+          audience: {
+            type: "string",
+            description: "Audience target: 'engineering', 'technical_leadership', 'architecture_review', 'security_review', 'operations', 'executive_overview'.",
+          },
+          title: { type: "string", description: "Optional custom report title." },
+          format: {
+            type: "string",
+            description: "Export format: 'markdown', 'html', 'json', 'pdf', 'docx'. If provided, includes exported document content.",
+          },
+        },
+        required: [],
+      },
+      execute: async (args, context) => {
+        const templateId = String(args.templateId || "architecture_overview");
+        const audience = args.audience as ReportAudience | undefined;
+        const title = args.title ? String(args.title) : undefined;
+        const format = args.format as ReportExportFormat | undefined;
+
+        const report = architectureReportEngine.generateReport({
+          projectId: context.projectId,
+          architectureId: context.architectureId,
+          graphRevision: context.graphRevision,
+          nodes: context.nodes,
+          edges: context.edges,
+          templateId,
+          audience,
+          title,
+        });
+
+        let exportPayload: unknown = undefined;
+        if (format) {
+          const exportResult = ReportExportCoordinator.exportReport(report, {
+            format,
+            theme: "dark",
+          });
+          exportPayload = {
+            format: exportResult.format,
+            filename: exportResult.filename,
+            byteSize: exportResult.byteSize,
+            preview: exportResult.content.slice(0, 1500) + (exportResult.content.length > 1500 ? "..." : ""),
+          };
+        }
+
+        return {
+          reportId: report.id,
+          title: report.title,
+          templateId: report.templateId,
+          audience: report.audience,
+          versionNumber: report.versionNumber,
+          sectionCount: report.sections.length,
+          evidenceCount: report.evidence.length,
+          sections: report.sections.map((s) => ({
+            id: s.id,
+            kind: s.kind,
+            title: s.title,
+            isEnabled: s.isEnabled,
+          })),
+          export: exportPayload,
         };
       },
     });

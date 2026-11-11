@@ -50,6 +50,7 @@ export * from "./reliability";
 
 // Disambiguate exports between submodules
 export type { EvidenceReference } from "./contracts/health.types";
+export { EvidenceReferenceSchema } from "./contracts/health.schemas";
 export type { RecommendationFeasibility } from "./scalability";
 
 // Unified Intelligent Architecture Recommendations Engine (Phase 05.3.8)
@@ -66,6 +67,10 @@ export * from "./capacity-planning";
 
 // Architecture Cost Estimation & Optimization Engine (Phase 05.3.14)
 export * from "./cost";
+
+// Architecture Reports & Technical Documentation Generator (Phase 05.3.12)
+export * from "./reports";
+
 
 
 
