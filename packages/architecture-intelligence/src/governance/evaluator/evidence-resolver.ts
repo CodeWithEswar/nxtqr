@@ -87,3 +87,4 @@ export class EvidenceResolver {
     return `sha256-${hex}${hex}`;
   }
 }
+

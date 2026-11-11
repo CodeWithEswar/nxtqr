@@ -111,4 +111,8 @@ export * from "./network";
 // Architecture Compliance, Governance & Policy-as-Code Intelligence Engine (Phase 05.3.25)
 export * from "./governance";
 
+// Architecture Migration, Modernization & Evolution Planning Engine (Phase 05.3.26)
+export * from "./evolution";
+export type { MigrationAnalysisResult } from "./evolution";
+
 

@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "messaging" | "cache" | "governance" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "messaging" | "cache" | "governance" | "migration" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -50,6 +50,7 @@ export type ReportSectionKind =
   | "database_architecture"
   | "network_and_traffic"
   | "governance_and_compliance"
+  | "migration_and_evolution"
   | "adrs"
   | "text";
 
@@ -744,6 +745,52 @@ export interface GovernanceAndComplianceSection extends BaseReportSection {
   };
 }
 
+export interface MigrationAndEvolutionSection extends BaseReportSection {
+  kind: "migration_and_evolution";
+  content: {
+    projectId: string;
+    strategyId: string;
+    strategyName: string;
+    strategyComplexity: string;
+    totalRequirementsCount: number;
+    acceptedRequirementsCount: number;
+    totalTasksCount: number;
+    totalWavesCount: number;
+    completedTasksCount: number;
+    blockedTasksCount: number;
+    criticalRisksCount: number;
+    highRisksCount: number;
+    irreversibleWavesCount: number;
+    passedGatesCount: number;
+    failedGatesCount: number;
+    estimatedTotalEffortHours: number;
+    hasBlockingIssues: boolean;
+    waves: Array<{
+      waveNumber: number;
+      title: string;
+      objective: string;
+      tasksCount: number;
+      status: string;
+      rollbackStrategy: string;
+      isIrreversible: boolean;
+    }>;
+    criticalPathTaskIds: string[];
+    risks: Array<{
+      id: string;
+      category: string;
+      severity: string;
+      failureMode: string;
+      mitigationPlan: string;
+    }>;
+    rollbackPlans: Array<{
+      waveId: string;
+      feasibilityStatus: string;
+      isFeasible: boolean;
+      warning?: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -789,6 +836,7 @@ export type ReportSection =
   | DatabaseArchitectureSection
   | NetworkAndTrafficSection
   | GovernanceAndComplianceSection
+  | MigrationAndEvolutionSection
   | ADRsSection
   | TextSection;
 

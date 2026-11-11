@@ -126,3 +126,4 @@ describe("Phase 05.3.25 — What-If Policy Simulation & Remediation Planning", (
     expect(plan[2].step).toBe(3);
   });
 });
+

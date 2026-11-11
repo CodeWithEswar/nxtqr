@@ -714,6 +714,46 @@ export class MarkdownExporter {
           break;
         }
 
+        case "migration_and_evolution": {
+          const content = section.content;
+          lines.push(`- Migration Strategy: **${content.strategyName}** (\`${content.strategyId}\`, Complexity: **${content.strategyComplexity.toUpperCase()}**)`);
+          lines.push(`- Scope: **${content.totalRequirementsCount} Requirements** (${content.acceptedRequirementsCount} Accepted) | **${content.totalTasksCount} Tasks** across **${content.totalWavesCount} Waves**`);
+          lines.push(`- Execution: **${content.completedTasksCount} Completed** | **${content.blockedTasksCount} Blocked** | Estimated Effort: **${content.estimatedTotalEffortHours} Hours**`);
+          lines.push(`- Risk & Safety: **${content.criticalRisksCount} Critical Risks** | **${content.highRisksCount} High Risks** | **${content.irreversibleWavesCount} Irreversible Waves**`);
+          lines.push(`- Verification Gates: **${content.passedGatesCount} Passed** | **${content.failedGatesCount} Failed** | Blocking Issues: **${content.hasBlockingIssues ? "YES" : "None"}**`);
+          lines.push("");
+
+          lines.push("### Migration Waves & Sequence");
+          lines.push("| Wave # | Title | Objective | Tasks | Status | Rollback Feasibility |");
+          lines.push("|---|---|---|---|---|---|");
+          for (const w of content.waves) {
+            const revLabel = w.isIrreversible ? "**IRREVERSIBLE**" : "Reversible";
+            lines.push(`| Wave ${w.waveNumber} | ${w.title} | ${w.objective} | ${w.tasksCount} | \`${w.status.toUpperCase()}\` | ${revLabel} |`);
+          }
+          lines.push("");
+
+          if (content.risks.length > 0) {
+            lines.push("### Critical Migration Risks & Blast Radius Mitigations");
+            lines.push("| Risk ID | Category | Severity | Failure Mode | Mitigation Plan |");
+            lines.push("|---|---|---|---|---|");
+            for (const r of content.risks) {
+              lines.push(`| \`${r.id}\` | ${r.category} | **${r.severity.toUpperCase()}** | ${r.failureMode} | ${r.mitigationPlan} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.rollbackPlans.length > 0) {
+            lines.push("### Rollback Feasibility & Point of No Return");
+            lines.push("| Wave ID | Feasibility | Safe to Revert | Point of No Return Warning |");
+            lines.push("|---|---|---|---|");
+            for (const rp of content.rollbackPlans) {
+              lines.push(`| \`${rp.waveId}\` | \`${rp.feasibilityStatus.toUpperCase()}\` | ${rp.isFeasible ? "Yes" : "No"} | ${rp.warning || "None"} |`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

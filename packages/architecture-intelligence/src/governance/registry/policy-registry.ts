@@ -39,16 +39,12 @@ export class PolicyRegistry {
     return PolicyRegistry.getInstance().getAllPolicies();
   }
 
-  public static getAllBundles(): PolicyBundle[] {
-    return PolicyRegistry.getInstance().getAllBundles();
-  }
-
   public static getPolicy(id: string): GovernancePolicy | undefined {
     return PolicyRegistry.getInstance().getPolicy(id);
   }
 
-  public static getBundle(id: string): PolicyBundle | undefined {
-    return PolicyRegistry.getInstance().getBundle(id);
+  public static getAllBundles(): PolicyBundle[] {
+    return PolicyRegistry.getInstance().getAllBundles();
   }
 
   private registerDefaultPolicies(): void {
@@ -603,3 +599,4 @@ export class PolicyRegistry {
 }
 
 export const policyRegistry = PolicyRegistry.getInstance();
+

@@ -260,3 +260,4 @@ export class PolicyAstInterpreter {
     return current;
   }
 }
+

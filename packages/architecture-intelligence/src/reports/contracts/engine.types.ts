@@ -39,6 +39,7 @@ import type { DistributedStateTopology } from "../../cache-state/contracts/cache
 import type { DatabaseArchitectureTopology } from "../../database/contracts/database.types";
 import type { NetworkArchitectureTopology } from "../../network/contracts/network.types";
 import type { GovernanceArchitectureTopology } from "../../governance/contracts/governance.types";
+import type { MigrationProject } from "../../evolution/contracts/evolution.types";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -77,6 +78,7 @@ export interface ReportAnalysisContext {
   databaseTopology?: DatabaseArchitectureTopology;
   networkTopology?: NetworkArchitectureTopology;
   governanceTopology?: GovernanceArchitectureTopology;
+  migrationProject?: MigrationProject;
 }
 
 export interface GenerateReportInput {

@@ -1059,6 +1059,103 @@ export class HtmlExporter {
           break;
         }
 
+        case "migration_and_evolution": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Strategy</span>
+                  <span class="pillar-score" style="font-size: 14px;">${escapeHtml(c.strategyName)}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Requirements</span>
+                  <span class="pillar-score">${c.totalRequirementsCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Waves / Tasks</span>
+                  <span class="pillar-score">${c.totalWavesCount} / ${c.totalTasksCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Estimated Effort</span>
+                  <span class="pillar-score">${c.estimatedTotalEffortHours}h</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Critical Risks</span>
+                  <span class="pillar-score" style="color: ${c.criticalRisksCount > 0 ? "#ef4444" : "#22c55e"};">${c.criticalRisksCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Gates Status</span>
+                  <span class="pillar-score" style="color: ${c.failedGatesCount > 0 ? "#ef4444" : "#22c55e"};">${c.passedGatesCount}P / ${c.failedGatesCount}F</span>
+                </div>
+              </div>
+            </div>
+
+            <h4>Migration Waves & Execution Path</h4>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Wave</th>
+                    <th>Title</th>
+                    <th>Objective</th>
+                    <th>Tasks</th>
+                    <th>Status</th>
+                    <th>Rollback</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${c.waves
+                    .map(
+                      (w) => `<tr>
+                    <td><strong>Wave ${w.waveNumber}</strong></td>
+                    <td>${escapeHtml(w.title)}</td>
+                    <td>${escapeHtml(w.objective)}</td>
+                    <td>${w.tasksCount} tasks</td>
+                    <td><span class="badge ${w.status === "completed" ? "badge-success" : w.status === "active" ? "badge-info" : "badge-warning"}">${w.status.toUpperCase()}</span></td>
+                    <td><span class="badge ${w.isIrreversible ? "badge-error" : "badge-success"}">${w.isIrreversible ? "IRREVERSIBLE" : "Reversible"}</span></td>
+                  </tr>`
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            </div>
+
+            ${
+              c.risks.length > 0
+                ? `<h4>Migration Risks & Mitigation Actions</h4>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Risk ID</th>
+                        <th>Category</th>
+                        <th>Severity</th>
+                        <th>Failure Mode</th>
+                        <th>Mitigation Plan</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${c.risks
+                        .map(
+                          (r) => `<tr>
+                        <td><code>${escapeHtml(r.id)}</code></td>
+                        <td>${escapeHtml(r.category)}</td>
+                        <td><span class="badge ${r.severity === "critical" || r.severity === "high" ? "badge-error" : "badge-warning"}">${r.severity.toUpperCase()}</span></td>
+                        <td>${escapeHtml(r.failureMode)}</td>
+                        <td>${escapeHtml(r.mitigationPlan)}</td>
+                      </tr>`
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

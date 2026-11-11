@@ -70,6 +70,7 @@ export const ReportSectionKindSchema = z.enum([
   "database_architecture",
   "network_and_traffic",
   "governance_and_compliance",
+  "migration_and_evolution",
   "adrs",
   "text",
 ]);
@@ -869,6 +870,58 @@ export const GovernanceAndComplianceSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const MigrationAndEvolutionSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("migration_and_evolution"),
+  content: z.object({
+    projectId: z.string(),
+    strategyId: z.string(),
+    strategyName: z.string(),
+    strategyComplexity: z.string(),
+    totalRequirementsCount: z.number().int().min(0),
+    acceptedRequirementsCount: z.number().int().min(0),
+    totalTasksCount: z.number().int().min(0),
+    totalWavesCount: z.number().int().min(0),
+    completedTasksCount: z.number().int().min(0),
+    blockedTasksCount: z.number().int().min(0),
+    criticalRisksCount: z.number().int().min(0),
+    highRisksCount: z.number().int().min(0),
+    irreversibleWavesCount: z.number().int().min(0),
+    passedGatesCount: z.number().int().min(0),
+    failedGatesCount: z.number().int().min(0),
+    estimatedTotalEffortHours: z.number().int().min(0),
+    hasBlockingIssues: z.boolean(),
+    waves: z.array(
+      z.object({
+        waveNumber: z.number().int(),
+        title: z.string(),
+        objective: z.string(),
+        tasksCount: z.number().int().min(0),
+        status: z.string(),
+        rollbackStrategy: z.string(),
+        isIrreversible: z.boolean(),
+      })
+    ),
+    criticalPathTaskIds: z.array(z.string()),
+    risks: z.array(
+      z.object({
+        id: z.string(),
+        category: z.string(),
+        severity: z.string(),
+        failureMode: z.string(),
+        mitigationPlan: z.string(),
+      })
+    ),
+    rollbackPlans: z.array(
+      z.object({
+        waveId: z.string(),
+        feasibilityStatus: z.string(),
+        isFeasible: z.boolean(),
+        warning: z.string().optional(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -914,6 +967,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   DatabaseArchitectureSectionSchema,
   NetworkAndTrafficSectionSchema,
   GovernanceAndComplianceSectionSchema,
+  MigrationAndEvolutionSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

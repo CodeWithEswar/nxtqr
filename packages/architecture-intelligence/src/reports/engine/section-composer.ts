@@ -11,6 +11,7 @@ import type {
   DatabaseArchitectureSection,
   NetworkAndTrafficSection,
   GovernanceAndComplianceSection,
+  MigrationAndEvolutionSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -46,6 +47,9 @@ import { architectureDatabaseEngine } from "../../database/engine/database-engin
 import { architectureNetworkEngine } from "../../network/engine/network-engine";
 import { architectureGovernanceEngine } from "../../governance/engine/governance-engine";
 import { PolicyRegistry } from "../../governance/registry/policy-registry";
+import { architectureEvolutionEngine } from "../../evolution/engine/evolution-engine";
+import { migrationStrategyRegistry } from "../../evolution/registry/strategy-registry";
+import type { ArchitectureSnapshot } from "../../comparison/contracts/comparison.types";
 
 export class SectionComposer {
   public static composeSections(params: {
@@ -1548,6 +1552,165 @@ export class SectionComposer {
             },
           };
           sections.push(govSection);
+          break;
+        }
+
+        case "migration_and_evolution": {
+          const rawProject = analysisContext?.migrationProject;
+          const evolutionProject = rawProject;
+
+          if (evolutionProject) {
+            const strategy = migrationStrategyRegistry.getStrategy(evolutionProject.strategyId);
+            const irreversibleWaves = evolutionProject.rollbackPlans.filter((p) => p.feasibilityStatus === "irreversible").length;
+            const passedGates = evolutionProject.gates.filter((g) => g.status === "passed").length;
+            const failedGates = evolutionProject.gates.filter((g) => g.status === "failed").length;
+
+            const migrationSection: MigrationAndEvolutionSection = {
+              id: `sec-migration-evolution`,
+              kind: "migration_and_evolution",
+              title: "Architecture Migration, Modernization & Evolution Planning",
+              description:
+                "Systematic architecture evolution roadmap, 7 R's strategy selection, dependency DAG scheduling, intermediate state validation, and cutover/rollback feasibility.",
+              isEnabled: true,
+              order,
+              evidenceIds: getEvidenceIds((e) => e.sourceEngine === "evolution" || e.kind === "migration"),
+              content: {
+                projectId: evolutionProject.id,
+                strategyId: strategy.id,
+                strategyName: strategy.name,
+                strategyComplexity: strategy.complexity,
+                totalRequirementsCount: evolutionProject.requirements.length,
+                acceptedRequirementsCount: evolutionProject.requirements.filter((r) => r.status === "accepted").length,
+                totalTasksCount: evolutionProject.tasks.length,
+                totalWavesCount: evolutionProject.waves.length,
+                completedTasksCount: evolutionProject.tasks.filter((t) => t.status === "completed").length,
+                blockedTasksCount: evolutionProject.tasks.filter((t) => t.status === "blocked").length,
+                criticalRisksCount: evolutionProject.risks.filter((r) => r.severity === "critical").length,
+                highRisksCount: evolutionProject.risks.filter((r) => r.severity === "high").length,
+                irreversibleWavesCount: irreversibleWaves,
+                passedGatesCount: passedGates,
+                failedGatesCount: failedGates,
+                estimatedTotalEffortHours: evolutionProject.tasks.reduce((sum, t) => sum + t.estimatedHours, 0),
+                hasBlockingIssues: failedGates > 0,
+                waves: evolutionProject.waves.map((w) => ({
+                  waveNumber: w.waveNumber,
+                  title: w.title,
+                  objective: w.objective,
+                  tasksCount: w.taskIds.length,
+                  status: w.status,
+                  rollbackStrategy: w.rollbackStrategy,
+                  isIrreversible: evolutionProject!.rollbackPlans.find((p) => p.waveId === w.id)?.feasibilityStatus === "irreversible",
+                })),
+                criticalPathTaskIds: evolutionProject.tasks.slice(0, 4).map((t) => t.id),
+                risks: evolutionProject.risks.slice(0, 10).map((r) => ({
+                  id: r.id,
+                  category: r.category,
+                  severity: r.severity,
+                  failureMode: r.failureMode,
+                  mitigationPlan: r.mitigationPlan,
+                })),
+                rollbackPlans: evolutionProject.rollbackPlans.map((p) => ({
+                  waveId: p.waveId,
+                  feasibilityStatus: p.feasibilityStatus,
+                  isFeasible: p.isFeasible,
+                  warning: p.pointOfNoReturnWarning,
+                })),
+              },
+            };
+            sections.push(migrationSection);
+          } else {
+            // Synthesize default evolution plan from current nodes
+            const srcSnap: ArchitectureSnapshot = {
+              id: "snap-source-baseline",
+              title: "Source Architecture Baseline",
+              schemaVersion: 1,
+              provenance: "current-draft",
+              revision: "rev-source-baseline",
+              createdAt: new Date().toISOString(),
+              nodes: nodes.length > 0 ? nodes : [{ id: "legacy-monolith", type: "custom", position: { x: 0, y: 0 }, data: { label: "Legacy Monolith", nodeType: "service" } } as BaseNode],
+              edges: edges || [],
+              metadata: { environment: "production", version: "1.0.0" },
+            };
+            const tgtSnap: ArchitectureSnapshot = {
+              id: "snap-target-modernized",
+              title: "Target Modernized Architecture",
+              schemaVersion: 1,
+              provenance: "what-if-proposal",
+              revision: "rev-target-modernized",
+              createdAt: new Date().toISOString(),
+              nodes: [
+                { id: "api-gw", type: "custom", position: { x: 100, y: 100 }, data: { label: "API Gateway", nodeType: "gateway" } } as BaseNode,
+                { id: "svc-order", type: "custom", position: { x: 300, y: 100 }, data: { label: "Order Service", nodeType: "service" } } as BaseNode,
+                { id: "db-order", type: "custom", position: { x: 500, y: 100 }, data: { label: "Order DB", nodeType: "database" } } as BaseNode,
+              ],
+              edges: [
+                { id: "e1", source: "api-gw", target: "svc-order", type: "smoothstep", data: {} } as BaseEdge,
+                { id: "e2", source: "svc-order", target: "db-order", type: "smoothstep", data: {} } as BaseEdge,
+              ],
+              metadata: { environment: "cloud-native", version: "2.0.0" },
+            };
+
+            const planResult = architectureEvolutionEngine.planEvolution(srcSnap, tgtSnap, {
+              projectId: "report-evolution-plan",
+              title: "Monolith to Microservices Evolution Plan",
+            });
+            const p = planResult.project;
+            const strat = migrationStrategyRegistry.getStrategy(p.strategyId);
+
+            const migrationSection: MigrationAndEvolutionSection = {
+              id: `sec-migration-evolution`,
+              kind: "migration_and_evolution",
+              title: "Architecture Migration, Modernization & Evolution Planning",
+              description:
+                "Systematic architecture evolution roadmap, 7 R's strategy selection, dependency DAG scheduling, intermediate state validation, and cutover/rollback feasibility.",
+              isEnabled: true,
+              order,
+              evidenceIds: getEvidenceIds((e) => e.sourceEngine === "evolution" || e.kind === "migration"),
+              content: {
+                projectId: p.id,
+                strategyId: strat.id,
+                strategyName: strat.name,
+                strategyComplexity: strat.complexity,
+                totalRequirementsCount: planResult.summary.totalRequirementsCount,
+                acceptedRequirementsCount: planResult.summary.acceptedRequirementsCount,
+                totalTasksCount: planResult.summary.totalTasksCount,
+                totalWavesCount: planResult.summary.totalWavesCount,
+                completedTasksCount: planResult.summary.completedTasksCount,
+                blockedTasksCount: planResult.summary.blockedTasksCount,
+                criticalRisksCount: planResult.summary.criticalRisksCount,
+                highRisksCount: planResult.summary.highRisksCount,
+                irreversibleWavesCount: planResult.summary.irreversibleWavesCount,
+                passedGatesCount: planResult.summary.passedGatesCount,
+                failedGatesCount: planResult.summary.failedGatesCount,
+                estimatedTotalEffortHours: planResult.summary.estimatedTotalEffortHours,
+                hasBlockingIssues: planResult.summary.hasBlockingIssues,
+                waves: p.waves.map((w) => ({
+                  waveNumber: w.waveNumber,
+                  title: w.title,
+                  objective: w.objective,
+                  tasksCount: w.taskIds.length,
+                  status: w.status,
+                  rollbackStrategy: w.rollbackStrategy,
+                  isIrreversible: p.rollbackPlans.find((rp) => rp.waveId === w.id)?.feasibilityStatus === "irreversible",
+                })),
+                criticalPathTaskIds: planResult.roadmap.criticalPathTaskIds,
+                risks: p.risks.slice(0, 10).map((r) => ({
+                  id: r.id,
+                  category: r.category,
+                  severity: r.severity,
+                  failureMode: r.failureMode,
+                  mitigationPlan: r.mitigationPlan,
+                })),
+                rollbackPlans: p.rollbackPlans.map((rp) => ({
+                  waveId: rp.waveId,
+                  feasibilityStatus: rp.feasibilityStatus,
+                  isFeasible: rp.isFeasible,
+                  warning: rp.pointOfNoReturnWarning,
+                })),
+              },
+            };
+            sections.push(migrationSection);
+          }
           break;
         }
 

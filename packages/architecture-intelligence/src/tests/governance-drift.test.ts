@@ -163,3 +163,4 @@ describe("Phase 05.3.25 — Governance Baseline & Architecture Drift Detection",
     expect(drift.driftItems.some((i) => i.driftType === "expired_exception")).toBe(true);
   });
 });
+

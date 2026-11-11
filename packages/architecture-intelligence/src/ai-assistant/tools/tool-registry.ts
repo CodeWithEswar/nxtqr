@@ -41,6 +41,9 @@ import type { NetworkArchitectureTopology } from "../../network/contracts/networ
 import { architectureGovernanceEngine } from "../../governance/engine/governance-engine";
 import type { GovernanceArchitectureTopology } from "../../governance/contracts/governance.types";
 import { PolicyRegistry } from "../../governance/registry/policy-registry";
+import { architectureEvolutionEngine } from "../../evolution/engine/evolution-engine";
+import { migrationStrategyRegistry } from "../../evolution/registry/strategy-registry";
+import type { MigrationStrategyId } from "../../evolution/contracts/evolution.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -2751,6 +2754,206 @@ export class ArchitectureToolRegistry {
           ],
           disclaimer:
             "Technical architecture verification only. Does not constitute regulatory or legal compliance certification.",
+        };
+      },
+    });
+
+    // =========================================================================
+    // Tool #29: get_architecture_evolution_and_migration_intelligence (Phase 05.3.26)
+    // =========================================================================
+    this.registerTool({
+      name: "get_architecture_evolution_and_migration_intelligence",
+      description:
+        "Analyzes architecture evolution, migration roadmaps, dependency DAGs, cycle detection (SCC), wave sequencing, intermediate topology validity, cutover readiness, rollback feasibility, points of no return, dual-write risks, and plan drift across the 7 R's (rehost, replatform, refactor, rearchitect, replace, retire, retain) and modern strangler fig / progressive cutover patterns.",
+      parameters: {
+        type: "object",
+        properties: {
+          strategyId: {
+            type: "string",
+            enum: [
+              "rehost",
+              "replatform",
+              "refactor",
+              "rearchitect",
+              "replace",
+              "retire",
+              "retain",
+              "strangler_fig",
+              "parallel_run",
+              "blue_green",
+              "progressive_cutover",
+            ],
+            description: "Target migration strategy. If omitted, the engine automatically recommends the optimal strategy.",
+          },
+          includeIntermediateStates: {
+            type: "boolean",
+            description: "Include summaries of intermediate architecture snapshots across migration waves.",
+          },
+          includeRoadmap: {
+            type: "boolean",
+            description: "Include migration evolution roadmap milestones and critical path task IDs.",
+          },
+          includeRisks: {
+            type: "boolean",
+            description: "Include migration risks and blast radius mitigation plans.",
+          },
+          includeRollbackPlans: {
+            type: "boolean",
+            description: "Include wave rollback plans and point-of-no-return warnings.",
+          },
+          includeDrift: {
+            type: "boolean",
+            description: "Evaluate architectural drift between approved baseline plan and current revision.",
+          },
+        },
+      },
+      execute: async (args, context) => {
+        const strategyId = args.strategyId as MigrationStrategyId | undefined;
+        const includeIntermediateStates = args.includeIntermediateStates ?? true;
+        const includeRoadmap = args.includeRoadmap ?? true;
+        const includeRisks = args.includeRisks ?? true;
+        const includeRollbackPlans = args.includeRollbackPlans ?? true;
+        const includeDrift = args.includeDrift ?? false;
+
+        const sourceSnapshot: ArchitectureSnapshot = {
+          id: `snap-source-${context.graphRevision || "rev-source"}`,
+          title: "Source Architecture Snapshot",
+          schemaVersion: 1,
+          provenance: "current-draft",
+          revision: context.graphRevision || "rev-source",
+          createdAt: new Date().toISOString(),
+          nodes: context.nodes || [],
+          edges: context.edges || [],
+          metadata: {
+            environment: "production",
+            version: "1.0.0",
+          },
+        };
+
+        const targetSnapshot: ArchitectureSnapshot = context.targetSnapshot || {
+          id: "snap-target-modernized",
+          title: "Target Modernized Architecture Snapshot",
+          schemaVersion: 1,
+          provenance: "what-if-proposal",
+          revision: "rev-target-modernized",
+          createdAt: new Date().toISOString(),
+          nodes: [
+            ...context.nodes.filter((n) => n.data.nodeType !== "service" || !(n.data.label as string | undefined)?.toLowerCase().includes("monolith")),
+            {
+              id: "target-api-gw",
+              type: "custom",
+              position: { x: 100, y: 100 },
+              data: { label: "Target API Gateway", nodeType: "gateway", tier: "edge", status: "active" },
+            },
+            {
+              id: "target-svc-auth",
+              type: "custom",
+              position: { x: 300, y: 100 },
+              data: { label: "Auth Microservice", nodeType: "service", tier: "application", status: "active" },
+            },
+            {
+              id: "target-svc-billing",
+              type: "custom",
+              position: { x: 300, y: 200 },
+              data: { label: "Billing Microservice", nodeType: "service", tier: "application", status: "active" },
+            },
+            {
+              id: "target-db-cluster",
+              type: "custom",
+              position: { x: 500, y: 150 },
+              data: { label: "Target Polyglot DB", nodeType: "database", tier: "database", status: "active" },
+            },
+          ],
+          edges: [
+            { id: "e-gw-auth", source: "target-api-gw", target: "target-svc-auth", type: "smoothstep", data: {} },
+            { id: "e-gw-billing", source: "target-api-gw", target: "target-svc-billing", type: "smoothstep", data: {} },
+            { id: "e-auth-db", source: "target-svc-auth", target: "target-db-cluster", type: "smoothstep", data: {} },
+            { id: "e-billing-db", source: "target-svc-billing", target: "target-db-cluster", type: "smoothstep", data: {} },
+          ],
+          metadata: {
+            environment: "target-cloud",
+            version: "2.0.0",
+          },
+        };
+
+        const result = architectureEvolutionEngine.planEvolution(
+          sourceSnapshot,
+          targetSnapshot,
+          {
+            strategyId,
+            projectId: context.projectId || "ai-migration-project",
+          }
+        );
+
+        const drift = includeDrift
+          ? architectureEvolutionEngine.detectDrift(result.project, sourceSnapshot)
+          : undefined;
+
+        const activeStrategy = migrationStrategyRegistry.getStrategy(result.project.strategyId);
+
+        return {
+          summary: result.summary,
+          strategy: {
+            id: activeStrategy.id,
+            name: activeStrategy.name,
+            complexity: activeStrategy.complexity,
+            description: activeStrategy.description,
+          },
+          waves: result.project.waves.map((w) => ({
+            waveNumber: w.waveNumber,
+            title: w.title,
+            objective: w.objective,
+            tasksCount: w.taskIds.length,
+            status: w.status,
+            rollbackStrategy: w.rollbackStrategy,
+          })),
+          roadmap: includeRoadmap
+            ? {
+                totalWaves: result.roadmap.totalWaves,
+                estimatedTotalHours: result.roadmap.estimatedTotalHours,
+                criticalPathTaskCount: result.roadmap.criticalPathTaskIds.length,
+                hasScheduleGaps: result.roadmap.hasScheduleGaps,
+              }
+            : undefined,
+          risks: includeRisks
+            ? result.project.risks.slice(0, 4).map((r) => ({
+                id: r.id,
+                category: r.category,
+                severity: r.severity,
+                failureMode: r.failureMode,
+                mitigationPlan: r.mitigationPlan,
+              }))
+            : undefined,
+          rollbackFeasibility: includeRollbackPlans
+            ? result.project.rollbackPlans.map((p) => ({
+                waveId: p.waveId,
+                feasibilityStatus: p.feasibilityStatus,
+                isFeasible: p.isFeasible,
+                hasPointOfNoReturn: p.pointOfNoReturnStepIndex !== undefined,
+                pointOfNoReturnWarning: p.pointOfNoReturnWarning,
+              }))
+            : undefined,
+          intermediateStates: includeIntermediateStates
+            ? result.project.intermediateStates.map((s) => ({
+                waveNumber: s.waveNumber,
+                title: s.title,
+                nodesCount: s.snapshot.nodes.length,
+                edgesCount: s.snapshot.edges.length,
+                reachabilityVerified: s.reachabilityVerified,
+                validationStatus: s.validationStatus,
+              }))
+            : undefined,
+          drift: drift
+            ? {
+                hasRegressions: drift.hasRegressions,
+                driftItemsCount: drift.driftItems.length,
+                items: drift.driftItems.slice(0, 3).map((d) => ({
+                  type: d.driftType,
+                  severity: d.severity,
+                  description: d.description,
+                })),
+              }
+            : undefined,
         };
       },
     });
