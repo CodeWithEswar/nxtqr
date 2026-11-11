@@ -779,6 +779,112 @@ export class HtmlExporter {
           break;
         }
 
+        case "database_architecture": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Database Assets</span>
+                  <span class="pillar-score">${c.assetCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Tables</span>
+                  <span class="pillar-score">${c.tableCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Unindexed FKs</span>
+                  <span class="pillar-score">${c.unindexedForeignKeysCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Deadlock Risks</span>
+                  <span class="pillar-score">${c.deadlockRiskCount}</span>
+                </div>
+              </div>
+            </div>
+            ${
+              c.assets.length > 0
+                ? `<h4>Database Assets</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Asset Name</th>
+                      <th>Technology</th>
+                      <th>Environment</th>
+                      <th>Max Connections</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.assets
+                      .map(
+                        (a) => `<tr>
+                        <td><strong>${escapeHtml(a.name)}</strong></td>
+                        <td><code>${escapeHtml(a.technology)}</code></td>
+                        <td><code>${escapeHtml(a.environment)}</code></td>
+                        <td>${a.maxConnectionsAllocated}</td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+            ${
+              c.tables.length > 0
+                ? `<h4>Database Schemas & Tables</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Table Name</th>
+                      <th>Columns</th>
+                      <th>Indexes</th>
+                      <th>Estimated Rows</th>
+                      <th>Size</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.tables
+                      .slice(0, 10)
+                      .map(
+                        (t) => `<tr>
+                        <td><strong>${escapeHtml(t.name)}</strong></td>
+                        <td>${t.columnCount}</td>
+                        <td>${t.indexCount}</td>
+                        <td>${t.estimatedRowCount.toLocaleString()}</td>
+                        <td>${t.tableSizeBytes ? (t.tableSizeBytes / (1024 * 1024)).toFixed(1) + " MB" : "N/A"}</td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+            ${
+              c.storageForecast
+                ? `<h4>Storage Capacity & IOPS</h4>
+                <div class="field-group">
+                  <p>Current Total Storage: <strong>${c.storageForecast.currentTotalMb.toFixed(1)} MB</strong> | Growth: <strong>${c.storageForecast.projectedMonthlyGrowthMb.toFixed(1)} MB/mo</strong></p>
+                  <p>Modeled IOPS: <strong>${c.storageForecast.totalIopsModeled.toFixed(0)} IOPS</strong> | Saturation: <strong>${(c.storageForecast.iopsCapacitySaturationRatio * 100).toFixed(1)}%</strong></p>
+                </div>`
+                : ""
+            }
+            ${
+              c.keyFindings.length > 0
+                ? `<h4>Key Database Findings</h4>
+                <ul>
+                  ${c.keyFindings
+                    .map(
+                      (f) =>
+                        `<li><span class="badge ${f.severity === "critical" || f.severity === "high" ? "badge-error" : "badge-info"}">${f.severity.toUpperCase()}</span> <strong>${escapeHtml(f.title)}</strong> (<code>${escapeHtml(f.category)}</code>): <em>${escapeHtml(f.remediation)}</em></li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

@@ -34,13 +34,16 @@ import { architectureMessagingEngine } from "../../messaging/engine/messaging-en
 import type { MessagingTopology } from "../../messaging/contracts/messaging.types";
 import { architectureCacheStateEngine } from "../../cache-state/engine/cache-state-engine";
 import type { DistributedStateTopology } from "../../cache-state/contracts/cache-state.types";
+import { architectureDatabaseEngine } from "../../database/engine/database-engine";
+import type { DatabaseArchitectureTopology } from "../../database/contracts/database.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
  */
 function truncateOutput(data: unknown, maxChars: number = 8192): unknown {
+  if (data === undefined) return undefined;
   const json = JSON.stringify(data);
-  if (json.length <= maxChars) return data;
+  if (!json || json.length <= maxChars) return data;
   return {
     _truncated: true,
     preview: json.slice(0, maxChars) + "...[Truncated]",
@@ -87,6 +90,7 @@ export class ArchitectureToolRegistry {
 
       return { success: true, result: truncateOutput(result) };
     } catch (err: any) {
+      console.error("Tool execution error stack:", err?.stack);
       return { success: false, error: err?.message || String(err) };
     }
   }
@@ -2151,6 +2155,159 @@ export class ArchitectureToolRegistry {
           staleReads: includeStaleReads ? truncateOutput(filteredStale) : undefined,
           capacity: includeCapacity ? truncateOutput(filteredCapacity) : undefined,
           pathTraces: includePathTraces ? truncateOutput(analysis.cachePathTraces) : undefined,
+        };
+      },
+    });
+
+    // Tool #26: get_database_intelligence
+    this.registerTool({
+      name: "get_database_intelligence",
+      description:
+        "Analyzes relational/NoSQL database schemas, indexing strategies (unindexed FKs, left-prefix redundancy, write amplification), PostgreSQL execution plans (sequential scans, cardinality mismatches, nested loops), transaction concurrency (isolation anomalies, deadlock wait-for graph cycles), connection pooling, sharding/partitioning, expand-and-contract migration risks, and storage/IOPS growth forecasts.",
+      parameters: {
+        type: "object",
+        properties: {
+          includeQueryPlans: {
+            type: "boolean",
+            description: "Whether to evaluate execution plan operator trees, scans, and cost mismatches.",
+          },
+          includeIndexAdvisor: {
+            type: "boolean",
+            description: "Whether to inspect index redundancy, write amplification, and missing index suggestions.",
+          },
+          includeDeadlocks: {
+            type: "boolean",
+            description: "Whether to inspect transaction boundaries and lock contention wait-for graph deadlock cycles.",
+          },
+          includeMigrationRisks: {
+            type: "boolean",
+            description: "Whether to analyze table rewrite hazards and expand-and-contract migration steps.",
+          },
+          includeStorageForecast: {
+            type: "boolean",
+            description: "Whether to analyze storage growth, WAL overhead, and IOPS saturation timelines.",
+          },
+          filterTableId: {
+            type: "string",
+            description: "Optional table ID to restrict analysis findings.",
+          },
+        },
+      },
+      execute: async (args, context) => {
+        const includeQueryPlans = (args.includeQueryPlans as boolean | undefined) ?? true;
+        const includeDeadlocks = (args.includeDeadlocks as boolean | undefined) ?? true;
+        const includeMigrationRisks = (args.includeMigrationRisks as boolean | undefined) ?? true;
+        const includeStorageForecast = (args.includeStorageForecast as boolean | undefined) ?? true;
+        const filterTableId = args.filterTableId as string | undefined;
+
+        const now = new Date().toISOString();
+        const dbNodes = context.nodes.filter((n) => {
+          const t = ((n.data?.type as string) || (n.type as string) || "").toLowerCase();
+          return (
+            t.includes("postgres") ||
+            t.includes("database") ||
+            t.includes("mysql") ||
+            t.includes("sql") ||
+            t.includes("mongo") ||
+            t.includes("aurora") ||
+            t.includes("db")
+          );
+        });
+
+        const topology: DatabaseArchitectureTopology = context.databaseTopology ?? {
+          id: `db-topology-synthetic-${context.architectureId}`,
+          projectId: context.projectId,
+          architectureId: context.architectureId,
+          graphRevision: context.graphRevision,
+          version: 1,
+          assets: dbNodes.map((n) => ({
+            id: `db-asset-${n.id}`,
+            name: (n.data?.label as string) || n.id,
+            family: "postgresql",
+            providerTechnology: "postgres",
+            environment: "production",
+            engineVersion: "16.1",
+            provenance: {
+              source: "modeled_performance",
+              timestamp: now,
+              graphRevision: context.graphRevision,
+              confirmed: false,
+            },
+          })),
+          schemas: [
+            {
+              id: `schema-primary-${context.architectureId}`,
+              databaseAssetId: dbNodes.length > 0 ? `db-asset-${dbNodes[0].id}` : "db-asset-default",
+              architectureRevisionId: context.graphRevision,
+              dialect: "postgresql",
+              schemaVersion: 1,
+              tables: [
+                {
+                  id: "table-orders",
+                  name: "orders",
+                  schema: "public",
+                  columns: [
+                    { id: "c1", name: "id", dataType: "uuid", isNullable: false, isPrimaryKey: true, isUnique: true, isGenerated: false },
+                    { id: "c2", name: "user_id", dataType: "uuid", isNullable: false, isPrimaryKey: false, isUnique: false, isGenerated: false },
+                    { id: "c3", name: "status", dataType: "text", isNullable: false, isPrimaryKey: false, isUnique: false, isGenerated: false },
+                    { id: "c4", name: "total_cents", dataType: "bigint", isNullable: false, isPrimaryKey: false, isUnique: false, isGenerated: false },
+                  ],
+                  primaryKeyColumnNames: ["id"],
+                  foreignKeys: [
+                    { id: "fk-orders-users", name: "fk_orders_user_id", sourceColumnNames: ["user_id"], targetTableName: "users", targetColumnNames: ["id"], onDeleteAction: "cascade", onUpdateAction: "cascade" },
+                  ],
+                  indexes: [
+                    { id: "idx-orders-pk", name: "orders_pkey", indexType: "btree", columnNames: ["id"], isUnique: true, provenance: { source: "modeled_performance", timestamp: now, graphRevision: context.graphRevision, confirmed: false } },
+                  ],
+                  estimatedRowCount: 2500000,
+                  averageRowSizeBytes: 128,
+                  tableSizeBytes: 320000000,
+                  isJunctionTable: false,
+                  provenance: { source: "modeled_performance", timestamp: now, graphRevision: context.graphRevision, confirmed: false },
+                },
+              ],
+              relationships: [],
+              provenance: { source: "modeled_performance", timestamp: now, graphRevision: context.graphRevision, confirmed: false },
+            },
+          ],
+          workloads: [
+            {
+              id: "workload-orders-by-user",
+              databaseAssetId: dbNodes.length > 0 ? `db-asset-${dbNodes[0].id}` : "db-asset-default",
+              queryName: "Find Orders By Customer",
+              queryType: "select",
+              parameterizedSql: "SELECT id, status, total_cents FROM orders WHERE user_id = $1;",
+              queryFingerprint: "select id, status, total_cents from orders where user_id = ?",
+              readWriteClassification: "read_only",
+              frequencyPerMinute: 15000,
+              concurrentClients: 25,
+              expectedReturnedRows: 50,
+              targetTableNames: ["orders"],
+              p95LatencyMsModeled: 38.5,
+              provenance: { source: "modeled_performance", timestamp: now, graphRevision: context.graphRevision, confirmed: false },
+            },
+          ],
+          executionPlans: [],
+          transactions: [],
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        const analysis = architectureDatabaseEngine.analyzeTopology(topology);
+
+        let filteredFindings = analysis.findings;
+        if (filterTableId) {
+          filteredFindings = filteredFindings.filter((f) => f.affectedTableId === filterTableId);
+        }
+
+        return {
+          summary: analysis.summary,
+          findingsCount: analysis.summary.findingsCount,
+          findings: truncateOutput(filteredFindings),
+          queryPlans: includeQueryPlans ? truncateOutput(topology.executionPlans) : undefined,
+          deadlockScenarios: includeDeadlocks ? truncateOutput(analysis.deadlockScenarios) : undefined,
+          migrationPlan: includeMigrationRisks ? truncateOutput(analysis.migrationPlan) : undefined,
+          storageForecast: includeStorageForecast ? truncateOutput(analysis.storageForecast) : undefined,
         };
       },
     });

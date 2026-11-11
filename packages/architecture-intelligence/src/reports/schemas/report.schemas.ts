@@ -67,6 +67,7 @@ export const ReportSectionKindSchema = z.enum([
   "api_contracts",
   "messaging_systems",
   "caching_and_state",
+  "database_architecture",
   "adrs",
   "text",
 ]);
@@ -701,6 +702,62 @@ export const CachingAndStateSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const DatabaseArchitectureSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("database_architecture"),
+  content: z.object({
+    assetCount: z.number().int().min(0),
+    tableCount: z.number().int().min(0),
+    indexCount: z.number().int().min(0),
+    workloadCount: z.number().int().min(0),
+    planCount: z.number().int().min(0),
+    transactionCount: z.number().int().min(0),
+    unindexedForeignKeysCount: z.number().int().min(0),
+    redundantIndexCount: z.number().int().min(0),
+    deadlockRiskCount: z.number().int().min(0),
+    breakingMigrationCount: z.number().int().min(0),
+    criticalFindingsCount: z.number().int().min(0),
+    assets: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        family: z.string(),
+        technology: z.string(),
+        environment: z.string(),
+        maxConnectionsAllocated: z.number().int().min(0),
+      })
+    ),
+    tables: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        columnCount: z.number().int().min(0),
+        indexCount: z.number().int().min(0),
+        estimatedRowCount: z.number().int().min(0),
+        tableSizeBytes: z.number().nonnegative().optional(),
+      })
+    ),
+    storageForecast: z
+      .object({
+        currentTotalMb: z.number().nonnegative(),
+        projectedMonthlyGrowthMb: z.number().nonnegative(),
+        projectedSaturationMonths: z.number().positive().optional(),
+        totalIopsModeled: z.number().nonnegative(),
+        iopsCapacitySaturationRatio: z.number().nonnegative(),
+      })
+      .optional(),
+    keyFindings: z.array(
+      z.object({
+        id: z.string(),
+        severity: z.string(),
+        category: z.string(),
+        title: z.string(),
+        explanation: z.string(),
+        remediation: z.string(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -743,6 +800,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   APIContractsSectionSchema,
   MessagingSystemsSectionSchema,
   CachingAndStateSectionSchema,
+  DatabaseArchitectureSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

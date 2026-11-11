@@ -102,4 +102,7 @@ export * from "./messaging";
 // Architecture Caching, Data Consistency & State Management Intelligence Engine (Phase 05.3.22)
 export * from "./cache-state";
 
+// Architecture Database Design, Query Performance & Storage Intelligence Engine (Phase 05.3.23)
+export * from "./database";
+
 

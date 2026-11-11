@@ -575,6 +575,59 @@ export class MarkdownExporter {
           break;
         }
 
+        case "database_architecture": {
+          const content = section.content;
+          lines.push(`- Database Assets: **${content.assetCount}** | Tables: **${content.tableCount}** | Total Indexes: **${content.indexCount}**`);
+          lines.push(`- Workload Queries: **${content.workloadCount}** | Execution Plans: **${content.planCount}** | Transactions: **${content.transactionCount}**`);
+          lines.push(`- Unindexed Foreign Keys: **${content.unindexedForeignKeysCount}** | Redundant Indexes: **${content.redundantIndexCount}**`);
+          lines.push(`- Deadlock Dependency Cycles: **${content.deadlockRiskCount}** | Breaking Migrations: **${content.breakingMigrationCount}**`);
+          lines.push(`- Critical Architecture Findings: **${content.criticalFindingsCount}**`);
+          lines.push("");
+
+          if (content.assets.length > 0) {
+            lines.push("### Database Assets");
+            lines.push("| Asset Name | Technology | Environment | Max Connections |");
+            lines.push("| :--- | :--- | :--- | :---: |");
+            for (const asset of content.assets) {
+              lines.push(`| **${asset.name}** | \`${asset.technology}\` | \`${asset.environment}\` | ${asset.maxConnectionsAllocated} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.tables.length > 0) {
+            lines.push("### Schemas & Tables");
+            lines.push("| Table Name | Columns | Indexes | Estimated Rows | Size |");
+            lines.push("| :--- | :---: | :---: | :---: | :---: |");
+            for (const table of content.tables.slice(0, 10)) {
+              const sizeStr = table.tableSizeBytes ? `${(table.tableSizeBytes / (1024 * 1024)).toFixed(1)} MB` : "N/A";
+              lines.push(`| **${table.name}** | ${table.columnCount} | ${table.indexCount} | ${table.estimatedRowCount.toLocaleString()} | ${sizeStr} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.storageForecast) {
+            lines.push("### Storage Capacity & IOPS Demand");
+            lines.push(`- Current Data & WAL: **${content.storageForecast.currentTotalMb.toFixed(1)} MB**`);
+            lines.push(`- Projected Monthly Growth: **${content.storageForecast.projectedMonthlyGrowthMb.toFixed(1)} MB/mo**`);
+            if (content.storageForecast.projectedSaturationMonths) {
+              lines.push(`- Headroom to Saturation: **${content.storageForecast.projectedSaturationMonths.toFixed(1)} months**`);
+            }
+            lines.push(`- Modeled IOPS Demand: **${content.storageForecast.totalIopsModeled.toFixed(0)} IOPS** (Saturation: **${(content.storageForecast.iopsCapacitySaturationRatio * 100).toFixed(1)}%**)`);
+            lines.push("");
+          }
+
+          if (content.keyFindings.length > 0) {
+            lines.push("### Key Database Architecture Findings");
+            for (const f of content.keyFindings) {
+              lines.push(`- [${f.severity.toUpperCase()}] **${f.title}** (\`${f.category}\`)`);
+              lines.push(`  *Risk & Explanation:* ${f.explanation}`);
+              lines.push(`  *Remediation:* ${f.remediation}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

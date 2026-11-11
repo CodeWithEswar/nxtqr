@@ -47,6 +47,7 @@ export type ReportSectionKind =
   | "api_contracts"
   | "messaging_systems"
   | "caching_and_state"
+  | "database_architecture"
   | "adrs"
   | "text";
 
@@ -598,6 +599,54 @@ export interface CachingAndStateSection extends BaseReportSection {
   };
 }
 
+export interface DatabaseArchitectureSection extends BaseReportSection {
+  kind: "database_architecture";
+  content: {
+    assetCount: number;
+    tableCount: number;
+    indexCount: number;
+    workloadCount: number;
+    planCount: number;
+    transactionCount: number;
+    unindexedForeignKeysCount: number;
+    redundantIndexCount: number;
+    deadlockRiskCount: number;
+    breakingMigrationCount: number;
+    criticalFindingsCount: number;
+    assets: Array<{
+      id: string;
+      name: string;
+      family: string;
+      technology: string;
+      environment: string;
+      maxConnectionsAllocated: number;
+    }>;
+    tables: Array<{
+      id: string;
+      name: string;
+      columnCount: number;
+      indexCount: number;
+      estimatedRowCount: number;
+      tableSizeBytes?: number;
+    }>;
+    storageForecast?: {
+      currentTotalMb: number;
+      projectedMonthlyGrowthMb: number;
+      projectedSaturationMonths?: number;
+      totalIopsModeled: number;
+      iopsCapacitySaturationRatio: number;
+    };
+    keyFindings: Array<{
+      id: string;
+      severity: string;
+      category: string;
+      title: string;
+      explanation: string;
+      remediation: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -640,6 +689,7 @@ export type ReportSection =
   | APIContractsSection
   | MessagingSystemsSection
   | CachingAndStateSection
+  | DatabaseArchitectureSection
   | ADRsSection
   | TextSection;
 

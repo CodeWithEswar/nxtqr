@@ -259,3 +259,4 @@ CREATE POLICY "Users can manage cache state findings in their projects"
         WHERE t.id = cache_state_findings_records.topology_id
           AND public.check_user_cache_state_access(t.project_id)
     ));
+

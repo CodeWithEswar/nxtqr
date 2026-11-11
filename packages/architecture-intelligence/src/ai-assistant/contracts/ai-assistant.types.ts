@@ -4,6 +4,7 @@ import type { ArchitectureDataLineageModel } from "../../lineage/contracts/linea
 import type { APIContract, ConsumerDependency } from "../../api-contracts/contracts/contract.types";
 import type { MessagingTopology } from "../../messaging/contracts/messaging.types";
 import type { DistributedStateTopology } from "../../cache-state/contracts/cache-state.types";
+import type { DatabaseArchitectureTopology } from "../../database/contracts/database.types";
 
 export type AIMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -148,5 +149,6 @@ export interface AIExecutionContext {
   consumerDependencies?: ConsumerDependency[];
   messagingTopology?: MessagingTopology;
   cacheTopology?: DistributedStateTopology;
+  databaseTopology?: DatabaseArchitectureTopology;
 }
 

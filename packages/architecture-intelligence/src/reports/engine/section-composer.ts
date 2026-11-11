@@ -8,6 +8,7 @@ import type {
   APIContractsSection,
   MessagingSystemsSection,
   CachingAndStateSection,
+  DatabaseArchitectureSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -39,6 +40,7 @@ import { RetentionCoverageAnalyzer } from "../../lineage/analysis/retention-cove
 import { TransferAnalyzer } from "../../lineage/analysis/transfer-analyzer";
 import { architectureMessagingEngine } from "../../messaging/engine/messaging-engine";
 import { architectureCacheStateEngine } from "../../cache-state/engine/cache-state-engine";
+import { architectureDatabaseEngine } from "../../database/engine/database-engine";
 
 export class SectionComposer {
   public static composeSections(params: {
@@ -1195,6 +1197,138 @@ export class SectionComposer {
             },
           };
           sections.push(cacheSection);
+          break;
+        }
+
+        case "database_architecture": {
+          const rawTopology = analysisContext?.databaseTopology;
+          let assetCount = 0;
+          let tableCount = 0;
+          let indexCount = 0;
+          let workloadCount = 0;
+          let planCount = 0;
+          let transactionCount = 0;
+          let unindexedForeignKeysCount = 0;
+          let redundantIndexCount = 0;
+          let deadlockRiskCount = 0;
+          let breakingMigrationCount = 0;
+          let criticalFindingsCount = 0;
+          let assetsList: Array<{
+            id: string;
+            name: string;
+            family: string;
+            technology: string;
+            environment: string;
+            maxConnectionsAllocated: number;
+          }> = [];
+          let tablesList: Array<{
+            id: string;
+            name: string;
+            columnCount: number;
+            indexCount: number;
+            estimatedRowCount: number;
+            tableSizeBytes?: number;
+          }> = [];
+          let storageForecastData:
+            | {
+                currentTotalMb: number;
+                projectedMonthlyGrowthMb: number;
+                projectedSaturationMonths?: number;
+                totalIopsModeled: number;
+                iopsCapacitySaturationRatio: number;
+              }
+            | undefined = undefined;
+          let keyFindingsList: Array<{
+            id: string;
+            severity: string;
+            category: string;
+            title: string;
+            explanation: string;
+            remediation: string;
+          }> = [];
+
+          if (rawTopology) {
+            const analysis = architectureDatabaseEngine.analyzeTopology(rawTopology);
+            assetCount = analysis.summary.assetCount;
+            tableCount = analysis.summary.tableCount;
+            indexCount = analysis.summary.indexCount;
+            workloadCount = analysis.summary.workloadCount;
+            planCount = analysis.summary.planCount;
+            transactionCount = analysis.summary.transactionCount;
+            unindexedForeignKeysCount = analysis.summary.unindexedForeignKeysCount;
+            redundantIndexCount = analysis.summary.redundantIndexCount;
+            deadlockRiskCount = analysis.summary.deadlockRiskCount;
+            breakingMigrationCount = analysis.summary.breakingMigrationCount;
+            criticalFindingsCount = analysis.summary.findingsCount.critical;
+
+            assetsList = rawTopology.assets.map((a) => ({
+              id: a.id,
+              name: a.name,
+              family: a.family,
+              technology: a.providerTechnology,
+              environment: a.environment,
+              maxConnectionsAllocated: rawTopology.connectionPooling?.maxPoolSize ?? 100,
+            }));
+
+            tablesList = rawTopology.schemas.flatMap((s) =>
+              s.tables.map((t) => ({
+                id: t.id,
+                name: t.name,
+                columnCount: t.columns.length,
+                indexCount: t.indexes.length,
+                estimatedRowCount: t.estimatedRowCount,
+                tableSizeBytes: t.tableSizeBytes,
+              }))
+            );
+
+            if (analysis.storageForecast) {
+              storageForecastData = {
+                currentTotalMb: analysis.storageForecast.currentTotalMb,
+                projectedMonthlyGrowthMb: analysis.storageForecast.projectedMonthlyGrowthMb,
+                projectedSaturationMonths: analysis.storageForecast.projectedSaturationMonths,
+                totalIopsModeled: analysis.storageForecast.totalIopsModeled,
+                iopsCapacitySaturationRatio: analysis.storageForecast.iopsCapacitySaturationRatio,
+              };
+            }
+
+            keyFindingsList = analysis.findings.slice(0, 5).map((f) => ({
+              id: f.id,
+              severity: f.severity,
+              category: f.category,
+              title: f.title,
+              explanation: f.explanation,
+              remediation: f.remediation,
+            }));
+          }
+
+          const dbSection: DatabaseArchitectureSection = {
+            id: `sec-database-architecture`,
+            kind: "database_architecture",
+            title: "Database Architecture, Query Performance & Storage Intelligence",
+            description:
+              "Relational/NoSQL data models, query plan performance, indexing efficiency, transaction isolation, deadlock risk, and storage growth forecasting.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "database"),
+            content: {
+              assetCount,
+              tableCount,
+              indexCount,
+              workloadCount,
+              planCount,
+              transactionCount,
+              unindexedForeignKeysCount,
+              redundantIndexCount,
+              deadlockRiskCount,
+              breakingMigrationCount,
+              criticalFindingsCount,
+              assets: assetsList,
+              tables: tablesList,
+              storageForecast: storageForecastData,
+              keyFindings: keyFindingsList,
+            },
+          };
+          sections.push(dbSection);
           break;
         }
 
