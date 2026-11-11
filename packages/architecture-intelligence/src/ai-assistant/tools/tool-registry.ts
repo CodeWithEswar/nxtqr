@@ -19,6 +19,8 @@ import type { ReportAudience } from "../../reports/contracts/report.types";
 import type { ReportExportFormat } from "../../reports/contracts/export.types";
 import { ReviewCheckRunner } from "../../reviews/checks/check-runner";
 import type { ArchitectureSnapshot } from "../../comparison/contracts/comparison.types";
+import { architectureSimulationEngine } from "../../simulation/engine/simulation-engine";
+import { SIMULATION_PRESETS } from "../../simulation/presets/failure-presets";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -663,6 +665,73 @@ export class ArchitectureToolRegistry {
             message: c.message,
           })),
           readiness: checks.some((c) => c.status === "failed") ? "blocked" : "ready_for_review",
+        };
+      },
+    });
+
+    // 18. simulate_failure_scenario
+    this.registerTool({
+      name: "simulate_failure_scenario",
+      description: "Executes a model-based discrete failure simulation (e.g. database crash, cache outage, AZ outage) to analyze dependency propagation, blast radius, and recovery sequence.",
+      parameters: {
+        type: "object",
+        properties: {
+          targetNodeId: { type: "string", description: "Node ID to inject failure into (e.g., database or service ID). Defaults to first core store." },
+          preset: {
+            type: "string",
+            description: "Failure preset: 'primary_database_outage', 'cache_outage', 'external_api_timeout', or 'availability_zone_outage'. Default is 'primary_database_outage'.",
+          },
+        },
+        required: [],
+      },
+      execute: async (args, context) => {
+        const presetKey = String(args.preset || "primary_database_outage");
+        const presetTemplate = SIMULATION_PRESETS[presetKey] || SIMULATION_PRESETS.primary_database_outage;
+
+        // Choose target node
+        let targetId = String(args.targetNodeId || "");
+        if (!targetId || !context.nodes.some((n) => n.id === targetId)) {
+          const dbNode = context.nodes.find((n) => (n.type || "").toLowerCase().includes("database"));
+          const svcNode = context.nodes.find((n) => (n.type || "").toLowerCase().includes("service"));
+          targetId = dbNode?.id || svcNode?.id || context.nodes[0]?.id || "node-1";
+        }
+
+        const targetNode = context.nodes.find((n) => n.id === targetId);
+        const scenario = presetTemplate.buildScenario({
+          architectureId: context.architectureId,
+          graphRevision: context.graphRevision,
+          targetNodeId: targetId,
+          targetNodeLabel: targetNode?.label || targetId,
+        });
+
+        const simResult = architectureSimulationEngine.simulate(
+          context.nodes,
+          context.edges,
+          scenario
+        );
+
+        return {
+          scenarioName: scenario.name,
+          durationMs: scenario.durationMs,
+          targetNodeId: targetId,
+          blastRadiusScore: simResult.blastRadius.blastRadiusScore,
+          directlyImpactedComponents: simResult.blastRadius.directlyImpactedNodeIds,
+          indirectlyImpactedComponents: simResult.blastRadius.indirectlyImpactedNodeIds,
+          interruptedJourneys: simResult.journeyResults
+            .filter((j) => j.status === "unavailable")
+            .map((j) => j.name),
+          degradedJourneys: simResult.journeyResults
+            .filter((j) => j.status === "degraded")
+            .map((j) => j.name),
+          modeledRecoveryTimeSeconds: Number((simResult.recovery.totalModeledRecoveryMs / 1000).toFixed(1)),
+          rtoMet: simResult.recovery.rtoMet,
+          cascadingRisksCount: simResult.cascadingRisks.length,
+          findings: simResult.findings.map((f) => ({
+            severity: f.severity,
+            title: f.title,
+            explanation: f.explanation,
+            remediation: f.remediationRecommendation,
+          })),
         };
       },
     });

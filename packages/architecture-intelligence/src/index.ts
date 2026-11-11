@@ -74,6 +74,9 @@ export * from "./reports";
 // Architecture Design Review & Collaboration Engine (Phase 05.3.13)
 export * from "./reviews";
 
+// Architecture Simulation & Failure Testing Engine (Phase 05.3.15)
+export * from "./simulation";
+
 
 
 

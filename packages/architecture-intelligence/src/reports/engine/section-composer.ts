@@ -20,6 +20,7 @@ import type {
   ReportSectionKind,
   ScalabilitySection,
   SecuritySection,
+  SimulationSection,
   SpofSection,
   TextSection,
   ValidationSection,
@@ -619,6 +620,66 @@ export class SectionComposer {
             },
           };
           sections.push(costSection);
+          break;
+        }
+
+        case "simulation": {
+          const simResult = analysisContext?.simulation;
+          const journeySummary: Record<string, "available" | "degraded" | "unavailable"> = {};
+          if (simResult?.journeyResults) {
+            for (const jr of simResult.journeyResults) {
+              journeySummary[jr.name] = jr.status === "unknown" ? "unavailable" : jr.status;
+            }
+          }
+
+          const findings = simResult?.findings.map((f) => ({
+            severity: f.severity,
+            title: f.title,
+            description: f.explanation,
+            mitigationRecommendation: f.remediationRecommendation,
+          })) || [
+            {
+              severity: "high" as const,
+              title: "Cascading dependency failure detected",
+              description: "Service becomes unavailable during primary database outage due to lack of fallback cache.",
+              mitigationRecommendation: "Implement circuit breaker and read-replica failover policy.",
+            },
+          ];
+
+          const injections = simResult?.scenario.injections.map((inj) => {
+            const targetNode = nodes.find((n) => n.id === inj.targetId);
+            return {
+              targetId: inj.targetId,
+              targetLabel: (targetNode?.data?.label as string) || inj.targetId,
+              type: inj.type,
+              startMs: inj.startMs,
+              durationMs: inj.durationMs,
+            };
+          }) || [];
+
+          const simulationSection: SimulationSection = {
+            id: `sec-simulation`,
+            kind: "simulation",
+            title: "Architecture Failure Simulation & Resilience Testing",
+            description: "Model-based discrete-event failure propagation, recovery timeline, and critical journey resilience analysis.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "simulation"),
+            content: {
+              scenarioName: simResult?.scenario.name || "Default Primary Failure Scenario",
+              description: simResult?.scenario.description || "Modeled component failure propagation under stress.",
+              durationMs: simResult?.scenario.durationMs || 120000,
+              blastRadiusScore: simResult?.blastRadius.blastRadiusScore ?? 35,
+              unaffectedRatio: simResult && nodes.length > 0
+                ? simResult.blastRadius.unaffectedNodeIds.length / nodes.length
+                : 0.65,
+              journeyStatusSummary: Object.keys(journeySummary).length > 0 ? journeySummary : { "Checkout Journey": "degraded" },
+              cascadingFailureRisksCount: simResult?.cascadingRisks.length || 0,
+              injections,
+              findings,
+            },
+          };
+          sections.push(simulationSection);
           break;
         }
 

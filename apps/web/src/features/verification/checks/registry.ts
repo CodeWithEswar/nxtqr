@@ -650,5 +650,23 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/cost-estimation",
     },
   },
+  {
+    id: "architecture_simulation",
+    category: "architecture",
+    title: "Phase 05.3.15: Architecture Simulation & Failure Testing Engine",
+    description: "Visual, deterministic, model-based discrete-event failure simulation engine for the NXTQR System Design Visualizer. Models component outages, network partitions/latency, database outages, cache stampedes, queue congestion, and AZ/regional outages. Tracks virtual time, bounded upstream dependency propagation, resilience mechanisms (retries, timeouts, circuit breakers, replica failover), critical user journeys, blast radius scoring, recovery RTO/RPO evaluation, interactive timeline scrubbing, What-If resilience comparisons, and AI Assistant Tool #18 (simulate_failure_scenario).",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-simulation",
+      simulationClock: "VirtualClock independent of wall-clock with seek & step",
+      supportedFailureTypesCount: 12,
+      deterministicEngine: "Mulberry32 PRNG seed reproducible",
+      presetsCount: 4,
+      aiAssistantToolRegistered: "simulate_failure_scenario (Tool #18)",
+      inspectionRoute: "/verify/architecture-simulation",
+    },
+  },
 ];
 

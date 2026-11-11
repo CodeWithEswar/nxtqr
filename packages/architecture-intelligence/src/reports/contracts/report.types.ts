@@ -39,6 +39,7 @@ export type ReportSectionKind =
   | "comparison"
   | "capacity"
   | "cost"
+  | "simulation"
   | "adrs"
   | "text";
 
@@ -322,6 +323,32 @@ export interface CostSection extends BaseReportSection {
   };
 }
 
+export interface SimulationSection extends BaseReportSection {
+  kind: "simulation";
+  content: {
+    scenarioName: string;
+    description: string;
+    durationMs: number;
+    blastRadiusScore: number;
+    unaffectedRatio: number;
+    journeyStatusSummary: Record<string, "available" | "degraded" | "unavailable">;
+    cascadingFailureRisksCount: number;
+    injections: Array<{
+      targetId: string;
+      targetLabel: string;
+      type: string;
+      startMs: number;
+      durationMs: number;
+    }>;
+    findings: Array<{
+      severity: "critical" | "high" | "medium" | "low";
+      title: string;
+      description: string;
+      mitigationRecommendation: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -356,6 +383,7 @@ export type ReportSection =
   | ComparisonSection
   | CapacitySection
   | CostSection
+  | SimulationSection
   | ADRsSection
   | TextSection;
 

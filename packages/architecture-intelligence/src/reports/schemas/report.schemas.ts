@@ -22,6 +22,7 @@ export const ReportEvidenceReferenceSchema = z.object({
     "comparison",
     "capacity",
     "cost",
+    "simulation",
     "adr",
     "doc",
   ]),
@@ -51,6 +52,7 @@ export const ReportSectionKindSchema = z.enum([
   "comparison",
   "capacity",
   "cost",
+  "simulation",
   "adrs",
   "text",
 ]);
@@ -375,6 +377,36 @@ export const CostSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const SimulationSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("simulation"),
+  content: z.object({
+    scenarioName: z.string(),
+    description: z.string(),
+    durationMs: z.number().min(0),
+    blastRadiusScore: z.number().min(0).max(100),
+    unaffectedRatio: z.number().min(0).max(1),
+    journeyStatusSummary: z.record(z.enum(["available", "degraded", "unavailable"])),
+    cascadingFailureRisksCount: z.number().int().min(0),
+    injections: z.array(
+      z.object({
+        targetId: z.string(),
+        targetLabel: z.string(),
+        type: z.string(),
+        startMs: z.number().min(0),
+        durationMs: z.number().min(0),
+      })
+    ),
+    findings: z.array(
+      z.object({
+        severity: z.enum(["critical", "high", "medium", "low"]),
+        title: z.string(),
+        description: z.string(),
+        mitigationRecommendation: z.string(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -409,6 +441,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   ComparisonSectionSchema,
   CapacitySectionSchema,
   CostSectionSchema,
+  SimulationSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

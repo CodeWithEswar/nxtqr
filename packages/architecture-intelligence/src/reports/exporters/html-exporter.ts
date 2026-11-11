@@ -194,6 +194,38 @@ export class HtmlExporter {
           break;
         }
 
+        case "simulation": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="cost-summary-box">
+              <div class="cost-stat">
+                <span class="label">Scenario:</span>
+                <span class="value">${escapeHtml(c.scenarioName)}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Blast Radius:</span>
+                <span class="value">${c.blastRadiusScore}%</span>
+              </div>
+            </div>
+            <h4>Critical User Journeys</h4>
+            <ul>
+              ${Object.entries(c.journeyStatusSummary)
+                .map(([journey, status]) => `<li><strong>${escapeHtml(journey)}</strong>: ${status.toUpperCase()}</li>`)
+                .join("")}
+            </ul>
+            <h4>Resilience Findings</h4>
+            <ul>
+              ${c.findings
+                .map(
+                  (f) =>
+                    `<li><strong>[${f.severity.toUpperCase()}] ${escapeHtml(f.title)}</strong>: ${escapeHtml(f.description)}<br/><em>Mitigation:</em> ${escapeHtml(f.mitigationRecommendation)}</li>`
+                )
+                .join("")}
+            </ul>
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

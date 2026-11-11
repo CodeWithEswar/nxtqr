@@ -454,6 +454,20 @@ export const PlayIcon = createIcon("PlayIcon", (props) => (
   </svg>
 ));
 
+export const PauseIcon = createIcon("PauseIcon", (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect x="6" y="4" width="4" height="16" />
+    <rect x="14" y="4" width="4" height="16" />
+  </svg>
+));
+
 export const ExternalLinkIcon = createIcon("ExternalLinkIcon", (props) => (
   <svg
     viewBox="0 0 24 24"

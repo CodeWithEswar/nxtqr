@@ -288,6 +288,29 @@ export class MarkdownExporter {
           break;
         }
 
+        case "simulation": {
+          const content = section.content;
+          lines.push(`- Scenario: **${content.scenarioName}** (${content.durationMs / 1000}s timeline)`);
+          lines.push(`- Blast Radius Score: **${content.blastRadiusScore}%** (${Math.round(content.unaffectedRatio * 100)}% architecture unaffected)`);
+          lines.push(`- Cascading Failure Risks: **${content.cascadingFailureRisksCount}**`);
+          lines.push("");
+          lines.push("### Critical User Journeys");
+          for (const [journey, status] of Object.entries(content.journeyStatusSummary)) {
+            const icon = status === "available" ? "🟢" : status === "degraded" ? "🟡" : "🔴";
+            lines.push(`- ${icon} **${journey}**: \`${status.toUpperCase()}\``);
+          }
+          lines.push("");
+          if (content.findings.length > 0) {
+            lines.push("### Resilience Findings");
+            for (const f of content.findings) {
+              lines.push(`- **[${f.severity.toUpperCase()}] ${f.title}**: ${f.description}`);
+              lines.push(`  *Mitigation:* ${f.mitigationRecommendation}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);
