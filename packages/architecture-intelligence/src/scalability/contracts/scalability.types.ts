@@ -45,13 +45,21 @@ export type ScalabilityScenarioInput =
     };
 
 export function toBottleneckScenario(scenario?: ScalabilityScenarioInput): BottleneckWorkloadScenario {
-  if (scenario && "parameters" in scenario) return scenario;
+  if (
+    scenario &&
+    "parameters" in scenario &&
+    typeof scenario.parameters?.ingressRps === "number" &&
+    typeof scenario.parameters.readRatio === "number"
+  ) {
+    return scenario;
+  }
 
   const id = scenario?.id || "normal_traffic";
   const preset = DEFAULT_WORKLOAD_SCENARIOS[id];
   if (preset?.parameters) return preset;
-  const trafficMultiplier = Number(scenario?.trafficMultiplier ?? 1.0);
-  const concurrentUsersMultiplier = Number(scenario?.concurrentUsersMultiplier ?? 1.0);
+  const multiplierScenario = scenario && !("parameters" in scenario) ? scenario : undefined;
+  const trafficMultiplier = Number(multiplierScenario?.trafficMultiplier ?? 1.0);
+  const concurrentUsersMultiplier = Number(multiplierScenario?.concurrentUsersMultiplier ?? 1.0);
   return {
     id,
     name: scenario?.name || id,

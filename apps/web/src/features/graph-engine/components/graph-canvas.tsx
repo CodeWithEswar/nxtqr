@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   MiniMap,
+  useNodesInitialized,
   useReactFlow,
   type Connection,
   type NodeChange,
@@ -20,7 +21,7 @@ import {
   type ConnectionValidationResult,
 } from "@nxtqr/architecture-validation";
 import { ConnectionFeedback } from "@/features/system-design/validation";
-import type { BaseEdge, BaseNode, NodePosition } from "../schemas/graph.schema";
+import type { BaseEdge, BaseNode, NodeDimensions, NodePosition } from "../schemas/graph.schema";
 
 export interface GraphCanvasProps {
   className?: string;
@@ -52,7 +53,18 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const snapToGrid = useGraphEditorStore((s) => s.snapToGrid);
   const showMinimap = useGraphEditorStore((s) => s.showMinimap);
   const toggleMinimap = useGraphEditorStore((s) => s.toggleMinimap);
-  const { getInternalNode, setCenter, screenToFlowPosition } = useReactFlow();
+  const { fitView, setCenter, screenToFlowPosition, viewportInitialized } = useReactFlow();
+  const nodesInitialized = useNodesInitialized();
+  const fittedOnMount = React.useRef(false);
+  const [nodeMeasurements, setNodeMeasurements] = React.useState(
+    () => new Map<string, NodeDimensions>(),
+  );
+
+  React.useEffect(() => {
+    if (!fitViewOnMount || fittedOnMount.current || !viewportInitialized || !nodesInitialized) return;
+    fittedOnMount.current = true;
+    void fitView({ padding: 0.22, maxZoom: 1.1 });
+  }, [fitView, fitViewOnMount, nodesInitialized, viewportInitialized]);
 
   // Track initial node positions at drag start to group continuous drag into a single history transaction
   const dragStartPositions = React.useRef<Map<string, NodePosition>>(new Map());
@@ -63,7 +75,7 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
       id: n.id,
       type: n.type || "generic",
       position: n.position,
-      measured: getInternalNode(n.id)?.measured,
+      measured: nodeMeasurements.get(n.id),
       selected: selectedNodeIds.includes(n.id),
       data: {
         label: n.label,
@@ -74,7 +86,7 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
         ...n.data,
       },
     }));
-  }, [getInternalNode, nodes, selectedNodeIds]);
+  }, [nodeMeasurements, nodes, selectedNodeIds]);
 
   // Map NXTQR edges to React Flow format
   const flowEdges = React.useMemo(() => {
@@ -98,8 +110,21 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   // Node Changes (Dragging, Selection)
   const onNodesChange = React.useCallback(
     (changes: NodeChange[]) => {
-      // React Flow owns these measurements. Rewriting the graph here discards the
-      // dimensions and port bounds React Flow just measured.
+      // Keep measurements in the canvas so replacing a controlled node preserves its ports.
+      const measurements = changes.filter((change) => change.type === "dimensions");
+      if (measurements.length > 0) {
+        setNodeMeasurements((previous) => {
+          const next = new Map<string, NodeDimensions>();
+          for (const node of nodes) {
+            const dimensions = previous.get(node.id);
+            if (dimensions) next.set(node.id, dimensions);
+          }
+          for (const { id, dimensions } of measurements) {
+            if (dimensions) next.set(id, dimensions);
+          }
+          return next;
+        });
+      }
       const graphChanges = changes.filter((change) => change.type !== "dimensions");
       if (graphChanges.length === 0) return;
       const updated = applyNodeChanges(graphChanges, flowNodes);
@@ -337,7 +362,6 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
         nodes={flowNodes}
         edges={flowEdges}
         gridType={gridType}
-        fitView={fitViewOnMount}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeDragStart={onNodeDragStart}

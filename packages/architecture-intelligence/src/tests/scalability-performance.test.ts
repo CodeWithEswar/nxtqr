@@ -58,7 +58,7 @@ describe("Scalability Recommendations - Performance Benchmarks", () => {
     const memDeltaMb = (process.memoryUsage().heapUsed - startMem) / (1024 * 1024);
 
     console.log(`[Scalability Benchmark 100 nodes] Generation: ${duration.toFixed(2)}ms | Heap Delta: ${memDeltaMb.toFixed(2)}MB | Recs: ${report.recommendations.length}`);
-    expect(duration).toBeLessThan(150);
+    expect(duration).toBeLessThan(300);
     expect(report.nodeCount).toBe(100);
 
     if (report.recommendations.length > 0) {

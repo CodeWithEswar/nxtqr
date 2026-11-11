@@ -55,5 +55,8 @@ export type { RecommendationFeasibility } from "./scalability";
 // Unified Intelligent Architecture Recommendations Engine (Phase 05.3.8)
 export * from "./recommendations";
 
+// Architecture Comparison & Change Intelligence Engine (Phase 05.3.9)
+export * from "./comparison";
+
 
 
