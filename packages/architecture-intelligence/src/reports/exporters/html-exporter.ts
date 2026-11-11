@@ -301,6 +301,105 @@ export class HtmlExporter {
           break;
         }
 
+        case "benchmark": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="cost-summary-box">
+              <div class="cost-stat">
+                <span class="label">Benchmark Test:</span>
+                <span class="value">${escapeHtml(c.testName)} (${escapeHtml(c.testType)})</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Environment:</span>
+                <span class="value">${escapeHtml(c.environmentName)}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Workload Model:</span>
+                <span class="value">${escapeHtml(c.workloadModel)}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Total Requests:</span>
+                <span class="value">${c.totalRequests.toLocaleString()}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Achieved RPS:</span>
+                <span class="value">${c.achievedRps.toFixed(1)}</span>
+              </div>
+              <div class="cost-stat">
+                <span class="label">Error Rate:</span>
+                <span class="value">${c.errorRatePct.toFixed(2)}%</span>
+              </div>
+            </div>
+
+            <h4>Measured Latency Distribution</h4>
+            <div class="cost-summary-box">
+              <div class="cost-stat"><span class="label">P50 (Median):</span><span class="value">${c.p50LatencyMs.toFixed(1)} ms</span></div>
+              <div class="cost-stat"><span class="label">P90:</span><span class="value">${c.p90LatencyMs.toFixed(1)} ms</span></div>
+              <div class="cost-stat"><span class="label">P95:</span><span class="value">${c.p95LatencyMs.toFixed(1)} ms</span></div>
+              <div class="cost-stat"><span class="label">P99 (Tail):</span><span class="value">${c.p99LatencyMs.toFixed(1)} ms</span></div>
+            </div>
+
+            ${
+              c.targetResults.length > 0
+                ? `<h4>Performance Target Compliance</h4>
+                <ul>
+                  ${c.targetResults
+                    .map(
+                      (t) =>
+                        `<li><strong>[${t.status.toUpperCase()}] ${escapeHtml(t.targetName)}</strong>: ${escapeHtml(t.reason)}</li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+
+            ${
+              c.regressions.length > 0
+                ? `<h4>Performance Regressions vs Baseline</h4>
+                <ul>
+                  ${c.regressions
+                    .map(
+                      (r) =>
+                        `<li><strong>[${r.severity.toUpperCase()}] ${escapeHtml(r.metric)}:</strong> ${escapeHtml(r.explanation)}</li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+
+            ${
+              c.calibrationProposals.length > 0
+                ? `<h4>Architecture Model Calibration Proposals</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Component</th>
+                      <th>Parameter</th>
+                      <th class="num">Modeled</th>
+                      <th class="num">Measured</th>
+                      <th class="num">Recommended</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.calibrationProposals
+                      .map(
+                        (cp) => `<tr>
+                        <td><strong>${escapeHtml(cp.componentLabel)}</strong></td>
+                        <td><code>${escapeHtml(cp.parameterName)}</code></td>
+                        <td class="num">${cp.modeledValue}</td>
+                        <td class="num">${cp.measuredValue}</td>
+                        <td class="num"><strong>${cp.recommendedCalibration}</strong></td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

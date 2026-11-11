@@ -22,6 +22,10 @@ import type {
   TopologyDriftFinding,
   ObservedVsModeledComparison,
 } from "../../observability/contracts/observability.types";
+import type {
+  BenchmarkRun,
+  BenchmarkComparisonResult,
+} from "../../performance/contracts/performance.types";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -41,6 +45,10 @@ export interface ReportAnalysisContext {
     healthIndicators: Record<string, ServiceHealthIndicator>;
     driftFindings: TopologyDriftFinding[];
     comparisons: ObservedVsModeledComparison[];
+  };
+  benchmark?: {
+    run: BenchmarkRun;
+    comparison?: BenchmarkComparisonResult;
   };
 }
 

@@ -2,6 +2,7 @@ import type { BaseEdge, BaseNode } from "@nxtqr/graph-schema";
 import type { ArchitectureDecisionRecord } from "../contracts/adr.types";
 import type {
   ADRsSection,
+  BenchmarkSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -741,6 +742,61 @@ export class SectionComposer {
             },
           };
           sections.push(observabilitySection);
+          break;
+        }
+
+        case "benchmark": {
+          const benchData = analysisContext?.benchmark;
+          const run = benchData?.run;
+          const summary = run?.overallSummary;
+
+          const benchmarkSection: BenchmarkSection = {
+            id: `sec-benchmark`,
+            kind: "benchmark",
+            title: "Performance Benchmarking & Load Testing",
+            description:
+              "Controlled workload benchmarks, empirical latency distributions, throughput ceilings, target compliance, and regression analysis.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "performance"),
+            content: {
+              testName: run?.benchmarkDefinitionId || "Baseline Architecture Benchmark",
+              testType: run?.workloadProfile.modelType === "open_loop" ? "Open-Loop Arrival Rate" : "Closed-Loop Concurrency",
+              workloadModel: run?.workloadProfile.modelType || "closed_loop",
+              environmentName: run?.environment?.name || "Staging Cluster",
+              totalRequests: summary?.totalRequests || 0,
+              achievedRps: summary?.achievedRps || 0,
+              offeredRps: summary?.offeredRps || 0,
+              errorRatePct: summary?.errorRatePct || 0,
+              p50LatencyMs: summary?.p50LatencyMs || 0,
+              p90LatencyMs: summary?.p90LatencyMs || 0,
+              p95LatencyMs: summary?.p95LatencyMs || 0,
+              p99LatencyMs: summary?.p99LatencyMs || 0,
+              droppedIterations: summary?.droppedIterations || 0,
+              dataQualityScore: run?.dataQuality?.qualityScore || 100,
+              targetResults: run?.targetEvaluations?.map((t) => ({
+                targetName: t.targetName,
+                metric: t.metric,
+                status: t.status,
+                reason: t.reason,
+              })) || [],
+              regressions: benchData?.comparison?.regressions?.map((r) => ({
+                metric: r.metric,
+                delta: r.delta,
+                percentChange: r.percentChange,
+                severity: r.severity,
+                explanation: r.explanation,
+              })) || [],
+              calibrationProposals: benchData?.comparison?.calibrationProposals?.map((c) => ({
+                componentLabel: c.componentLabel,
+                parameterName: c.parameterName,
+                modeledValue: c.modeledValue,
+                measuredValue: c.measuredValue,
+                recommendedCalibration: c.recommendedCalibration,
+              })) || [],
+            },
+          };
+          sections.push(benchmarkSection);
           break;
         }
 

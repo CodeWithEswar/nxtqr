@@ -80,6 +80,9 @@ export * from "./simulation";
 // Architecture Observability & Telemetry Mapping Engine (Phase 05.3.16)
 export * from "./observability";
 
+// Architecture Performance Benchmarking & Load Testing Planner (Phase 05.3.17)
+export * from "./performance";
+
 
 
 

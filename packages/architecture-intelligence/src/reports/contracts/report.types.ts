@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -41,6 +41,7 @@ export type ReportSectionKind =
   | "cost"
   | "simulation"
   | "observability"
+  | "benchmark"
   | "adrs"
   | "text";
 
@@ -376,6 +377,46 @@ export interface ObservabilitySection extends BaseReportSection {
   };
 }
 
+export interface BenchmarkSection extends BaseReportSection {
+  kind: "benchmark";
+  content: {
+    testName: string;
+    testType: string;
+    workloadModel: string;
+    environmentName: string;
+    totalRequests: number;
+    achievedRps: number;
+    offeredRps: number;
+    errorRatePct: number;
+    p50LatencyMs: number;
+    p90LatencyMs: number;
+    p95LatencyMs: number;
+    p99LatencyMs: number;
+    droppedIterations: number;
+    dataQualityScore: number;
+    targetResults: Array<{
+      targetName: string;
+      metric: string;
+      status: "passed" | "warn" | "failed" | "unknown";
+      reason: string;
+    }>;
+    regressions: Array<{
+      metric: string;
+      delta: number;
+      percentChange: number;
+      severity: string;
+      explanation: string;
+    }>;
+    calibrationProposals: Array<{
+      componentLabel: string;
+      parameterName: string;
+      modeledValue: number;
+      measuredValue: number;
+      recommendedCalibration: number;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -412,6 +453,7 @@ export type ReportSection =
   | CostSection
   | SimulationSection
   | ObservabilitySection
+  | BenchmarkSection
   | ADRsSection
   | TextSection;
 

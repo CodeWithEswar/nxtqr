@@ -344,6 +344,50 @@ export class MarkdownExporter {
           break;
         }
 
+        case "benchmark": {
+          const content = section.content;
+          lines.push(`Benchmark Test: **${content.testName}** (${content.testType})`);
+          lines.push(`- Environment: **${content.environmentName}** | Workload Model: \`${content.workloadModel}\``);
+          lines.push(`- Sample Volume: **${content.totalRequests.toLocaleString()}** requests | Data Quality Score: **${content.dataQualityScore}/100**`);
+          lines.push(`- Achieved Throughput: **${content.achievedRps.toFixed(1)}** RPS (Offered: ${content.offeredRps.toFixed(1)} RPS)`);
+          lines.push(`- Error Rate: **${content.errorRatePct.toFixed(2)}%** | Dropped Iterations: **${content.droppedIterations}**`);
+          lines.push("");
+
+          lines.push("### Measured Latency Percentiles");
+          lines.push("| P50 (Median) | P90 | P95 | P99 (Tail) |");
+          lines.push("| :---: | :---: | :---: | :---: |");
+          lines.push(`| ${content.p50LatencyMs.toFixed(1)} ms | ${content.p90LatencyMs.toFixed(1)} ms | ${content.p95LatencyMs.toFixed(1)} ms | ${content.p99LatencyMs.toFixed(1)} ms |`);
+          lines.push("");
+
+          if (content.targetResults.length > 0) {
+            lines.push("### Target Compliance");
+            for (const t of content.targetResults) {
+              const statusBadge = t.status === "passed" ? "PASSED" : t.status === "warn" ? "WARN" : "FAILED";
+              lines.push(`- **[${statusBadge}] ${t.targetName}** (${t.metric}): ${t.reason}`);
+            }
+            lines.push("");
+          }
+
+          if (content.regressions.length > 0) {
+            lines.push("### Performance Regressions vs Baseline");
+            for (const r of content.regressions) {
+              lines.push(`- **[${r.severity.toUpperCase()}] ${r.metric}:** ${r.explanation}`);
+            }
+            lines.push("");
+          }
+
+          if (content.calibrationProposals.length > 0) {
+            lines.push("### Architecture Model Calibration Proposals");
+            lines.push("| Component | Parameter | Modeled | Measured | Recommended |");
+            lines.push("| :--- | :--- | :---: | :---: | :---: |");
+            for (const c of content.calibrationProposals) {
+              lines.push(`| **${c.componentLabel}** | \`${c.parameterName}\` | ${c.modeledValue} | ${c.measuredValue} | **${c.recommendedCalibration}** |`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

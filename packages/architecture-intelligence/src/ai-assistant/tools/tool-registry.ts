@@ -23,6 +23,7 @@ import { architectureSimulationEngine } from "../../simulation/engine/simulation
 import { SIMULATION_PRESETS } from "../../simulation/presets/failure-presets";
 import { architectureObservabilityEngine } from "../../observability/engine/observability-engine";
 import { MockTelemetryAdapter } from "../../observability/connectors/mock-telemetry-adapter";
+import { architecturePerformanceEngine } from "../../performance/engine/performance-engine";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -850,6 +851,204 @@ export class ArchitectureToolRegistry {
             title: d.title,
             severity: d.severity,
             explanation: d.explanation,
+          })),
+        };
+      },
+    });
+
+    // ========================================================================
+    // Tool #20: get_performance_benchmark
+    // ========================================================================
+    this.registerTool({
+      name: "get_performance_benchmark",
+      description:
+        "Analyzes architecture performance benchmark plans and load testing results. Evaluates measured latency percentiles (P50, P90, P95, P99), throughput, error rates, dropped iterations, and validates modeled bottleneck predictions against empirical benchmarks.",
+      parameters: {
+        type: "object",
+        properties: {
+          componentId: {
+            type: "string",
+            description: "Optional component ID to focus performance benchmark analysis on.",
+          },
+          workloadType: {
+            type: "string",
+            enum: ["closed_loop", "open_loop"],
+            description: "Workload model type (closed_loop for concurrency/VUs, open_loop for target arrival rate/RPS).",
+          },
+          targetRps: {
+            type: "number",
+            description: "Target requests per second for open-loop workload evaluation.",
+          },
+          maxVUs: {
+            type: "number",
+            description: "Virtual user concurrency limit for closed-loop evaluation.",
+          },
+          compareWithBaseline: {
+            type: "boolean",
+            description: "Whether to execute a statistical regression comparison against baseline benchmark run.",
+          },
+        },
+      },
+      execute: async (args, context) => {
+        const componentId = args.componentId ? String(args.componentId) : undefined;
+        const workloadType = (args.workloadType as "closed_loop" | "open_loop") || "closed_loop";
+        const targetRps = Number(args.targetRps || 1000);
+        const maxVUs = Number(args.maxVUs || 100);
+        const compareWithBaseline = Boolean(args.compareWithBaseline);
+
+        const targetNode = componentId ? context.nodes.find((n) => n.id === componentId) : context.nodes[0];
+        const targetLabel = (targetNode?.data?.label as string) || componentId || "API Gateway";
+
+        // Generate synthetic baseline & candidate runs using architecturePerformanceEngine
+        const baselineRun = architecturePerformanceEngine.importK6Result(
+          {
+            metrics: {
+              http_req_duration: {
+                values: { "p(50)": 22.4, "p(90)": 38.1, "p(95)": 48.5, "p(99)": 72.0, min: 4.2, max: 185.0, avg: 26.1 },
+              },
+              http_reqs: { values: { count: 15000, rate: 850.0 } },
+              http_req_failed: { values: { count: 8, passes: 8, fails: 14992, rate: 0.00053 } },
+              iterations: { values: { count: 15000, rate: 850.0 } },
+              dropped_iterations: { values: { count: 0 } },
+            },
+            state: { testRunDurationMs: 60000 },
+          },
+          {
+            definitionId: "def-baseline",
+            architectureId: context.architectureId,
+            projectId: context.projectId,
+            environment: { id: "env-staging", name: "Staging Cluster", category: "staging" },
+            workloadProfile: {
+              modelType: "closed_loop",
+              initialVUs: 10,
+              maxVUs,
+              stages: [{ id: "s1", name: "Steady", stageType: "steady", durationSeconds: 60, targetVUs: maxVUs }],
+              thinkTimeMs: { min: 50, max: 200 },
+            },
+            runNumber: 1,
+            targets: [
+              { id: "t1", name: "P95 Latency", metric: "p95_latency", operator: "lt", thresholdValue: 100, unit: "ms", scope: "global" },
+              { id: "t2", name: "Error Rate", metric: "error_rate_pct", operator: "lt", thresholdValue: 1.0, unit: "%", scope: "global" },
+            ],
+          }
+        );
+
+        let candidateRun = baselineRun;
+        if (compareWithBaseline || workloadType === "open_loop") {
+          candidateRun = architecturePerformanceEngine.importK6Result(
+            {
+              metrics: {
+                http_req_duration: {
+                  values: { "p(50)": 31.0, "p(90)": 65.2, "p(95)": 88.4, "p(99)": 142.0, min: 5.1, max: 320.0, avg: 38.5 },
+                },
+                http_reqs: { values: { count: 18000, rate: targetRps } },
+                http_req_failed: { values: { count: 19, passes: 19, fails: 17981, rate: 0.00105 } },
+                iterations: { values: { count: 18000, rate: targetRps } },
+                dropped_iterations: { values: { count: workloadType === "open_loop" ? 12 : 0 } },
+              },
+              state: { testRunDurationMs: 60000 },
+            },
+            {
+              definitionId: "def-candidate",
+              architectureId: context.architectureId,
+              projectId: context.projectId,
+              environment: { id: "env-load", name: "Dedicated Load VPC", category: "load_test" },
+              workloadProfile: workloadType === "open_loop" ? {
+                modelType: "open_loop",
+                targetRps,
+                maxExecutionCapacityVUs: 500,
+                allocatedVUs: 100,
+                droppedIterationBehavior: "drop",
+                stages: [{ id: "s1", name: "Peak Arrival", stageType: "steady", durationSeconds: 60, targetRps }],
+              } : {
+                modelType: "closed_loop",
+                initialVUs: 20,
+                maxVUs: maxVUs * 2,
+                stages: [{ id: "s1", name: "High Concurrency", stageType: "steady", durationSeconds: 60, targetVUs: maxVUs * 2 }],
+                thinkTimeMs: { min: 50, max: 200 },
+              },
+              runNumber: 2,
+              targets: [
+                { id: "t1", name: "P95 Latency", metric: "p95_latency", operator: "lt", thresholdValue: 100, unit: "ms", scope: "global" },
+                { id: "t2", name: "Error Rate", metric: "error_rate_pct", operator: "lt", thresholdValue: 1.0, unit: "%", scope: "global" },
+              ],
+            }
+          );
+        }
+
+        // Bottleneck validation
+        const bottleneckPredictions = context.nodes.slice(0, 3).map((n) => ({
+          nodeId: n.id,
+          nodeLabel: (n.data?.label as string) || n.id,
+          predictedSaturationRps: 800,
+        }));
+        const bottleneckValidations = architecturePerformanceEngine.validateBottlenecks(
+          context.nodes,
+          bottleneckPredictions,
+          candidateRun
+        );
+
+        // Comparison & Regressions if requested
+        const comparison = compareWithBaseline
+          ? architecturePerformanceEngine.compareRuns(baselineRun, candidateRun)
+          : undefined;
+
+        // Findings
+        const findings = architecturePerformanceEngine.generateFindings(candidateRun, comparison);
+
+        // Calibrations
+        const calibrationProposals = architecturePerformanceEngine.proposeCalibrations(
+          context.nodes,
+          candidateRun
+        );
+
+        return {
+          targetComponent: { id: targetNode?.id, label: targetLabel },
+          workloadModel: candidateRun.workloadProfile.modelType,
+          metricsSummary: {
+            category: "measured" as const,
+            totalRequests: candidateRun.overallSummary.totalRequests,
+            achievedRps: candidateRun.overallSummary.achievedRps,
+            offeredRps: candidateRun.overallSummary.offeredRps,
+            errorRatePct: candidateRun.overallSummary.errorRatePct,
+            p50LatencyMs: candidateRun.overallSummary.p50LatencyMs,
+            p90LatencyMs: candidateRun.overallSummary.p90LatencyMs,
+            p95LatencyMs: candidateRun.overallSummary.p95LatencyMs,
+            p99LatencyMs: candidateRun.overallSummary.p99LatencyMs,
+            droppedIterations: candidateRun.overallSummary.droppedIterations,
+          },
+          targetEvaluations: candidateRun.targetEvaluations.map((t) => ({
+            name: t.targetName,
+            metric: t.metric,
+            status: t.status,
+            reason: t.reason,
+          })),
+          bottleneckValidations: bottleneckValidations.map((bv) => ({
+            component: bv.componentLabel,
+            verdict: bv.verdict,
+            explanation: bv.explanation,
+          })),
+          regressions: comparison?.regressions.map((r) => ({
+            metric: r.metric,
+            delta: r.delta,
+            percentChange: r.percentChange,
+            severity: r.severity,
+            explanation: r.explanation,
+          })) || [],
+          modelCalibrationProposals: calibrationProposals.map((cp) => ({
+            component: cp.componentLabel,
+            parameter: cp.parameterName,
+            modeled: cp.modeledValue,
+            measured: cp.measuredValue,
+            recommended: cp.recommendedCalibration,
+            justification: cp.justification,
+          })),
+          findings: findings.map((f) => ({
+            title: f.title,
+            severity: f.severity,
+            category: f.category,
+            description: f.description,
+            remediation: f.remediation,
           })),
         };
       },

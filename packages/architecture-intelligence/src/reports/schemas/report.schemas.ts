@@ -24,6 +24,7 @@ export const ReportEvidenceReferenceSchema = z.object({
     "cost",
     "simulation",
     "observability",
+    "benchmark",
     "adr",
     "doc",
   ]),
@@ -55,6 +56,7 @@ export const ReportSectionKindSchema = z.enum([
   "cost",
   "simulation",
   "observability",
+  "benchmark",
   "adrs",
   "text",
 ]);
@@ -439,6 +441,52 @@ export const ObservabilitySectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const BenchmarkSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("benchmark"),
+  content: z.object({
+    testName: z.string(),
+    testType: z.string(),
+    workloadModel: z.string(),
+    environmentName: z.string(),
+    totalRequests: z.number().nonnegative(),
+    achievedRps: z.number().nonnegative(),
+    offeredRps: z.number().nonnegative(),
+    errorRatePct: z.number().nonnegative(),
+    p50LatencyMs: z.number().nonnegative(),
+    p90LatencyMs: z.number().nonnegative(),
+    p95LatencyMs: z.number().nonnegative(),
+    p99LatencyMs: z.number().nonnegative(),
+    droppedIterations: z.number().nonnegative(),
+    dataQualityScore: z.number().min(0).max(100),
+    targetResults: z.array(
+      z.object({
+        targetName: z.string(),
+        metric: z.string(),
+        status: z.enum(["passed", "warn", "failed", "unknown"]),
+        reason: z.string(),
+      })
+    ),
+    regressions: z.array(
+      z.object({
+        metric: z.string(),
+        delta: z.number(),
+        percentChange: z.number(),
+        severity: z.string(),
+        explanation: z.string(),
+      })
+    ),
+    calibrationProposals: z.array(
+      z.object({
+        componentLabel: z.string(),
+        parameterName: z.string(),
+        modeledValue: z.number(),
+        measuredValue: z.number(),
+        recommendedCalibration: z.number(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -475,6 +523,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   CostSectionSchema,
   SimulationSectionSchema,
   ObservabilitySectionSchema,
+  BenchmarkSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

@@ -685,5 +685,23 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-observability",
     },
   },
+  {
+    id: "architecture_performance",
+    category: "architecture",
+    title: "Phase 05.3.17: Architecture Performance Benchmarking & Load Testing Planner",
+    description: "Production-grade performance engineering workspace and load testing planner for the NXTQR System Design Visualizer. Features strict 4-category segregation (planned, modeled, measured, unknown), closed-loop (concurrency/VUs with think time) and open-loop (arrival rate/RPS with dropped iteration tracking) workload profiles, multi-stage ramp-up/steady/spike schedules, weighted request mixes mapped to architecture nodes, SLA performance target evaluations (P50, P90, P95, P99, throughput, error budget), safe k6 ECMAScript test script generation with SSRF and concurrency safeguards, k6 summary JSON import and mathematical latency percentiles (without percentile averaging), empirical bottleneck validation against Phase 05.3.3 models, statistical regression detection across deployment revisions, architecture model calibration proposals, Architecture Reports Generator integration, and AI Architecture Assistant Tool #20 (get_performance_benchmark).",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-performance",
+      workloadModels: ["closed_loop", "open_loop"],
+      supportedTools: ["k6", "jmeter", "locust", "opentelemetry", "custom"],
+      mathematicalPrecision: "Strict rank-interpolated raw samples & histogram quantiles (zero percentile averaging)",
+      safeScriptExport: "k6 ECMAScript with SSRF host validation & concurrency ceilings",
+      aiAssistantToolRegistered: "get_performance_benchmark (Tool #20)",
+      inspectionRoute: "/verify/architecture-performance",
+    },
+  },
 ];
 
