@@ -125,3 +125,4 @@ describe("Architecture Comparison Engine - Performance Benchmarks (Phase 05.3.9)
     expect(result.changes.length).toBeGreaterThanOrEqual(100);
   });
 });
+

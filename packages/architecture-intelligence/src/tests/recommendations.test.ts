@@ -62,7 +62,7 @@ describe("Unified Intelligent Architecture Recommendations Engine (Phase 05.3.8)
           remediation: "Deploy multi-AZ replication.",
         },
       ],
-    });
+    } as any);
 
     expect(normalized.findings).toHaveLength(3);
     expect(normalized.findingsByEngine.health).toBe(1);
@@ -113,7 +113,7 @@ describe("Unified Intelligent Architecture Recommendations Engine (Phase 05.3.8)
           confidence: "high",
         },
       ],
-    });
+    } as any);
 
     const groups = CorrelationEngine.correlateFindings(findings, nodes, edges);
     expect(groups).toHaveLength(1);
@@ -175,7 +175,7 @@ describe("Unified Intelligent Architecture Recommendations Engine (Phase 05.3.8)
           confidence: "high",
         },
       ],
-    });
+    } as any);
 
     expect(report.recommendations.length).toBeGreaterThanOrEqual(2);
     expect(report.summary.totalRecommendations).toBe(report.recommendations.length);

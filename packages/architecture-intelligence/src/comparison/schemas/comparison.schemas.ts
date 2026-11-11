@@ -183,3 +183,4 @@ export const ArchitectureComparisonResultSchema = z.object({
   isCompatibleScenarios: z.boolean(),
   notes: z.array(z.string()),
 });
+

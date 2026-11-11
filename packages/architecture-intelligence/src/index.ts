@@ -58,5 +58,8 @@ export * from "./recommendations";
 // Architecture Comparison & Change Intelligence Engine (Phase 05.3.9)
 export * from "./comparison";
 
+// AI Architecture Assistant & Engineering Copilot (Phase 05.3.10)
+export * from "./ai-assistant";
+
 
 

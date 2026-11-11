@@ -289,3 +289,4 @@ describe("Architecture Comparison & Change Intelligence Engine (Phase 05.3.9)", 
     expect(result.summary.keyTradeoffs.length).toBeGreaterThan(0);
   });
 });
+

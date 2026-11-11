@@ -83,7 +83,7 @@ describe("Unified Architecture Recommendations - Performance Benchmarks", () => 
       inputs: {
         bottleneckFindings,
         reliabilityFindings,
-      },
+      } as any,
     };
   }
 

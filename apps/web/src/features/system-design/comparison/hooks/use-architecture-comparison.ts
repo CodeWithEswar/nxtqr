@@ -145,3 +145,4 @@ export function useArchitectureComparison(options: UseArchitectureComparisonOpti
     swapSnapshots,
   };
 }
+
