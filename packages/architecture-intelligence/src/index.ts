@@ -108,4 +108,7 @@ export * from "./database";
 // Architecture Network, API Gateway & Traffic Engineering Intelligence Engine (Phase 05.3.24)
 export * from "./network";
 
+// Architecture Compliance, Governance & Policy-as-Code Intelligence Engine (Phase 05.3.25)
+export * from "./governance";
+
 

@@ -671,6 +671,49 @@ export class MarkdownExporter {
           break;
         }
 
+        case "governance_and_compliance": {
+          const content = section.content;
+          lines.push(`- Active Policies: **${content.activePoliciesCount}** | Total Evaluated Rules: **${content.evaluatedRulesCount}**`);
+          lines.push(`- Evaluation Status: **${content.passedCount} Pass** | **${content.failedCount} Fail** | **${content.unknownCount} Unknown (Missing Evidence)** | **${content.notApplicableCount} N/A**`);
+          lines.push(`- Violations: **${content.criticalViolationsCount} Critical** | Blocking Violations: **${content.hasBlockingViolations ? "YES (BLOCKING DEPLOYMENT)" : "None"}**`);
+          lines.push(`- Exceptions & Waivers: **${content.activeExceptionsCount} Active** | Expired Exceptions: **${content.expiredExceptionsCount}**`);
+          lines.push(`- Evidence Health: **${content.staleEvidenceCount} Stale Evidence Artifacts**`);
+          lines.push("");
+
+          lines.push("### Evaluated Architecture Policies");
+          lines.push("| Policy ID | Title | Category | Severity | Status | Exception |");
+          lines.push("|---|---|---|---|---|---|");
+          for (const ev of content.evaluations) {
+            const exLabel = ev.hasActiveException ? `Waiver (${ev.exceptionId || "approved"})` : "-";
+            lines.push(`| \`${ev.policyId}\` | ${ev.policyTitle} | ${ev.category} | ${ev.severity.toUpperCase()} | \`${ev.status.toUpperCase()}\` | ${exLabel} |`);
+          }
+          lines.push("");
+
+          if (content.activeExceptions.length > 0) {
+            lines.push("### Active Time-Bound Policy Exceptions");
+            lines.push("| Exception ID | Policy ID | Justification | Expiration Date | Status |");
+            lines.push("|---|---|---|---|---|");
+            for (const ex of content.activeExceptions) {
+              lines.push(`| \`${ex.id}\` | \`${ex.policyId}\` | ${ex.justification} | ${ex.expirationDate} | \`${ex.status}\` |`);
+            }
+            lines.push("");
+          }
+
+          if (content.frameworkCoverage.length > 0) {
+            lines.push("### Qualified Standard Framework Alignments");
+            lines.push("| Framework | Mapped Controls | Support Strength |");
+            lines.push("|---|---|---|");
+            for (const fc of content.frameworkCoverage) {
+              lines.push(`| ${fc.frameworkName} | ${fc.controlsCount} | ${fc.supportStrength.toUpperCase()} |`);
+            }
+            lines.push("");
+          }
+
+          lines.push(`> **Non-Certification Notice**: ${content.disclaimer}`);
+          lines.push("");
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

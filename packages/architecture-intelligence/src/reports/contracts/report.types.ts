@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "messaging" | "cache" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "messaging" | "cache" | "governance" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -49,6 +49,7 @@ export type ReportSectionKind =
   | "caching_and_state"
   | "database_architecture"
   | "network_and_traffic"
+  | "governance_and_compliance"
   | "adrs"
   | "text";
 
@@ -702,6 +703,47 @@ export interface NetworkAndTrafficSection extends BaseReportSection {
   };
 }
 
+export interface GovernanceAndComplianceSection extends BaseReportSection {
+  kind: "governance_and_compliance";
+  content: {
+    totalPoliciesCount: number;
+    activePoliciesCount: number;
+    evaluatedRulesCount: number;
+    passedCount: number;
+    failedCount: number;
+    unknownCount: number;
+    notApplicableCount: number;
+    criticalViolationsCount: number;
+    activeExceptionsCount: number;
+    expiredExceptionsCount: number;
+    staleEvidenceCount: number;
+    hasBlockingViolations: boolean;
+    evaluations: Array<{
+      policyId: string;
+      policyTitle: string;
+      category: string;
+      severity: string;
+      status: string;
+      explanation: string;
+      hasActiveException: boolean;
+      exceptionId?: string;
+    }>;
+    activeExceptions: Array<{
+      id: string;
+      policyId: string;
+      justification: string;
+      expirationDate: string;
+      status: string;
+    }>;
+    frameworkCoverage: Array<{
+      frameworkName: string;
+      controlsCount: number;
+      supportStrength: string;
+    }>;
+    disclaimer: string;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -746,6 +788,7 @@ export type ReportSection =
   | CachingAndStateSection
   | DatabaseArchitectureSection
   | NetworkAndTrafficSection
+  | GovernanceAndComplianceSection
   | ADRsSection
   | TextSection;
 

@@ -6,6 +6,7 @@ import type { MessagingTopology } from "../../messaging/contracts/messaging.type
 import type { DistributedStateTopology } from "../../cache-state/contracts/cache-state.types";
 import type { DatabaseArchitectureTopology } from "../../database/contracts/database.types";
 import type { NetworkArchitectureTopology } from "../../network/contracts/network.types";
+import type { GovernanceArchitectureTopology } from "../../governance/contracts/governance.types";
 
 export type AIMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -152,5 +153,6 @@ export interface AIExecutionContext {
   cacheTopology?: DistributedStateTopology;
   databaseTopology?: DatabaseArchitectureTopology;
   networkTopology?: NetworkArchitectureTopology;
+  governanceTopology?: GovernanceArchitectureTopology;
 }
 

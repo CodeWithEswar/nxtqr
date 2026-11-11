@@ -962,6 +962,103 @@ export class HtmlExporter {
           break;
         }
 
+        case "governance_and_compliance": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Active Policies</span>
+                  <span class="pillar-score">${c.activePoliciesCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Evaluations</span>
+                  <span class="pillar-score">${c.evaluatedRulesCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Passed</span>
+                  <span class="pillar-score" style="color: #22c55e;">${c.passedCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Failed</span>
+                  <span class="pillar-score" style="color: #ef4444;">${c.failedCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Unknown (No Proof)</span>
+                  <span class="pillar-score" style="color: #eab308;">${c.unknownCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Active Waivers</span>
+                  <span class="pillar-score">${c.activeExceptionsCount}</span>
+                </div>
+              </div>
+            </div>
+
+            <h4>Evaluated Policies & Findings</h4>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Policy ID</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Waiver</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${c.evaluations
+                    .map(
+                      (ev) => `<tr>
+                    <td><code>${escapeHtml(ev.policyId)}</code></td>
+                    <td><strong>${escapeHtml(ev.policyTitle)}</strong></td>
+                    <td>${escapeHtml(ev.category)}</td>
+                    <td><span class="badge ${ev.severity === "critical" || ev.severity === "high" ? "badge-error" : "badge-info"}">${ev.severity.toUpperCase()}</span></td>
+                    <td><span class="badge ${ev.status === "pass" ? "badge-success" : ev.status === "fail" ? "badge-error" : "badge-warning"}">${ev.status.toUpperCase()}</span></td>
+                    <td>${ev.hasActiveException ? `Waiver (${escapeHtml(ev.exceptionId || "active")})` : "-"}</td>
+                  </tr>`
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            </div>
+
+            ${
+              c.frameworkCoverage.length > 0
+                ? `<h4>Qualified Framework Alignments</h4>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Framework</th>
+                        <th>Mapped Controls</th>
+                        <th>Support Strength</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${c.frameworkCoverage
+                        .map(
+                          (fc) => `<tr>
+                        <td><strong>${escapeHtml(fc.frameworkName)}</strong></td>
+                        <td>${fc.controlsCount} controls</td>
+                        <td><span class="badge">${escapeHtml(fc.supportStrength.toUpperCase())}</span></td>
+                      </tr>`
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+                : ""
+            }
+
+            <div style="margin-top: 16px; padding: 12px; background: #141414; border: 1px solid #262626; border-radius: 6px; font-size: 12px; color: #858585;">
+              <strong>Non-Certification Notice:</strong> ${escapeHtml(c.disclaimer)}
+            </div>
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

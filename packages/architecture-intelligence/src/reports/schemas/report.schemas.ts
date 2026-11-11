@@ -69,6 +69,7 @@ export const ReportSectionKindSchema = z.enum([
   "caching_and_state",
   "database_architecture",
   "network_and_traffic",
+  "governance_and_compliance",
   "adrs",
   "text",
 ]);
@@ -821,6 +822,53 @@ export const NetworkAndTrafficSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const GovernanceAndComplianceSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("governance_and_compliance"),
+  content: z.object({
+    totalPoliciesCount: z.number().int().min(0),
+    activePoliciesCount: z.number().int().min(0),
+    evaluatedRulesCount: z.number().int().min(0),
+    passedCount: z.number().int().min(0),
+    failedCount: z.number().int().min(0),
+    unknownCount: z.number().int().min(0),
+    notApplicableCount: z.number().int().min(0),
+    criticalViolationsCount: z.number().int().min(0),
+    activeExceptionsCount: z.number().int().min(0),
+    expiredExceptionsCount: z.number().int().min(0),
+    staleEvidenceCount: z.number().int().min(0),
+    hasBlockingViolations: z.boolean(),
+    evaluations: z.array(
+      z.object({
+        policyId: z.string(),
+        policyTitle: z.string(),
+        category: z.string(),
+        severity: z.string(),
+        status: z.string(),
+        explanation: z.string(),
+        hasActiveException: z.boolean(),
+        exceptionId: z.string().optional(),
+      })
+    ),
+    activeExceptions: z.array(
+      z.object({
+        id: z.string(),
+        policyId: z.string(),
+        justification: z.string(),
+        expirationDate: z.string(),
+        status: z.string(),
+      })
+    ),
+    frameworkCoverage: z.array(
+      z.object({
+        frameworkName: z.string(),
+        controlsCount: z.number().int().min(0),
+        supportStrength: z.string(),
+      })
+    ),
+    disclaimer: z.string(),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -865,6 +913,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   CachingAndStateSectionSchema,
   DatabaseArchitectureSectionSchema,
   NetworkAndTrafficSectionSchema,
+  GovernanceAndComplianceSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

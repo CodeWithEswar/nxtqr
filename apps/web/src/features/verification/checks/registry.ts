@@ -930,5 +930,37 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-network",
     },
   },
+  {
+    id: "architecture_governance",
+    category: "architecture",
+    title: "Phase 05.3.25: Architecture Compliance, Governance & Policy-as-Code Intelligence Engine",
+    description: "Production-grade, provider-neutral architecture compliance, governance, and policy-as-code intelligence engine. Features Policy-as-Code Registry with hierarchical scopes (organization, workspace, project, environment), declarative rule AST with bounded depth (<10) and zero dynamic code execution (eval), strict four-state evaluation (pass, fail, unknown, not_applicable) without pass-collapsing, cryptographic evidence management with freshness window enforcement and deterministic SHA-256 integrity hashing, scoped time-bound policy exceptions with compensating controls verification preserving raw failure state, governance baseline snapshots with automated drift detection (new violations, resolved violations, expired exceptions, stale evidence), non-destructive What-If simulation and remediation planning, standard compliance framework reference catalog (NIST SP 800-53 Rev. 5, SOC 2 TSC 2017, ISO/IEC 27001:2022, OWASP ASVS v4.0.3, PCI DSS v4.0, EU GDPR) with qualified support strength and mandatory non-certification disclaimer, Architecture Reports Generator integration (governance_and_compliance section in Markdown and HTML), and AI Architecture Assistant Tool #28 (get_governance_and_compliance_intelligence).",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-governance",
+      standardBundles: [
+        "baseline_architecture",
+        "production_readiness",
+        "cloud_security_guardrails",
+        "data_privacy_gdpr",
+        "zero_trust_network",
+        "financial_compliance",
+      ],
+      frameworksCatalog: [
+        "NIST SP 800-53 Rev. 5",
+        "SOC 2 TSC 2017",
+        "ISO/IEC 27001:2022",
+        "OWASP ASVS v4.0.3",
+        "PCI DSS v4.0",
+        "EU GDPR (Regulation 2016/679)",
+      ],
+      evaluationStates: ["pass", "fail", "unknown", "not_applicable"],
+      aiAssistantToolRegistered: "get_governance_and_compliance_intelligence (Tool #28)",
+      reportsSectionRegistered: "governance_and_compliance",
+      inspectionRoute: "/verify/architecture-governance",
+    },
+  },
 ];
 
