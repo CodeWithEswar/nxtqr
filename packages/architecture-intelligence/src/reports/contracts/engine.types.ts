@@ -32,6 +32,7 @@ import type {
   TopologyValidationFinding,
 } from "../../deployment/contracts/deployment.types";
 import type { DeploymentReliabilityMetrics } from "../../deployment/analysis/deployment-reliability";
+import type { ArchitectureDataLineageModel } from "../../lineage/contracts/lineage.types";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -62,6 +63,7 @@ export interface ReportAnalysisContext {
     reliability?: DeploymentReliabilityMetrics;
     findings?: TopologyValidationFinding[];
   };
+  lineage?: ArchitectureDataLineageModel;
 }
 
 export interface GenerateReportInput {

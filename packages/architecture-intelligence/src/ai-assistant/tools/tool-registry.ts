@@ -26,6 +26,8 @@ import { MockTelemetryAdapter } from "../../observability/connectors/mock-teleme
 import { architecturePerformanceEngine } from "../../performance/engine/performance-engine";
 import { architectureDeploymentEngine } from "../../deployment/engine/deployment-engine";
 import type { DeploymentTopology } from "../../deployment/contracts/deployment.types";
+import { architectureDataLineageEngine } from "../../lineage/engine/lineage-engine";
+import type { DataAsset, DataFlow } from "../../lineage/contracts/lineage.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -1320,6 +1322,186 @@ export class ArchitectureToolRegistry {
             description: f.description,
             remediation: f.remediation,
           })),
+        };
+      },
+    });
+
+    // Tool 22: Data Flow, Lineage & Privacy Analysis Engine (Phase 05.3.19)
+    this.registerTool({
+      name: "get_data_lineage_and_privacy",
+      description:
+        "Analyzes data flows, upstream and downstream data lineage, sensitivity propagation, storage residency, retention coverage, cross-border transfers, and privacy risks across the architecture graph.",
+      parameters: {
+        type: "object",
+        properties: {
+          assetId: {
+            type: "string",
+            description: "Optional specific data asset ID to trace upstream and downstream lineage and deletion impact.",
+          },
+          includePrivacyFindings: {
+            type: "boolean",
+            description: "Whether to evaluate and return evidence-backed privacy and data governance findings.",
+            default: true,
+          },
+          includeRetentionCoverage: {
+            type: "boolean",
+            description: "Whether to evaluate retention policy coverage across durable and transient data stores.",
+            default: true,
+          },
+          includeTransfers: {
+            type: "boolean",
+            description: "Whether to analyze cross-border, cross-jurisdiction, or third-party data transfers.",
+            default: true,
+          },
+          includeDeletionImpact: {
+            type: "boolean",
+            description: "Whether to calculate deletion cascade and Right-to-be-Forgotten readiness.",
+            default: false,
+          },
+        },
+      },
+      execute: async (args, context) => {
+        const assetId = args.assetId as string | undefined;
+        const includePrivacyFindings = (args.includePrivacyFindings as boolean | undefined) ?? true;
+        const includeRetentionCoverage = (args.includeRetentionCoverage as boolean | undefined) ?? true;
+        const includeTransfers = (args.includeTransfers as boolean | undefined) ?? true;
+        const includeDeletionImpact = (args.includeDeletionImpact as boolean | undefined) ?? false;
+
+        let lineageModel = context.lineageModel;
+        if (!lineageModel) {
+          // Synthesize model from graph topology
+          const now = new Date().toISOString();
+          const defaultAssetId = "asset-core-customer-data";
+          const defaultAsset: DataAsset = {
+            id: defaultAssetId,
+            projectId: context.projectId,
+            architectureId: context.architectureId,
+            name: "Customer Account Data",
+            description: "Synthesized core data asset for architectural evaluation",
+            classification: {
+              id: "class-core-customer",
+              level: "confidential",
+              categories: ["personal_data"],
+              name: "Confidential Customer PII",
+              isLegalDetermination: false,
+              provenance: {
+                source: "inferred",
+                timestamp: now,
+                graphRevision: context.graphRevision,
+                confirmed: false,
+              },
+            },
+            storageBindings: context.nodes
+              .filter((n) => {
+                const t = ((n.data?.type as string) || (n.type as string) || "").toLowerCase();
+                return t.includes("database") || t.includes("sql") || t.includes("storage") || t.includes("bucket");
+              })
+              .map((n) => ({
+                componentId: n.id,
+                componentName: (n.data?.label as string) || n.id,
+                storeType: "relational_db",
+                copyType: "primary",
+                isTransient: false,
+              })),
+            purposes: [],
+            provenance: {
+              source: "inferred",
+              timestamp: now,
+              graphRevision: context.graphRevision,
+              confirmed: false,
+            },
+            createdAt: now,
+            updatedAt: now,
+          };
+
+          const flows: DataFlow[] = context.edges.map((e) => ({
+            id: `flow-${e.id}`,
+            architectureId: context.architectureId,
+            sourceComponentId: e.source,
+            destinationComponentId: e.target,
+            dataAssetIds: [defaultAssetId],
+            direction: "forward",
+            crossesTrustBoundary: false,
+            isThirdPartyTransfer: false,
+            purposes: [],
+            provenance: {
+              source: "inferred",
+              timestamp: now,
+              graphRevision: context.graphRevision,
+              confirmed: false,
+            },
+            confirmed: false,
+          }));
+
+          lineageModel = {
+            id: `lineage-${context.architectureId}`,
+            projectId: context.projectId,
+            architectureId: context.architectureId,
+            graphRevision: context.graphRevision,
+            version: 1,
+            assets: [defaultAsset],
+            flows,
+            transformations: [],
+            retentionPolicies: [],
+            purposes: [],
+            createdAt: now,
+            updatedAt: now,
+          };
+        }
+
+        const targetAssetId = assetId || (lineageModel.assets[0]?.id ?? "");
+        let traversalResult;
+        let deletionImpact;
+
+        if (targetAssetId && lineageModel.assets.some((a) => a.id === targetAssetId)) {
+          traversalResult = architectureDataLineageEngine.traverseAsset(targetAssetId, lineageModel);
+          if (includeDeletionImpact) {
+            deletionImpact = architectureDataLineageEngine.analyzeDeletionImpact(targetAssetId, lineageModel);
+          }
+        }
+
+        const privacyFindings = includePrivacyFindings
+          ? architectureDataLineageEngine.analyzePrivacyRisks(lineageModel)
+          : [];
+
+        const retentionReport = includeRetentionCoverage
+          ? architectureDataLineageEngine.evaluateRetentionCoverage(lineageModel)
+          : undefined;
+
+        const transferFindings = includeTransfers
+          ? architectureDataLineageEngine.analyzeTransfers(lineageModel)
+          : [];
+
+        return {
+          summary: {
+            totalAssets: lineageModel.assets.length,
+            totalFlows: lineageModel.flows.length,
+            totalTransformations: lineageModel.transformations.length,
+            privacyFindingsCount: privacyFindings.length,
+            crossBorderTransfersCount: transferFindings.length,
+            retentionCoveragePct: retentionReport?.overallCoveragePct ?? 100,
+          },
+          targetAsset: targetAssetId ? lineageModel.assets.find((a) => a.id === targetAssetId) : undefined,
+          lineageTraversal: traversalResult,
+          deletionImpact,
+          privacyFindings: privacyFindings.map((f) => ({
+            id: f.id,
+            severity: f.severity,
+            category: f.category,
+            title: f.title,
+            description: f.description,
+            remediation: f.remediation,
+          })),
+          retentionReport: retentionReport
+            ? {
+                totalAssets: retentionReport.totalAssets,
+                coveredAssets: retentionReport.coveredAssets,
+                uncoveredAssets: retentionReport.uncoveredAssets,
+                overallCoveragePct: retentionReport.overallCoveragePct,
+                criticalGaps: retentionReport.criticalGaps,
+              }
+            : undefined,
+          transfers: transferFindings,
         };
       },
     });

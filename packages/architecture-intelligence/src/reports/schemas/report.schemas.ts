@@ -26,6 +26,7 @@ export const ReportEvidenceReferenceSchema = z.object({
     "observability",
     "benchmark",
     "deployment",
+    "lineage",
     "adr",
     "doc",
   ]),
@@ -59,6 +60,7 @@ export const ReportSectionKindSchema = z.enum([
   "observability",
   "benchmark",
   "deployment",
+  "lineage",
   "adrs",
   "text",
 ]);
@@ -529,6 +531,47 @@ export const DeploymentSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const LineageSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("lineage"),
+  content: z.object({
+    totalAssets: z.number().int().min(0),
+    totalFlows: z.number().int().min(0),
+    totalTransformations: z.number().int().min(0),
+    retentionCoveragePct: z.number().min(0).max(100),
+    privacyFindingsCount: z.number().int().min(0),
+    assets: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        classificationLevel: z.string(),
+        categories: z.array(z.string()),
+        storageCount: z.number().int().min(0),
+        hasRetention: z.boolean(),
+      })
+    ),
+    privacyFindings: z.array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        severity: z.string(),
+        category: z.string(),
+        remediation: z.string(),
+      })
+    ),
+    crossBorderTransfers: z.array(
+      z.object({
+        flowId: z.string(),
+        sourceComponent: z.string(),
+        destinationComponent: z.string(),
+        sourceCountry: z.string().optional(),
+        destinationCountry: z.string().optional(),
+        isThirdParty: z.boolean(),
+        recipientName: z.string().optional(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -567,6 +610,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   ObservabilitySectionSchema,
   BenchmarkSectionSchema,
   DeploymentSectionSchema,
+  LineageSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

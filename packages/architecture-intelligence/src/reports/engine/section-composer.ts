@@ -4,6 +4,7 @@ import type {
   ADRsSection,
   BenchmarkSection,
   DeploymentSection,
+  LineageSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -30,6 +31,9 @@ import type {
 } from "../contracts/report.types";
 import type { ReportAnalysisContext } from "../contracts/engine.types";
 import type { ResolvedTopologySummary } from "./source-resolver";
+import { PrivacyRiskAnalyzer } from "../../lineage/analysis/privacy-risk-analyzer";
+import { RetentionCoverageAnalyzer } from "../../lineage/analysis/retention-coverage";
+import { TransferAnalyzer } from "../../lineage/analysis/transfer-analyzer";
 
 export class SectionComposer {
   public static composeSections(params: {
@@ -854,6 +858,80 @@ export class SectionComposer {
             },
           };
           sections.push(deploymentSection);
+          break;
+        }
+
+        case "lineage": {
+          const lineageModel = analysisContext?.lineage;
+          const assets = lineageModel?.assets || [];
+          const flows = lineageModel?.flows || [];
+          const transformations = lineageModel?.transformations || [];
+
+          let privacyFindings: Array<{ id: string; title: string; severity: string; category: string; remediation: string }> = [];
+          let retentionCoveragePct = 100;
+          let transfers: Array<{
+            flowId: string;
+            sourceComponent: string;
+            destinationComponent: string;
+            sourceCountry?: string;
+            destinationCountry?: string;
+            isThirdParty: boolean;
+            recipientName?: string;
+          }> = [];
+
+          if (lineageModel) {
+            const rawFindings = PrivacyRiskAnalyzer.analyze(lineageModel);
+            privacyFindings = rawFindings.slice(0, 8).map((f) => ({
+              id: f.id,
+              title: f.title,
+              severity: f.severity,
+              category: f.category,
+              remediation: f.remediation,
+            }));
+
+            const retReport = RetentionCoverageAnalyzer.evaluateModel(lineageModel);
+            retentionCoveragePct = retReport.overallCoveragePct;
+
+            const rawTransfers = TransferAnalyzer.analyzeTransfers(lineageModel);
+            transfers = rawTransfers.slice(0, 8).map((t) => ({
+              flowId: t.flowId,
+              sourceComponent: t.sourceComponentId,
+              destinationComponent: t.destinationComponentId,
+              sourceCountry: t.sourceCountry,
+              destinationCountry: t.destinationCountry,
+              isThirdParty: t.isThirdParty,
+              recipientName: t.recipientName,
+            }));
+          }
+
+          const lineageSection: LineageSection = {
+            id: `sec-lineage`,
+            kind: "lineage",
+            title: "Data Flow, Lineage & Privacy Analysis",
+            description:
+              "End-to-end data asset lineage, sensitivity classification propagation, storage residency, retention schedule coverage, and privacy risk findings.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "data_lineage"),
+            content: {
+              totalAssets: assets.length,
+              totalFlows: flows.length,
+              totalTransformations: transformations.length,
+              retentionCoveragePct,
+              privacyFindingsCount: privacyFindings.length,
+              assets: assets.slice(0, 10).map((a) => ({
+                id: a.id,
+                name: a.name,
+                classificationLevel: a.classification.level,
+                categories: a.classification.categories,
+                storageCount: a.storageBindings.length,
+                hasRetention: !!a.retentionPolicy && a.retentionPolicy.durationDays > 0,
+              })),
+              privacyFindings,
+              crossBorderTransfers: transfers,
+            },
+          };
+          sections.push(lineageSection);
           break;
         }
 

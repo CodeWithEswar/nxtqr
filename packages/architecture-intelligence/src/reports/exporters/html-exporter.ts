@@ -483,6 +483,75 @@ export class HtmlExporter {
           break;
         }
 
+        case "lineage": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Total Data Assets</span>
+                  <span class="pillar-score">${c.totalAssets}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Data Flows</span>
+                  <span class="pillar-score">${c.totalFlows}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Retention Coverage</span>
+                  <span class="pillar-score">${c.retentionCoveragePct}%</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Privacy Findings</span>
+                  <span class="pillar-score">${c.privacyFindingsCount}</span>
+                </div>
+              </div>
+            </div>
+            ${
+              c.assets.length > 0
+                ? `<h4>Registered Data Assets</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Asset Name</th>
+                      <th>Sensitivity Level</th>
+                      <th>Categories</th>
+                      <th>Storage Bindings</th>
+                      <th>Retention Configured</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.assets
+                      .map(
+                        (a) => `<tr>
+                        <td><strong>${escapeHtml(a.name)}</strong></td>
+                        <td><span class="badge ${a.classificationLevel === "restricted" || a.classificationLevel === "confidential" ? "badge-error" : "badge-info"}">${escapeHtml(a.classificationLevel.toUpperCase())}</span></td>
+                        <td>${escapeHtml(a.categories.join(", ") || "—")}</td>
+                        <td>${a.storageCount}</td>
+                        <td>${a.hasRetention ? "Yes" : "No"}</td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+            ${
+              c.privacyFindings.length > 0
+                ? `<h4>Privacy & Governance Findings</h4>
+                <ul>
+                  ${c.privacyFindings
+                    .map(
+                      (f) =>
+                        `<li><span class="badge ${f.severity === "critical" || f.severity === "high" ? "badge-error" : "badge-info"}">${f.severity.toUpperCase()}</span> <strong>${escapeHtml(f.title)}</strong> (<code>${escapeHtml(f.category)}</code>): <em>${escapeHtml(f.remediation)}</em></li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

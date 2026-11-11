@@ -721,5 +721,23 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-deployment",
     },
   },
+  {
+    id: "architecture_data_lineage",
+    category: "architecture",
+    title: "Phase 05.3.19: Architecture Data Flow, Lineage & Privacy Analysis Engine",
+    description: "Production-grade data intelligence and privacy analysis engine for the NXTQR System Design Visualizer. Features strict 5-category segregation (modeled, imported, observed, inferred, unknown), cycle-safe bounded upstream and downstream lineage traversal, conservative data sensitivity propagation (public < internal < confidential < restricted) with verified reduction transformations (tokenization, anonymization, hashing), deterministic privacy governance risk rules (trust boundary exposure, missing retention, unmanaged deletion cascade, cross-border transfers), storage binding residency & durability classification, multi-tier retention schedule coverage & backup exemptions, cascade deletion & Right-to-be-Forgotten readiness scoring across replicas/caches/warehouses/third-parties, safe OpenAPI 3.x specification ingestion without code execution, runtime lineage drift detection, Architecture Reports Generator integration, and AI Architecture Assistant Tool #22 (get_data_lineage_and_privacy).",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-lineage",
+      provenanceCategories: ["modeled", "imported", "observed", "inferred", "unknown"],
+      sensitivityHierarchy: "public < internal < confidential < restricted",
+      safeSpecImporters: "Zero code execution OpenAPI 3.x parser with automated field sensitivity inference",
+      deletionReadiness: "Durable primary, read replica, cache, analytics warehouse & third-party cascade verification",
+      aiAssistantToolRegistered: "get_data_lineage_and_privacy (Tool #22)",
+      inspectionRoute: "/verify/architecture-lineage",
+    },
+  },
 ];
 

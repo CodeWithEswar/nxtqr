@@ -427,6 +427,46 @@ export class MarkdownExporter {
           break;
         }
 
+        case "lineage": {
+          const content = section.content;
+          lines.push(`- Total Data Assets: **${content.totalAssets}**`);
+          lines.push(`- Data Flows: **${content.totalFlows}** | Transformations: **${content.totalTransformations}**`);
+          lines.push(`- Retention Coverage: **${content.retentionCoveragePct}%**`);
+          lines.push(`- Privacy Findings: **${content.privacyFindingsCount}**`);
+          lines.push("");
+
+          if (content.assets.length > 0) {
+            lines.push("### Registered Data Assets");
+            lines.push("| Asset Name | Sensitivity Level | Categories | Storage Stores | Retention Configured |");
+            lines.push("| :--- | :--- | :--- | :--- | :--- |");
+            for (const a of content.assets) {
+              const cats = a.categories.join(", ") || "none";
+              lines.push(`| **${a.name}** | \`${a.classificationLevel.toUpperCase()}\` | ${cats} | ${a.storageCount} stores | ${a.hasRetention ? "Yes" : "No"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.crossBorderTransfers.length > 0) {
+            lines.push("### Cross-Border & External Transfers");
+            lines.push("| Source -> Destination | Source Country | Dest Country | Third Party | Recipient |");
+            lines.push("| :--- | :--- | :--- | :--- | :--- |");
+            for (const t of content.crossBorderTransfers) {
+              lines.push(`| ${t.sourceComponent} -> ${t.destinationComponent} | ${t.sourceCountry || "—"} | ${t.destinationCountry || "—"} | ${t.isThirdParty ? "Yes" : "No"} | ${t.recipientName || "—"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.privacyFindings.length > 0) {
+            lines.push("### Privacy & Governance Risk Findings");
+            for (const f of content.privacyFindings) {
+              lines.push(`- [${f.severity.toUpperCase()}] **${f.title}** (\`${f.category}\`)`);
+              lines.push(`  *Remediation:* ${f.remediation}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

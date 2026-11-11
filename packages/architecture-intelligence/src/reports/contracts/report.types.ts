@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -43,6 +43,7 @@ export type ReportSectionKind =
   | "observability"
   | "benchmark"
   | "deployment"
+  | "lineage"
   | "adrs"
   | "text";
 
@@ -452,6 +453,41 @@ export interface DeploymentSection extends BaseReportSection {
   };
 }
 
+export interface LineageSection extends BaseReportSection {
+  kind: "lineage";
+  content: {
+    totalAssets: number;
+    totalFlows: number;
+    totalTransformations: number;
+    retentionCoveragePct: number;
+    privacyFindingsCount: number;
+    assets: Array<{
+      id: string;
+      name: string;
+      classificationLevel: string;
+      categories: string[];
+      storageCount: number;
+      hasRetention: boolean;
+    }>;
+    privacyFindings: Array<{
+      id: string;
+      title: string;
+      severity: string;
+      category: string;
+      remediation: string;
+    }>;
+    crossBorderTransfers: Array<{
+      flowId: string;
+      sourceComponent: string;
+      destinationComponent: string;
+      sourceCountry?: string;
+      destinationCountry?: string;
+      isThirdParty: boolean;
+      recipientName?: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -490,6 +526,7 @@ export type ReportSection =
   | ObservabilitySection
   | BenchmarkSection
   | DeploymentSection
+  | LineageSection
   | ADRsSection
   | TextSection;
 

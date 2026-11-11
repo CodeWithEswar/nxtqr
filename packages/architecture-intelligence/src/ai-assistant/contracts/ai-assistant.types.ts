@@ -1,5 +1,6 @@
 import type { BaseNode, BaseEdge } from "@nxtqr/graph-schema";
 import type { GraphOperation } from "../../scalability/schemas/scalability.schemas";
+import type { ArchitectureDataLineageModel } from "../../lineage/contracts/lineage.types";
 
 export type AIMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -139,5 +140,6 @@ export interface AIExecutionContext {
   selectedEdgeIds?: string[];
   activeScenarioId?: string;
   history?: AIMessage[];
+  lineageModel?: ArchitectureDataLineageModel;
 }
 
