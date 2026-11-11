@@ -37,6 +37,7 @@ export type ReviewCheckCategory =
   | "security"
   | "reliability"
   | "capacity"
+  | "cost"
   | "regression";
 
 export type ReviewCommentAnchor =

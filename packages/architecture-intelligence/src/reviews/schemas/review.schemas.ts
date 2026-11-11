@@ -44,6 +44,7 @@ export const ReviewCheckCategorySchema = z.enum([
   "security",
   "reliability",
   "capacity",
+  "cost",
   "regression",
 ]);
 
