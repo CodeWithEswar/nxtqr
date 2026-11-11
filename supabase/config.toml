@@ -30,7 +30,6 @@ enable_signup = true
 
 [auth.email]
 enabled = true
-double_positive_sign_in = false
 enable_confirmations = false
 
 [storage]

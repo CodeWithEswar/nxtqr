@@ -31,7 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_arch_readiness_assessments_verdict ON public.arch
 CREATE INDEX IF NOT EXISTS idx_arch_readiness_assessments_created ON public.arch_readiness_assessments(created_at DESC);
 
 -- 2. Release Gate Results Table
-CREATE TABLE IF NOT EXISTS public.arch_readiness_gates (
+CREATE TABLE IF NOT EXISTS public.arch_production_readiness_gates (
   id TEXT PRIMARY KEY,
   assessment_id TEXT NOT NULL REFERENCES public.arch_readiness_assessments(id) ON DELETE CASCADE,
   gate_id TEXT NOT NULL,
@@ -45,9 +45,9 @@ CREATE TABLE IF NOT EXISTS public.arch_readiness_gates (
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
-CREATE INDEX IF NOT EXISTS idx_arch_readiness_gates_assessment ON public.arch_readiness_gates(assessment_id);
-CREATE INDEX IF NOT EXISTS idx_arch_readiness_gates_pillar ON public.arch_readiness_gates(pillar);
-CREATE INDEX IF NOT EXISTS idx_arch_readiness_gates_status ON public.arch_readiness_gates(status);
+CREATE INDEX IF NOT EXISTS idx_arch_prod_readiness_gates_assessment ON public.arch_production_readiness_gates(assessment_id);
+CREATE INDEX IF NOT EXISTS idx_arch_prod_readiness_gates_pillar ON public.arch_production_readiness_gates(pillar);
+CREATE INDEX IF NOT EXISTS idx_arch_prod_readiness_gates_status ON public.arch_production_readiness_gates(status);
 
 -- 3. Performance Benchmarks Table
 CREATE TABLE IF NOT EXISTS public.arch_performance_benchmarks (
@@ -73,7 +73,7 @@ CREATE INDEX IF NOT EXISTS idx_arch_perf_benchmarks_created ON public.arch_perfo
 -- ==============================================================================
 
 ALTER TABLE public.arch_readiness_assessments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.arch_readiness_gates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.arch_production_readiness_gates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.arch_performance_benchmarks ENABLE ROW LEVEL SECURITY;
 
 -- arch_readiness_assessments policies
@@ -85,7 +85,7 @@ CREATE POLICY "Users can view readiness assessments in their accessible projects
       EXISTS (
         SELECT 1 FROM public.projects p
         JOIN public.workspace_members wm ON wm.workspace_id = p.workspace_id
-        WHERE p.id = arch_readiness_assessments.project_id AND wm.user_id = auth.uid()
+        WHERE p.id::text = arch_readiness_assessments.project_id AND wm.user_id = auth.uid()
       )
     )
   );
@@ -98,7 +98,7 @@ CREATE POLICY "Users can create readiness assessments in their accessible projec
       EXISTS (
         SELECT 1 FROM public.projects p
         JOIN public.workspace_members wm ON wm.workspace_id = p.workspace_id
-        WHERE p.id = arch_readiness_assessments.project_id AND wm.user_id = auth.uid()
+        WHERE p.id::text = arch_readiness_assessments.project_id AND wm.user_id = auth.uid()
       )
     )
   );
@@ -111,39 +111,39 @@ CREATE POLICY "Users can update readiness assessments in their accessible projec
       EXISTS (
         SELECT 1 FROM public.projects p
         JOIN public.workspace_members wm ON wm.workspace_id = p.workspace_id
-        WHERE p.id = arch_readiness_assessments.project_id AND wm.user_id = auth.uid()
+        WHERE p.id::text = arch_readiness_assessments.project_id AND wm.user_id = auth.uid()
       )
     )
   );
 
--- arch_readiness_gates policies
+-- arch_production_readiness_gates policies
 CREATE POLICY "Users can view readiness gates in their accessible assessments"
-  ON public.arch_readiness_gates FOR SELECT
+  ON public.arch_production_readiness_gates FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM public.arch_readiness_assessments a
-      WHERE a.id = arch_readiness_gates.assessment_id AND (
+      WHERE a.id = arch_production_readiness_gates.assessment_id AND (
         a.created_by = auth.uid()::text OR
         EXISTS (
           SELECT 1 FROM public.projects p
           JOIN public.workspace_members wm ON wm.workspace_id = p.workspace_id
-          WHERE p.id = a.project_id AND wm.user_id = auth.uid()
+          WHERE p.id::text = a.project_id AND wm.user_id = auth.uid()
         )
       )
     )
   );
 
 CREATE POLICY "Users can insert readiness gates in their accessible assessments"
-  ON public.arch_readiness_gates FOR INSERT
+  ON public.arch_production_readiness_gates FOR INSERT
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM public.arch_readiness_assessments a
-      WHERE a.id = arch_readiness_gates.assessment_id AND (
+      WHERE a.id = arch_production_readiness_gates.assessment_id AND (
         a.created_by = auth.uid()::text OR
         EXISTS (
           SELECT 1 FROM public.projects p
           JOIN public.workspace_members wm ON wm.workspace_id = p.workspace_id
-          WHERE p.id = a.project_id AND wm.user_id = auth.uid()
+          WHERE p.id::text = a.project_id AND wm.user_id = auth.uid()
         )
       )
     )
@@ -160,7 +160,7 @@ CREATE POLICY "Users can view performance benchmarks in their accessible assessm
         EXISTS (
           SELECT 1 FROM public.projects p
           JOIN public.workspace_members wm ON wm.workspace_id = p.workspace_id
-          WHERE p.id = a.project_id AND wm.user_id = auth.uid()
+          WHERE p.id::text = a.project_id AND wm.user_id = auth.uid()
         )
       )
     )
@@ -176,9 +176,8 @@ CREATE POLICY "Users can insert performance benchmarks in their accessible asses
         EXISTS (
           SELECT 1 FROM public.projects p
           JOIN public.workspace_members wm ON wm.workspace_id = p.workspace_id
-          WHERE p.id = a.project_id AND wm.user_id = auth.uid()
+          WHERE p.id::text = a.project_id AND wm.user_id = auth.uid()
         )
       )
     )
   );
-

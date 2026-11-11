@@ -121,7 +121,7 @@ AS $$
     SELECT EXISTS (
         SELECT 1
         FROM public.project_members
-        WHERE project_id = project_id_param
+        WHERE project_id::text = project_id_param
           AND user_id = auth.uid()
     );
 $$;

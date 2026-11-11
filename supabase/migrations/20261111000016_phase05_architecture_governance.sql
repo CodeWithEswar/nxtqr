@@ -18,7 +18,7 @@ BEGIN
         SELECT 1
         FROM public.projects p
         JOIN public.workspace_members wm ON wm.workspace_id = p.workspace_id
-        WHERE p.id = project_id_param
+        WHERE p.id::text = project_id_param
           AND wm.user_id = auth.uid()
     );
 END;
