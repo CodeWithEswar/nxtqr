@@ -26,6 +26,12 @@ import type {
   BenchmarkRun,
   BenchmarkComparisonResult,
 } from "../../performance/contracts/performance.types";
+import type {
+  DeploymentTopology,
+  FailureDomainItem,
+  TopologyValidationFinding,
+} from "../../deployment/contracts/deployment.types";
+import type { DeploymentReliabilityMetrics } from "../../deployment/analysis/deployment-reliability";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -49,6 +55,12 @@ export interface ReportAnalysisContext {
   benchmark?: {
     run: BenchmarkRun;
     comparison?: BenchmarkComparisonResult;
+  };
+  deployment?: {
+    topology: DeploymentTopology;
+    failureDomains?: FailureDomainItem[];
+    reliability?: DeploymentReliabilityMetrics;
+    findings?: TopologyValidationFinding[];
   };
 }
 

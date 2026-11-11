@@ -3,6 +3,7 @@ import type { ArchitectureDecisionRecord } from "../contracts/adr.types";
 import type {
   ADRsSection,
   BenchmarkSection,
+  DeploymentSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -797,6 +798,62 @@ export class SectionComposer {
             },
           };
           sections.push(benchmarkSection);
+          break;
+        }
+
+        case "deployment": {
+          const depData = analysisContext?.deployment;
+          const topo = depData?.topology;
+          const envName = topo?.environment?.name || "Production";
+          const envCategory = topo?.environment?.category || "production";
+          const resList = topo?.resources || [];
+          const mapList = topo?.mappings || [];
+          const domains = depData?.failureDomains || [];
+          const relScore = depData?.reliability?.overallScore ?? 85;
+          const azScore = depData?.reliability?.multiAzRedundancyScore ?? 90;
+          const findings = depData?.findings || [];
+
+          const deploymentSection: DeploymentSection = {
+            id: `sec-deployment`,
+            kind: "deployment",
+            title: "Deployment Topology & Infrastructure Architecture",
+            description:
+              "Physical workload placement, availability zone redundancy, VPC networking, failure domains, and logical-to-physical mapping completeness.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "deployment"),
+            content: {
+              environmentName: envName,
+              environmentCategory: envCategory,
+              totalResources: resList.length,
+              totalMappings: mapList.length,
+              unmappedCount: Math.max(0, nodes.length - mapList.length),
+              multiAzScore: azScore,
+              overallReliabilityScore: relScore,
+              resources: resList.slice(0, 15).map((r) => ({
+                id: r.id,
+                name: r.name,
+                type: r.type,
+                provider: r.provider,
+                region: r.regionId,
+                zone: r.zoneId,
+                cidr: r.cidr,
+              })),
+              failureDomains: domains.slice(0, 6).map((d) => ({
+                name: d.name,
+                type: d.domainType,
+                riskLevel: d.riskLevel,
+                description: d.description,
+              })),
+              findings: findings.slice(0, 5).map((f) => ({
+                title: f.title,
+                severity: f.severity,
+                description: f.description,
+                remediation: f.remediation,
+              })),
+            },
+          };
+          sections.push(deploymentSection);
           break;
         }
 

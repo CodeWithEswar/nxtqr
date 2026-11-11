@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -42,6 +42,7 @@ export type ReportSectionKind =
   | "simulation"
   | "observability"
   | "benchmark"
+  | "deployment"
   | "adrs"
   | "text";
 
@@ -417,6 +418,40 @@ export interface BenchmarkSection extends BaseReportSection {
   };
 }
 
+export interface DeploymentSection extends BaseReportSection {
+  kind: "deployment";
+  content: {
+    environmentName: string;
+    environmentCategory: string;
+    totalResources: number;
+    totalMappings: number;
+    unmappedCount: number;
+    multiAzScore: number;
+    overallReliabilityScore: number;
+    resources: Array<{
+      id: string;
+      name: string;
+      type: string;
+      provider: string;
+      region?: string;
+      zone?: string;
+      cidr?: string;
+    }>;
+    failureDomains: Array<{
+      name: string;
+      type: string;
+      riskLevel: string;
+      description: string;
+    }>;
+    findings: Array<{
+      title: string;
+      severity: string;
+      description: string;
+      remediation: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -454,6 +489,7 @@ export type ReportSection =
   | SimulationSection
   | ObservabilitySection
   | BenchmarkSection
+  | DeploymentSection
   | ADRsSection
   | TextSection;
 

@@ -400,6 +400,89 @@ export class HtmlExporter {
           break;
         }
 
+        case "deployment": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <p>Environment: <strong>${escapeHtml(c.environmentName)}</strong> (<code>${escapeHtml(c.environmentCategory)}</code>)</p>
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Multi-AZ Redundancy</span>
+                  <span class="pillar-score">${c.multiAzScore}%</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Overall Reliability</span>
+                  <span class="pillar-score">${c.overallReliabilityScore}%</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Total Resources</span>
+                  <span class="pillar-score">${c.totalResources}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Mappings / Unmapped</span>
+                  <span class="pillar-score">${c.totalMappings} / ${c.unmappedCount}</span>
+                </div>
+              </div>
+            </div>
+            ${
+              c.resources.length > 0
+                ? `<h4>Key Infrastructure Resources</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Resource</th>
+                      <th>Type</th>
+                      <th>Provider</th>
+                      <th>Region / Zone</th>
+                      <th>CIDR</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.resources
+                      .map(
+                        (r) => `<tr>
+                        <td><strong>${escapeHtml(r.name)}</strong></td>
+                        <td><code>${escapeHtml(r.type)}</code></td>
+                        <td>${escapeHtml(r.provider.toUpperCase())}</td>
+                        <td>${escapeHtml([r.region, r.zone].filter(Boolean).join(" / ") || "—")}</td>
+                        <td><code>${escapeHtml(r.cidr || "—")}</code></td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+            ${
+              c.failureDomains.length > 0
+                ? `<h4>Identified Failure Domains</h4>
+                <ul>
+                  ${c.failureDomains
+                    .map(
+                      (d) =>
+                        `<li><strong>${escapeHtml(d.name)}</strong> (<code>${escapeHtml(d.type)}</code>, Risk: <span class="badge ${d.riskLevel === "critical" || d.riskLevel === "high" ? "badge-error" : "badge-info"}">${d.riskLevel.toUpperCase()}</span>): ${escapeHtml(d.description)}</li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+            ${
+              c.findings.length > 0
+                ? `<h4>Topology Findings</h4>
+                <ul>
+                  ${c.findings
+                    .map(
+                      (f) =>
+                        `<li><span class="badge ${f.severity === "critical" || f.severity === "high" ? "badge-error" : "badge-info"}">${f.severity.toUpperCase()}</span> <strong>${escapeHtml(f.title)}</strong>: ${escapeHtml(f.description)}<br><em>Remediation: ${escapeHtml(f.remediation)}</em></li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

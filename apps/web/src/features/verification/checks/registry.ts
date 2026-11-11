@@ -703,5 +703,23 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-performance",
     },
   },
+  {
+    id: "architecture_deployment",
+    category: "architecture",
+    title: "Phase 05.3.18: Architecture Deployment Topology & Infrastructure Mapping Engine",
+    description: "Production-grade deployment topology and infrastructure mapping engine extending the System Design Visualizer from logical architecture to physical/virtual deployment. Features strict 5-category segregation (logical, deployment, infrastructure, observed, planned), logical-to-physical mapping (runs_on, implemented_by, stored_in, served_by, depends_on), deployment environments with isolation levels (separate account, separate VPC, shared cluster), multi-provider cloud modeling (AWS, Azure, GCP, Cloudflare, on-premises), geographic regions & Availability Zone failure domains, bitwise IPv4 CIDR validation & collision detection, security group network path reachability evaluation, Kubernetes topology (namespaces, nodepools, workloads, ingress, storage), failure domain analysis (shared host, cluster, zone, region, storage), topology validation (containment cycles, dangling parents, unshielded public databases), safe Terraform plan JSON & Kubernetes manifest importers with credential redaction, architecture drift detection against observed inventory, Architecture Reports Generator integration, and AI Assistant Tool #21 (get_deployment_topology).",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-deployment",
+      supportedProviders: ["aws", "azure", "gcp", "cloudflare", "on_premises", "custom"],
+      supportedEnvironments: ["production", "staging", "development", "disaster_recovery", "custom"],
+      bitwiseCidrMath: "32-bit unsigned integer range arithmetic with overlap & containment checks",
+      safeIaCImporters: "Zero execution Terraform Plan JSON & Kubernetes YAML parsers with secret masking",
+      aiAssistantToolRegistered: "get_deployment_topology (Tool #21)",
+      inspectionRoute: "/verify/architecture-deployment",
+    },
+  },
 ];
 

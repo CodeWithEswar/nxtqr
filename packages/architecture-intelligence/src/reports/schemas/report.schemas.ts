@@ -25,6 +25,7 @@ export const ReportEvidenceReferenceSchema = z.object({
     "simulation",
     "observability",
     "benchmark",
+    "deployment",
     "adr",
     "doc",
   ]),
@@ -57,6 +58,7 @@ export const ReportSectionKindSchema = z.enum([
   "simulation",
   "observability",
   "benchmark",
+  "deployment",
   "adrs",
   "text",
 ]);
@@ -487,6 +489,46 @@ export const BenchmarkSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const DeploymentSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("deployment"),
+  content: z.object({
+    environmentName: z.string(),
+    environmentCategory: z.string(),
+    totalResources: z.number().int().min(0),
+    totalMappings: z.number().int().min(0),
+    unmappedCount: z.number().int().min(0),
+    multiAzScore: z.number().min(0).max(100),
+    overallReliabilityScore: z.number().min(0).max(100),
+    resources: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        type: z.string(),
+        provider: z.string(),
+        region: z.string().optional(),
+        zone: z.string().optional(),
+        cidr: z.string().optional(),
+      })
+    ),
+    failureDomains: z.array(
+      z.object({
+        name: z.string(),
+        type: z.string(),
+        riskLevel: z.string(),
+        description: z.string(),
+      })
+    ),
+    findings: z.array(
+      z.object({
+        title: z.string(),
+        severity: z.string(),
+        description: z.string(),
+        remediation: z.string(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -524,6 +566,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   SimulationSectionSchema,
   ObservabilitySectionSchema,
   BenchmarkSectionSchema,
+  DeploymentSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

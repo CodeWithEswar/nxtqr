@@ -388,6 +388,45 @@ export class MarkdownExporter {
           break;
         }
 
+        case "deployment": {
+          const content = section.content;
+          lines.push(`Environment: **${content.environmentName}** (\`${content.environmentCategory}\`)`);
+          lines.push(`- Multi-AZ Redundancy Score: **${content.multiAzScore}%**`);
+          lines.push(`- Overall Deployment Reliability: **${content.overallReliabilityScore}%**`);
+          lines.push(`- Infrastructure Resources: **${content.totalResources}**`);
+          lines.push(`- Logical Mappings: **${content.totalMappings}** (Unmapped components: ${content.unmappedCount})`);
+          lines.push("");
+
+          if (content.resources.length > 0) {
+            lines.push("### Key Infrastructure Resources");
+            lines.push("| Name | Type | Provider | Region / Zone | CIDR |");
+            lines.push("| :--- | :--- | :--- | :--- | :--- |");
+            for (const r of content.resources) {
+              const location = [r.region, r.zone].filter(Boolean).join(" / ") || "—";
+              lines.push(`| **${r.name}** | \`${r.type}\` | ${r.provider.toUpperCase()} | ${location} | ${r.cidr || "—"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.failureDomains.length > 0) {
+            lines.push("### Identified Failure Domains");
+            for (const fd of content.failureDomains) {
+              lines.push(`- **${fd.name}** (\`${fd.type}\`, Risk: **${fd.riskLevel.toUpperCase()}**): ${fd.description}`);
+            }
+            lines.push("");
+          }
+
+          if (content.findings.length > 0) {
+            lines.push("### Topology Findings & Remediation");
+            for (const f of content.findings) {
+              lines.push(`- [${f.severity.toUpperCase()}] **${f.title}**: ${f.description}`);
+              lines.push(`  *Remediation:* ${f.remediation}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

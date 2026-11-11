@@ -52,6 +52,10 @@ export * from "./reliability";
 export type { EvidenceReference } from "./contracts/health.types";
 export { EvidenceReferenceSchema } from "./contracts/health.schemas";
 export type { RecommendationFeasibility } from "./scalability";
+export type { CloudProviderId } from "./cost";
+export { CloudProviderIdSchema } from "./cost";
+export type { CloudProviderId as DeploymentCloudProviderId } from "./deployment/contracts/deployment.types";
+export { CloudProviderIdSchema as DeploymentCloudProviderIdSchema } from "./deployment/schemas/deployment.schemas";
 
 // Unified Intelligent Architecture Recommendations Engine (Phase 05.3.8)
 export * from "./recommendations";
@@ -83,7 +87,7 @@ export * from "./observability";
 // Architecture Performance Benchmarking & Load Testing Planner (Phase 05.3.17)
 export * from "./performance";
 
-
-
+// Architecture Deployment Topology & Infrastructure Mapping Engine (Phase 05.3.18)
+export * from "./deployment";
 
 

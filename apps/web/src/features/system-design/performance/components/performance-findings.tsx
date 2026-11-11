@@ -81,3 +81,4 @@ export function PerformanceFindings({ findings }: PerformanceFindingsProps) {
     </div>
   );
 }
+
