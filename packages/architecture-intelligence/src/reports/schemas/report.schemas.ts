@@ -71,6 +71,7 @@ export const ReportSectionKindSchema = z.enum([
   "network_and_traffic",
   "governance_and_compliance",
   "migration_and_evolution",
+  "operational_readiness_and_dr",
   "adrs",
   "text",
 ]);
@@ -922,6 +923,53 @@ export const MigrationAndEvolutionSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const OperationalReadinessAndDRSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("operational_readiness_and_dr"),
+  content: z.object({
+    overallReadinessStatus: z.string(),
+    overallScorePercent: z.number().min(0).max(100),
+    totalScenarios: z.number().int().min(0),
+    totalRunbooks: z.number().int().min(0),
+    tier1RunbookCoveragePercent: z.number().min(0).max(100),
+    criticalPathSeconds: z.number().nonnegative(),
+    hasRecoveryCycles: z.boolean(),
+    dimensionScores: z.array(
+      z.object({
+        dimension: z.string(),
+        status: z.string(),
+        coveragePercent: z.number().min(0).max(100),
+        note: z.string(),
+      })
+    ),
+    scenarios: z.array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        category: z.string(),
+        severity: z.string(),
+        blastRadiusScore: z.number().min(0).max(100),
+      })
+    ),
+    recoveryObjectives: z.array(
+      z.object({
+        serviceName: z.string(),
+        rtoTargetSeconds: z.number().nonnegative(),
+        rpoTargetSeconds: z.number().nonnegative(),
+        isRtoVerified: z.boolean(),
+        isRpoVerified: z.boolean(),
+      })
+    ),
+    findings: z.array(
+      z.object({
+        id: z.string(),
+        category: z.string(),
+        severity: z.string(),
+        title: z.string(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -968,6 +1016,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   NetworkAndTrafficSectionSchema,
   GovernanceAndComplianceSectionSchema,
   MigrationAndEvolutionSectionSchema,
+  OperationalReadinessAndDRSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

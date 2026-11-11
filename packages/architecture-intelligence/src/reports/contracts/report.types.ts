@@ -51,6 +51,7 @@ export type ReportSectionKind =
   | "network_and_traffic"
   | "governance_and_compliance"
   | "migration_and_evolution"
+  | "operational_readiness_and_dr"
   | "adrs"
   | "text";
 
@@ -791,6 +792,45 @@ export interface MigrationAndEvolutionSection extends BaseReportSection {
   };
 }
 
+export interface OperationalReadinessAndDRSection extends BaseReportSection {
+  kind: "operational_readiness_and_dr";
+  content: {
+    overallReadinessStatus: string;
+    overallScorePercent: number;
+    totalScenarios: number;
+    totalRunbooks: number;
+    tier1RunbookCoveragePercent: number;
+    criticalPathSeconds: number;
+    hasRecoveryCycles: boolean;
+    dimensionScores: Array<{
+      dimension: string;
+      status: string;
+      coveragePercent: number;
+      note: string;
+    }>;
+    scenarios: Array<{
+      id: string;
+      title: string;
+      category: string;
+      severity: string;
+      blastRadiusScore: number;
+    }>;
+    recoveryObjectives: Array<{
+      serviceName: string;
+      rtoTargetSeconds: number;
+      rpoTargetSeconds: number;
+      isRtoVerified: boolean;
+      isRpoVerified: boolean;
+    }>;
+    findings: Array<{
+      id: string;
+      category: string;
+      severity: string;
+      title: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -837,6 +877,7 @@ export type ReportSection =
   | NetworkAndTrafficSection
   | GovernanceAndComplianceSection
   | MigrationAndEvolutionSection
+  | OperationalReadinessAndDRSection
   | ADRsSection
   | TextSection;
 

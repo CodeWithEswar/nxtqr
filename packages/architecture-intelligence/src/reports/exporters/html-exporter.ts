@@ -1156,6 +1156,131 @@ export class HtmlExporter {
           break;
         }
 
+        case "operational_readiness_and_dr": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Readiness Status</span>
+                  <span class="pillar-score" style="color: ${c.overallReadinessStatus === "ready" ? "#22c55e" : "#FFAA00"};">${escapeHtml(c.overallReadinessStatus.toUpperCase())}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Readiness Score</span>
+                  <span class="pillar-score">${c.overallScorePercent}%</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Tier 1 Runbooks</span>
+                  <span class="pillar-score">${c.tier1RunbookCoveragePercent}%</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Scenarios</span>
+                  <span class="pillar-score">${c.totalScenarios}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">DR Critical Path</span>
+                  <span class="pillar-score">${c.criticalPathSeconds}s</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">DR DAG Cycles</span>
+                  <span class="pillar-score" style="color: ${c.hasRecoveryCycles ? "#ef4444" : "#22c55e"};">${c.hasRecoveryCycles ? "CYCLES" : "NONE"}</span>
+                </div>
+              </div>
+            </div>
+
+            <h4>8-Dimension Operational Readiness Matrix</h4>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>Status</th>
+                    <th>Coverage</th>
+                    <th>Assessment Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${c.dimensionScores
+                    .map(
+                      (d) => `<tr>
+                    <td><strong>${escapeHtml(d.dimension.toUpperCase())}</strong></td>
+                    <td><span class="badge ${d.status === "ready" ? "badge-success" : d.status === "not_ready" ? "badge-error" : "badge-warning"}">${d.status.toUpperCase()}</span></td>
+                    <td>${d.coveragePercent}%</td>
+                    <td>${escapeHtml(d.note)}</td>
+                  </tr>`
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            </div>
+
+            ${
+              c.scenarios.length > 0
+                ? `<h4>Critical Failure Scenarios & Blast Radius</h4>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Scenario ID</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Severity</th>
+                        <th>Blast Radius</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${c.scenarios
+                        .map(
+                          (s) => `<tr>
+                        <td><code>${escapeHtml(s.id)}</code></td>
+                        <td>${escapeHtml(s.title)}</td>
+                        <td>${escapeHtml(s.category)}</td>
+                        <td><span class="badge ${s.severity === "SEV1" || s.severity === "SEV2" ? "badge-error" : "badge-warning"}">${s.severity}</span></td>
+                        <td><strong>${s.blastRadiusScore}/100</strong></td>
+                      </tr>`
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+                : ""
+            }
+
+            ${
+              c.recoveryObjectives.length > 0
+                ? `<h4>Disaster Recovery Objectives (RTO & RPO)</h4>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Service</th>
+                        <th>Target RTO</th>
+                        <th>Target RPO</th>
+                        <th>RTO Drill Verified</th>
+                        <th>RPO Drill Verified</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${c.recoveryObjectives
+                        .map(
+                          (o) => `<tr>
+                        <td><strong>${escapeHtml(o.serviceName)}</strong></td>
+                        <td>${o.rtoTargetSeconds}s</td>
+                        <td>${o.rpoTargetSeconds}s</td>
+                        <td><span class="badge ${o.isRtoVerified ? "badge-success" : "badge-warning"}">${o.isRtoVerified ? "VERIFIED" : "UNVERIFIED"}</span></td>
+                        <td><span class="badge ${o.isRpoVerified ? "badge-success" : "badge-warning"}">${o.isRpoVerified ? "VERIFIED" : "UNVERIFIED"}</span></td>
+                      </tr>`
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

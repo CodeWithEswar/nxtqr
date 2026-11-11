@@ -754,6 +754,53 @@ export class MarkdownExporter {
           break;
         }
 
+        case "operational_readiness_and_dr": {
+          const content = section.content;
+          lines.push(`- Overall Readiness Status: **${content.overallReadinessStatus.toUpperCase()}** (${content.overallScorePercent}% score)`);
+          lines.push(`- Failure Scenarios: **${content.totalScenarios}** | Operational Runbooks: **${content.totalRunbooks}** (Tier 1 Coverage: **${content.tier1RunbookCoveragePercent}%**)`);
+          lines.push(`- Disaster Recovery DAG: Critical Path **${content.criticalPathSeconds}s** | Cycles Detected: **${content.hasRecoveryCycles ? "YES (BLOCKING)" : "None"}**`);
+          lines.push("");
+
+          lines.push("### 8-Dimension Readiness Matrix");
+          lines.push("| Operational Dimension | Status | Coverage | Assessment Note |");
+          lines.push("|---|---|---|---|");
+          for (const d of content.dimensionScores) {
+            lines.push(`| **${d.dimension.toUpperCase()}** | \`${d.status.toUpperCase()}\` | ${d.coveragePercent}% | ${d.note} |`);
+          }
+          lines.push("");
+
+          if (content.scenarios.length > 0) {
+            lines.push("### Critical Incident Scenarios & Blast Radius");
+            lines.push("| Scenario ID | Title | Category | Severity | Blast Radius |");
+            lines.push("|---|---|---|---|---|");
+            for (const s of content.scenarios) {
+              lines.push(`| \`${s.id}\` | ${s.title} | ${s.category} | **${s.severity}** | **${s.blastRadiusScore}/100** |`);
+            }
+            lines.push("");
+          }
+
+          if (content.recoveryObjectives.length > 0) {
+            lines.push("### Recovery Objectives (RTO & RPO)");
+            lines.push("| Service | Target RTO | Target RPO | RTO Verified | RPO Verified |");
+            lines.push("|---|---|---|---|---|");
+            for (const o of content.recoveryObjectives) {
+              lines.push(`| ${o.serviceName} | ${o.rtoTargetSeconds}s | ${o.rpoTargetSeconds}s | ${o.isRtoVerified ? "YES" : "NO"} | ${o.isRpoVerified ? "YES" : "NO"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.findings.length > 0) {
+            lines.push("### Active Operational Findings");
+            lines.push("| Finding ID | Category | Severity | Title |");
+            lines.push("|---|---|---|---|");
+            for (const f of content.findings) {
+              lines.push(`| \`${f.id}\` | ${f.category} | **${f.severity.toUpperCase()}** | ${f.title} |`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

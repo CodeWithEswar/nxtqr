@@ -115,4 +115,7 @@ export * from "./governance";
 export * from "./evolution";
 export type { MigrationAnalysisResult } from "./evolution";
 
+// Architecture Incident Response, Disaster Recovery & Operational Readiness Intelligence Engine (Phase 05.3.27)
+export * from "./operations";
+
 

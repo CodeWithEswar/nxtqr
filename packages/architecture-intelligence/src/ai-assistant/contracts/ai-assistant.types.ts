@@ -9,6 +9,7 @@ import type { NetworkArchitectureTopology } from "../../network/contracts/networ
 import type { GovernanceArchitectureTopology } from "../../governance/contracts/governance.types";
 import type { MigrationProject } from "../../evolution/contracts/evolution.types";
 import type { ArchitectureSnapshot } from "../../comparison/contracts/comparison.types";
+import type { OperationalProject } from "../../operations/contracts/operations.types";
 
 export type AIMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -158,5 +159,6 @@ export interface AIExecutionContext {
   governanceTopology?: GovernanceArchitectureTopology;
   evolutionProject?: MigrationProject;
   targetSnapshot?: ArchitectureSnapshot;
+  operationalProject?: OperationalProject;
 }
 

@@ -12,6 +12,7 @@ import type {
   NetworkAndTrafficSection,
   GovernanceAndComplianceSection,
   MigrationAndEvolutionSection,
+  OperationalReadinessAndDRSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -50,6 +51,9 @@ import { PolicyRegistry } from "../../governance/registry/policy-registry";
 import { architectureEvolutionEngine } from "../../evolution/engine/evolution-engine";
 import { migrationStrategyRegistry } from "../../evolution/registry/strategy-registry";
 import type { ArchitectureSnapshot } from "../../comparison/contracts/comparison.types";
+import { architectureOperationsEngine } from "../../operations/engine/operations-engine";
+import { incidentScenarioRegistry } from "../../operations/registry/incident-registry";
+import type { OperationalProject } from "../../operations/contracts/operations.types";
 
 export class SectionComposer {
   public static composeSections(params: {
@@ -1711,6 +1715,224 @@ export class SectionComposer {
             };
             sections.push(migrationSection);
           }
+          break;
+        }
+
+        case "operational_readiness_and_dr": {
+          const rawProject = analysisContext?.operationalProject;
+          const defaultScenarios = incidentScenarioRegistry.getAllScenarios();
+
+          const opProject: OperationalProject = rawProject || {
+            id: "report-op-project",
+            architectureId: "report-arch",
+            architectureRevisionId: "rev-report",
+            title: "Operational Readiness & Disaster Recovery Assessment",
+            scenarios: defaultScenarios.slice(0, 4),
+            journeys: [
+              {
+                id: "journey-primary",
+                title: "Primary User Flow",
+                description: "End-to-end critical ingress and persistence flow",
+                entryPointComponentId: nodes[0]?.id || "entry",
+                traversedComponentIds: nodes.slice(0, 3).map((n) => n.id),
+                recoveryPriority: 1,
+                maxAllowedDowntimeSeconds: 300,
+              },
+            ],
+            ownerships: nodes.map((n) => ({
+              id: `own-${n.id}`,
+              serviceId: n.id,
+              primaryOwner: "oncall-platform@nxtqr.internal",
+              team: "Platform Engineering",
+              escalationPolicyId: "esc-standard",
+            })),
+            escalationPolicies: [
+              {
+                id: "esc-standard",
+                name: "Standard Escalation Policy",
+                levels: [
+                  {
+                    levelNumber: 1,
+                    delayMinutes: 0,
+                    notifyRoles: ["incident_commander", "technical_lead"],
+                    targetChannel: "#ops-critical",
+                    targetRoleName: "Primary On-Call",
+                  },
+                ],
+                fallbackContact: "noc@nxtqr.internal",
+                acknowledgementTimeoutMinutes: 5,
+              },
+            ],
+            runbooks: [
+              {
+                id: "rb-triage-standard",
+                title: "Standard Operational Triage & Failover Runbook",
+                purpose: "Triage degraded service instances and reroute client traffic",
+                applicableComponentIds: nodes.slice(0, 2).map((n) => n.id),
+                incidentScenarioIds: ["SCN-DB-FAILOVER-001"],
+                revision: "1.0.0",
+                steps: [
+                  {
+                    id: "step-1",
+                    stepNumber: 1,
+                    type: "observation",
+                    title: "Check Ingress Error Spikes",
+                    details: "Inspect edge metrics for 5xx errors",
+                    isDestructive: false,
+                    requiresApproval: false,
+                  },
+                  {
+                    id: "step-2",
+                    stepNumber: 2,
+                    type: "recovery",
+                    title: "Reroute Traffic to Secondary Cluster",
+                    details: "Promote warm standby instance",
+                    isDestructive: true,
+                    requiresApproval: true,
+                    verificationGate: "Health check returns 200 OK within 15s",
+                  },
+                ],
+                safetyWarnings: ["Verify secondary sync state before redirecting write traffic."],
+                prerequisites: ["VPN access established"],
+                rollbackGuidance: "Revert DNS weights back to primary if secondary errors exceed 1%.",
+                owner: "platform-team",
+                reviewDate: new Date().toISOString(),
+                isApproved: true,
+              },
+            ],
+            objectives: [
+              {
+                id: "obj-primary",
+                serviceId: nodes[0]?.id || "entry",
+                serviceName: String((nodes[0]?.data as any)?.label || "Primary Ingress"),
+                rtoTargetSeconds: 300,
+                rpoTargetSeconds: 60,
+                supportingStrategyType: "warm_standby",
+                observedRtoSeconds: 180,
+                observedRpoSeconds: 30,
+                isRtoVerified: true,
+                isRpoVerified: true,
+                evidenceIds: ["ev-baseline-drill"],
+              },
+            ],
+            dependencies: edges.map((e, idx) => ({
+              id: `dep-${idx}`,
+              sourceComponentId: e.source,
+              targetComponentId: e.target,
+              dependencyType: "infrastructure",
+              isBlocking: true,
+            })),
+            backupCapabilities: [
+              {
+                id: "bk-primary",
+                componentId: nodes.find((n) => (n.data as any)?.nodeType === "database")?.id || nodes[0]?.id || "db",
+                componentName: "Primary Data Store",
+                backupType: "snapshot",
+                scheduleExpression: "cron(0 2 * * ? *)",
+                retentionDays: 30,
+                isEncrypted: true,
+                storageLocation: "s3://backups-vault",
+                lastSuccessfulBackupAt: new Date().toISOString(),
+                lastRestoreTestAt: new Date().toISOString(),
+                restoreVerified: true,
+                evidenceIds: ["ev-restore-verified"],
+              },
+            ],
+            failoverProcedures: [
+              {
+                id: "fo-primary",
+                componentId: nodes[0]?.id || "entry",
+                primaryRegion: "us-east-1",
+                secondaryRegion: "us-west-2",
+                failoverType: "automatic",
+                healthCheckType: "HTTPS Route53",
+                dataSyncLagMaxSeconds: 30,
+                failbackProcedure: "Gradually steer 10% traffic back after 1 hour zero errors.",
+                readinessVerified: true,
+                readinessNotes: ["Geographically distinct failover region confirmed."],
+              },
+            ],
+            tabletopExercises: [
+              {
+                id: "ttx-primary",
+                title: "Annual Disaster Recovery Tabletop",
+                scenarioId: "SCN-DB-FAILOVER-001",
+                facilitator: "Lead Architect",
+                participants: [{ name: "Alice", role: "incident_commander" }],
+                scheduledDate: new Date().toISOString().slice(0, 10),
+                status: "completed",
+                assumptions: ["Warm standby ready"],
+                injects: [],
+                observations: [],
+                findings: [],
+                actionItems: [],
+                completedAt: new Date().toISOString(),
+              },
+            ],
+            evidence: [
+              {
+                id: "ev-baseline-drill",
+                evidenceType: "failover_drill",
+                sourceUri: "audit://drills/q3-baseline",
+                contentHash: "sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+                recordedAt: new Date().toISOString(),
+                verifiedBy: "sec-ops@nxtqr.internal",
+                notes: "Verified secondary gateway takes over within 180 seconds.",
+              },
+            ],
+          };
+
+          const opAnalysis = architectureOperationsEngine.analyzeOperations(opProject, nodes, edges);
+
+          const opSection: OperationalReadinessAndDRSection = {
+            id: "sec-operational-readiness-dr",
+            kind: "operational_readiness_and_dr",
+            title: "Incident Response, Disaster Recovery & Operational Readiness",
+            description:
+              "Operational readiness evaluation, failure scenario blast radius, runbook coverage and safety, disaster recovery DAG sequence, RTO/RPO target verification, and drift detection.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "operations"),
+            content: {
+              overallReadinessStatus: opAnalysis.summary.overallReadinessStatus,
+              overallScorePercent: opAnalysis.readiness.overallScorePercent,
+              totalScenarios: opAnalysis.summary.totalScenariosCount,
+              totalRunbooks: opAnalysis.summary.totalRunbooksCount,
+              tier1RunbookCoveragePercent: opAnalysis.summary.tier1CoveragePercent,
+              criticalPathSeconds: opAnalysis.recoveryPlan.criticalPathSeconds,
+              hasRecoveryCycles: opAnalysis.recoveryPlan.hasCycles,
+              dimensionScores: opAnalysis.readiness.dimensionScores.map((d) => ({
+                dimension: d.dimension,
+                status: d.status,
+                coveragePercent: d.coveragePercent,
+                note: d.notes[0] || "",
+              })),
+              scenarios: opAnalysis.project.scenarios.slice(0, 5).map((s) => {
+                const impact = opAnalysis.impactAnalyses.find((ia) => ia.scenarioId === s.id);
+                return {
+                  id: s.id,
+                  title: s.title,
+                  category: s.category,
+                  severity: s.severity,
+                  blastRadiusScore: impact?.blastRadiusScore ?? 50,
+                };
+              }),
+              recoveryObjectives: opAnalysis.project.objectives.map((o) => ({
+                serviceName: o.serviceName,
+                rtoTargetSeconds: o.rtoTargetSeconds,
+                rpoTargetSeconds: o.rpoTargetSeconds,
+                isRtoVerified: o.isRtoVerified,
+                isRpoVerified: o.isRpoVerified,
+              })),
+              findings: opAnalysis.readiness.findings.slice(0, 8).map((f) => ({
+                id: f.id,
+                category: f.category,
+                severity: f.severity,
+                title: f.title,
+              })),
+            },
+          };
+          sections.push(opSection);
           break;
         }
 

@@ -1006,5 +1006,31 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-evolution",
     },
   },
+  {
+    id: "arch_operational_readiness",
+    category: "architecture",
+    title: "Phase 05.3.27: Incident Response, Disaster Recovery & Operational Readiness Engine",
+    description: "Evaluates operational incident scenarios, blast radius, runbook safety & coverage, DR dependency DAG cycles, RTO/RPO target verification, and 8-dimension readiness.",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-operations",
+      readinessDimensions: [
+        "ownership",
+        "detection",
+        "runbook_coverage",
+        "dr_strategy",
+        "backup_readiness",
+        "failover_readiness",
+        "verification_evidence",
+        "exercise_cadence",
+      ],
+      standardIncidentScenariosCount: 6,
+      aiAssistantToolRegistered: "get_architecture_operational_readiness_and_dr_intelligence (Tool #30)",
+      reportsSectionRegistered: "operational_readiness_and_dr",
+      inspectionRoute: "/verify/architecture-operations",
+    },
+  },
 ];
 
