@@ -54,6 +54,7 @@ export type ReportSectionKind =
   | "operational_readiness_and_dr"
   | "architecture_verification_and_readiness"
   | "unified_architecture_intelligence"
+  | "production_readiness_assessment"
   | "adrs"
   | "text";
 
@@ -922,6 +923,35 @@ export interface UnifiedArchitectureIntelligenceSection extends BaseReportSectio
   };
 }
 
+export interface ProductionReadinessAssessmentSection extends BaseReportSection {
+  kind: "production_readiness_assessment";
+  content: {
+    overallVerdict: string;
+    readinessScore: number;
+    summary: string;
+    blockers: string[];
+    pillars: Record<string, { score: number; passed: boolean; gateCount: number; passedGates: number; blockers: number }>;
+    benchmarks: {
+      graphLoadDurationMs: number;
+      graphRenderDurationMs: number;
+      analysisWaveDurationMs: number;
+      cacheSpeedupRatio: number;
+      memoryUsageEstimateMb: number;
+      reportGenerationDurationMs: number;
+      nodesEvaluated: number;
+      edgesEvaluated: number;
+      analyzersRan: number;
+    };
+    capabilityStats: {
+      total: number;
+      integrated: number;
+      tested: number;
+      blocked: number;
+    };
+    nonFabricationVerified: boolean;
+  };
+}
+
 export interface TextSection extends BaseReportSection {
   kind: "text";
   content: {
@@ -963,6 +993,7 @@ export type ReportSection =
   | OperationalReadinessAndDRSection
   | ArchitectureVerificationAndReadinessSection
   | UnifiedArchitectureIntelligenceSection
+  | ProductionReadinessAssessmentSection
   | ADRsSection
   | TextSection;
 

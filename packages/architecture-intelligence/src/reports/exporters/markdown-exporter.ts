@@ -864,6 +864,40 @@ export class MarkdownExporter {
           break;
         }
 
+        case "production_readiness_assessment": {
+          const content = section.content;
+          lines.push(`- **Overall Verdict:** \`${content.overallVerdict.toUpperCase()}\` | **Readiness Score:** \`${content.readinessScore}/100\``);
+          lines.push(`- **Summary:** ${content.summary}`);
+          lines.push(`- **Capabilities:** ${content.capabilityStats.integrated}/${content.capabilityStats.total} Integrated, ${content.capabilityStats.tested} Verified`);
+          lines.push("");
+
+          lines.push("### 8 Architectural Readiness Pillars");
+          lines.push("| Pillar | Score | Status | Gates Evaluated | Blockers |");
+          lines.push("|---|---|---|---|---|");
+          for (const [pillar, evalObj] of Object.entries(content.pillars)) {
+            lines.push(`| **${pillar.toUpperCase()}** | ${evalObj.score}/100 | ${evalObj.passed ? "PASSED" : "FAILED"} | ${evalObj.passedGates}/${evalObj.gateCount} | ${evalObj.blockers} |`);
+          }
+          lines.push("");
+
+          lines.push("### Measured Performance Benchmarks");
+          lines.push(`- Graph Load & Indexing: **${content.benchmarks.graphLoadDurationMs}ms**`);
+          lines.push(`- Viewport & Graph Render Calculation: **${content.benchmarks.graphRenderDurationMs}ms**`);
+          lines.push(`- Orchestrated Analysis Wave Duration: **${content.benchmarks.analysisWaveDurationMs}ms**`);
+          lines.push(`- Incremental Cache Speedup: **${content.benchmarks.cacheSpeedupRatio}x**`);
+          lines.push(`- Memory Footprint Estimate: **${content.benchmarks.memoryUsageEstimateMb} MB**`);
+          lines.push(`- Report Generation Duration: **${content.benchmarks.reportGenerationDurationMs}ms**`);
+          lines.push("");
+
+          if (content.blockers.length > 0) {
+            lines.push("### Critical Release Blockers");
+            for (const b of content.blockers) {
+              lines.push(`- ⚠️ ${b}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

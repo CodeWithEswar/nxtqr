@@ -1492,6 +1492,98 @@ export class HtmlExporter {
           break;
         }
 
+        case "production_readiness_assessment": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Readiness Score</span>
+                  <span class="pillar-score" style="color: ${c.readinessScore >= 80 ? "#22c55e" : "#FFAA00"};">${c.readinessScore}/100</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Verdict</span>
+                  <span class="pillar-score" style="color: ${c.overallVerdict === "ready_for_production" ? "#22c55e" : "#FFAA00"};">${escapeHtml(c.overallVerdict.toUpperCase())}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Capabilities</span>
+                  <span class="pillar-score">${c.capabilityStats.integrated} / ${c.capabilityStats.total}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Blockers</span>
+                  <span class="pillar-score" style="color: ${c.blockers.length === 0 ? "#22c55e" : "#ef4444"};">${c.blockers.length}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 16px;">
+              <span class="field-label">Executive Summary</span>
+              <div class="field-value">${escapeHtml(c.summary)}</div>
+            </div>
+
+            <div class="field-group" style="margin-top: 16px;">
+              <span class="field-label">8 Architectural Pillars Evaluation</span>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Pillar</th>
+                      <th>Score</th>
+                      <th>Status</th>
+                      <th>Gates Evaluated</th>
+                      <th>Blockers</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${Object.entries(c.pillars)
+                      .map(
+                        ([pillar, p]) => `<tr>
+                      <td><strong>${escapeHtml(pillar.toUpperCase())}</strong></td>
+                      <td>${p.score}/100</td>
+                      <td><span class="badge ${p.passed ? "badge-success" : "badge-error"}">${p.passed ? "PASSED" : "FAILED"}</span></td>
+                      <td>${p.passedGates} / ${p.gateCount}</td>
+                      <td>${p.blockers}</td>
+                    </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 16px;">
+              <span class="field-label">Measured Performance Benchmarks</span>
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Graph Load</span>
+                  <span class="pillar-score">${c.benchmarks.graphLoadDurationMs}ms</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Render Calc</span>
+                  <span class="pillar-score">${c.benchmarks.graphRenderDurationMs}ms</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Wave Execution</span>
+                  <span class="pillar-score">${c.benchmarks.analysisWaveDurationMs}ms</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Cache Speedup</span>
+                  <span class="pillar-score">${c.benchmarks.cacheSpeedupRatio}x</span>
+                </div>
+              </div>
+            </div>
+
+            ${c.blockers.length > 0 ? `
+            <div class="field-group" style="margin-top: 16px;">
+              <span class="field-label" style="color: #ef4444;">Critical Blockers</span>
+              <ul>
+                ${c.blockers.map((b) => `<li style="color: #ef4444; margin-top: 4px;">${escapeHtml(b)}</li>`).join("")}
+              </ul>
+            </div>` : ""}
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

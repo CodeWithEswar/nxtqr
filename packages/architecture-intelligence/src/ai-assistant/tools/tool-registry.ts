@@ -53,6 +53,7 @@ import { suiteRegistry } from "../../verification/registry/suite-registry";
 import { gateRegistry } from "../../verification/registry/gate-registry";
 import type { VerificationProject } from "../../verification/contracts/verification.types";
 import { architectureOrchestrationEngine } from "../../orchestration/engine/orchestration-engine";
+import { architectureReadinessEngine } from "../../readiness";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -3601,6 +3602,61 @@ export class ArchitectureToolRegistry {
                 confidence: f.confidence,
               }))
             : undefined,
+        };
+      },
+    });
+
+    // Tool 33: get_architecture_production_readiness (Phase 05.3.30)
+    this.registerTool({
+      name: "get_architecture_production_readiness",
+      description:
+        "Assesses complete production release readiness across all 8 architectural pillars: correctness, security, reliability, performance, accessibility, operability, governance, and verification release gates. Records measured benchmarks and non-fabrication evidence.",
+      parameters: {
+        type: "object",
+        properties: {
+          projectId: {
+            type: "string",
+            description: "Optional project identifier (defaults to current project).",
+          },
+          revisionId: {
+            type: "string",
+            description: "Optional architecture snapshot revision ID.",
+          },
+          includeGates: {
+            type: "boolean",
+            description: "Whether to include full gate evaluation breakdown.",
+          },
+          includeBenchmarks: {
+            type: "boolean",
+            description: "Whether to include measured performance benchmarks.",
+          },
+        },
+      },
+      execute: async (args: Record<string, unknown>, context: AIExecutionContext) => {
+        const projectId = (args.projectId as string) || context.projectId || "default-project";
+        const revisionId = (args.revisionId as string) || "head";
+        const includeGates = args.includeGates !== false;
+        const includeBenchmarks = args.includeBenchmarks !== false;
+
+        const assessment = await architectureReadinessEngine.assessProductionReadiness({
+          projectId,
+          revisionId,
+          nodes: context.nodes,
+          edges: context.edges,
+        });
+
+        return {
+          assessmentId: assessment.assessmentId,
+          projectId: assessment.projectId,
+          verdict: assessment.overallVerdict,
+          readinessScore: assessment.readinessScore,
+          summary: assessment.summary,
+          blockers: assessment.blockers,
+          capabilityStats: assessment.capabilityStats,
+          pillars: assessment.pillars,
+          gates: includeGates ? assessment.gates : undefined,
+          benchmarks: includeBenchmarks ? assessment.benchmarks : undefined,
+          nonFabricationVerified: assessment.nonFabricationVerified,
         };
       },
     });

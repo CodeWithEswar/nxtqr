@@ -74,6 +74,7 @@ export const ReportSectionKindSchema = z.enum([
   "operational_readiness_and_dr",
   "architecture_verification_and_readiness",
   "unified_architecture_intelligence",
+  "production_readiness_assessment",
   "adrs",
   "text",
 ]);
@@ -1065,6 +1066,44 @@ export const UnifiedArchitectureIntelligenceSectionSchema = BaseSectionSchema.ex
   }),
 });
 
+export const ProductionReadinessAssessmentSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("production_readiness_assessment"),
+  content: z.object({
+    overallVerdict: z.string(),
+    readinessScore: z.number().min(0).max(100),
+    summary: z.string(),
+    blockers: z.array(z.string()),
+    pillars: z.record(
+      z.string(),
+      z.object({
+        score: z.number().min(0).max(100),
+        passed: z.boolean(),
+        gateCount: z.number().int().min(0),
+        passedGates: z.number().int().min(0),
+        blockers: z.number().int().min(0),
+      })
+    ),
+    benchmarks: z.object({
+      graphLoadDurationMs: z.number().min(0),
+      graphRenderDurationMs: z.number().min(0),
+      analysisWaveDurationMs: z.number().min(0),
+      cacheSpeedupRatio: z.number().min(0),
+      memoryUsageEstimateMb: z.number().min(0),
+      reportGenerationDurationMs: z.number().min(0),
+      nodesEvaluated: z.number().int().min(0),
+      edgesEvaluated: z.number().int().min(0),
+      analyzersRan: z.number().int().min(0),
+    }),
+    capabilityStats: z.object({
+      total: z.number().int().min(0),
+      integrated: z.number().int().min(0),
+      tested: z.number().int().min(0),
+      blocked: z.number().int().min(0),
+    }),
+    nonFabricationVerified: z.boolean(),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -1114,6 +1153,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   OperationalReadinessAndDRSectionSchema,
   ArchitectureVerificationAndReadinessSectionSchema,
   UnifiedArchitectureIntelligenceSectionSchema,
+  ProductionReadinessAssessmentSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

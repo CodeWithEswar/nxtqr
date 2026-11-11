@@ -18,7 +18,7 @@ export const DEFAULT_REPORT_TEMPLATES: Record<string, ReportTemplate> = {
     description: "Deep engineering reference for system developers, detailing components, runtime dependencies, explicit data flows, validation results, and decisions.",
     intendedAudience: "engineering",
     requiredSections: ["overview", "diagram", "components", "dependencies", "data_flows", "validation", "adrs"],
-    optionalSections: ["health", "bottlenecks", "spof", "security", "reliability", "scalability", "capacity", "cost", "recommendations", "messaging_systems", "caching_and_state", "database_architecture", "network_and_traffic", "governance_and_compliance", "migration_and_evolution", "operational_readiness_and_dr", "architecture_verification_and_readiness", "unified_architecture_intelligence", "text"],
+    optionalSections: ["health", "bottlenecks", "spof", "security", "reliability", "scalability", "capacity", "cost", "recommendations", "messaging_systems", "caching_and_state", "database_architecture", "network_and_traffic", "governance_and_compliance", "migration_and_evolution", "operational_readiness_and_dr", "architecture_verification_and_readiness", "unified_architecture_intelligence", "production_readiness_assessment", "text"],
     defaultSectionOrder: [
       "overview",
       "diagram",
@@ -42,6 +42,7 @@ export const DEFAULT_REPORT_TEMPLATES: Record<string, ReportTemplate> = {
       "operational_readiness_and_dr",
       "architecture_verification_and_readiness",
       "unified_architecture_intelligence",
+      "production_readiness_assessment",
       "adrs",
       "recommendations",
       "text",

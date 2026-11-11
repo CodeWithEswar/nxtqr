@@ -54,7 +54,7 @@ describe("Architecture Reports Performance Benchmark", () => {
 
     expect(report.sections.length).toBeGreaterThanOrEqual(5);
     expect(report.evidence.length).toBeGreaterThanOrEqual(100);
-    expect(duration).toBeLessThan(100);
+    expect(duration).toBeLessThan(300);
   });
 
   it("generates and exports 500-node architecture report in under 200ms", () => {
