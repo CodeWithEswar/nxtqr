@@ -140,3 +140,4 @@ export interface AIExecutionContext {
   activeScenarioId?: string;
   history?: AIMessage[];
 }
+

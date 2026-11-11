@@ -37,3 +37,4 @@ export interface IAIProvider {
     onChunk: (chunk: AIStreamChunk) => void
   ): Promise<ProviderCompletionResponse>;
 }
+

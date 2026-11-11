@@ -7,6 +7,31 @@ import type {
 import { getAllExamples, getExamplesForComponent } from "./examples-registry";
 import { type BaseNode, type BaseEdge } from "@nxtqr/graph-schema";
 
+const connectedNodeSpacing = 376;
+const connectedPreviewCopy: Record<string, {
+  description: string;
+  source: { label: string; description: string; action: string };
+  destination: { label: string; description: string; action: string };
+}> = {
+  "artifact-registry": {
+    description: "Stores versioned packages and build artifacts.",
+    source: {
+      label: "CI build",
+      description: "Builds and publishes a versioned package.",
+      action: "Publish package",
+    },
+    destination: {
+      label: "Deployment",
+      description: "Downloads the pinned package version.",
+      action: "Download package",
+    },
+  },
+};
+
+function previewPortLabel(name: string): string {
+  return name.replace(/\s+(?:in|out)$/i, "");
+}
+
 // Custom detailed technical enrichment for key infrastructure components
 interface ComponentEnrichment {
   classification: string;
@@ -446,10 +471,12 @@ export class TutorialRegistryClass {
         compatibleTypes: p.dataType ? [p.dataType] : ["Any"],
       }));
 
+      const copy = connectedPreviewCopy[comp.id];
       const isolated = infrastructureRegistry.createInfrastructureNode(comp.id, {
         id: `preview_${comp.id}`,
-        position: { x: 320, y: 120 },
+        position: { x: connectedNodeSpacing, y: 120 },
       });
+      if (copy) isolated.description = copy.description;
       const connectedNodes = [isolated];
       const connectedEdges: BaseEdge[] = [];
       const input = comp.ports.find((port) => port.type !== "output");
@@ -460,7 +487,8 @@ export class TutorialRegistryClass {
         connectedNodes.unshift({
           id,
           type: "input",
-          label: "Upstream",
+          label: copy?.source.label ?? "Upstream",
+          description: copy?.source.description ?? "Sends data to the featured component.",
           position: { x: 0, y: 120 },
           ports: [{ id: "out", name: input.name, type: "output", dataType: input.dataType }],
           data: {},
@@ -474,7 +502,7 @@ export class TutorialRegistryClass {
           targetHandle: input.id,
           targetPort: input.id,
           type: "bezier",
-          label: input.name,
+          label: copy?.source.action ?? previewPortLabel(input.name),
           data: {},
         });
       }
@@ -484,8 +512,9 @@ export class TutorialRegistryClass {
         connectedNodes.push({
           id,
           type: "output",
-          label: "Downstream",
-          position: { x: 640, y: 120 },
+          label: copy?.destination.label ?? "Downstream",
+          description: copy?.destination.description ?? "Receives data from the featured component.",
+          position: { x: connectedNodeSpacing * 2, y: 120 },
           ports: [{ id: "in", name: output.name, type: "input", dataType: output.dataType }],
           data: {},
         });
@@ -498,7 +527,7 @@ export class TutorialRegistryClass {
           targetHandle: "in",
           targetPort: "in",
           type: "bezier",
-          label: output.name,
+          label: copy?.destination.action ?? previewPortLabel(output.name),
           data: {},
         });
       }

@@ -31,16 +31,17 @@ export function GraphCanvasSurface<N extends Node, E extends Edge>({
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       colorMode="dark"
+      defaultMarkerColor="var(--text-muted)"
       proOptions={{ hideAttribution: true }}
       fitViewOptions={fitViewOptions}
-      className={cn("nxtqr-graph-canvas", className)}
+      className={cn("nxtqr-graph-canvas [--xy-background-color:var(--surface-00)]", className)}
     >
       {gridType !== "none" && (
         <Background
           variant={gridType === "lines" ? BackgroundVariant.Lines : BackgroundVariant.Dots}
-          gap={20}
-          size={1.5}
-          color="#202020"
+          gap={24}
+          size={1}
+          color="var(--border-subtle)"
         />
       )}
 

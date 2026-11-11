@@ -269,4 +269,31 @@ describe("AI Architecture Assistant - Unit Tests", () => {
       expect(cleared).toHaveLength(0);
     });
   });
+
+  describe("Architecture Tool Registry & Schemas", () => {
+    it("provides registered tools including get_capacity_plan", () => {
+      const defs = architectureToolRegistry.getAllTools();
+      expect(defs.length).toBeGreaterThan(0);
+      expect(defs.some((d: { name: string }) => d.name === "get_capacity_plan")).toBe(true);
+    });
+
+    it("validates proposal structure via AIArchitectureProposalSchema", () => {
+      const parsed = AIArchitectureProposalSchema.safeParse({
+        id: "prop_sample",
+        architectureId: "a1",
+        baseGraphRevision: "rev_1",
+        title: "Scale replicas",
+        explanation: "Scale compute",
+        operations: [],
+        assumptions: [],
+        prerequisites: [],
+        tradeoffs: [],
+        sourceFindingIds: [],
+        validationStatus: "valid",
+        validationErrors: [],
+      });
+      expect(parsed.success).toBe(true);
+    });
+  });
 });
+

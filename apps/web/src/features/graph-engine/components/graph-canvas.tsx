@@ -14,6 +14,8 @@ import {
 
 import { useGraphEditorStore } from "../store/graph-editor-store";
 import { GraphCanvasSurface } from "./graph-canvas-surface";
+import { showcaseEdgeMarker } from "./graph-edge";
+import type { GraphNodeData } from "./graph-node";
 import { useGraphShortcuts } from "../hooks/use-graph-shortcuts";
 import { infrastructureRegistry, nodeRegistry } from "@nxtqr/node-registry";
 import {
@@ -48,6 +50,13 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const setViewport = useGraphEditorStore((s) => s.setViewport);
 
   const visualizerType = useGraphEditorStore((s) => s.visualizerType);
+  const showcaseComponent = useGraphEditorStore((s) =>
+    typeof s.metadata.componentId === "string" &&
+    (s.metadata.scenario === "connected" || s.metadata.scenario === "isolated")
+      ? s.metadata.componentId
+      : undefined,
+  );
+  const verticalShowcase = useGraphEditorStore((s) => s.metadata.portLayout === "vertical");
   const toolMode = useGraphEditorStore((s) => s.toolMode);
   const gridType = useGraphEditorStore((s) => s.gridType);
   const snapToGrid = useGraphEditorStore((s) => s.snapToGrid);
@@ -73,7 +82,7 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const flowNodes = React.useMemo(() => {
     return nodes.map((n) => ({
       id: n.id,
-      type: n.type || "generic",
+      type: showcaseComponent ? "custom" : n.type || "generic",
       position: n.position,
       measured: nodeMeasurements.get(n.id),
       selected: selectedNodeIds.includes(n.id),
@@ -84,9 +93,14 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
         status: n.status || "idle",
         ports: n.ports,
         ...n.data,
-      },
+        ...(showcaseComponent && {
+          portLayout: verticalShowcase ? "vertical" : "horizontal",
+          showcase: true,
+          highlighted: n.type === showcaseComponent,
+        }),
+      } satisfies GraphNodeData,
     }));
-  }, [nodeMeasurements, nodes, selectedNodeIds]);
+  }, [nodeMeasurements, nodes, selectedNodeIds, showcaseComponent, verticalShowcase]);
 
   // Map NXTQR edges to React Flow format
   const flowEdges = React.useMemo(() => {
@@ -94,18 +108,20 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
       id: e.id,
       source: e.source,
       target: e.target,
-      sourceHandle: e.sourceHandle,
-      targetHandle: e.targetHandle,
+      sourceHandle: e.sourceHandle ?? e.sourcePort,
+      targetHandle: e.targetHandle ?? e.targetPort,
       type: e.type || "bezier",
       selected: selectedEdgeIds.includes(e.id),
       data: {
         label: e.label,
         edgeType: e.type,
         ...e.data,
+        ...(showcaseComponent && { showcaseWire: true }),
       },
       label: e.label,
+      markerEnd: showcaseComponent ? showcaseEdgeMarker : undefined,
     }));
-  }, [edges, selectedEdgeIds]);
+  }, [edges, selectedEdgeIds, showcaseComponent]);
 
   // Node Changes (Dragging, Selection)
   const onNodesChange = React.useCallback(

@@ -1,11 +1,12 @@
 .tutorial-canvas {
-  --tutorial-flow-route-stroke: #858585;
+  --tutorial-flow-route-stroke: var(--text-secondary);
 }
 
 .tutorial-canvas .tutorial-flow-trace {
   fill: none;
-  stroke: #e5e5e5;
+  stroke: var(--foreground);
   stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
   stroke-linecap: round;
   stroke-dasharray: 6 120;
   opacity: 0;
@@ -14,7 +15,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .tutorial-canvas {
-    --tutorial-flow-route-stroke: #555555;
+    --tutorial-flow-route-stroke: var(--text-muted);
   }
 
   .tutorial-canvas .tutorial-flow-trace {

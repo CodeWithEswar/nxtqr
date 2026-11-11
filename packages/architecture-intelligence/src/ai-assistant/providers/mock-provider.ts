@@ -259,7 +259,59 @@ ${f.remediation || f.recommendation || "Enforce mutual TLS (mTLS) and place data
 All network boundaries, authentication handshakes, and encryption configurations pass the active Zero Trust and OWASP architectural security rules.`;
       }
 
-    // 5. Intent: Component Documentation or details
+    // 5. Intent: Capacity Planning & Workload Forecasting
+    } else if (
+      query.includes("capacity") ||
+      query.includes("forecast") ||
+      query.includes("headroom") ||
+      query.includes("how much traffic") ||
+      query.includes("saturat")
+    ) {
+      const toolCall: AIToolCall = {
+        id: `call_${Date.now()}_cap`,
+        name: "get_capacity_plan",
+        arguments: {},
+      };
+      onChunk({ type: "tool_call_start", toolCall });
+      const toolRes = await architectureToolRegistry.executeTool("get_capacity_plan", {}, executionContext);
+      onChunk({
+        type: "tool_call_result",
+        toolResult: { toolCallId: toolCall.id, name: toolCall.name, result: toolRes.result },
+      });
+
+      const capResult = toolRes.result as any;
+      const earliestSat = capResult?.summary?.earliestSaturationLabel || "Sufficient Headroom through Horizon";
+      const earliestNode = capResult?.summary?.earliestSaturationNodeId;
+      const findings = capResult?.findings || [];
+
+      responseText = `### Capacity Planning & Growth Forecast: ${capResult?.scenarioName || "Compound Growth"}
+
+Based on deterministic demand projection over **${capResult?.horizonIntervals || 12} ${capResult?.intervalUnit || "month"}s**:
+
+- **Earliest Saturation Point**: **${earliestSat}**
+- **Saturated Components**: ${findings.length}
+- **Recommended Instance Additions**: ${capResult?.summary?.recommendedInstanceAdditions || 0} instances
+
+#### Saturation Analysis
+${
+  findings.length > 0
+    ? findings
+        .map(
+          (f: any) =>
+            `- \`${f.affectedNodeId}\`: Reaches critical saturation by **${f.forecastIntervalLabel}** (Projected demand: ${f.projectedDemandRps} RPS vs Declared capacity: ${f.declaredCapacityRps || "N/A"} RPS).`
+        )
+        .join("\n")
+    : "All infrastructure components maintain safe headroom buffers through the entire forecast horizon."
+}
+
+#### Infrastructure Sizing Guidance
+To support this projected growth trajectory, review the Capacity Planning panel for autoscaling readiness and horizontal scale-out recommendations.`;
+
+      if (earliestNode) {
+        citations.push({ type: "node", targetId: earliestNode, label: earliestNode });
+      }
+
+    // 6. Intent: Component Documentation or details
     } else if (query.includes("component") || query.includes("what does") || query.includes("explain")) {
       const selectedId = executionContext.selectedNodeIds?.[0] || executionContext.nodes[0]?.id;
       if (selectedId) {

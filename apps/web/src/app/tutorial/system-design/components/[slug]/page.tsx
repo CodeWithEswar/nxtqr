@@ -36,7 +36,7 @@ export default async function ComponentDetailPage({ params }: ComponentPageProps
   // Table of Contents navigation items
   const tocItems = [
     { id: "overview", label: "Overview & Problem" },
-    { id: "live-preview", label: "Live Topology Preview" },
+    { id: "live-preview", label: "Component Showcase" },
     { id: "how-it-works", label: "Internal Mechanics" },
     { id: "when-to-use", label: "When to Use / Avoid" },
     { id: "properties", label: "Properties Explorer" },
@@ -95,14 +95,14 @@ export default async function ComponentDetailPage({ params }: ComponentPageProps
           </div>
         </section>
 
-        {/* 2. Live Topology Preview */}
+        {/* 2. Component Showcase */}
         <section id="live-preview" className="space-y-4">
           <div className="space-y-1">
             <h2 className="text-xl font-sans font-bold text-foreground">
-              Interactive preview
+              Component showcase
             </h2>
             <p className="text-xs text-text-muted font-sans">
-              Inspect the component and trace its connections. Available scenarios depend on its ports and published examples.
+              Inspect the component on its own, or trace how data moves between it and its neighbors.
             </p>
           </div>
 

@@ -6,9 +6,18 @@ import {
   getBezierPath,
   getSmoothStepPath,
   getStraightPath,
+  MarkerType,
+  Position,
   type EdgeProps,
   EdgeLabelRenderer,
 } from "@xyflow/react";
+import { cn } from "@nxtqr/utils";
+
+export const showcaseEdgeMarker = {
+  type: MarkerType.ArrowClosed,
+  width: 12,
+  height: 12,
+};
 
 export const GraphEdge = React.memo(function GraphEdge({
   id,
@@ -29,10 +38,15 @@ export const GraphEdge = React.memo(function GraphEdge({
   const pulseDelay = typeof data?.flowPulseDelay === "number" ? data.flowPulseDelay : undefined;
   const traceKey = typeof data?.traceKey === "string" ? data.traceKey : undefined;
   const tutorialWire = data?.tutorialWire === true;
-  const routeTop = typeof data?.routeTop === "number" ? data.routeTop : undefined;
+  const showcaseWire = tutorialWire || data?.showcaseWire === true;
+  const horizontal = sourcePosition === Position.Right && targetPosition === Position.Left;
 
   const [edgePath, labelX, labelY] = React.useMemo(() => {
-    if (edgeType === "smoothstep" || edgeType === "step") {
+    if (edgeType === "straight") {
+      return getStraightPath({ sourceX, sourceY, targetX, targetY });
+    }
+
+    if (showcaseWire || edgeType === "smoothstep" || edgeType === "step") {
       return getSmoothStepPath({
         sourceX,
         sourceY,
@@ -41,12 +55,11 @@ export const GraphEdge = React.memo(function GraphEdge({
         targetY,
         targetPosition,
         borderRadius: 8,
-        centerY: tutorialWire && targetX - sourceX < 40 ? routeTop : undefined,
+        centerY:
+          showcaseWire && horizontal && targetX - sourceX < 40
+            ? Math.min(sourceY, targetY) - 96
+            : undefined,
       });
-    }
-
-    if (edgeType === "straight") {
-      return getStraightPath({ sourceX, sourceY, targetX, targetY });
     }
 
     return getBezierPath({
@@ -59,40 +72,32 @@ export const GraphEdge = React.memo(function GraphEdge({
     });
   }, [
     edgeType,
-    routeTop,
+    horizontal,
+    showcaseWire,
     sourceX,
     sourceY,
     sourcePosition,
     targetX,
     targetY,
     targetPosition,
-    tutorialWire,
   ]);
 
   return (
     <>
-      {/* Invisible wider hit target for reliable clicking on mobile and desktop */}
-      <path
-        d={edgePath}
-        fill="none"
-        stroke="transparent"
-        strokeWidth={24}
-        className="cursor-pointer"
-      />
-
-      {/* Visible directed edge path */}
       <BaseEdge
         id={id}
         path={edgePath}
         markerEnd={markerEnd}
+        interactionWidth={tutorialWire ? 0 : 24}
         style={{
           ...style,
           stroke: flowActive
             ? "var(--tutorial-flow-route-stroke, #858585)"
             : selected
               ? "#737373"
-              : (style.stroke ?? "#333333"),
+              : (style.stroke ?? (showcaseWire ? "var(--text-disabled)" : "#333333")),
           strokeWidth: selected ? 2 : (style.strokeWidth ?? 1.5),
+          vectorEffect: showcaseWire ? "non-scaling-stroke" : style.vectorEffect,
           transition: "stroke 0.15s ease, stroke-width 0.15s ease",
         }}
       />
@@ -116,16 +121,22 @@ export const GraphEdge = React.memo(function GraphEdge({
               position: "absolute",
               left: labelX,
               top: labelY,
-              transform: tutorialWire
-                ? "translate(-50%, calc(-100% - 4px))"
+              transform: showcaseWire
+                ? horizontal
+                  ? "translate(-50%, calc(-100% - 5px))"
+                  : "translate(10px, -50%)"
                 : "translate(-50%, -50%)",
               pointerEvents: tutorialWire ? "none" : "all",
             }}
-            className={`${tutorialWire ? "max-w-36 truncate whitespace-nowrap " : ""}px-1.5 py-0.5 rounded-md border text-[9px] font-mono tracking-tight transition-colors select-none ${
+            className={cn(
+              "select-none rounded-md border px-1.5 py-0.5 transition-colors",
+              showcaseWire
+                ? "max-w-[8.5rem] truncate text-[11px] font-medium"
+                : "font-mono text-[9px] tracking-tight",
               selected || flowActive
                 ? "bg-surface-04 border-border-strong text-foreground shadow-level-2"
-                : "bg-surface-01 border-border-default text-text-muted hover:text-foreground hover:border-border-hover shadow-level-1"
-            }`}
+                : "bg-surface-01 border-border-default text-text-secondary hover:text-foreground hover:border-border-hover shadow-level-1",
+            )}
           >
             {label}
           </div>

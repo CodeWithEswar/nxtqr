@@ -14,6 +14,8 @@ import {
   getInfrastructureIcon,
 } from "@nxtqr/icons";
 import { nodeRegistry, infrastructureRegistry } from "@nxtqr/node-registry";
+import { Card } from "@nxtqr/ui";
+import { cn } from "@nxtqr/utils";
 import type { BaseNode, PortDefinition } from "../schemas/graph.schema";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -27,6 +29,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   queue: SearchIcon,
 };
 
+export type GraphPortLayout = "horizontal" | "vertical";
+
 export type GraphNodeData = {
   label?: string;
   description?: string;
@@ -34,7 +38,8 @@ export type GraphNodeData = {
   status?: BaseNode["status"];
   ports?: PortDefinition[];
   visualizerType?: string;
-  portLayout?: "horizontal";
+  portLayout?: GraphPortLayout;
+  showcase?: boolean;
   highlighted?: boolean;
   connectedPorts?: { inputs: ReadonlySet<string>; outputs: ReadonlySet<string> };
   [key: string]: unknown;
@@ -48,7 +53,9 @@ export const GraphNode = React.memo(function GraphNode({
 }: NodeProps) {
   const nodeData = data as GraphNodeData;
   const selected = isSelected || nodeData.highlighted;
+  const tutorialNode = nodeData.portLayout !== undefined;
   const horizontal = nodeData.portLayout === "horizontal";
+  const showcase = nodeData.showcase === true;
   const nodeType = nodeData.nodeType || "process";
   const visualizerType = (nodeData.visualizerType as any) || "generic";
 
@@ -66,16 +73,24 @@ export const GraphNode = React.memo(function GraphNode({
 
   const IconComponent = ICON_MAP[nodeType] || CpuIcon;
   const label = nodeData.label || infraDef?.display.name || nodeDef?.label || "Node";
-  const description = nodeData.description || infraDef?.display.description || nodeDef?.description || "";
+  const description =
+    nodeData.description ||
+    (showcase && nodeType === "input" ? "Sends data to the featured component." : "") ||
+    (showcase && nodeType === "output" ? "Receives data from the featured component." : "") ||
+    infraDef?.display.description ||
+    nodeDef?.description ||
+    "";
   const categoryLabel = React.useMemo(() => {
+    if (showcase && nodeType === "input") return "Source";
+    if (showcase && nodeType === "output") return "Destination";
     if (infraDef) {
       const cat = infrastructureRegistry.getCategory(infraDef.categoryId);
       const name = cat?.name ?? "Infrastructure";
-      return horizontal ? name : name.toUpperCase();
+      return name;
     }
     const name = nodeDef?.category || nodeType;
-    return horizontal ? name : name.toUpperCase();
-  }, [horizontal, infraDef, nodeDef, nodeType]);
+    return name;
+  }, [infraDef, nodeDef, nodeType, showcase]);
 
   // Merge registered ports with node instance ports
   const ports = React.useMemo(() => {
@@ -94,7 +109,7 @@ export const GraphNode = React.memo(function GraphNode({
   const inputPorts = ports.filter((p) => p.type === "input" || p.type === "bidirectional");
   const outputPorts = ports.filter((p) => p.type === "output" || p.type === "bidirectional");
 
-  const connectedPorts = horizontal ? nodeData.connectedPorts : undefined;
+  const connectedPorts = nodeData.connectedPorts;
   const visibleInputs = connectedPorts ? inputPorts.filter((port) => connectedPorts.inputs.has(port.id)) : inputPorts;
   const visibleOutputs = connectedPorts ? outputPorts.filter((port) => connectedPorts.outputs.has(port.id)) : outputPorts;
 
@@ -102,17 +117,20 @@ export const GraphNode = React.memo(function GraphNode({
   // Base: Surface 02 (#0D0D0D), Border Default (#262626)
   // Selected: Surface 04 (#1A1A1A), Border Strong (#404040), Shadow Level 3, bold foreground text
   return (
-    <div
+    <Card
       data-node-id={id}
-      title={horizontal ? description : undefined}
-      className={`group relative rounded-md border select-none text-foreground transition-colors duration-150 ${horizontal ? "w-56 cursor-grab text-left active:cursor-grabbing" : "min-w-[200px] max-w-[260px]"} ${
+      title={tutorialNode ? description : undefined}
+      className={cn(
+        "group relative select-none text-foreground transition-colors duration-150",
+        tutorialNode ? "w-56 cursor-grab text-left active:cursor-grabbing" : "min-w-[200px] max-w-[260px]",
+        showcase && "flex h-[6.5rem] flex-col",
         selected
           ? "bg-surface-04 border-border-strong shadow-level-3 ring-1 ring-border-strong"
-          : "bg-surface-02 border-border-default hover:border-border-hover hover:bg-surface-03 shadow-level-1"
-      }`}
+          : "bg-surface-02 border-border-default hover:border-border-hover hover:bg-surface-03 shadow-level-1",
+      )}
     >
       {/* Input Ports (Top / Left) */}
-      <div className={horizontal ? "pointer-events-none absolute inset-0 z-10" : "absolute -top-1.5 left-0 right-0 z-10"}>
+      <div className={tutorialNode ? "pointer-events-none absolute inset-0 z-10" : "absolute -top-1.5 left-0 right-0 z-10"}>
         {visibleInputs.map((port, index) => {
           const total = visibleInputs.length;
           const percent = total === 1 ? 50 : ((index + 1) / (total + 1)) * 100;
@@ -132,16 +150,16 @@ export const GraphNode = React.memo(function GraphNode({
       </div>
 
       {/* Node Header */}
-      <div className={`flex gap-2.5 ${horizontal ? "min-h-14 items-center px-3 py-2.5" : "items-start border-b border-border-subtle/60 p-2.5"}`}>
+      <div className={`flex gap-2.5 ${tutorialNode ? "min-h-14 items-center px-3 py-2.5" : "items-start border-b border-border-subtle/60 p-2.5"}`}>
         <div
-          className={`rounded-md flex items-center justify-center shrink-0 border transition-colors ${horizontal ? "size-8" : "size-7"} ${
+          className={`rounded-md flex items-center justify-center shrink-0 border transition-colors ${tutorialNode ? "size-8" : "size-7"} ${
             selected
               ? "bg-surface-03 border-border-strong text-foreground"
               : "bg-surface-01 border-border-default text-text-secondary group-hover:text-foreground"
           }`}
         >
           {InfraIcon ? (
-            <InfraIcon size={horizontal ? 22 : 20} variant="colored" />
+            <InfraIcon size={tutorialNode ? 22 : 20} variant="colored" />
           ) : (
             <IconComponent className="h-3.5 w-3.5" />
           )}
@@ -149,16 +167,16 @@ export const GraphNode = React.memo(function GraphNode({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-1">
-            <span title={categoryLabel} className={`truncate text-[10px] font-medium text-text-muted ${horizontal ? "capitalize" : "font-mono uppercase tracking-wider"}`}>
+            <span title={categoryLabel} className={`truncate text-[10px] font-medium text-text-muted ${tutorialNode ? "" : "font-mono uppercase tracking-wider"}`}>
               {categoryLabel}
             </span>
-            {!horizontal && (
+            {!tutorialNode && (
               <span className="shrink-0 font-mono text-[9px] text-text-disabled">#{id.slice(-4)}</span>
             )}
           </div>
           <h4
             title={label}
-            className={`font-sans text-xs leading-tight ${horizontal ? "line-clamp-2 break-words" : "truncate"} ${
+            className={`font-sans leading-tight ${tutorialNode ? "line-clamp-2 break-words text-sm" : "truncate text-xs"} ${
               selected ? "text-foreground font-semibold" : "text-text-primary group-hover:text-foreground font-medium"
             }`}
           >
@@ -167,7 +185,13 @@ export const GraphNode = React.memo(function GraphNode({
         </div>
       </div>
 
-      {horizontal ? (
+      {showcase ? (
+        <div className="flex min-h-0 flex-1 items-center border-t border-border-subtle px-3 py-1.5">
+          <p className="line-clamp-2 break-words text-xs leading-snug text-text-secondary">
+            {description}
+          </p>
+        </div>
+      ) : tutorialNode ? (
         <div className="flex items-center justify-between gap-2 border-t border-border-subtle px-3 py-2 font-mono text-[10px] tabular-nums text-text-muted">
           <span><span className="text-text-secondary">{inputPorts.length}</span> in</span>
           <span><span className="text-text-secondary">{outputPorts.length}</span> out</span>
@@ -184,7 +208,7 @@ export const GraphNode = React.memo(function GraphNode({
       )}
 
       {/* Output Ports (Bottom / Right) */}
-      <div className={horizontal ? "pointer-events-none absolute inset-0 z-10" : "absolute -bottom-1.5 left-0 right-0 z-10"}>
+      <div className={tutorialNode ? "pointer-events-none absolute inset-0 z-10" : "absolute -bottom-1.5 left-0 right-0 z-10"}>
         {visibleOutputs.map((port, index) => {
           const total = visibleOutputs.length;
           const percent = total === 1 ? 50 : ((index + 1) / (total + 1)) * 100;
@@ -202,7 +226,7 @@ export const GraphNode = React.memo(function GraphNode({
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 });
 

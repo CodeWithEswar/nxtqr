@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  MarkerType,
   Panel,
   useNodesInitialized,
   applyNodeChanges,
@@ -17,8 +16,9 @@ import type { BaseEdge, BaseNode } from "@nxtqr/graph-schema";
 import { cn } from "@nxtqr/utils";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@nxtqr/ui";
 import { RefreshIcon } from "@nxtqr/icons";
-import type { GraphNodeData } from "@/features/graph-engine/components/graph-node";
+import type { GraphNodeData, GraphPortLayout } from "@/features/graph-engine/components/graph-node";
 import { GraphCanvasSurface } from "@/features/graph-engine/components/graph-canvas-surface";
+import { showcaseEdgeMarker } from "@/features/graph-engine/components/graph-edge";
 import { TUTORIAL_FLOW_HOP_MS } from "../lib/tutorial-flow";
 import "./tutorial-canvas.css";
 
@@ -38,6 +38,8 @@ interface TutorialCanvasProps {
   activeEdgeIds?: readonly string[];
   traceKey?: string;
   highlightedType?: string;
+  portLayout?: GraphPortLayout;
+  showcase?: boolean;
   layout?: TutorialLayout;
   setLayout?: React.Dispatch<React.SetStateAction<TutorialLayout>>;
   className?: string;
@@ -64,6 +66,8 @@ export function TutorialCanvas({
   activeEdgeIds = emptyIds,
   traceKey,
   highlightedType,
+  portLayout = "horizontal",
+  showcase = false,
   layout: controlledLayout,
   setLayout: setControlledLayout,
   className,
@@ -75,14 +79,14 @@ export function TutorialCanvas({
     () => new Map(activeEdgeIds.map((id, index) => [id, index])),
     [activeEdgeIds],
   );
-  const focusIds = React.useMemo(
-    () => [
-      ...new Set(
+  const focusedNodes = React.useMemo(
+    () =>
+      new Set(
         edges.filter((edge) => active.has(edge.id)).flatMap((edge) => [edge.source, edge.target]),
       ),
-    ],
     [active, edges],
   );
+  const focusIds = React.useMemo(() => [...focusedNodes], [focusedNodes]);
 
   const connectedPorts = React.useMemo(() => {
     const ports = new Map<string, { inputs: Set<string>; outputs: Set<string> }>();
@@ -115,12 +119,13 @@ export function TutorialCanvas({
           label: node.label,
           description: node.description,
           ports: node.ports,
-          portLayout: "horizontal",
+          portLayout,
+          showcase,
           connectedPorts: connectedPorts.get(node.id),
-          highlighted: focusIds.includes(node.id) || node.type === highlightedType,
+          highlighted: focusedNodes.has(node.id) || node.type === highlightedType,
         },
       })),
-    [connectedPorts, focusIds, highlightedType, nodes],
+    [connectedPorts, focusedNodes, highlightedType, nodes, portLayout, showcase],
   );
 
   const [flowNodes, setFlowNodes] = React.useState(() =>
@@ -138,14 +143,10 @@ export function TutorialCanvas({
   }, [graphNodes, setFlowNodes]);
 
   const flowEdges = React.useMemo<Edge[]>(() => {
-    const positions = new Map(flowNodes.map((node) => [node.id, node.position]));
     return edges.map((edge) => {
       const hop = active.get(edge.id);
       const flowActive = hop !== undefined;
       const edgeType = edge.type === "straight" ? "straight" : "smoothstep";
-      const source = positions.get(edge.source);
-      const target = positions.get(edge.target);
-      const routeTop = source && target ? Math.min(source.y, target.y) - 28 : undefined;
       return {
         id: edge.id,
         type: edgeType,
@@ -159,20 +160,13 @@ export function TutorialCanvas({
           edgeType,
           flowActive,
           tutorialWire: true,
-          routeTop,
           flowPulseDelay: hop === undefined ? undefined : hop * TUTORIAL_FLOW_HOP_MS,
           traceKey,
         },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: "#555555",
-          width: 12,
-          height: 12,
-        },
-        style: { stroke: "#555555" },
+        markerEnd: showcaseEdgeMarker,
       };
     });
-  }, [active, edges, flowNodes, traceKey]);
+  }, [active, edges, traceKey]);
 
   const handleNodesChange = React.useCallback(
     (changes: NodeChange<Node<GraphNodeData>>[]) => {

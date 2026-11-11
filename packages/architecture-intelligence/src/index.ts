@@ -61,5 +61,8 @@ export * from "./comparison";
 // AI Architecture Assistant & Engineering Copilot (Phase 05.3.10)
 export * from "./ai-assistant";
 
+// Capacity Planning & Workload Forecasting Engine (Phase 05.3.11)
+export * from "./capacity-planning";
+
 
 

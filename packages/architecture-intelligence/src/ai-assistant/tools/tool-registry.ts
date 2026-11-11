@@ -8,6 +8,8 @@ import { scalabilityRecommendationsEngine } from "../../scalability/engine/scala
 import { reliabilityEngine } from "../../reliability/engine/reliability-engine";
 import { recommendationEngine } from "../../recommendations/engine/recommendation-engine";
 import { comparisonEngine } from "../../comparison/engine/comparison-engine";
+import { capacityPlanningEngine } from "../../capacity-planning/engine/capacity-planning-engine";
+import { DEFAULT_CAPACITY_SCENARIOS } from "../../capacity-planning/scenarios/capacity-scenarios";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
 
 /**
@@ -420,7 +422,38 @@ export class ArchitectureToolRegistry {
       },
     });
 
-    // 13. get_documentation
+    // 13. get_capacity_plan
+    this.registerTool({
+      name: "get_capacity_plan",
+      description: "Projects workload growth, evaluates resource capacity headroom, and identifies projected saturation intervals across all system components.",
+      parameters: {
+        type: "object",
+        properties: {
+          scenarioId: { type: "string", description: "Optional scenario identifier: 'rapid_startup_growth', 'linear_enterprise_scaling', 'black_friday_surge', 'seasonal_annual_cycle', or 'steady_state'." },
+        },
+        required: [],
+      },
+      execute: async (args, context) => {
+        const scenarioKey = String(args.scenarioId || "rapid_startup_growth");
+        const baseScenario = DEFAULT_CAPACITY_SCENARIOS[scenarioKey] || DEFAULT_CAPACITY_SCENARIOS.rapid_startup_growth;
+        const scenario = args.horizonIntervals
+          ? { ...baseScenario, horizonIntervals: Number(args.horizonIntervals) }
+          : baseScenario;
+        const report = capacityPlanningEngine.planCapacity(context.nodes, context.edges, scenario);
+        return {
+          scenarioId: report.scenarioId,
+          scenarioName: report.scenarioName,
+          growthModel: report.growthModel,
+          horizonIntervals: report.horizonIntervals,
+          intervalUnit: report.intervalUnit,
+          summary: report.summary,
+          findings: report.findings.slice(0, 5),
+          timeSeries: report.timeSeries,
+        };
+      },
+    });
+
+    // 14. get_documentation
     this.registerTool({
       name: "get_documentation",
       description: "Retrieves documentation, component specifications, or architectural best practices from the NXTQR component catalog.",

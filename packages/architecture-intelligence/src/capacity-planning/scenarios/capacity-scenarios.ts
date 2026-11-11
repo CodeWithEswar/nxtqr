@@ -1,0 +1,102 @@
+import type { CapacityForecastScenario } from "../contracts/capacity.types";
+
+export const DEFAULT_CAPACITY_SCENARIOS: Record<string, CapacityForecastScenario> = {
+  rapid_startup_growth: {
+    id: "rapid_startup_growth",
+    name: "Rapid Startup Growth (15% Monthly)",
+    description: "Models aggressive 15% compound monthly traffic expansion over a 12-month horizon to identify when services outgrow initial single-instance tiers.",
+    baseWorkloadScenarioId: "normal_traffic",
+    growthModel: "compound",
+    growthParams: {
+      kind: "compound",
+      params: {
+        growthRatePercentPerInterval: 15,
+      },
+    },
+    horizonIntervals: 12,
+    intervalUnit: "month",
+    warningUtilizationThreshold: 0.7,
+    criticalUtilizationThreshold: 0.85,
+    graphRevision: "rev_default",
+    sourceOfAssumptions: "Standard hyper-growth SaaS projection benchmark",
+  },
+  linear_enterprise_scaling: {
+    id: "linear_enterprise_scaling",
+    name: "Linear Enterprise Scaling (+50 RPS/mo)",
+    description: "Evaluates steady linear customer onboarding adding 50 RPS per month over a 12-month planning horizon.",
+    baseWorkloadScenarioId: "normal_traffic",
+    growthModel: "linear",
+    growthParams: {
+      kind: "linear",
+      params: {
+        growthPerIntervalRps: 50,
+      },
+    },
+    horizonIntervals: 12,
+    intervalUnit: "month",
+    warningUtilizationThreshold: 0.7,
+    criticalUtilizationThreshold: 0.85,
+    graphRevision: "rev_default",
+    sourceOfAssumptions: "Enterprise SLA and predictable tenant onboarding roadmap",
+  },
+  black_friday_surge: {
+    id: "black_friday_surge",
+    name: "Black Friday & Flash Sale Surge",
+    description: "Models baseline traffic that experiences a 4x step surge at Month 3 representing a major promotional event or seasonal product launch.",
+    baseWorkloadScenarioId: "normal_traffic",
+    growthModel: "step",
+    growthParams: {
+      kind: "step",
+      params: {
+        milestones: [
+          { intervalIndex: 0, demandRps: 200, label: "Baseline" },
+          { intervalIndex: 3, demandRps: 800, label: "Flash Sale Launch" },
+          { intervalIndex: 6, demandRps: 350, label: "Post-Sale Baseline" },
+        ],
+      },
+    },
+    horizonIntervals: 6,
+    intervalUnit: "month",
+    warningUtilizationThreshold: 0.7,
+    criticalUtilizationThreshold: 0.85,
+    graphRevision: "rev_default",
+    sourceOfAssumptions: "Historical e-commerce holiday traffic surge profiles",
+  },
+  seasonal_annual_cycle: {
+    id: "seasonal_annual_cycle",
+    name: "Seasonal Annual Cycle (40% Wave)",
+    description: "Simulates cyclical demand with 40% sinusoidal amplitude over an annual 12-month cycle with underlying 10% annual trend.",
+    baseWorkloadScenarioId: "normal_traffic",
+    growthModel: "seasonal",
+    growthParams: {
+      kind: "seasonal",
+      params: {
+        baseGrowthRatePercent: 10,
+        amplitudePercent: 40,
+        periodIntervals: 12,
+      },
+    },
+    horizonIntervals: 12,
+    intervalUnit: "month",
+    warningUtilizationThreshold: 0.7,
+    criticalUtilizationThreshold: 0.85,
+    graphRevision: "rev_default",
+    sourceOfAssumptions: "Retail and hospitality cyclical booking patterns",
+  },
+  steady_state: {
+    id: "steady_state",
+    name: "Steady State Constant Demand",
+    description: "Evaluates current baseline traffic over 6 months to audit existing headroom and confirm headroom stability without growth.",
+    baseWorkloadScenarioId: "normal_traffic",
+    growthModel: "constant",
+    growthParams: {
+      kind: "constant",
+    },
+    horizonIntervals: 6,
+    intervalUnit: "month",
+    warningUtilizationThreshold: 0.7,
+    criticalUtilizationThreshold: 0.85,
+    graphRevision: "rev_default",
+    sourceOfAssumptions: "Current operational baseline audit",
+  },
+};
