@@ -1032,5 +1032,25 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-operations",
     },
   },
+  {
+    id: "arch_architecture_verification",
+    category: "architecture",
+    title: "Phase 05.3.28: Architecture Testing, Verification & Readiness Gates Intelligence Engine",
+    description: "Evaluates architecture assertions, test suites, four-state execution, five-state readiness gates, evidence freshness, regressions, and requirement traceability.",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-verification",
+      testEvaluationStates: ["pass", "fail", "unknown", "not_applicable"],
+      readinessGateStates: ["passed", "failed", "blocked", "unknown", "approved_with_exception"],
+      standardArchitectureTestsCount: 8,
+      standardReadinessGatesCount: 2,
+      standardSuitesCount: 3,
+      aiAssistantToolRegistered: "get_architecture_verification_and_readiness_intelligence (Tool #31)",
+      reportsSectionRegistered: "architecture_verification_and_readiness",
+      inspectionRoute: "/verify/architecture-verification",
+    },
+  },
 ];
 

@@ -1281,6 +1281,95 @@ export class HtmlExporter {
           break;
         }
 
+        case "architecture_verification_and_readiness": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Pass Rate</span>
+                  <span class="pillar-score" style="color: ${c.passRatePercent >= 80 ? "#22c55e" : "#FFAA00"};">${c.passRatePercent}%</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Passed Tests</span>
+                  <span class="pillar-score" style="color: #22c55e;">${c.passedTests} / ${c.totalTests}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Failed Tests</span>
+                  <span class="pillar-score" style="color: ${c.failedTests > 0 ? "#ef4444" : "#858585"};">${c.failedTests}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Req Coverage</span>
+                  <span class="pillar-score">${c.coverage.requirementCoveragePercent}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <h4>Readiness Gates</h4>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Gate ID</th>
+                      <th>Status</th>
+                      <th>Passed</th>
+                      <th>Failed</th>
+                      <th>Blocking Issues</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.readinessGates
+                      .map(
+                        (g) => `<tr>
+                      <td><code>${escapeHtml(g.gateId)}</code></td>
+                      <td><span class="badge ${g.status === "passed" ? "badge-success" : g.status === "approved_with_exception" ? "badge-info" : "badge-error"}">${escapeHtml(g.status.toUpperCase())}</span></td>
+                      <td>${g.passedTestsCount}</td>
+                      <td>${g.failedTestsCount}</td>
+                      <td>${escapeHtml(g.blockingReasons.join("; ") || "None")}</td>
+                    </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <h4>Test Results</h4>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Test ID</th>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>Severity</th>
+                      <th>Status</th>
+                      <th>Explanation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.tests
+                      .map(
+                        (t) => `<tr>
+                      <td><code>${escapeHtml(t.id)}</code></td>
+                      <td>${escapeHtml(t.title)}</td>
+                      <td>${escapeHtml(t.category)}</td>
+                      <td><span class="badge ${t.severity === "critical" ? "badge-error" : "badge-warning"}">${t.severity.toUpperCase()}</span></td>
+                      <td><span class="badge ${t.status === "pass" ? "badge-success" : t.status === "unknown" ? "badge-warning" : "badge-error"}">${t.status.toUpperCase()}</span></td>
+                      <td>${escapeHtml(t.explanation)}</td>
+                    </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

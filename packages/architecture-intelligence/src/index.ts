@@ -118,4 +118,7 @@ export type { MigrationAnalysisResult } from "./evolution";
 // Architecture Incident Response, Disaster Recovery & Operational Readiness Intelligence Engine (Phase 05.3.27)
 export * from "./operations";
 
+// Architecture Testing, Verification & Readiness Gates Intelligence Engine (Phase 05.3.28)
+export * from "./verification";
+
 

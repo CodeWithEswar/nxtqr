@@ -801,6 +801,30 @@ export class MarkdownExporter {
           break;
         }
 
+        case "architecture_verification_and_readiness": {
+          const content = section.content;
+          lines.push(`- Total Architecture Tests: **${content.totalTests}** (Passed: **${content.passedTests}**, Failed: **${content.failedTests}**, Unknown: **${content.unknownTests}**)`);
+          lines.push(`- Pass Rate: **${content.passRatePercent}%** | Requirement Coverage: **${content.coverage.requirementCoveragePercent}%** | Component Coverage: **${content.coverage.componentCoveragePercent}%**`);
+          lines.push("");
+
+          lines.push("### Release Readiness Gates");
+          lines.push("| Gate ID | Status | Passed Tests | Failed Tests | Blocking Issues |");
+          lines.push("|---|---|---|---|---|");
+          for (const g of content.readinessGates) {
+            lines.push(`| \`${g.gateId}\` | **${g.status.toUpperCase()}** | ${g.passedTestsCount} | ${g.failedTestsCount} | ${g.blockingReasons.length > 0 ? g.blockingReasons.join("; ") : "None"} |`);
+          }
+          lines.push("");
+
+          lines.push("### Architecture Test Results");
+          lines.push("| Test ID | Title | Category | Severity | Status | Explanation |");
+          lines.push("|---|---|---|---|---|---|");
+          for (const t of content.tests) {
+            lines.push(`| \`${t.id}\` | ${t.title} | ${t.category} | ${t.severity.toUpperCase()} | **${t.status.toUpperCase()}** | ${t.explanation} |`);
+          }
+          lines.push("");
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

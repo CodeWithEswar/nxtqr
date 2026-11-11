@@ -72,6 +72,7 @@ export const ReportSectionKindSchema = z.enum([
   "governance_and_compliance",
   "migration_and_evolution",
   "operational_readiness_and_dr",
+  "architecture_verification_and_readiness",
   "adrs",
   "text",
 ]);
@@ -970,6 +971,48 @@ export const OperationalReadinessAndDRSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const ArchitectureVerificationAndReadinessSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("architecture_verification_and_readiness"),
+  content: z.object({
+    totalTests: z.number().int().min(0),
+    passedTests: z.number().int().min(0),
+    failedTests: z.number().int().min(0),
+    unknownTests: z.number().int().min(0),
+    passRatePercent: z.number().min(0).max(100),
+    readinessGates: z.array(
+      z.object({
+        gateId: z.string(),
+        status: z.string(),
+        passedTestsCount: z.number().int().min(0),
+        failedTestsCount: z.number().int().min(0),
+        blockingReasons: z.array(z.string()),
+      })
+    ),
+    coverage: z.object({
+      requirementCoveragePercent: z.number().min(0).max(100),
+      componentCoveragePercent: z.number().min(0).max(100),
+      evidenceCoveragePercent: z.number().min(0).max(100),
+    }),
+    tests: z.array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        category: z.string(),
+        severity: z.string(),
+        status: z.string(),
+        explanation: z.string(),
+      })
+    ),
+    regressions: z
+      .object({
+        hasRegressions: z.boolean(),
+        newFailuresCount: z.number().int().min(0),
+        resolvedFailuresCount: z.number().int().min(0),
+      })
+      .optional(),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -1017,6 +1060,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   GovernanceAndComplianceSectionSchema,
   MigrationAndEvolutionSectionSchema,
   OperationalReadinessAndDRSectionSchema,
+  ArchitectureVerificationAndReadinessSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

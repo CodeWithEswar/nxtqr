@@ -52,6 +52,7 @@ export type ReportSectionKind =
   | "governance_and_compliance"
   | "migration_and_evolution"
   | "operational_readiness_and_dr"
+  | "architecture_verification_and_readiness"
   | "adrs"
   | "text";
 
@@ -831,6 +832,42 @@ export interface OperationalReadinessAndDRSection extends BaseReportSection {
   };
 }
 
+export interface ArchitectureVerificationAndReadinessSection extends BaseReportSection {
+  kind: "architecture_verification_and_readiness";
+  content: {
+    totalTests: number;
+    passedTests: number;
+    failedTests: number;
+    unknownTests: number;
+    passRatePercent: number;
+    readinessGates: Array<{
+      gateId: string;
+      status: string;
+      passedTestsCount: number;
+      failedTestsCount: number;
+      blockingReasons: string[];
+    }>;
+    coverage: {
+      requirementCoveragePercent: number;
+      componentCoveragePercent: number;
+      evidenceCoveragePercent: number;
+    };
+    tests: Array<{
+      id: string;
+      title: string;
+      category: string;
+      severity: string;
+      status: string;
+      explanation: string;
+    }>;
+    regressions?: {
+      hasRegressions: boolean;
+      newFailuresCount: number;
+      resolvedFailuresCount: number;
+    };
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -878,6 +915,7 @@ export type ReportSection =
   | GovernanceAndComplianceSection
   | MigrationAndEvolutionSection
   | OperationalReadinessAndDRSection
+  | ArchitectureVerificationAndReadinessSection
   | ADRsSection
   | TextSection;
 

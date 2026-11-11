@@ -13,6 +13,7 @@ import type {
   GovernanceAndComplianceSection,
   MigrationAndEvolutionSection,
   OperationalReadinessAndDRSection,
+  ArchitectureVerificationAndReadinessSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -54,6 +55,11 @@ import type { ArchitectureSnapshot } from "../../comparison/contracts/comparison
 import { architectureOperationsEngine } from "../../operations/engine/operations-engine";
 import { incidentScenarioRegistry } from "../../operations/registry/incident-registry";
 import type { OperationalProject } from "../../operations/contracts/operations.types";
+import { architectureVerificationEngine } from "../../verification/engine/verification-engine";
+import { architectureTestRegistry } from "../../verification/registry/test-registry";
+import { suiteRegistry } from "../../verification/registry/suite-registry";
+import { gateRegistry } from "../../verification/registry/gate-registry";
+import type { VerificationProject } from "../../verification/contracts/verification.types";
 
 export class SectionComposer {
   public static composeSections(params: {
@@ -1933,6 +1939,108 @@ export class SectionComposer {
             },
           };
           sections.push(opSection);
+          break;
+        }
+
+        case "architecture_verification_and_readiness": {
+          const rawProject = analysisContext?.verificationProject;
+          const defaultTests = architectureTestRegistry.getAll();
+
+          const verProject: VerificationProject = rawProject || {
+            id: "report-ver-project",
+            name: "Architecture Verification & Readiness Assessment",
+            requirements: [
+              {
+                id: "REQ-ARCH-001",
+                projectId: "report-ver-project",
+                version: "1.0.0",
+                title: "Network Perimeter Ingress Gateway Requirement",
+                description: "All client requests must enter through a managed API gateway with ingress controls.",
+                category: "graph_topology",
+                criticality: "critical",
+                owner: "arch-board@nxtqr.internal",
+                scope: { level: "architecture" },
+                status: "active",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+            ],
+            tests: defaultTests,
+            suites: suiteRegistry.getAll(),
+            evidenceCatalog: [
+              {
+                id: "ev-report-1",
+                evidenceType: "architecture_topology",
+                source: "graph-schema://verified-snapshot",
+                owner: "architecture-engine",
+                architectureRevisionId: "rev-report",
+                observedAt: new Date().toISOString(),
+                importedAt: new Date().toISOString(),
+                contentHash: "sha256:4a83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9061",
+                freshnessWindowHours: 72,
+                isVerified: true,
+              },
+            ],
+            baselines: [],
+            gates: gateRegistry.getAll(),
+            exceptions: [],
+            runs: [],
+          };
+
+          const verAnalysis = architectureVerificationEngine.verifyArchitecture(
+            verProject,
+            nodes,
+            edges
+          );
+
+          const verSection: ArchitectureVerificationAndReadinessSection = {
+            id: "sec-architecture-verification",
+            kind: "architecture_verification_and_readiness",
+            title: "Architecture Testing, Verification & Readiness Gates",
+            description:
+              "Deterministic architecture verification, assertion test results, 5-state release readiness gates, evidence freshness, and requirement traceability.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "verification"),
+            content: {
+              totalTests: verAnalysis.run.summary.total,
+              passedTests: verAnalysis.run.summary.passed,
+              failedTests: verAnalysis.run.summary.failed,
+              unknownTests: verAnalysis.run.summary.unknown,
+              passRatePercent: verAnalysis.run.summary.passRatePercent,
+              readinessGates: verAnalysis.gateEvaluations.map((g) => ({
+                gateId: g.gateId,
+                status: g.status,
+                passedTestsCount: g.passedTestsCount,
+                failedTestsCount: g.failedTestsCount,
+                blockingReasons: g.blockingReasons,
+              })),
+              coverage: {
+                requirementCoveragePercent: verAnalysis.coverage.requirementCoveragePercent,
+                componentCoveragePercent: verAnalysis.coverage.componentCoveragePercent,
+                evidenceCoveragePercent: verAnalysis.coverage.evidenceCoveragePercent,
+              },
+              tests: verAnalysis.run.results.map((r) => {
+                const testDef = defaultTests.find((t) => t.id === r.testId);
+                return {
+                  id: r.testId,
+                  title: testDef?.title || r.testId,
+                  category: testDef?.category || "graph_topology",
+                  severity: testDef?.severity || "medium",
+                  status: r.status,
+                  explanation: r.explanation,
+                };
+              }),
+              regressions: verAnalysis.regressions
+                ? {
+                    hasRegressions: verAnalysis.regressions.hasRegressions,
+                    newFailuresCount: verAnalysis.regressions.summary.newFailuresCount,
+                    resolvedFailuresCount: verAnalysis.regressions.summary.resolvedFailuresCount,
+                  }
+                : undefined,
+            },
+          };
+          sections.push(verSection);
           break;
         }
 

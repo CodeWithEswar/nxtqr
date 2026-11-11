@@ -47,6 +47,11 @@ import type { MigrationStrategyId } from "../../evolution/contracts/evolution.ty
 import { architectureOperationsEngine } from "../../operations/engine/operations-engine";
 import { incidentScenarioRegistry } from "../../operations/registry/incident-registry";
 import type { OperationalProject } from "../../operations/contracts/operations.types";
+import { architectureVerificationEngine } from "../../verification/engine/verification-engine";
+import { architectureTestRegistry } from "../../verification/registry/test-registry";
+import { suiteRegistry } from "../../verification/registry/suite-registry";
+import { gateRegistry } from "../../verification/registry/gate-registry";
+import type { VerificationProject } from "../../verification/contracts/verification.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -3252,6 +3257,230 @@ export class ArchitectureToolRegistry {
             title: f.title,
             remediation: f.remediationRecommendation,
           })),
+        };
+      },
+    });
+
+    // ==========================================
+    // Tool #31: Architecture Verification & Readiness Gates Intelligence (Phase 05.3.28)
+    // ==========================================
+    this.registerTool({
+      name: "get_architecture_verification_and_readiness_intelligence",
+      description:
+        "Evaluates architecture assertions, test suites, quality readiness gates, evidence freshness, regressions, and requirement traceability across declared system designs.",
+      parameters: {
+        type: "object",
+        properties: {
+          includeTests: {
+            type: "boolean",
+            description: "Whether to include detailed test execution results and explanations.",
+            default: true,
+          },
+          includeGates: {
+            type: "boolean",
+            description: "Whether to evaluate 5-state readiness gates (passed, failed, blocked, unknown, approved_with_exception).",
+            default: true,
+          },
+          includeRegressions: {
+            type: "boolean",
+            description: "Whether to detect regressions against baseline runs.",
+            default: true,
+          },
+          includeTraceability: {
+            type: "boolean",
+            description: "Whether to include requirement-to-test traceability matrix.",
+            default: true,
+          },
+          includeCoverage: {
+            type: "boolean",
+            description: "Whether to include requirement, component, and evidence coverage percentages.",
+            default: true,
+          },
+          suiteId: {
+            type: "string",
+            description: "Optional specific test suite ID to run (e.g. 'SUITE-PROD-READINESS').",
+          },
+        },
+      },
+      execute: async (args, context) => {
+        const includeTests = args.includeTests !== false;
+        const includeGates = args.includeGates !== false;
+        const includeRegressions = args.includeRegressions !== false;
+        const includeTraceability = args.includeTraceability !== false;
+        const includeCoverage = args.includeCoverage !== false;
+        const suiteId = args.suiteId as string | undefined;
+
+        const defaultTests = architectureTestRegistry.getAll();
+        const activeTests = suiteId
+          ? (() => {
+              const suite = suiteRegistry.getById(suiteId);
+              return suite ? defaultTests.filter((t) => suite.testIds.includes(t.id)) : defaultTests;
+            })()
+          : defaultTests;
+
+        const project: VerificationProject = context.verificationProject || {
+          id: `ver-proj-${context.architectureId}`,
+          name: "Architecture Verification & Quality Project",
+          requirements: [
+            {
+              id: "REQ-ARCH-001",
+              projectId: `ver-proj-${context.architectureId}`,
+              version: "1.0.0",
+              title: "Network Perimeter Ingress Gateway Requirement",
+              description: "All client requests must enter through a managed API gateway with ingress controls.",
+              category: "graph_topology",
+              criticality: "critical",
+              owner: "arch-board@nxtqr.internal",
+              scope: { level: "architecture" },
+              status: "active",
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+            {
+              id: "REQ-SEC-001",
+              projectId: `ver-proj-${context.architectureId}`,
+              version: "1.0.0",
+              title: "Perimeter Edge Authentication Requirement",
+              description: "Ingress services must declare authentication enforcement before dispatching downstream.",
+              category: "security",
+              criticality: "critical",
+              owner: "sec-ops@nxtqr.internal",
+              scope: { level: "component" },
+              status: "active",
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+            {
+              id: "REQ-REL-002",
+              projectId: `ver-proj-${context.architectureId}`,
+              version: "1.0.0",
+              title: "Database Backup Policy & RPO Requirement",
+              description: "Databases must have active backup policies and verified recovery point objectives.",
+              category: "database",
+              criticality: "critical",
+              owner: "data-plat@nxtqr.internal",
+              scope: { level: "component" },
+              status: "active",
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          ],
+          tests: activeTests,
+          suites: suiteRegistry.getAll(),
+          evidenceCatalog: [
+            {
+              id: "ev-topo-1",
+              evidenceType: "architecture_topology",
+              source: "graph-schema://verified-snapshot",
+              owner: "architecture-engine",
+              architectureRevisionId: context.graphRevision,
+              observedAt: new Date().toISOString(),
+              importedAt: new Date().toISOString(),
+              contentHash: "sha256:4a83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9061",
+              freshnessWindowHours: 72,
+              isVerified: true,
+            },
+            {
+              id: "ev-sec-1",
+              evidenceType: "security_audit_log",
+              source: "siem://edge-waf-audit",
+              owner: "sec-ops",
+              architectureRevisionId: context.graphRevision,
+              observedAt: new Date().toISOString(),
+              importedAt: new Date().toISOString(),
+              contentHash: "sha256:5b83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9062",
+              freshnessWindowHours: 24,
+              isVerified: true,
+            },
+            {
+              id: "ev-db-1",
+              evidenceType: "backup_verification",
+              source: "s3://backups/restore-audit",
+              owner: "data-plat",
+              architectureRevisionId: context.graphRevision,
+              observedAt: new Date().toISOString(),
+              importedAt: new Date().toISOString(),
+              contentHash: "sha256:6c83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9063",
+              freshnessWindowHours: 48,
+              isVerified: true,
+            },
+            {
+              id: "ev-runbook-1",
+              evidenceType: "operational_runbook",
+              source: "runbooks://rb-standard-triage",
+              owner: "sre-core",
+              architectureRevisionId: context.graphRevision,
+              observedAt: new Date().toISOString(),
+              importedAt: new Date().toISOString(),
+              contentHash: "sha256:7d83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9064",
+              freshnessWindowHours: 720,
+              isVerified: true,
+            },
+          ],
+          baselines: [],
+          gates: gateRegistry.getAll(),
+          exceptions: [],
+          runs: [],
+        };
+
+        const result = architectureVerificationEngine.verifyArchitecture(
+          project,
+          context.nodes,
+          context.edges
+        );
+
+        return {
+          runSummary: {
+            totalTests: result.run.summary.total,
+            passed: result.run.summary.passed,
+            failed: result.run.summary.failed,
+            unknown: result.run.summary.unknown,
+            notApplicable: result.run.summary.notApplicable,
+            passRatePercent: result.run.summary.passRatePercent,
+            durationMs: result.run.summary.executionDurationMs,
+          },
+          gates: includeGates
+            ? result.gateEvaluations.map((g) => ({
+                gateId: g.gateId,
+                status: g.status,
+                passedTestsCount: g.passedTestsCount,
+                failedTestsCount: g.failedTestsCount,
+                unknownTestsCount: g.unknownTestsCount,
+                blockingReasons: g.blockingReasons,
+              }))
+            : undefined,
+          tests: includeTests
+            ? result.run.results.slice(0, 6).map((r) => ({
+                testId: r.testId,
+                status: r.status,
+                explanation: r.explanation,
+                affectedComponents: r.affectedComponentIds,
+              }))
+            : undefined,
+          regressions:
+            includeRegressions && result.regressions
+              ? {
+                  hasRegressions: result.regressions.hasRegressions,
+                  newFailuresCount: result.regressions.summary.newFailuresCount,
+                  resolvedFailuresCount: result.regressions.summary.resolvedFailuresCount,
+                  affectedComponents: result.regressions.summary.affectedComponents,
+                }
+              : undefined,
+          coverage: includeCoverage
+            ? {
+                requirementCoveragePercent: result.coverage.requirementCoveragePercent,
+                componentCoveragePercent: result.coverage.componentCoveragePercent,
+                evidenceCoveragePercent: result.coverage.evidenceCoveragePercent,
+              }
+            : undefined,
+          traceability: includeTraceability
+            ? result.traceability.slice(0, 4).map((t) => ({
+                requirementId: t.requirementId,
+                title: t.requirementTitle,
+                criticality: t.criticality,
+                latestStatus: t.latestStatus,
+              }))
+            : undefined,
         };
       },
     });

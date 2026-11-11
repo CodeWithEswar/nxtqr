@@ -10,6 +10,7 @@ import type { GovernanceArchitectureTopology } from "../../governance/contracts/
 import type { MigrationProject } from "../../evolution/contracts/evolution.types";
 import type { ArchitectureSnapshot } from "../../comparison/contracts/comparison.types";
 import type { OperationalProject } from "../../operations/contracts/operations.types";
+import type { VerificationProject } from "../../verification/contracts/verification.types";
 
 export type AIMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -160,5 +161,6 @@ export interface AIExecutionContext {
   evolutionProject?: MigrationProject;
   targetSnapshot?: ArchitectureSnapshot;
   operationalProject?: OperationalProject;
+  verificationProject?: VerificationProject;
 }
 
