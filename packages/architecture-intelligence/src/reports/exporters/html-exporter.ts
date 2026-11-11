@@ -885,6 +885,83 @@ export class HtmlExporter {
           break;
         }
 
+        case "network_and_traffic": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">DNS Zones</span>
+                  <span class="pillar-score">${c.dnsZoneCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Gateways</span>
+                  <span class="pillar-score">${c.gatewayCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Routes</span>
+                  <span class="pillar-score">${c.routeCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Upstream Pools</span>
+                  <span class="pillar-score">${c.poolCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Critical Findings</span>
+                  <span class="pillar-score">${c.criticalFindingsCount}</span>
+                </div>
+              </div>
+            </div>
+            ${
+              c.gateways.length > 0
+                ? `<h4>API Gateways & Ingress Controllers</h4>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Gateway</th>
+                        <th>Type</th>
+                        <th>Technology</th>
+                        <th>Routes</th>
+                        <th>Auth Required</th>
+                        <th>Rate Limiting</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${c.gateways
+                        .map(
+                          (g) => `<tr>
+                          <td><strong>${escapeHtml(g.name)}</strong></td>
+                          <td>${escapeHtml(g.gatewayType)}</td>
+                          <td><code>${escapeHtml(g.technology)}</code></td>
+                          <td>${g.routeCount}</td>
+                          <td>${g.hasAuthRequired ? "Yes" : "No"}</td>
+                          <td>${g.hasRateLimiting ? "Yes" : "No"}</td>
+                        </tr>`
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+                : ""
+            }
+            ${
+              c.keyFindings.length > 0
+                ? `<h4>Key Network & Traffic Engineering Findings</h4>
+                <ul>
+                  ${c.keyFindings
+                    .map(
+                      (f) =>
+                        `<li><span class="badge ${f.severity === "critical" || f.severity === "high" ? "badge-error" : "badge-info"}">${f.severity.toUpperCase()}</span> <strong>${escapeHtml(f.title)}</strong> (<code>${escapeHtml(f.category)}</code>): <em>${escapeHtml(f.remediation)}</em></li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

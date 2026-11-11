@@ -105,4 +105,7 @@ export * from "./cache-state";
 // Architecture Database Design, Query Performance & Storage Intelligence Engine (Phase 05.3.23)
 export * from "./database";
 
+// Architecture Network, API Gateway & Traffic Engineering Intelligence Engine (Phase 05.3.24)
+export * from "./network";
+
 

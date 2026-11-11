@@ -628,6 +628,49 @@ export class MarkdownExporter {
           break;
         }
 
+        case "network_and_traffic": {
+          const content = section.content;
+          lines.push(`- DNS Zones: **${content.dnsZoneCount}** | Total DNS Records: **${content.dnsRecordCount}**`);
+          lines.push(`- API Gateways: **${content.gatewayCount}** | Configured Routes: **${content.routeCount}** | Upstream Pools: **${content.poolCount}**`);
+          lines.push(`- CDNs & Edge Distributions: **${content.cdnCount}** | Network Boundaries: **${content.boundaryCount}**`);
+          lines.push(`- Plaintext Traffic Exposure: **${content.hasPlaintextExposure ? "YES (CRITICAL HAZARD)" : "None Detected"}**`);
+          lines.push(`- Routing Loops Detected: **${content.hasRoutingLoops ? "YES (CRITICAL HAZARD)" : "None"}**`);
+          lines.push(`- Single Ingress SPOF: **${content.hasSingleIngressSpof ? "YES" : "No (Redundant)"}**`);
+          lines.push(`- Critical Architecture Findings: **${content.criticalFindingsCount}**`);
+          lines.push("");
+
+          if (content.gateways.length > 0) {
+            lines.push("### API Gateways & Edge Proxies");
+            lines.push("| Gateway | Type | Technology | Routes | Auth Required | Rate Limiting |");
+            lines.push("|---|---|---|---|---|---|");
+            for (const g of content.gateways) {
+              lines.push(`| ${g.name} | ${g.gatewayType} | ${g.technology} | ${g.routeCount} | ${g.hasAuthRequired ? "Yes" : "No"} | ${g.hasRateLimiting ? "Yes" : "No"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.trafficPaths.length > 0) {
+            lines.push("### Resolved Traffic Scenarios & Latency Budgets");
+            lines.push("| Scenario | Hops | Modeled Latency | Cross-Region | Plaintext Hop | Reachable |");
+            lines.push("|---|---|---|---|---|---|");
+            for (const p of content.trafficPaths) {
+              lines.push(`| ${p.scenarioName} | ${p.hopCount} | ${p.totalModeledLatencyMs}ms | ${p.hasCrossRegionHop ? "Yes" : "No"} | ${p.hasPlaintextHop ? "Yes" : "No"} | ${p.isReachable ? "Yes" : "No"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.keyFindings.length > 0) {
+            lines.push("### Key Network & Traffic Engineering Findings");
+            for (const f of content.keyFindings) {
+              lines.push(`- [${f.severity.toUpperCase()}] **${f.title}** (\`${f.category}\`)`);
+              lines.push(`  *Risk & Explanation:* ${f.explanation}`);
+              lines.push(`  *Remediation:* ${f.remediation}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

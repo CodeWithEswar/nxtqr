@@ -9,6 +9,7 @@ import type {
   MessagingSystemsSection,
   CachingAndStateSection,
   DatabaseArchitectureSection,
+  NetworkAndTrafficSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -41,6 +42,7 @@ import { TransferAnalyzer } from "../../lineage/analysis/transfer-analyzer";
 import { architectureMessagingEngine } from "../../messaging/engine/messaging-engine";
 import { architectureCacheStateEngine } from "../../cache-state/engine/cache-state-engine";
 import { architectureDatabaseEngine } from "../../database/engine/database-engine";
+import { architectureNetworkEngine } from "../../network/engine/network-engine";
 
 export class SectionComposer {
   public static composeSections(params: {
@@ -1329,6 +1331,118 @@ export class SectionComposer {
             },
           };
           sections.push(dbSection);
+          break;
+        }
+
+        case "network_and_traffic": {
+          const rawTopology = analysisContext?.networkTopology;
+          let dnsZoneCount = 0;
+          let dnsRecordCount = 0;
+          let cdnCount = 0;
+          let loadBalancerCount = 0;
+          let gatewayCount = 0;
+          let routeCount = 0;
+          let poolCount = 0;
+          let boundaryCount = 0;
+          let criticalFindingsCount = 0;
+          let hasPlaintextExposure = false;
+          let hasRoutingLoops = false;
+          let hasBlackHoles = false;
+          let hasSingleIngressSpof = false;
+
+          let gatewaysList: NetworkAndTrafficSection["content"]["gateways"] = [];
+          let routesList: NetworkAndTrafficSection["content"]["routes"] = [];
+          let pathsList: NetworkAndTrafficSection["content"]["trafficPaths"] = [];
+          let keyFindingsList: NetworkAndTrafficSection["content"]["keyFindings"] = [];
+
+          if (rawTopology) {
+            const analysis = architectureNetworkEngine.analyzeTopology(rawTopology);
+            dnsZoneCount = analysis.summary.dnsZoneCount;
+            dnsRecordCount = analysis.summary.dnsRecordCount;
+            cdnCount = analysis.summary.cdnCount;
+            loadBalancerCount = analysis.summary.loadBalancerCount;
+            gatewayCount = analysis.summary.gatewayCount;
+            routeCount = analysis.summary.routeCount;
+            poolCount = analysis.summary.poolCount;
+            boundaryCount = analysis.summary.boundaryCount;
+            criticalFindingsCount = analysis.summary.criticalFindingsCount;
+            hasPlaintextExposure = analysis.summary.hasPlaintextExposure;
+            hasRoutingLoops = analysis.summary.hasRoutingLoops;
+            hasBlackHoles = analysis.summary.hasBlackHoles;
+            hasSingleIngressSpof = analysis.summary.hasSingleIngressSpof;
+
+            gatewaysList = rawTopology.gateways.map((g) => ({
+              id: g.id,
+              name: g.name,
+              gatewayType: g.gatewayType,
+              technology: g.providerTechnology,
+              routeCount: g.routes.length,
+              hasAuthRequired: !!g.globalPolicies.authRequired,
+              hasRateLimiting: !!g.globalPolicies.rateLimitId || g.routes.some((r) => !!r.policies.rateLimit),
+            }));
+
+            routesList = rawTopology.gateways.flatMap((g) =>
+              g.routes.map((r) => ({
+                id: r.id,
+                name: r.name,
+                gatewayName: g.name,
+                pathMatch: r.match.pathExact || r.match.pathPrefix || r.match.pathRegex || "/",
+                methods: r.match.methods,
+                targetUpstreamPoolId: r.targetUpstreamPoolId,
+                hasTrafficSplit: !!(r.trafficSplit && r.trafficSplit.length > 0),
+              }))
+            );
+
+            pathsList = analysis.resolvedPaths.map((p) => ({
+              id: p.id,
+              scenarioName: p.id.replace("path-", ""),
+              hopCount: p.hops.length,
+              totalModeledLatencyMs: p.totalModeledLatencyMs,
+              hasPlaintextHop: p.hasPlaintextHop,
+              hasCrossRegionHop: p.hasCrossRegionHop,
+              isReachable: p.isReachable,
+            }));
+
+            keyFindingsList = analysis.findings.slice(0, 10).map((f) => ({
+              id: f.id,
+              severity: f.severity,
+              category: f.category,
+              title: f.title,
+              explanation: f.summary,
+              remediation: f.remediation,
+            }));
+          }
+
+          const netSection: NetworkAndTrafficSection = {
+            id: `sec-network-traffic`,
+            kind: "network_and_traffic",
+            title: "Network Architecture, API Gateway & Traffic Engineering Intelligence",
+            description:
+              "DNS resolution, CDN edge routing, API gateway policies, load balancer pools, health checks, rate limiting, and traffic path traversal.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "network"),
+            content: {
+              dnsZoneCount,
+              dnsRecordCount,
+              cdnCount,
+              loadBalancerCount,
+              gatewayCount,
+              routeCount,
+              poolCount,
+              boundaryCount,
+              criticalFindingsCount,
+              hasPlaintextExposure,
+              hasRoutingLoops,
+              hasBlackHoles,
+              hasSingleIngressSpof,
+              gateways: gatewaysList,
+              routes: routesList,
+              trafficPaths: pathsList,
+              keyFindings: keyFindingsList,
+            },
+          };
+          sections.push(netSection);
           break;
         }
 

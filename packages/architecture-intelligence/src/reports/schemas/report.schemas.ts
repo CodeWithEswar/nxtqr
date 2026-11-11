@@ -68,6 +68,7 @@ export const ReportSectionKindSchema = z.enum([
   "messaging_systems",
   "caching_and_state",
   "database_architecture",
+  "network_and_traffic",
   "adrs",
   "text",
 ]);
@@ -758,6 +759,68 @@ export const DatabaseArchitectureSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const NetworkAndTrafficSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("network_and_traffic"),
+  content: z.object({
+    dnsZoneCount: z.number().int().min(0),
+    dnsRecordCount: z.number().int().min(0),
+    cdnCount: z.number().int().min(0),
+    loadBalancerCount: z.number().int().min(0),
+    gatewayCount: z.number().int().min(0),
+    routeCount: z.number().int().min(0),
+    poolCount: z.number().int().min(0),
+    boundaryCount: z.number().int().min(0),
+    criticalFindingsCount: z.number().int().min(0),
+    hasPlaintextExposure: z.boolean(),
+    hasRoutingLoops: z.boolean(),
+    hasBlackHoles: z.boolean(),
+    hasSingleIngressSpof: z.boolean(),
+    gateways: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        gatewayType: z.string(),
+        technology: z.string(),
+        routeCount: z.number().int().min(0),
+        hasAuthRequired: z.boolean(),
+        hasRateLimiting: z.boolean(),
+      })
+    ),
+    routes: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        gatewayName: z.string(),
+        pathMatch: z.string(),
+        methods: z.array(z.string()).optional(),
+        targetUpstreamPoolId: z.string(),
+        hasTrafficSplit: z.boolean(),
+      })
+    ),
+    trafficPaths: z.array(
+      z.object({
+        id: z.string(),
+        scenarioName: z.string(),
+        hopCount: z.number().int().min(0),
+        totalModeledLatencyMs: z.number().min(0),
+        hasPlaintextHop: z.boolean(),
+        hasCrossRegionHop: z.boolean(),
+        isReachable: z.boolean(),
+      })
+    ),
+    keyFindings: z.array(
+      z.object({
+        id: z.string(),
+        severity: z.string(),
+        category: z.string(),
+        title: z.string(),
+        explanation: z.string(),
+        remediation: z.string(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -801,6 +864,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   MessagingSystemsSectionSchema,
   CachingAndStateSectionSchema,
   DatabaseArchitectureSectionSchema,
+  NetworkAndTrafficSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

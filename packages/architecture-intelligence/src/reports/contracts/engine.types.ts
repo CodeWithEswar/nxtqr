@@ -37,6 +37,7 @@ import type { APIContract, ConsumerDependency } from "../../api-contracts/contra
 import type { MessagingTopology } from "../../messaging/contracts/messaging.types";
 import type { DistributedStateTopology } from "../../cache-state/contracts/cache-state.types";
 import type { DatabaseArchitectureTopology } from "../../database/contracts/database.types";
+import type { NetworkArchitectureTopology } from "../../network/contracts/network.types";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -73,6 +74,7 @@ export interface ReportAnalysisContext {
   messagingTopology?: MessagingTopology;
   cacheTopology?: DistributedStateTopology;
   databaseTopology?: DatabaseArchitectureTopology;
+  networkTopology?: NetworkArchitectureTopology;
 }
 
 export interface GenerateReportInput {

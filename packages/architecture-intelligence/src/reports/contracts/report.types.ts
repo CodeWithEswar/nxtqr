@@ -48,6 +48,7 @@ export type ReportSectionKind =
   | "messaging_systems"
   | "caching_and_state"
   | "database_architecture"
+  | "network_and_traffic"
   | "adrs"
   | "text";
 
@@ -647,6 +648,60 @@ export interface DatabaseArchitectureSection extends BaseReportSection {
   };
 }
 
+export interface NetworkAndTrafficSection extends BaseReportSection {
+  kind: "network_and_traffic";
+  content: {
+    dnsZoneCount: number;
+    dnsRecordCount: number;
+    cdnCount: number;
+    loadBalancerCount: number;
+    gatewayCount: number;
+    routeCount: number;
+    poolCount: number;
+    boundaryCount: number;
+    criticalFindingsCount: number;
+    hasPlaintextExposure: boolean;
+    hasRoutingLoops: boolean;
+    hasBlackHoles: boolean;
+    hasSingleIngressSpof: boolean;
+    gateways: Array<{
+      id: string;
+      name: string;
+      gatewayType: string;
+      technology: string;
+      routeCount: number;
+      hasAuthRequired: boolean;
+      hasRateLimiting: boolean;
+    }>;
+    routes: Array<{
+      id: string;
+      name: string;
+      gatewayName: string;
+      pathMatch: string;
+      methods?: string[];
+      targetUpstreamPoolId: string;
+      hasTrafficSplit: boolean;
+    }>;
+    trafficPaths: Array<{
+      id: string;
+      scenarioName: string;
+      hopCount: number;
+      totalModeledLatencyMs: number;
+      hasPlaintextHop: boolean;
+      hasCrossRegionHop: boolean;
+      isReachable: boolean;
+    }>;
+    keyFindings: Array<{
+      id: string;
+      severity: string;
+      category: string;
+      title: string;
+      explanation: string;
+      remediation: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -690,6 +745,7 @@ export type ReportSection =
   | MessagingSystemsSection
   | CachingAndStateSection
   | DatabaseArchitectureSection
+  | NetworkAndTrafficSection
   | ADRsSection
   | TextSection;
 

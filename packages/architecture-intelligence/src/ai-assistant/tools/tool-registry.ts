@@ -36,6 +36,8 @@ import { architectureCacheStateEngine } from "../../cache-state/engine/cache-sta
 import type { DistributedStateTopology } from "../../cache-state/contracts/cache-state.types";
 import { architectureDatabaseEngine } from "../../database/engine/database-engine";
 import type { DatabaseArchitectureTopology } from "../../database/contracts/database.types";
+import { architectureNetworkEngine } from "../../network/engine/network-engine";
+import type { NetworkArchitectureTopology } from "../../network/contracts/network.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -2308,6 +2310,259 @@ export class ArchitectureToolRegistry {
           deadlockScenarios: includeDeadlocks ? truncateOutput(analysis.deadlockScenarios) : undefined,
           migrationPlan: includeMigrationRisks ? truncateOutput(analysis.migrationPlan) : undefined,
           storageForecast: includeStorageForecast ? truncateOutput(analysis.storageForecast) : undefined,
+        };
+      },
+    });
+
+    // Tool #27: get_network_and_traffic_intelligence
+    this.registerTool({
+      name: "get_network_and_traffic_intelligence",
+      description:
+        "Analyzes network architecture, DNS resolution, CDN edge routing, API gateway routes, load balancer pools, health checks, rate limiting policies, timeout budget inversions, retry amplification hazards, traffic path traversal with latency budgets, routing loops, and network single points of failure (SPOFs).",
+      parameters: {
+        type: "object",
+        properties: {
+          includeDnsAnalysis: {
+            type: "boolean",
+            description: "Whether to evaluate DNS zones, CNAME loops, TTL failover, and provider redundancy.",
+          },
+          includeRouteValidation: {
+            type: "boolean",
+            description: "Whether to validate route precedence conflicts, duplicate matches, and missing upstreams.",
+          },
+          includeLoadBalancing: {
+            type: "boolean",
+            description: "Whether to evaluate load balancer pools, backend health check policies, and unhealthy pool exhaustion.",
+          },
+          includeTrafficPolicies: {
+            type: "boolean",
+            description: "Whether to inspect rate limiting scopes, timeout budget inversions, and retry amplification hazards.",
+          },
+          includePathTraversal: {
+            type: "boolean",
+            description: "Whether to traverse client-to-service traffic paths, boundary crossings, and latency budgets.",
+          },
+          filterGatewayId: {
+            type: "string",
+            description: "Optional gateway ID to filter findings and routes.",
+          },
+        },
+      },
+      execute: async (args: Record<string, unknown>, context: AIExecutionContext) => {
+        const includeDnsAnalysis = args.includeDnsAnalysis !== false;
+        const includeRouteValidation = args.includeRouteValidation !== false;
+        const includeLoadBalancing = args.includeLoadBalancing !== false;
+        const includeTrafficPolicies = args.includeTrafficPolicies !== false;
+        const includePathTraversal = args.includePathTraversal !== false;
+        const filterGatewayId = args.filterGatewayId as string | undefined;
+
+        const now = new Date().toISOString();
+
+        // 1. Resolve network topology or construct from context
+        const topology: NetworkArchitectureTopology = context.networkTopology || {
+          id: `net-topo-${context.architectureId}`,
+          projectId: context.projectId,
+          architectureId: context.architectureId,
+          graphRevision: context.graphRevision,
+          version: 1,
+          dnsZones: [
+            {
+              id: "dns-primary",
+              domainName: "api.example.com",
+              isPrivate: false,
+              records: [
+                {
+                  id: "rec-api",
+                  name: "api.example.com",
+                  recordType: "CNAME",
+                  ttlSeconds: 300,
+                  values: ["edge.example.com"],
+                  provenance: {
+                    source: "modeled_performance",
+                    timestamp: now,
+                    graphRevision: context.graphRevision,
+                    confirmed: false,
+                  },
+                },
+              ],
+              providerTechnology: "cloudflare",
+              provenance: {
+                source: "modeled_performance",
+                timestamp: now,
+                graphRevision: context.graphRevision,
+                confirmed: false,
+              },
+            },
+          ],
+          cdnDistributions: [
+            {
+              id: "cdn-global",
+              name: "Global Edge CDN",
+              domainNames: ["api.example.com"],
+              originTargetIds: ["gw-main"],
+              wafEnabled: true,
+              tlsMode: "edge_terminated",
+              providerTechnology: "cloudflare",
+              provenance: {
+                source: "modeled_performance",
+                timestamp: now,
+                graphRevision: context.graphRevision,
+                confirmed: false,
+              },
+            },
+          ],
+          loadBalancers: [],
+          upstreamPools: [
+            {
+              id: "pool-core-svc",
+              name: "Core Services Pool",
+              endpoints: [
+                {
+                  id: "ep-core-1",
+                  address: "10.0.1.25",
+                  port: 8080,
+                  weight: 100,
+                  isHealthy: true,
+                },
+              ],
+              healthCheck: {
+                id: "hc-core",
+                protocol: "http",
+                path: "/healthz",
+                intervalSeconds: 10,
+                timeoutSeconds: 3,
+                healthyThreshold: 2,
+                unhealthyThreshold: 3,
+              },
+              provenance: {
+                source: "modeled_performance",
+                timestamp: now,
+                graphRevision: context.graphRevision,
+                confirmed: false,
+              },
+            },
+          ],
+          gateways: [
+            {
+              id: "gw-main",
+              name: "Production API Gateway",
+              gatewayType: "api_gateway",
+              listeners: [
+                {
+                  name: "https",
+                  port: 443,
+                  protocol: "https",
+                  hostname: "api.example.com",
+                  tlsMode: "edge_terminated",
+                },
+              ],
+              routes: [
+                {
+                  id: "route-api-v1",
+                  gatewayId: "gw-main",
+                  name: "API v1 Route",
+                  match: {
+                    hosts: ["api.example.com"],
+                    pathPrefix: "/api/v1",
+                  },
+                  precedenceOrder: 1,
+                  targetUpstreamPoolId: "pool-core-svc",
+                  policies: {
+                    authRequired: true,
+                    rateLimit: {
+                      id: "rl-global",
+                      algorithm: "token_bucket",
+                      limit: 1000,
+                      windowSeconds: 60,
+                      scope: "global",
+                    },
+                    timeout: {
+                      gatewayTimeoutMs: 5000,
+                      upstreamTimeoutMs: 4500,
+                      idleTimeoutMs: 30000,
+                    },
+                  },
+                  provenance: {
+                    source: "modeled_performance",
+                    timestamp: now,
+                    graphRevision: context.graphRevision,
+                    confirmed: false,
+                  },
+                },
+              ],
+              globalPolicies: { authRequired: true },
+              providerTechnology: "aws",
+              provenance: {
+                source: "modeled_performance",
+                timestamp: now,
+                graphRevision: context.graphRevision,
+                confirmed: false,
+              },
+            },
+          ],
+          boundaries: [
+            {
+              id: "b-dmz",
+              name: "Public DMZ",
+              boundaryType: "dmz",
+              memberNodeIds: ["gw-main"],
+              ingressRules: [],
+              egressRules: [],
+              provenance: {
+                source: "modeled_performance",
+                timestamp: now,
+                graphRevision: context.graphRevision,
+                confirmed: false,
+              },
+            },
+          ],
+          serviceMeshes: [],
+          scenarios: [
+            {
+              id: "sc-checkout",
+              name: "Client Checkout Request Flow",
+              sourceId: "client-web",
+              destinationId: "gw-main",
+              protocol: "https",
+              requestRateQps: 150,
+              averagePayloadBytes: 1024,
+              averageResponseBytes: 4096,
+              concurrency: 25,
+            },
+          ],
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        const analysis = architectureNetworkEngine.analyzeTopology(topology);
+
+        let filteredFindings = analysis.findings;
+        if (!includeDnsAnalysis) {
+          filteredFindings = filteredFindings.filter((f) => !f.id.startsWith("dns-finding-"));
+        }
+        if (!includeRouteValidation) {
+          filteredFindings = filteredFindings.filter((f) => !f.id.startsWith("route-finding-"));
+        }
+        if (!includeLoadBalancing) {
+          filteredFindings = filteredFindings.filter((f) => !f.id.startsWith("lb-finding-"));
+        }
+        if (!includeTrafficPolicies) {
+          filteredFindings = filteredFindings.filter((f) => !f.id.startsWith("traffic-finding-"));
+        }
+        if (filterGatewayId) {
+          filteredFindings = filteredFindings.filter((f) =>
+            f.affectedResourceIds.includes(filterGatewayId)
+          );
+        }
+
+        return {
+          summary: analysis.summary,
+          findingsCount: analysis.findings.length,
+          findings: truncateOutput(filteredFindings),
+          paths: includePathTraversal ? truncateOutput(analysis.resolvedPaths) : undefined,
+          gatewaysCount: topology.gateways.length,
+          upstreamPoolsCount: topology.upstreamPools.length,
+          dnsZonesCount: includeDnsAnalysis ? topology.dnsZones.length : undefined,
         };
       },
     });
