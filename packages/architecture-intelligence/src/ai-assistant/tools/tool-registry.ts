@@ -30,6 +30,8 @@ import { architectureDataLineageEngine } from "../../lineage/engine/lineage-engi
 import type { DataAsset, DataFlow } from "../../lineage/contracts/lineage.types";
 import { architectureContractEngine } from "../../api-contracts/engine/contract-engine";
 import type { APIContract } from "../../api-contracts/contracts/contract.types";
+import { architectureMessagingEngine } from "../../messaging/engine/messaging-engine";
+import type { MessagingTopology } from "../../messaging/contracts/messaging.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -1734,6 +1736,254 @@ export class ArchitectureToolRegistry {
           consumerImpact: impactReport,
           migrationPlan,
           coverageReport,
+        };
+      },
+    });
+
+    // Tool #24: get_messaging_topology_and_reliability
+    this.registerTool({
+      name: "get_messaging_topology_and_reliability",
+      description:
+        "Analyzes distributed messaging topology, message brokers, queues, topics, consumer groups, delivery semantics, retry amplification storms, idempotency gaps, partition ordering, and Saga consistency.",
+      parameters: {
+        type: "object",
+        properties: {
+          includeRetryStorms: {
+            type: "boolean",
+            description:
+              "Whether to evaluate geometric retry multiplier and peak RPS downstream saturation risks.",
+          },
+          includeBackpressure: {
+            type: "boolean",
+            description:
+              "Whether to project queue backlog accumulation and net arrival-vs-consumer capacity rates.",
+          },
+          includeReplaySafety: {
+            type: "boolean",
+            description: "Whether to evaluate historical event replay hazards.",
+          },
+          includeSagas: {
+            type: "boolean",
+            description:
+              "Whether to inspect distributed Saga workflows for uncompensated failure branches.",
+          },
+          filterDestinationId: {
+            type: "string",
+            description:
+              "Optional destination ID to narrow analysis to a specific queue or topic.",
+          },
+        },
+      },
+      execute: async (args, context) => {
+        const includeRetryStorms = (args.includeRetryStorms as boolean | undefined) ?? true;
+        const includeBackpressure = (args.includeBackpressure as boolean | undefined) ?? true;
+        const includeReplaySafety = (args.includeReplaySafety as boolean | undefined) ?? true;
+        const includeSagas = (args.includeSagas as boolean | undefined) ?? true;
+        const filterDestinationId = args.filterDestinationId as string | undefined;
+
+        let topology: MessagingTopology | undefined = context.messagingTopology;
+
+        if (!topology) {
+          // Synthesize minimal messaging topology from graph nodes & edges
+          const queueNodes = context.nodes.filter((n) => {
+            const t = ((n.data?.type as string) || (n.type as string) || "").toLowerCase();
+            return (
+              t.includes("queue") ||
+              t.includes("kafka") ||
+              t.includes("topic") ||
+              t.includes("broker")
+            );
+          });
+
+          const now = new Date().toISOString();
+          const brokerId = "broker-default";
+          const destId = queueNodes[0]?.id || "dest-events-default";
+
+          topology = {
+            id: `topology-${context.architectureId}`,
+            projectId: context.projectId,
+            architectureId: context.architectureId,
+            graphRevision: context.graphRevision,
+            version: 1,
+            brokers: [
+              {
+                id: brokerId,
+                name: "Event Broker",
+                technology: "apache_kafka",
+                clusterMode: "managed_serverless",
+                isMultiRegion: false,
+                capabilities: architectureMessagingEngine
+                  .getCapabilityRegistry()
+                  .getCapabilities("apache_kafka"),
+                provenance: {
+                  source: "modeled",
+                  timestamp: now,
+                  graphRevision: context.graphRevision,
+                  confirmed: false,
+                },
+              },
+            ],
+            destinations: [
+              {
+                id: destId,
+                brokerId,
+                name:
+                  (context.nodes.find((n) => n.id === destId)?.data?.label as string) ||
+                  "app.events",
+                type: "topic",
+                eventContractIds: [],
+                deliverySemantics: "at_least_once",
+                orderingScope: "partition",
+                partitioning: {
+                  partitionCount: 3,
+                  partitionKeyField: "userId",
+                  assignmentStrategy: "range",
+                  rebalanceAssumption: "cooperative_incremental",
+                },
+                retention: {
+                  retentionHours: 168,
+                  cleanupPolicy: "delete",
+                  isDurableStorage: true,
+                },
+                provenance: {
+                  source: "modeled",
+                  timestamp: now,
+                  graphRevision: context.graphRevision,
+                  confirmed: false,
+                },
+              },
+            ],
+            producers: [
+              {
+                id: "prod-default",
+                serviceId: context.nodes[0]?.id || "service-publisher",
+                destinationId: destId,
+                eventTypesPublished: ["OrderCreated", "OrderUpdated"],
+                publicationRateRps: 100,
+                usesTransactionalOutbox: true,
+                deliveryGuarantee: "at_least_once_outbox",
+                provenance: {
+                  source: "modeled",
+                  timestamp: now,
+                  graphRevision: context.graphRevision,
+                  confirmed: false,
+                },
+              },
+            ],
+            consumers: [
+              {
+                id: "cons-default",
+                serviceId: context.nodes[1]?.id || "service-consumer",
+                destinationId: destId,
+                consumerGroupId: "group-processors",
+                workerConcurrency: 2,
+                eventTypesConsumed: ["OrderCreated"],
+                avgProcessingTimeMs: 25,
+                ackMode: "explicit",
+                retryPolicy: {
+                  maxAttempts: 3,
+                  initialDelayMs: 200,
+                  maxDelayMs: 2000,
+                  backoffStrategy: "exponential_jitter",
+                  jitterPct: 20,
+                },
+                idempotency: {
+                  isConfigured: true,
+                  idempotencyKeyField: "eventId",
+                  deduplicationStore: "redis",
+                  windowSeconds: 86400,
+                  scope: "consumer_service",
+                  provenance: {
+                    source: "modeled",
+                    timestamp: now,
+                    graphRevision: context.graphRevision,
+                    confirmed: false,
+                  },
+                },
+                usesInboxDeduplication: true,
+                hasSideEffects: true,
+                sideEffectTypes: ["inventory_mutation"],
+                provenance: {
+                  source: "modeled",
+                  timestamp: now,
+                  graphRevision: context.graphRevision,
+                  confirmed: false,
+                },
+              },
+            ],
+            consumerGroups: [
+              {
+                id: "cg-processors",
+                groupId: "group-processors",
+                destinationId: destId,
+                consumerServiceIds: [context.nodes[1]?.id || "service-consumer"],
+                activeWorkersCount: 2,
+                provenance: {
+                  source: "modeled",
+                  timestamp: now,
+                  graphRevision: context.graphRevision,
+                  confirmed: false,
+                },
+              },
+            ],
+            relationships: [
+              {
+                id: "rel-pub-1",
+                sourceId: context.nodes[0]?.id || "service-publisher",
+                destinationId: destId,
+                kind: "publishes_to",
+                provenance: {
+                  source: "modeled",
+                  timestamp: now,
+                  graphRevision: context.graphRevision,
+                  confirmed: false,
+                },
+              },
+              {
+                id: "rel-sub-1",
+                sourceId: destId,
+                destinationId: context.nodes[1]?.id || "service-consumer",
+                kind: "consumes_from",
+                provenance: {
+                  source: "modeled",
+                  timestamp: now,
+                  graphRevision: context.graphRevision,
+                  confirmed: false,
+                },
+              },
+            ],
+            createdAt: now,
+            updatedAt: now,
+          };
+        }
+
+        const analysis = architectureMessagingEngine.analyzeTopology(topology);
+
+        let filteredFindings = analysis.findings;
+        let filteredStorms = analysis.retryStormEvaluations;
+        let filteredBackpressure = analysis.queueBacklogProjections;
+        let filteredReplay = analysis.replaySafetyEvaluations;
+
+        if (filterDestinationId) {
+          filteredFindings = filteredFindings.filter(
+            (f) => f.affectedDestinationId === filterDestinationId
+          );
+          filteredStorms = filteredStorms.filter((s) => s.destinationId === filterDestinationId);
+          filteredBackpressure = filteredBackpressure.filter(
+            (p) => p.destinationId === filterDestinationId
+          );
+          filteredReplay = filteredReplay.filter((r) => r.destinationId === filterDestinationId);
+        }
+
+        return {
+          summary: analysis.summary,
+          findingsCount: analysis.summary.findingsCount,
+          findings: truncateOutput(filteredFindings),
+          retryStorms: includeRetryStorms ? truncateOutput(filteredStorms) : undefined,
+          backpressure: includeBackpressure ? truncateOutput(filteredBackpressure) : undefined,
+          replaySafety: includeReplaySafety ? truncateOutput(filteredReplay) : undefined,
+          sagas: includeSagas ? truncateOutput(analysis.sagas) : undefined,
+          eventFlowTraces: truncateOutput(analysis.eventFlowTraces),
         };
       },
     });

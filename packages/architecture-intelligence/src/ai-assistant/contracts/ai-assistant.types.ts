@@ -2,6 +2,7 @@ import type { BaseNode, BaseEdge } from "@nxtqr/graph-schema";
 import type { GraphOperation } from "../../scalability/schemas/scalability.schemas";
 import type { ArchitectureDataLineageModel } from "../../lineage/contracts/lineage.types";
 import type { APIContract, ConsumerDependency } from "../../api-contracts/contracts/contract.types";
+import type { MessagingTopology } from "../../messaging/contracts/messaging.types";
 
 export type AIMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -144,5 +145,6 @@ export interface AIExecutionContext {
   lineageModel?: ArchitectureDataLineageModel;
   apiContracts?: APIContract[];
   consumerDependencies?: ConsumerDependency[];
+  messagingTopology?: MessagingTopology;
 }
 

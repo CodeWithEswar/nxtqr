@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "messaging" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -45,6 +45,7 @@ export type ReportSectionKind =
   | "deployment"
   | "lineage"
   | "api_contracts"
+  | "messaging_systems"
   | "adrs"
   | "text";
 
@@ -517,6 +518,45 @@ export interface APIContractsSection extends BaseReportSection {
   };
 }
 
+export interface MessagingSystemsSection extends BaseReportSection {
+  kind: "messaging_systems";
+  content: {
+    brokerCount: number;
+    destinationCount: number;
+    producerCount: number;
+    consumerCount: number;
+    consumerGroupCount: number;
+    sagaCount: number;
+    brokers: Array<{
+      id: string;
+      name: string;
+      technology: string;
+      clusterMode: string;
+      isMultiRegion: boolean;
+    }>;
+    destinations: Array<{
+      id: string;
+      name: string;
+      type: string;
+      deliverySemantics: string;
+      orderingScope: string;
+      partitionCount?: number;
+    }>;
+    criticalFindingsCount: number;
+    stormRiskCount: number;
+    unboundedGrowthCount: number;
+    uncompensatedSagasCount: number;
+    findings: Array<{
+      id: string;
+      category: string;
+      severity: string;
+      title: string;
+      explanation: string;
+      remediation: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -557,6 +597,7 @@ export type ReportSection =
   | DeploymentSection
   | LineageSection
   | APIContractsSection
+  | MessagingSystemsSection
   | ADRsSection
   | TextSection;
 

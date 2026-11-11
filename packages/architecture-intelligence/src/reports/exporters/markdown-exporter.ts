@@ -495,6 +495,46 @@ export class MarkdownExporter {
           break;
         }
 
+        case "messaging_systems": {
+          const content = section.content;
+          lines.push(`- Message Brokers: **${content.brokerCount}** | Destinations (Queues/Topics): **${content.destinationCount}**`);
+          lines.push(`- Producers: **${content.producerCount}** | Consumers: **${content.consumerCount}** | Consumer Groups: **${content.consumerGroupCount}**`);
+          lines.push(`- Distributed Sagas: **${content.sagaCount}**`);
+          lines.push(`- Critical Reliability Findings: **${content.criticalFindingsCount}** | Retry Storm Hazards: **${content.stormRiskCount}** | Unbounded Growth Queues: **${content.unboundedGrowthCount}**`);
+          lines.push("");
+
+          if (content.brokers.length > 0) {
+            lines.push("### Message Brokers");
+            lines.push("| Broker Name | Technology | Cluster Mode | Multi-Region |");
+            lines.push("| :--- | :--- | :--- | :--- |");
+            for (const b of content.brokers) {
+              lines.push(`| **${b.name}** | \`${b.technology}\` | ${b.clusterMode} | ${b.isMultiRegion ? "Yes" : "No"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.destinations.length > 0) {
+            lines.push("### Messaging Destinations");
+            lines.push("| Name | Type | Semantics | Ordering Scope | Partitions |");
+            lines.push("| :--- | :--- | :--- | :--- | :--- |");
+            for (const d of content.destinations) {
+              lines.push(`| **${d.name}** | \`${d.type}\` | \`${d.deliverySemantics}\` | \`${d.orderingScope}\` | ${d.partitionCount ?? "N/A"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.findings.length > 0) {
+            lines.push("### Messaging Reliability Findings");
+            for (const f of content.findings) {
+              lines.push(`- [${f.severity.toUpperCase()}] **${f.title}** (\`${f.category}\`)`);
+              lines.push(`  *Risk & Explanation:* ${f.explanation}`);
+              lines.push(`  *Remediation:* ${f.remediation}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

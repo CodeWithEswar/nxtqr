@@ -6,6 +6,7 @@ import type {
   DeploymentSection,
   LineageSection,
   APIContractsSection,
+  MessagingSystemsSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -35,6 +36,7 @@ import type { ResolvedTopologySummary } from "./source-resolver";
 import { PrivacyRiskAnalyzer } from "../../lineage/analysis/privacy-risk-analyzer";
 import { RetentionCoverageAnalyzer } from "../../lineage/analysis/retention-coverage";
 import { TransferAnalyzer } from "../../lineage/analysis/transfer-analyzer";
+import { architectureMessagingEngine } from "../../messaging/engine/messaging-engine";
 
 export class SectionComposer {
   public static composeSections(params: {
@@ -979,6 +981,111 @@ export class SectionComposer {
             },
           };
           sections.push(apiContractsSection);
+          break;
+        }
+
+        case "messaging_systems": {
+          const rawTopology = analysisContext?.messagingTopology;
+          let brokerCount = 0;
+          let destinationCount = 0;
+          let producerCount = 0;
+          let consumerCount = 0;
+          let consumerGroupCount = 0;
+          let sagaCount = 0;
+          let criticalFindingsCount = 0;
+          let stormRiskCount = 0;
+          let unboundedGrowthCount = 0;
+          let uncompensatedSagasCount = 0;
+          let brokersList: Array<{
+            id: string;
+            name: string;
+            technology: string;
+            clusterMode: string;
+            isMultiRegion: boolean;
+          }> = [];
+          let destsList: Array<{
+            id: string;
+            name: string;
+            type: string;
+            deliverySemantics: string;
+            orderingScope: string;
+            partitionCount?: number;
+          }> = [];
+          let findingsList: Array<{
+            id: string;
+            category: string;
+            severity: string;
+            title: string;
+            explanation: string;
+            remediation: string;
+          }> = [];
+
+          if (rawTopology) {
+            const analysis = architectureMessagingEngine.analyzeTopology(rawTopology);
+            brokerCount = analysis.summary.brokerCount;
+            destinationCount = analysis.summary.destinationCount;
+            producerCount = analysis.summary.producerCount;
+            consumerCount = analysis.summary.consumerCount;
+            consumerGroupCount = analysis.summary.consumerGroupCount;
+            sagaCount = analysis.summary.sagaCount;
+            criticalFindingsCount = analysis.summary.findingsCount.critical;
+            stormRiskCount = analysis.summary.stormRiskDestinationsCount;
+            unboundedGrowthCount = analysis.summary.unboundedGrowthDestinationsCount;
+            uncompensatedSagasCount = analysis.summary.uncompensatedSagasCount;
+
+            brokersList = analysis.topology.brokers.map((b) => ({
+              id: b.id,
+              name: b.name,
+              technology: b.technology,
+              clusterMode: b.clusterMode,
+              isMultiRegion: b.isMultiRegion,
+            }));
+
+            destsList = analysis.topology.destinations.map((d) => ({
+              id: d.id,
+              name: d.name,
+              type: d.type,
+              deliverySemantics: d.deliverySemantics,
+              orderingScope: d.orderingScope,
+              partitionCount: d.partitioning?.partitionCount,
+            }));
+
+            findingsList = analysis.findings.slice(0, 10).map((f) => ({
+              id: f.id,
+              category: f.category,
+              severity: f.severity,
+              title: f.title,
+              explanation: f.explanation,
+              remediation: f.remediation,
+            }));
+          }
+
+          const messagingSection: MessagingSystemsSection = {
+            id: `sec-messaging-systems`,
+            kind: "messaging_systems",
+            title: "Event-Driven Systems & Distributed Messaging Intelligence",
+            description:
+              "Brokers, queues, topics, delivery semantics, retry amplification storms, idempotency deduplication, and Saga workflows.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "messaging"),
+            content: {
+              brokerCount,
+              destinationCount,
+              producerCount,
+              consumerCount,
+              consumerGroupCount,
+              sagaCount,
+              brokers: brokersList,
+              destinations: destsList,
+              criticalFindingsCount,
+              stormRiskCount,
+              unboundedGrowthCount,
+              uncompensatedSagasCount,
+              findings: findingsList,
+            },
+          };
+          sections.push(messagingSection);
           break;
         }
 

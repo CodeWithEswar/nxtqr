@@ -96,4 +96,7 @@ export * from "./lineage";
 // Architecture API Contracts & Service Interface Intelligence Engine (Phase 05.3.20)
 export * from "./api-contracts";
 
+// Architecture Event-Driven Systems & Distributed Messaging Intelligence Engine (Phase 05.3.21)
+export * from "./messaging";
+
 

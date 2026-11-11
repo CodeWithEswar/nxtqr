@@ -612,6 +612,75 @@ export class HtmlExporter {
           break;
         }
 
+        case "messaging_systems": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Brokers</span>
+                  <span class="pillar-score">${c.brokerCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Destinations</span>
+                  <span class="pillar-score">${c.destinationCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Producers / Consumers</span>
+                  <span class="pillar-score">${c.producerCount} / ${c.consumerCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Sagas</span>
+                  <span class="pillar-score">${c.sagaCount}</span>
+                </div>
+              </div>
+            </div>
+            ${
+              c.destinations.length > 0
+                ? `<h4>Messaging Destinations (Queues & Topics)</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Delivery Semantics</th>
+                      <th>Ordering Scope</th>
+                      <th>Partitions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.destinations
+                      .map(
+                        (d) => `<tr>
+                        <td><strong>${escapeHtml(d.name)}</strong></td>
+                        <td><code>${escapeHtml(d.type)}</code></td>
+                        <td><code>${escapeHtml(d.deliverySemantics)}</code></td>
+                        <td><code>${escapeHtml(d.orderingScope)}</code></td>
+                        <td>${d.partitionCount ?? "N/A"}</td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+            ${
+              c.findings.length > 0
+                ? `<h4>Reliability & Consistency Findings</h4>
+                <ul>
+                  ${c.findings
+                    .map(
+                      (f) =>
+                        `<li><span class="badge ${f.severity === "critical" || f.severity === "high" ? "badge-error" : "badge-info"}">${f.severity.toUpperCase()}</span> <strong>${escapeHtml(f.title)}</strong> (<code>${escapeHtml(f.category)}</code>): <em>${escapeHtml(f.remediation)}</em></li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

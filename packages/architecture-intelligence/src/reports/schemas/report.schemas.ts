@@ -28,6 +28,7 @@ export const ReportEvidenceReferenceSchema = z.object({
     "deployment",
     "lineage",
     "api_contract",
+    "messaging",
     "adr",
     "doc",
   ]),
@@ -63,6 +64,7 @@ export const ReportSectionKindSchema = z.enum([
   "deployment",
   "lineage",
   "api_contracts",
+  "messaging_systems",
   "adrs",
   "text",
 ]);
@@ -606,6 +608,51 @@ export const APIContractsSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const MessagingSystemsSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("messaging_systems"),
+  content: z.object({
+    brokerCount: z.number().int().min(0),
+    destinationCount: z.number().int().min(0),
+    producerCount: z.number().int().min(0),
+    consumerCount: z.number().int().min(0),
+    consumerGroupCount: z.number().int().min(0),
+    sagaCount: z.number().int().min(0),
+    brokers: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        technology: z.string(),
+        clusterMode: z.string(),
+        isMultiRegion: z.boolean(),
+      })
+    ),
+    destinations: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        type: z.string(),
+        deliverySemantics: z.string(),
+        orderingScope: z.string(),
+        partitionCount: z.number().int().optional(),
+      })
+    ),
+    criticalFindingsCount: z.number().int().min(0),
+    stormRiskCount: z.number().int().min(0),
+    unboundedGrowthCount: z.number().int().min(0),
+    uncompensatedSagasCount: z.number().int().min(0),
+    findings: z.array(
+      z.object({
+        id: z.string(),
+        category: z.string(),
+        severity: z.string(),
+        title: z.string(),
+        explanation: z.string(),
+        remediation: z.string(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -646,6 +693,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   DeploymentSectionSchema,
   LineageSectionSchema,
   APIContractsSectionSchema,
+  MessagingSystemsSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);
