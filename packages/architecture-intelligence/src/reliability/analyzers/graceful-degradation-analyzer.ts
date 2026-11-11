@@ -27,7 +27,16 @@ export class GracefulDegradationAnalyzer implements IReliabilityAnalyzer {
         componentType.includes("telemetry") ||
         componentType.includes("notification");
 
-      if (isOptional && !targetProfile.hasFallback) {
+      const sourceProfile = context.nodeProfiles[edge.source];
+      const rawSource = (sourceNode.data || {}) as Record<string, unknown>;
+      const hasCallerFallback =
+        Boolean(sourceProfile?.hasFallback) ||
+        Boolean(rawSource.hasFallback || rawSource.fallbackEnabled || (rawSource.fallbackMode && rawSource.fallbackMode !== "none"));
+      const hasTargetFallback =
+        Boolean(targetProfile.hasFallback) ||
+        Boolean(rawTarget.hasFallback || rawTarget.fallbackEnabled || (rawTarget.fallbackMode && rawTarget.fallbackMode !== "none"));
+
+      if (isOptional && !hasCallerFallback && !hasTargetFallback) {
         findings.push({
           id: `REL-DEGR-001-${edge.id}`,
           ruleId: "REL-DEGR-001",

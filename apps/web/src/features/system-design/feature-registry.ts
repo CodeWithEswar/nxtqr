@@ -380,3 +380,4 @@ export function getFeatureById(id: string): ArchitectureFeature | undefined {
 export function getFeaturesByCategory(category: ArchitectureFeatureCategory): ArchitectureFeature[] {
   return ARCHITECTURE_FEATURES.filter((f) => f.category === category);
 }
+

@@ -29,6 +29,8 @@ export class CircuitBreakerStrategy implements IRecommendationStrategy {
         type: "update_node_config",
         nodeId: targetNode.id,
         configUpdates: {
+          hasCircuitBreaker: true,
+          hasFallback: true,
           circuitBreakerEnabled: true,
           failureRateThreshold: 50,
           slowCallRateThreshold: 70,

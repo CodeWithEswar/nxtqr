@@ -70,6 +70,7 @@ export interface GraphEditorState {
   enginePanelWidth: number;
   activeScenarioId: string;
   activeWhatIfPlan: WhatIfPlan | null;
+  recommendationLifecycleOverrides: Record<string, "new" | "reviewed" | "planned" | "applied" | "dismissed" | "superseded">;
   autosaveStatus: AutosaveStatus;
 
   // History state indicators
@@ -118,6 +119,7 @@ export interface GraphEditorState {
   setActiveScenarioId: (scenarioId: string) => void;
   setActiveWhatIfPlan: (plan: WhatIfPlan | null) => void;
   applyWhatIfPlan: (plan: WhatIfPlan) => void;
+  setRecommendationLifecycle: (id: string, state: "new" | "reviewed" | "planned" | "applied" | "dismissed" | "superseded") => void;
   resetPanelWidths: () => void;
   setAutosaveStatus: (status: AutosaveStatus) => void;
 
@@ -277,6 +279,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     enginePanelWidth: 460,
     activeScenarioId: "normal_traffic",
     activeWhatIfPlan: null,
+    recommendationLifecycleOverrides: {},
     autosaveStatus: "saved",
 
     canUndo: false,
@@ -295,6 +298,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
         metadata: doc.metadata ?? {},
         selectedNodeIds: [],
         selectedEdgeIds: [],
+        recommendationLifecycleOverrides: {},
         autosaveStatus: "saved",
         canUndo: false,
         canRedo: false,
@@ -406,8 +410,26 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
         plan.title,
       );
       history.execute(cmd, getCommandContext());
-      set({ activeWhatIfPlan: null });
+      if (plan.recommendationId) {
+        set((state) => ({
+          activeWhatIfPlan: null,
+          recommendationLifecycleOverrides: {
+            ...state.recommendationLifecycleOverrides,
+            [plan.recommendationId]: "applied",
+          },
+        }));
+      } else {
+        set({ activeWhatIfPlan: null });
+      }
       syncHistoryState();
+    },
+    setRecommendationLifecycle: (id, lifecycleState) => {
+      set((state) => ({
+        recommendationLifecycleOverrides: {
+          ...state.recommendationLifecycleOverrides,
+          [id]: lifecycleState,
+        },
+      }));
     },
     resetPanelWidths: () => set({ nodeLibraryWidth: 280, inspectorWidth: 320, validationPanelWidth: 320, healthPanelWidth: 340, bottlenecksPanelWidth: 360, failureAnalysisPanelWidth: 360, securityPanelWidth: 380, scalabilityPanelWidth: 380, enginePanelWidth: 460 }),
     setAutosaveStatus: (status) => set({ autosaveStatus: status }),

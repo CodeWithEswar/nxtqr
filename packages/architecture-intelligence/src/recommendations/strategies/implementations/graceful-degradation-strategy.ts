@@ -121,6 +121,7 @@ export class GracefulDegradationStrategy implements IRecommendationStrategy {
           type: "update_node_config",
           nodeId: targetNode.id,
           configUpdates: {
+            hasFallback: true,
             fallbackMode: "cached-or-empty",
             fallbackTtlSeconds: 3600,
           },

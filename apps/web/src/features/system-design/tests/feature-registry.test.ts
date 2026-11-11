@@ -48,6 +48,8 @@ describe("Architecture Intelligence Suite — Feature Registry & Engine Logic", 
   });
 
   it("should categorize engines accurately", () => {
+    expect(ARCHITECTURE_FEATURE_CATEGORIES.length).toBe(6);
+
     const diagnostics = getFeaturesByCategory("diagnostics");
     expect(diagnostics.length).toBe(7);
 
@@ -124,3 +126,4 @@ describe("Architecture Intelligence Suite — Feature Registry & Engine Logic", 
     expect(useGraphEditorStore.getState().enginePanelWidth).toBe(840);
   });
 });
+

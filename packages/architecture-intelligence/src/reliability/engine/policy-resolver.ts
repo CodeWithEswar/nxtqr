@@ -115,6 +115,12 @@ export class PolicyResolver {
       if (raw.hasFallback !== undefined || raw.fallbackEnabled !== undefined) {
         hasFallback = Boolean(raw.hasFallback ?? raw.fallbackEnabled);
         provenance.hasFallback = "configured";
+      } else if (raw.fallbackMode && raw.fallbackMode !== "none" && raw.fallbackMode !== "fail-closed") {
+        hasFallback = true;
+        provenance.hasFallback = "configured";
+      } else if (raw.fallbackAction && raw.fallbackAction !== "none" && raw.fallbackAction !== "fail") {
+        hasFallback = true;
+        provenance.hasFallback = "configured";
       } else if (fallbackTargets.has(node.id) || raw.fallbackNodeId) {
         hasFallback = true;
         provenance.hasFallback = "derived";

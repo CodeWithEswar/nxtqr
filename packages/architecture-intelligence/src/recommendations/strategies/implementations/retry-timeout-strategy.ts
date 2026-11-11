@@ -36,6 +36,9 @@ export class RetryTimeoutStrategy implements IRecommendationStrategy {
         configUpdates: {
           retries: 3,
           backoffStrategy: "exponential-jitter",
+          backoffType: "exponential",
+          jitter: true,
+          jitterEnabled: true,
           baseBackoffMs: 200,
           maxBackoffMs: 2000,
           timeoutMs: hasDeadlineInversion ? 1500 : 2000,

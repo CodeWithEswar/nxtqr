@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { toast } from "sonner";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
 import {
   recommendationEngine,
@@ -29,20 +30,19 @@ export function useUnifiedRecommendations() {
   const activeWhatIfPlan = useGraphEditorStore((s) => s.activeWhatIfPlan);
   const setActiveWhatIfPlan = useGraphEditorStore((s) => s.setActiveWhatIfPlan);
   const applyWhatIfPlan = useGraphEditorStore((s) => s.applyWhatIfPlan);
+  const lifecycleOverrides = useGraphEditorStore((s) => s.recommendationLifecycleOverrides);
+  const setRecommendationLifecycle = useGraphEditorStore((s) => s.setRecommendationLifecycle);
 
   const [priorityFilter, setPriorityFilter] = React.useState<"all" | RecommendationPriority>("all");
   const [feasibilityFilter, setFeasibilityFilter] = React.useState<"all" | RecommendationFeasibility>("all");
   const [lifecycleFilter, setLifecycleFilter] = React.useState<"all" | RecommendationLifecycle>("all");
   const [searchQuery, setSearchQuery] = React.useState<string>("");
   const [selectedRecId, setSelectedRecId] = React.useState<string | null>(null);
-  const [lifecycleOverrides, setLifecycleOverrides] = React.useState<Map<string, RecommendationLifecycle>>(
-    () => new Map()
-  );
   const [isAnalyzing, setIsAnalyzing] = React.useState<boolean>(false);
 
   // Compute recommendations
   const computeReport = React.useCallback(
-    (overrides?: Map<string, RecommendationLifecycle>): UnifiedRecommendationReport => {
+    (overrides?: Record<string, RecommendationLifecycle>): UnifiedRecommendationReport => {
       try {
         const scenario = DEFAULT_WORKLOAD_SCENARIOS.normal_traffic;
 
@@ -190,6 +190,18 @@ export function useUnifiedRecommendations() {
   // Apply recommendation atomically
   const applyRecommendation = React.useCallback(
     (rec: UnifiedRecommendation) => {
+      // 1. Optimistic immediate local state update so the UI turns to [APPLIED] without any delay
+      setReport((prev) => ({
+        ...prev,
+        recommendations: prev.recommendations.map((r) =>
+          r.id === rec.id ? { ...r, lifecycleState: "applied" } : r
+        ),
+      }));
+
+      // 2. Persist in global editor store
+      setRecommendationLifecycle(rec.id, "applied");
+
+      // 3. Create and execute What-If execution plan
       const plan: WhatIfPlan = {
         id: `plan_${rec.id}`,
         recommendationId: rec.id,
@@ -211,26 +223,24 @@ export function useUnifiedRecommendations() {
 
       applyWhatIfPlan(plan);
 
-      // Update lifecycle state to applied
-      setLifecycleOverrides((prev) => {
-        const next = new Map(prev);
-        next.set(rec.id, "applied");
-        return next;
-      });
+      // 4. Emit confirmation toast
+      toast.success(`Applied recommendation: ${rec.title}`);
     },
-    [nodes, edges, applyWhatIfPlan]
+    [nodes, edges, applyWhatIfPlan, setRecommendationLifecycle]
   );
 
   // Update lifecycle state
   const setLifecycleState = React.useCallback(
     (recId: string, state: RecommendationLifecycle) => {
-      setLifecycleOverrides((prev) => {
-        const next = new Map(prev);
-        next.set(recId, state);
-        return next;
-      });
+      setRecommendationLifecycle(recId, state);
+      setReport((prev) => ({
+        ...prev,
+        recommendations: prev.recommendations.map((r) =>
+          r.id === recId ? { ...r, lifecycleState: state } : r
+        ),
+      }));
     },
-    []
+    [setRecommendationLifecycle]
   );
 
   return {

@@ -16,14 +16,17 @@ import { ConflictDetector } from "../evaluation/conflict-detector";
 import { RankingEngine } from "../evaluation/ranking-engine";
 import { ImprovementPlanner } from "../planner/improvement-planner";
 
+import type { GraphOperation } from "../../scalability/schemas/scalability.schemas";
+
 export interface RecommendationEngineOptions {
   includeNotApplicable?: boolean;
   minScoreThreshold?: number;
-  lifecycleOverrides?: Map<string, RecommendationLifecycle>;
+  lifecycleOverrides?: Map<string, RecommendationLifecycle> | Record<string, RecommendationLifecycle>;
 }
 
 export class RecommendationEngine {
   private cache: Map<string, UnifiedRecommendationReport> = new Map();
+  private allRecommendationsHistory: Map<string, UnifiedRecommendation> = new Map();
 
   public generateRecommendations(
     nodes: BaseNode[],
@@ -81,12 +84,48 @@ export class RecommendationEngine {
         continue;
       }
 
-      // Apply lifecycle override if provided
-      if (options.lifecycleOverrides?.has(rec.id)) {
-        rec.lifecycleState = options.lifecycleOverrides.get(rec.id)!;
+      // 1. Resolve explicit lifecycle overrides if provided
+      let explicitOverride: RecommendationLifecycle | undefined;
+      if (options.lifecycleOverrides) {
+        if (options.lifecycleOverrides instanceof Map) {
+          explicitOverride = options.lifecycleOverrides.get(rec.id);
+        } else {
+          explicitOverride = (options.lifecycleOverrides as Record<string, RecommendationLifecycle>)[rec.id];
+        }
+      }
+
+      if (explicitOverride) {
+        rec.lifecycleState = explicitOverride;
+      } else if (this.areProposedOperationsSatisfied(rec.proposedOperations, nodes, edges)) {
+        // 2. Deterministically detect if proposed changes have already been applied to the graph
+        rec.lifecycleState = "applied";
       }
 
       evaluated.push(rec);
+    }
+
+    // Remember all evaluated recommendations across historical runs
+    for (const rec of evaluated) {
+      this.allRecommendationsHistory.set(rec.id, rec);
+    }
+
+    // Preserve previously applied recommendations whose underlying findings are now resolved
+    if (options.lifecycleOverrides) {
+      const overridesEntries = options.lifecycleOverrides instanceof Map
+        ? Array.from(options.lifecycleOverrides.entries())
+        : Object.entries(options.lifecycleOverrides);
+
+      for (const [recId, state] of overridesEntries) {
+        if (state === "applied" && !evaluated.some((r) => r.id === recId)) {
+          const historicalRec = this.allRecommendationsHistory.get(recId);
+          if (historicalRec) {
+            evaluated.push({
+              ...historicalRec,
+              lifecycleState: "applied",
+            });
+          }
+        }
+      }
     }
 
     // 6. Detect conflicting recommendations
@@ -184,6 +223,63 @@ export class RecommendationEngine {
     ].join("_");
 
     return `rec_${nodes.length}_${edges.length}_${counts}_${hashString(`${nodeSig}::${edgeSig}`)}`;
+  }
+
+  public areProposedOperationsSatisfied(
+    operations: GraphOperation[] | undefined,
+    nodes: BaseNode[],
+    edges: BaseEdge[]
+  ): boolean {
+    if (!operations || operations.length === 0) return false;
+
+    for (const op of operations) {
+      switch (op.type) {
+        case "update_node_config": {
+          const node = nodes.find((n) => n.id === op.nodeId);
+          if (!node) return false;
+          const data = (node.data || {}) as Record<string, unknown>;
+          for (const [k, v] of Object.entries(op.configUpdates)) {
+            if (data[k] !== v) return false;
+          }
+          break;
+        }
+        case "adjust_instances": {
+          const node = nodes.find((n) => n.id === op.nodeId);
+          if (!node) return false;
+          const data = (node.data || {}) as Record<string, unknown>;
+          if (data.replicas !== op.newReplicas) return false;
+          break;
+        }
+        case "add_node": {
+          const node = nodes.find((n) => n.id === op.node.id);
+          if (!node) return false;
+          break;
+        }
+        case "add_edge": {
+          const edge = edges.find(
+            (e) => e.id === op.edge.id || (e.source === op.edge.source && e.target === op.edge.target)
+          );
+          if (!edge) return false;
+          break;
+        }
+        case "delete_edge": {
+          const edge = edges.find((e) => e.id === op.edgeId);
+          if (edge) return false;
+          break;
+        }
+        case "insert_mediator": {
+          const mediatorNode = nodes.find((n) => n.id === op.mediatorNode.id);
+          if (!mediatorNode) return false;
+          const oldEdge = edges.find((e) => e.id === op.replaceEdgeId);
+          if (oldEdge) return false;
+          break;
+        }
+        default:
+          return false;
+      }
+    }
+
+    return true;
   }
 }
 

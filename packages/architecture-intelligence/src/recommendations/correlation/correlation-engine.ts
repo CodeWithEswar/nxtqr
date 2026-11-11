@@ -39,9 +39,9 @@ export class CorrelationEngine {
     const processedFindingIds = new Set<string>();
     const groups: CorrelatedFindingGroup[] = [];
 
-    // 1. Group by Nodes with multiple overlapping findings
+    // 1. Group by Nodes with multiple overlapping findings (with deterministic tie-breaker)
     const sortedNodeEntries = Array.from(nodeFindingsMap.entries()).sort(
-      (a, b) => b[1].length - a[1].length
+      (a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0])
     );
 
     for (const [nodeId, nodeFindings] of sortedNodeEntries) {
