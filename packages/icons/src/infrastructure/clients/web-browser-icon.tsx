@@ -11,15 +11,15 @@ export const WebBrowserIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokePrimary = isColored ? "#2563EB" : "#A3A3A3";
-  const fillTitleBar = isColored ? "#1E40AF" : "#262626";
-  const fillDot1 = isColored ? "#38BDF8" : "#E5E5E5";
-  const fillDot2 = isColored ? "#60A5FA" : "#A3A3A3";
-  const fillDot3 = isColored ? "#93C5FD" : "#737373";
-  const fillAddress = isColored ? "#1E3A8A" : "#1A1A1A";
-  const fillSidebar = isColored ? "#1E3A8A" : "#1F1F1F";
+  const strokePrimary = isColored ? "#60A5FA" : "#D4D4D4";
+  const fillTitleBar = isColored ? "#1D4ED8" : "#262626";
+  const fillDot1 = isColored ? "#38BDF8" : "#FFFFFF";
+  const fillDot2 = isColored ? "#60A5FA" : "#D4D4D4";
+  const fillDot3 = isColored ? "#93C5FD" : "#A3A3A3";
+  const fillAddress = isColored ? "#1E293B" : "#1A1A1A";
+  const fillSidebar = isColored ? "#1E293B" : "#1F1F1F";
   const fillCard = isColored ? "#2563EB" : "#333333";
-  const fillLine = isColored ? "#38BDF8" : "#737373";
+  const fillLine = isColored ? "#38BDF8" : "#A3A3A3";
 
   return (
     <svg

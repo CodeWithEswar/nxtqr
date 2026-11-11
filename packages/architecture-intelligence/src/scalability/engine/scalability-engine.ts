@@ -1,10 +1,10 @@
 import type { BaseNode, BaseEdge } from "@nxtqr/graph-schema";
-import { DEFAULT_WORKLOAD_SCENARIOS } from "../../bottlenecks/scenarios/scenario-registry";
 import { bottleneckEngine } from "../../bottlenecks/engine/bottleneck-engine";
 import {
   toBottleneckScenario,
   type IScalabilityStrategyEvaluator,
   type ScalabilityEvaluationContext,
+  type ScalabilityScenarioInput,
 } from "../contracts/scalability.types";
 import type {
   ScalabilityAnalysisReport,
@@ -31,22 +31,23 @@ export class ScalabilityRecommendationsEngine {
 
   private cache: {
     revisionHash: string;
-    scenarioId: string;
+    scenarioKey: string;
     report: ScalabilityAnalysisReport;
   } | null = null;
 
   public evaluateGraph(
     nodes: BaseNode[],
     edges: BaseEdge[],
-    scenario: any = DEFAULT_WORKLOAD_SCENARIOS.normal_traffic
+    scenario?: ScalabilityScenarioInput
   ): ScalabilityAnalysisReport {
+    const bottleneckScenario = toBottleneckScenario(scenario);
+    const scenarioKey = JSON.stringify(bottleneckScenario);
     const revisionHash = this.computeRevisionHash(nodes, edges);
-    if (this.cache && this.cache.revisionHash === revisionHash && this.cache.scenarioId === scenario.id) {
+    if (this.cache && this.cache.revisionHash === revisionHash && this.cache.scenarioKey === scenarioKey) {
       return this.cache.report;
     }
 
     // 1. Analyze bottlenecks under the given workload scenario
-    const bottleneckScenario = toBottleneckScenario(scenario);
     const bottleneckReport = bottleneckEngine.analyzeGraph(nodes, edges, bottleneckScenario);
 
     // 2. Build maps
@@ -72,7 +73,7 @@ export class ScalabilityRecommendationsEngine {
       nodeMap,
       outgoingEdgesMap,
       incomingEdgesMap,
-      scenario,
+      scenario: bottleneckScenario,
       bottleneckReport,
     };
 
@@ -123,7 +124,7 @@ export class ScalabilityRecommendationsEngine {
       id: `scale_report_${Date.now()}`,
       analyzedAt: new Date().toISOString(),
       revisionHash,
-      scenarioId: scenario.id,
+      scenarioId: bottleneckScenario.id,
       nodeCount: nodes.length,
       edgeCount: edges.length,
       recommendations: ranked,
@@ -136,7 +137,7 @@ export class ScalabilityRecommendationsEngine {
       },
     };
 
-    this.cache = { revisionHash, scenarioId: scenario.id, report };
+    this.cache = { revisionHash, scenarioKey, report };
     return report;
   }
 
@@ -144,9 +145,9 @@ export class ScalabilityRecommendationsEngine {
     nodes: BaseNode[],
     edges: BaseEdge[],
     recommendation: ScalabilityRecommendation,
-    scenario: any = DEFAULT_WORKLOAD_SCENARIOS.normal_traffic
+    scenario?: ScalabilityScenarioInput
   ): WhatIfPlan {
-    const { plan } = WhatIfEngine.createPlan(nodes, edges, recommendation, scenario);
+    const { plan } = WhatIfEngine.createPlan(nodes, edges, recommendation, toBottleneckScenario(scenario));
     return plan;
   }
 

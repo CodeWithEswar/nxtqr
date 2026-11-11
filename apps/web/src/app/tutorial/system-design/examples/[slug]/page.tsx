@@ -1,44 +1,52 @@
-import { TutorialComponentIcon } from "@/features/system-design-tutorials/components/tutorial-component-icon";
-import * as React from "react";
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from "@nxtqr/ui";
+import { CheckCircleIcon, ChevronRightIcon, ShieldIcon } from "@nxtqr/icons";
 import {
-  TutorialShell,
+  ArchitectureDiagramView,
   getAllExamples,
   getExampleBySlug,
-  ArchitectureDiagramView,
   OpenInVisualizerButton,
   tutorialRegistry,
+  TutorialShell,
 } from "@/features/system-design-tutorials";
-import { Badge } from "@nxtqr/ui";
-import { ChevronRightIcon, CheckCircleIcon, ShieldIcon } from "@nxtqr/icons";
+import { TutorialComponentIcon } from "@/features/system-design-tutorials/components/tutorial-component-icon";
 
 interface ExamplePageProps {
   params: Promise<{ slug: string }>;
 }
 
+const sectionTitle = "text-lg font-semibold tracking-tight sm:text-xl";
+const fieldLabel = "font-mono text-[11px] font-medium text-text-muted";
+
 export async function generateStaticParams() {
-  const examples = getAllExamples();
-  return examples.map((e) => ({
-    slug: e.slug,
-  }));
+  return getAllExamples().map(({ slug }) => ({ slug }));
 }
 
 export default async function ExampleDetailPage({ params }: ExamplePageProps) {
   const { slug } = await params;
   const example = getExampleBySlug(slug);
-
-  if (!example) {
-    notFound();
-  }
+  if (!example) notFound();
 
   const tocItems = [
-    { id: "diagram", label: "Interactive Diagram" },
-    { id: "requirements", label: "System Requirements" },
-    { id: "request-flow", label: "Request Flow Sequence" },
-    { id: "decisions", label: "Key Architectural Decisions" },
-    { id: "tradeoffs", label: "Trade-offs Analysis" },
-    { id: "components", label: "Component Breakdown" },
+    { id: "diagram", label: "Architecture canvas" },
+    ...(example.flowSteps.length ? [{ id: "request-flow", label: "Trace a request" }] : []),
+    { id: "requirements", label: "System requirements" },
+    { id: "decisions", label: "Engineering decisions" },
+    { id: "tradeoffs", label: "Architectural trade-offs" },
+    { id: "components", label: "Infrastructure components" },
+  ];
+
+  const scale = [
+    { label: "Throughput", value: example.scale.requestsPerSec },
+    { label: "Storage growth", value: example.scale.storagePerDay },
+    { label: "Target latency", value: example.scale.latencyTarget },
+    { label: "Availability SLA", value: example.scale.availabilityTarget },
+  ].filter(({ value }) => value);
+
+  const requirements = [
+    { title: "Functional", items: example.requirements.functional, Icon: CheckCircleIcon },
+    { title: "Non-functional", items: example.requirements.nonFunctional, Icon: ShieldIcon },
   ];
 
   return (
@@ -50,215 +58,168 @@ export default async function ExampleDetailPage({ params }: ExamplePageProps) {
       ]}
       tocItems={tocItems}
     >
-      <div className="space-y-12 pb-20">
-        {/* Header */}
-        <div className="space-y-4 border-b border-border-default pb-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="font-mono text-[9px] border-border-default text-text-muted">
-                  {example.category}
-                </Badge>
-                <Badge variant="outline" className="font-mono text-[9px] border-border-hover bg-surface-03 text-foreground font-semibold">
+      <article className="min-w-0 space-y-8 pb-8 [container-type:inline-size] sm:space-y-10 sm:pb-12">
+        <header className="space-y-5 border-b border-border-default pb-5 sm:pb-6">
+          <div className="grid min-w-0 items-end gap-4 [@container(min-width:42rem)]:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="min-w-0 space-y-2">
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                <span className={fieldLabel}>{example.category}</span>
+                <Badge variant="secondary" className="font-mono">
                   {example.difficulty}
                 </Badge>
               </div>
-
-              <h1 className="text-2xl sm:text-3xl font-sans font-bold text-foreground">
+              <h1 className="text-balance break-words text-2xl font-semibold tracking-tight [@container(min-width:32rem)]:text-3xl">
                 {example.title}
               </h1>
-              <p className="font-sans text-xs sm:text-sm text-text-secondary leading-relaxed max-w-3xl">
+              <p className="max-w-prose break-words text-sm leading-relaxed text-text-secondary">
                 {example.subtitle}
               </p>
             </div>
-
-            <div className="flex items-center gap-2">
-              <OpenInVisualizerButton
-                document={example.graphDocument}
-                templateSlug={example.slug}
-                size="sm"
-                label="Open in Visualizer"
-              />
-            </div>
+            <OpenInVisualizerButton
+              document={example.graphDocument}
+              templateSlug={example.slug}
+              size="sm"
+            />
           </div>
 
-          {/* Scale telemetry pills */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 font-mono text-[11px]">
-            {example.scale.requestsPerSec && (
-              <div className="p-2.5 rounded bg-surface-01 border border-border-default">
-                <span className="text-text-disabled block text-[9px] uppercase">Throughput</span>
-                <span className="text-foreground font-semibold">{example.scale.requestsPerSec}</span>
-              </div>
-            )}
-            {example.scale.storagePerDay && (
-              <div className="p-2.5 rounded bg-surface-01 border border-border-default">
-                <span className="text-text-disabled block text-[9px] uppercase">Storage Growth</span>
-                <span className="text-foreground font-semibold">{example.scale.storagePerDay}</span>
-              </div>
-            )}
-            {example.scale.latencyTarget && (
-              <div className="p-2.5 rounded bg-surface-01 border border-border-default">
-                <span className="text-text-disabled block text-[9px] uppercase">Target Latency</span>
-                <span className="text-foreground font-semibold">{example.scale.latencyTarget}</span>
-              </div>
-            )}
-            {example.scale.availabilityTarget && (
-              <div className="p-2.5 rounded bg-surface-01 border border-border-default">
-                <span className="text-text-disabled block text-[9px] uppercase">Availability SLA</span>
-                <span className="text-foreground font-semibold">{example.scale.availabilityTarget}</span>
-              </div>
-            )}
-          </div>
-        </div>
+          {scale.length > 0 && (
+            <Card className="min-w-0 border-border-default bg-surface-01">
+              <dl className="grid gap-x-4 gap-y-3 px-3 py-2.5 [@container(min-width:16rem)]:grid-cols-2 [@container(min-width:36rem)]:grid-cols-4 sm:px-4">
+                {scale.map(({ label, value }) => (
+                  <div key={label} className="min-w-0">
+                    <dt className={fieldLabel}>{label}</dt>
+                    <dd className="mt-0.5 break-words font-mono text-xs font-medium text-foreground">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Card>
+          )}
+        </header>
 
-        {/* 1. Interactive Diagram View */}
-        <section id="diagram" className="space-y-4">
+        <section id="diagram" aria-labelledby="diagram-title" className="scroll-mt-4 space-y-3">
           <div className="space-y-1">
-            <h2 className="text-xl font-sans font-bold text-foreground">
+            <h2 id="diagram-title" className={sectionTitle}>
               Architecture canvas
             </h2>
-            <p className="text-xs text-text-muted font-sans">
-              Inspect all components, zoom and pan, or select any request step below to highlight the active path trace.
+            <p className="text-sm leading-relaxed text-text-muted">
+              Pan and zoom to inspect the diagram, or select a request step to trace its path.
             </p>
           </div>
-
           <ArchitectureDiagramView example={example} />
         </section>
 
-        {/* 2. System Requirements */}
-        <section id="requirements" className="space-y-4">
-          <h2 className="text-xl font-sans font-bold text-foreground">
-            System Design Requirements
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-md bg-surface-01 border border-border-default space-y-3">
-              <div className="font-mono text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border-subtle pb-2">
-                Functional Requirements
-              </div>
-              <ul className="space-y-2">
-                {example.requirements.functional.map((req, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs font-sans text-text-secondary leading-relaxed">
-                    <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>{req}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="p-4 rounded-md bg-surface-01 border border-border-default space-y-3">
-              <div className="font-mono text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border-subtle pb-2">
-                Non-Functional Requirements
-              </div>
-              <ul className="space-y-2">
-                {example.requirements.nonFunctional.map((req, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs font-sans text-text-secondary leading-relaxed">
-                    <ShieldIcon className="w-3.5 h-3.5 text-text-muted shrink-0 mt-0.5" />
-                    <span>{req}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* 4. Key Architectural Decisions */}
-        <section id="decisions" className="space-y-4">
-          <div className="space-y-1">
-            <h2 className="text-xl font-sans font-bold text-foreground">
-              Key Engineering Decisions
-            </h2>
-            <p className="text-xs text-text-muted font-sans">
-              Deliberate choices between competing designs and rejected alternatives.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {example.keyDecisions.map((dec, idx) => (
-              <div key={idx} className="p-4 rounded-md bg-surface-01 border border-border-default space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-sans text-xs font-bold text-foreground">
-                    {dec.topic}
-                  </span>
-                  <Badge variant="outline" className="font-mono text-[9px] border-border-hover bg-surface-02 text-foreground">
-                    Decision: {dec.decision}
-                  </Badge>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs font-sans">
-                  <div className="p-2.5 rounded bg-surface-02 border border-border-subtle space-y-1">
-                    <span className="font-mono text-[10px] text-text-disabled uppercase font-semibold">
-                      Why this was chosen:
-                    </span>
-                    <p className="text-text-secondary leading-snug">{dec.why}</p>
-                  </div>
-                  <div className="p-2.5 rounded bg-surface-02 border border-border-subtle space-y-1">
-                    <span className="font-mono text-[10px] text-text-disabled uppercase font-semibold">
-                      Alternative Rejected:
-                    </span>
-                    <p className="text-text-muted leading-snug">{dec.alternativeRejected}</p>
-                  </div>
-                </div>
-              </div>
+        <section id="requirements" className="scroll-mt-4 space-y-3">
+          <h2 className={sectionTitle}>System design requirements</h2>
+          <div className="grid gap-3 [@container(min-width:36rem)]:grid-cols-2">
+            {requirements.map(({ title, items, Icon }) => (
+              <Card key={title} className="min-w-0 border-border-default bg-surface-01">
+                <CardHeader className="p-3 sm:p-4">
+                  <CardTitle className="flex items-center gap-2 leading-snug">
+                    <Icon size={16} className="shrink-0 text-text-muted" />
+                    {title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-3 pb-3 pt-0 sm:px-4 sm:pb-4">
+                  <ul className="list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-text-secondary marker:text-text-muted">
+                    {items.map((requirement, index) => (
+                      <li key={index} className="break-words">
+                        {requirement}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </section>
 
-        {/* 5. Trade-offs Analysis */}
-        <section id="tradeoffs" className="space-y-4">
-          <h2 className="text-xl font-sans font-bold text-foreground">
-            Architectural Trade-offs
-          </h2>
-          <div className="p-4 rounded-md bg-surface-01 border border-border-default space-y-2">
-            <ul className="space-y-2 text-xs font-sans text-text-secondary list-disc pl-5 leading-relaxed">
-              {example.tradeoffs.map((item, idx) => (
-                <li key={idx}>{item}</li>
-              ))}
-            </ul>
-          </div>
+        <section id="decisions" className="scroll-mt-4 space-y-3">
+          <h2 className={sectionTitle}>Key engineering decisions</h2>
+          {example.keyDecisions.map((decision, index) => (
+            <Card key={index} className="min-w-0 border-border-default bg-surface-01">
+              <CardHeader className="space-y-2 p-3 sm:p-4">
+                <CardTitle className="break-words font-semibold leading-snug">
+                  {decision.topic}
+                </CardTitle>
+                <dl className="space-y-1">
+                  <dt className={fieldLabel}>Chosen design</dt>
+                  <dd className="break-words text-sm font-medium leading-snug text-foreground">
+                    {decision.decision}
+                  </dd>
+                </dl>
+              </CardHeader>
+              <CardContent className="px-3 pb-3 pt-0 sm:px-4 sm:pb-4">
+                <dl className="grid gap-2 [@container(min-width:36rem)]:grid-cols-2">
+                  <div className="min-w-0 space-y-1 rounded-md border border-border-subtle bg-surface-02 p-2.5">
+                    <dt className={fieldLabel}>Why it was chosen</dt>
+                    <dd className="break-words text-sm leading-relaxed text-text-secondary">
+                      {decision.why}
+                    </dd>
+                  </div>
+                  <div className="min-w-0 space-y-1 rounded-md border border-border-subtle bg-surface-02 p-2.5">
+                    <dt className={fieldLabel}>Rejected alternative</dt>
+                    <dd className="break-words text-sm leading-relaxed text-text-secondary">
+                      {decision.alternativeRejected}
+                    </dd>
+                  </div>
+                </dl>
+              </CardContent>
+            </Card>
+          ))}
         </section>
 
-        {/* 6. Component Breakdown Table */}
-        <section id="components" className="space-y-4">
-          <div className="space-y-1">
-            <h2 className="text-xl font-sans font-bold text-foreground">
-              Featured Infrastructure Components
-            </h2>
-            <p className="text-xs text-text-muted font-sans">
-              Core components powering this topology. Click any component to inspect its dedicated reference guide.
-            </p>
-          </div>
+        <section id="tradeoffs" className="scroll-mt-4 space-y-3">
+          <h2 className={sectionTitle}>Architectural trade-offs</h2>
+          <Card className="border-border-default bg-surface-01">
+            <CardContent className="p-3 sm:p-4">
+              <ul className="list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-text-secondary marker:text-text-muted">
+                {example.tradeoffs.map((item, index) => (
+                  <li key={index} className="break-words">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {example.featuredComponentIds.map((cId) => {
-              const comp = tutorialRegistry.getComponentTutorial(cId);
-              if (!comp) return null;
-
+        <section id="components" className="scroll-mt-4 space-y-3">
+          <h2 className={sectionTitle}>Featured infrastructure components</h2>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] gap-2">
+            {example.featuredComponentIds.map((id) => {
+              const component = tutorialRegistry.getComponentTutorial(id);
+              if (!component) return null;
 
               return (
-                <Link
-                  key={comp.id}
-                  href={`/tutorial/system-design/components/${comp.id}`}
-                  className="p-3 rounded-md bg-surface-01 border border-border-default hover:border-border-hover hover:bg-surface-02 transition-colors flex items-center gap-3 group"
+                <Button
+                  key={component.id}
+                  asChild
+                  variant="outline"
+                  className="group h-auto min-h-12 min-w-0 justify-start gap-2.5 whitespace-normal p-2 text-left"
                 >
-                  <div className="w-10 h-10 rounded-md bg-surface-02 border border-border-default group-hover:border-border-strong group-hover:bg-surface-03 transition-all flex items-center justify-center shrink-0 shadow-level-1">
-                    <TutorialComponentIcon slug={comp.iconSlug} size={24} className="transition-transform duration-150 group-hover:scale-105" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-sans text-xs font-semibold text-foreground group-hover:underline truncate">
-                      {comp.name}
-                    </div>
-                    <div className="font-mono text-[9px] text-text-disabled truncate">
-                      {comp.categoryName}
-                    </div>
-                  </div>
-                  <ChevronRightIcon className="w-3.5 h-3.5 text-text-disabled group-hover:text-foreground shrink-0" />
-                </Link>
+                  <Link href={`/tutorial/system-design/components/${component.id}`}>
+                    <span className="grid size-8 shrink-0 place-items-center rounded-md border border-border-subtle bg-surface-02">
+                      <TutorialComponentIcon slug={component.iconSlug} size={20} />
+                    </span>
+                    <span className="min-w-0 flex-1 space-y-0.5 break-words">
+                      <span className="block font-semibold">{component.name}</span>
+                      <span className="block text-[11px] font-normal text-text-muted">
+                        {component.categoryName}
+                      </span>
+                    </span>
+                    <ChevronRightIcon
+                      size={14}
+                      className="shrink-0 text-text-muted group-hover:text-foreground"
+                    />
+                  </Link>
+                </Button>
               );
             })}
           </div>
         </section>
-      </div>
+      </article>
     </TutorialShell>
   );
 }

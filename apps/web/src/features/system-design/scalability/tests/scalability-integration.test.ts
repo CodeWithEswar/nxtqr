@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
 import {
   scalabilityRecommendationsEngine,
+  DEFAULT_WORKLOAD_SCENARIOS,
 } from "@nxtqr/architecture-intelligence";
 import { PRESET_WORKLOAD_SCENARIOS } from "../hooks/use-scalability-recommendations";
 import type { BaseNode, BaseEdge } from "@/features/graph-engine/schemas/graph.schema";
@@ -149,5 +150,45 @@ describe("Scalability Recommendations & What-If Planner - Store & Engine Integra
     useGraphEditorStore.getState().redo();
     const redoneNode = useGraphEditorStore.getState().nodes.find((n) => n.id === "app_server");
     expect(redoneNode?.data?.replicas).toBeGreaterThan(1);
+  });
+
+  it("uses normalized workload parameters for database recommendations from a UI preset", () => {
+    const nodes: BaseNode[] = [
+      {
+        id: "read_client",
+        type: "infrastructure",
+        position: { x: 0, y: 0 },
+        data: { componentType: "web-browser" },
+      },
+      {
+        id: "read_db",
+        type: "infrastructure",
+        position: { x: 300, y: 0 },
+        data: { componentType: "relational-database", declaredCapacityRps: 100, declaredCapacityOps: 100 },
+      },
+    ];
+    const edges: BaseEdge[] = [
+      { id: "read_queries", source: "read_client", target: "read_db", data: { protocol: "postgres" } },
+    ];
+    const preset = PRESET_WORKLOAD_SCENARIOS.find(({ id }) => id === "read_heavy")!;
+    const logError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const report = scalabilityRecommendationsEngine.evaluateGraph(nodes, edges, preset);
+      expect(logError).not.toHaveBeenCalled();
+      expect(report.recommendations.find(({ strategy }) => strategy === "read-replication"))
+        .toMatchObject({ feasibilityReasoning: expect.stringContaining("95%") });
+
+      const workload = DEFAULT_WORKLOAD_SCENARIOS.read_heavy;
+      const writeReport = scalabilityRecommendationsEngine.evaluateGraph(nodes, edges, {
+        ...workload,
+        parameters: { ...workload.parameters, readRatio: 0.2 },
+      });
+      expect(writeReport.recommendations.some(({ strategy }) => strategy === "read-replication"))
+        .toBe(false);
+      expect(writeReport.recommendations.some(({ strategy }) => strategy === "sharding"))
+        .toBe(true);
+    } finally {
+      logError.mockRestore();
+    }
   });
 });

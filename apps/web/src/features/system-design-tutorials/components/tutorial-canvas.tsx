@@ -15,7 +15,7 @@ import {
 } from "@xyflow/react";
 import type { BaseEdge, BaseNode } from "@nxtqr/graph-schema";
 import { cn } from "@nxtqr/utils";
-import { Button } from "@nxtqr/ui";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@nxtqr/ui";
 import { RefreshIcon } from "@nxtqr/icons";
 import type { GraphNodeData } from "@/features/graph-engine/components/graph-node";
 import { GraphCanvasSurface } from "@/features/graph-engine/components/graph-canvas-surface";
@@ -229,17 +229,24 @@ export function TutorialCanvas({
       >
         <FlowFocus focusIds={focusIds} />
         {Object.keys(layout).length > 0 && (
-          <Panel position="top-right">
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="gap-1.5"
-              onClick={resetLayout}
-            >
-              <RefreshIcon className="size-3.5" />
-              Reset layout
-            </Button>
+          <Panel position="bottom-right" className="!m-3">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="outline"
+                  aria-label="Reset layout"
+                  className="text-text-secondary"
+                  onClick={resetLayout}
+                >
+                  <RefreshIcon size={14} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" align="end">
+                Reset layout
+              </TooltipContent>
+            </Tooltip>
           </Panel>
         )}
       </GraphCanvasSurface>

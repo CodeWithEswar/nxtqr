@@ -11,14 +11,14 @@ export const CliClientIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokeWindow = isColored ? "#2563EB" : "#A3A3A3";
-  const fillTitleBar = isColored ? "#1E3A8A" : "#262626";
-  const fillDot1 = isColored ? "#38BDF8" : "#E5E5E5";
-  const fillDot2 = isColored ? "#60A5FA" : "#A3A3A3";
-  const fillDot3 = isColored ? "#A78BFA" : "#737373";
-  const strokePrompt = isColored ? "#38BDF8" : "#E5E5E5";
-  const fillCursor = isColored ? "#60A5FA" : "#D4D4D4";
-  const strokeOutput = isColored ? "#CBD5E1" : "#737373";
+  const strokeWindow = isColored ? "#60A5FA" : "#D4D4D4";
+  const fillTitleBar = isColored ? "#1D4ED8" : "#262626";
+  const fillDot1 = isColored ? "#38BDF8" : "#FFFFFF";
+  const fillDot2 = isColored ? "#60A5FA" : "#D4D4D4";
+  const fillDot3 = isColored ? "#A78BFA" : "#A3A3A3";
+  const strokePrompt = isColored ? "#38BDF8" : "#FFFFFF";
+  const fillCursor = isColored ? "#60A5FA" : "#E5E5E5";
+  const strokeOutput = isColored ? "#CBD5E1" : "#A3A3A3";
 
   return (
     <svg

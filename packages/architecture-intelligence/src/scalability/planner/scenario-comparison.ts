@@ -1,7 +1,7 @@
 import type { BaseNode, BaseEdge } from "@nxtqr/graph-schema";
 import type { ScenarioComparisonResult } from "../schemas/scalability.schemas";
 import { bottleneckEngine } from "../../bottlenecks/engine/bottleneck-engine";
-import { toBottleneckScenario } from "../contracts/scalability.types";
+import { toBottleneckScenario, type ScalabilityScenarioInput } from "../contracts/scalability.types";
 
 export class ScenarioComparator {
   public static compare(
@@ -9,7 +9,7 @@ export class ScenarioComparator {
     originalEdges: BaseEdge[],
     proposedNodes: BaseNode[],
     proposedEdges: BaseEdge[],
-    scenario: any
+    scenario: ScalabilityScenarioInput
   ): ScenarioComparisonResult {
     const bottleneckScenario = toBottleneckScenario(scenario);
     // 1. Analyze original graph

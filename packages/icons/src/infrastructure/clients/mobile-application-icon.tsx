@@ -11,15 +11,15 @@ export const MobileApplicationIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokeChassis = isColored ? "#2563EB" : "#A3A3A3";
-  const strokeSpeaker = isColored ? "#60A5FA" : "#737373";
-  const fillScreen = isColored ? "#0D1526" : "#141414";
+  const strokeChassis = isColored ? "#60A5FA" : "#D4D4D4";
+  const strokeSpeaker = isColored ? "#93C5FD" : "#A3A3A3";
+  const fillScreen = isColored ? "#0F172A" : "#141414";
   const fillApp1 = isColored ? "#60A5FA" : "#E5E5E5";
-  const fillApp2 = isColored ? "#38BDF8" : "#A3A3A3";
-  const fillApp3 = isColored ? "#A78BFA" : "#737373";
-  const fillApp4 = isColored ? "#2563EB" : "#404040";
-  const fillHomeBar = isColored ? "#CBD5E1" : "#858585";
-  const fillButton = isColored ? "#38BDF8" : "#A3A3A3";
+  const fillApp2 = isColored ? "#38BDF8" : "#D4D4D4";
+  const fillApp3 = isColored ? "#A78BFA" : "#A3A3A3";
+  const fillApp4 = isColored ? "#3B82F6" : "#737373";
+  const fillHomeBar = isColored ? "#CBD5E1" : "#A3A3A3";
+  const fillButton = isColored ? "#38BDF8" : "#E5E5E5";
 
   return (
     <svg

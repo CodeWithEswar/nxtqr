@@ -11,12 +11,12 @@ export const IotDeviceIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokeChip = isColored ? "#2563EB" : "#A3A3A3";
-  const strokePins = isColored ? "#60A5FA" : "#737373";
-  const fillSilicon = isColored ? "#1E3A8A" : "#262626";
-  const strokeSilicon = isColored ? "#38BDF8" : "#A3A3A3";
-  const fillCore = isColored ? "#A78BFA" : "#E5E5E5";
-  const fillDot = isColored ? "#38BDF8" : "#737373";
+  const strokeChip = isColored ? "#60A5FA" : "#D4D4D4";
+  const strokePins = isColored ? "#93C5FD" : "#A3A3A3";
+  const fillSilicon = isColored ? "#1E293B" : "#262626";
+  const strokeSilicon = isColored ? "#38BDF8" : "#E5E5E5";
+  const fillCore = isColored ? "#A78BFA" : "#FFFFFF";
+  const fillDot = isColored ? "#38BDF8" : "#A3A3A3";
 
   return (
     <svg

@@ -34,16 +34,22 @@ export type {
   ScalabilityAnalysisReport,
 };
 
-export function toBottleneckScenario(
-  scenario: any
-): BottleneckWorkloadScenario {
-  if (scenario && scenario.parameters && typeof scenario.parameters.ingressRps === "number") {
-    return scenario as BottleneckWorkloadScenario;
-  }
+export type ScalabilityScenarioInput =
+  | BottleneckWorkloadScenario
+  | {
+      id: string;
+      name?: string;
+      description?: string;
+      trafficMultiplier?: number;
+      concurrentUsersMultiplier?: number;
+    };
+
+export function toBottleneckScenario(scenario?: ScalabilityScenarioInput): BottleneckWorkloadScenario {
+  if (scenario && "parameters" in scenario) return scenario;
+
   const id = scenario?.id || "normal_traffic";
-  if (DEFAULT_WORKLOAD_SCENARIOS[id]) {
-    return DEFAULT_WORKLOAD_SCENARIOS[id];
-  }
+  const preset = DEFAULT_WORKLOAD_SCENARIOS[id];
+  if (preset?.parameters) return preset;
   const trafficMultiplier = Number(scenario?.trafficMultiplier ?? 1.0);
   const concurrentUsersMultiplier = Number(scenario?.concurrentUsersMultiplier ?? 1.0);
   return {

@@ -107,10 +107,10 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="w-12 h-12 rounded-md bg-surface-02 border border-border-default group-hover:border-border-strong group-hover:bg-surface-03 transition-all flex items-center justify-center shrink-0 shadow-level-1">
+                      <div className="size-14 sm:size-16 rounded-md bg-surface-02 border border-border-default group-hover:border-border-strong group-hover:bg-surface-03 transition-all flex items-center justify-center shrink-0 shadow-level-1 p-2">
                         <TutorialComponentIcon
                           slug={comp.iconSlug}
-                          size={32}
+                          size={42}
                           className="transition-transform duration-150 group-hover:scale-105"
                         />
                       </div>

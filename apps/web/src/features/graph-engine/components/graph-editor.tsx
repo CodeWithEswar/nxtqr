@@ -22,9 +22,10 @@ import { ReactFlowProvider } from "@xyflow/react";
 export interface GraphEditorProps {
   projectId?: string | null;
   className?: string;
+  fitViewOnMount?: boolean;
 }
 
-function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
+function InnerGraphEditor({ projectId, className, fitViewOnMount }: GraphEditorProps) {
   const { autosaveStatus } = useGraphPersistence(projectId);
 
   const title = useGraphEditorStore((s) => s.title);
@@ -136,7 +137,7 @@ function InnerGraphEditor({ projectId, className }: GraphEditorProps) {
 
         {/* Center: Graph Canvas Viewport */}
         <main className="flex-1 relative h-full w-full overflow-hidden min-h-0">
-          <GraphCanvas />
+          <GraphCanvas fitViewOnMount={fitViewOnMount} />
 
           {/* Mobile Bottom Floating Action Bar & Drawers */}
           <MobileGraphToolbar />

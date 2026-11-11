@@ -11,12 +11,12 @@ export const SinglePageApplicationIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokePrimary = isColored ? "#2563EB" : "#A3A3A3";
-  const fillTitleBar = isColored ? "#1E40AF" : "#262626";
+  const strokePrimary = isColored ? "#60A5FA" : "#D4D4D4";
+  const fillTitleBar = isColored ? "#1D4ED8" : "#262626";
   const strokeLoop = isColored ? "#38BDF8" : "#E5E5E5";
   const fillBlock1 = isColored ? "#60A5FA" : "#D4D4D4";
-  const fillBlock2 = isColored ? "#A78BFA" : "#858585";
-  const fillBlock3 = isColored ? "#38BDF8" : "#525252";
+  const fillBlock2 = isColored ? "#A78BFA" : "#A3A3A3";
+  const fillBlock3 = isColored ? "#38BDF8" : "#737373";
 
   return (
     <svg

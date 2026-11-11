@@ -6,6 +6,7 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@nxtqr/ui";
 import { ExternalLinkIcon, SpinnerIcon } from "@nxtqr/icons";
 import { cn } from "@nxtqr/utils";
 import { GraphDocumentSchema, type GraphDocument } from "@nxtqr/graph-schema";
+import { TUTORIAL_PREVIEW_STORAGE_KEY } from "../lib/tutorial-workspace";
 
 export interface OpenInVisualizerButtonProps {
   document: GraphDocument;
@@ -40,14 +41,14 @@ export function OpenInVisualizerButton({
 
     try {
       setIsLoading(true);
-      // Store document in sessionStorage for immediate hydration in the workspace
-      if (typeof window !== "undefined") {
-        window.sessionStorage.setItem("nxtqr_import_document", JSON.stringify(parsed.data));
+      const params = new URLSearchParams();
+      if (templateSlug) {
+        params.set("template", templateSlug);
+      } else {
+        window.sessionStorage.setItem(TUTORIAL_PREVIEW_STORAGE_KEY, JSON.stringify(parsed.data));
+        params.set("tutorialPreview", parsed.data.id);
       }
-      const targetUrl = templateSlug
-        ? `/workspace?template=${encodeURIComponent(templateSlug)}`
-        : "/workspace";
-      router.push(targetUrl);
+      router.push(`/workspace?${params}`);
     } catch (err) {
       console.error("[OpenInVisualizer] Failed to serialize template graph:", err);
       setIsLoading(false);
@@ -55,7 +56,8 @@ export function OpenInVisualizerButton({
     }
   }, [document, templateSlug, router]);
 
-  const actionLabel = isLoading ? "Opening visualizer…" : label;
+  const loadingLabel = "Opening visualizer…";
+  const actionLabel = isLoading ? loadingLabel : label;
   const Icon = isLoading ? SpinnerIcon : ExternalLinkIcon;
   const action = (
     <Button
@@ -64,11 +66,19 @@ export function OpenInVisualizerButton({
       size={iconOnly ? "icon-sm" : size}
       onClick={handleOpen}
       disabled={isLoading}
+      aria-busy={isLoading}
       aria-label={iconOnly ? actionLabel : undefined}
       className={cn("gap-1.5", iconOnly && "text-text-secondary", className)}
     >
       <Icon size={14} className={cn("shrink-0", isLoading && "motion-safe:animate-spin")} />
-      {!iconOnly && <span>{actionLabel}</span>}
+      {!iconOnly && (
+        <span className="grid">
+          <span className={cn("col-start-1 row-start-1", isLoading && "invisible")}>{label}</span>
+          <span className={cn("col-start-1 row-start-1", !isLoading && "invisible")}>
+            {loadingLabel}
+          </span>
+        </span>
+      )}
     </Button>
   );
 
@@ -84,6 +94,9 @@ export function OpenInVisualizerButton({
       ) : (
         action
       )}
+      <span role="status" className="sr-only">
+        {isLoading ? actionLabel : ""}
+      </span>
       {error && (
         <p role="alert" className="mt-1 text-xs text-text-secondary">
           {error}

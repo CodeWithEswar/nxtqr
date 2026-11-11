@@ -24,9 +24,10 @@ import type { BaseEdge, BaseNode, NodePosition } from "../schemas/graph.schema";
 
 export interface GraphCanvasProps {
   className?: string;
+  fitViewOnMount?: boolean;
 }
 
-function InnerGraphCanvas({ className }: GraphCanvasProps) {
+function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   // Bind global keyboard shortcuts (Undo, Redo, Copy, Paste, Delete, Select All)
   useGraphShortcuts();
 
@@ -51,6 +52,7 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
   const snapToGrid = useGraphEditorStore((s) => s.snapToGrid);
   const showMinimap = useGraphEditorStore((s) => s.showMinimap);
   const toggleMinimap = useGraphEditorStore((s) => s.toggleMinimap);
+  const { getInternalNode, setCenter, screenToFlowPosition } = useReactFlow();
 
   // Track initial node positions at drag start to group continuous drag into a single history transaction
   const dragStartPositions = React.useRef<Map<string, NodePosition>>(new Map());
@@ -61,6 +63,7 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
       id: n.id,
       type: n.type || "generic",
       position: n.position,
+      measured: getInternalNode(n.id)?.measured,
       selected: selectedNodeIds.includes(n.id),
       data: {
         label: n.label,
@@ -71,7 +74,7 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
         ...n.data,
       },
     }));
-  }, [nodes, selectedNodeIds]);
+  }, [getInternalNode, nodes, selectedNodeIds]);
 
   // Map NXTQR edges to React Flow format
   const flowEdges = React.useMemo(() => {
@@ -95,7 +98,11 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
   // Node Changes (Dragging, Selection)
   const onNodesChange = React.useCallback(
     (changes: NodeChange[]) => {
-      const updated = applyNodeChanges(changes, flowNodes);
+      // React Flow owns these measurements. Rewriting the graph here discards the
+      // dimensions and port bounds React Flow just measured.
+      const graphChanges = changes.filter((change) => change.type !== "dimensions");
+      if (graphChanges.length === 0) return;
+      const updated = applyNodeChanges(graphChanges, flowNodes);
       const mapped = updated.map((fn) => {
         const orig = nodes.find((n) => n.id === fn.id);
         return {
@@ -264,8 +271,6 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
     [selectNodes],
   );
 
-  const { setCenter, screenToFlowPosition } = useReactFlow();
-
   const onDragOver = React.useCallback((event: React.DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "copy";
@@ -332,6 +337,7 @@ function InnerGraphCanvas({ className }: GraphCanvasProps) {
         nodes={flowNodes}
         edges={flowEdges}
         gridType={gridType}
+        fitView={fitViewOnMount}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeDragStart={onNodeDragStart}

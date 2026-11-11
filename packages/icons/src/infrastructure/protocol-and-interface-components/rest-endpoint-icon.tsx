@@ -10,7 +10,7 @@ export const RestEndpointIcon: React.FC<InfrastructureIconProps> = ({
   const isMono = variant === "monochrome";
 
   const boundaryFill = isMono ? "#262626" : "#0E2138";
-  const boundaryBorder = isMono ? "#525252" : "#2563EB";
+  const boundaryBorder = isMono ? "#525252" : "#3B82F6";
   const primaryBlue = isMono ? "#FFFFFF" : "#60A5FA";
   const secondaryBlue = isMono ? "#A3A3A3" : "#BFDBFE";
   const pillFill = isMono ? "#404040" : "#1D4ED8";

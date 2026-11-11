@@ -11,15 +11,15 @@ export const ServerRenderedAppIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokeServer = isColored ? "#2563EB" : "#A3A3A3";
-  const strokeClient = isColored ? "#60A5FA" : "#D4D4D4";
-  const fillSlot1 = isColored ? "#38BDF8" : "#E5E5E5";
-  const fillSlot2 = isColored ? "#60A5FA" : "#A3A3A3";
-  const fillSlot3 = isColored ? "#A78BFA" : "#737373";
+  const strokeServer = isColored ? "#60A5FA" : "#D4D4D4";
+  const strokeClient = isColored ? "#93C5FD" : "#E5E5E5";
+  const fillSlot1 = isColored ? "#38BDF8" : "#FFFFFF";
+  const fillSlot2 = isColored ? "#60A5FA" : "#D4D4D4";
+  const fillSlot3 = isColored ? "#A78BFA" : "#A3A3A3";
   const strokeArrow = isColored ? "#38BDF8" : "#E5E5E5";
   const fillPageHeader = isColored ? "#2563EB" : "#333333";
-  const fillDomBlock1 = isColored ? "#38BDF8" : "#858585";
-  const fillDomBlock2 = isColored ? "#A78BFA" : "#525252";
+  const fillDomBlock1 = isColored ? "#38BDF8" : "#A3A3A3";
+  const fillDomBlock2 = isColored ? "#A78BFA" : "#737373";
 
   return (
     <svg

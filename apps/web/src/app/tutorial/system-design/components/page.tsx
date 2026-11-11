@@ -24,6 +24,7 @@ export default function ComponentsDirectoryPage() {
 
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
   const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [iconVariant, setIconVariant] = React.useState<"colored" | "monochrome">("colored");
 
   const filteredComponents = React.useMemo(() => {
     return allTutorials.filter((item) => {
@@ -70,8 +71,8 @@ export default function ComponentsDirectoryPage() {
 
         {/* Filter Controls Bar */}
         <div className="p-3 rounded-md bg-surface-01 border border-border-default flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 w-full sm:w-auto flex-1">
-            <div className="relative flex-1 max-w-md">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto flex-1">
+            <div className="relative flex-1 min-w-[220px] max-w-md">
               <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-muted" />
               <Input
                 type="text"
@@ -106,6 +107,34 @@ export default function ComponentsDirectoryPage() {
                 ))}
               </SelectContent>
             </Select>
+
+            {/* Icon Style Toggle */}
+            <div className="flex items-center rounded-md border border-border-default bg-surface-02 p-0.5 text-xs font-mono">
+              <button
+                type="button"
+                onClick={() => setIconVariant("colored")}
+                className={`px-2.5 py-1 rounded transition-colors ${
+                  iconVariant === "colored"
+                    ? "bg-surface-04 text-foreground font-semibold shadow-level-1"
+                    : "text-text-muted hover:text-foreground"
+                }`}
+                title="Vibrant high-contrast colored icons"
+              >
+                Vibrant
+              </button>
+              <button
+                type="button"
+                onClick={() => setIconVariant("monochrome")}
+                className={`px-2.5 py-1 rounded transition-colors ${
+                  iconVariant === "monochrome"
+                    ? "bg-surface-04 text-foreground font-semibold shadow-level-1"
+                    : "text-text-muted hover:text-foreground"
+                }`}
+                title="Monochrome high-contrast icons"
+              >
+                Monochrome
+              </button>
+            </div>
           </div>
 
           <div className="font-mono text-xs text-text-muted shrink-0">
@@ -130,10 +159,8 @@ export default function ComponentsDirectoryPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {filteredComponents.map((comp) => {
-
-
               return (
                 <Link
                   key={comp.id}
@@ -142,10 +169,11 @@ export default function ComponentsDirectoryPage() {
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="w-12 h-12 rounded-md bg-surface-02 border border-border-default group-hover:border-border-strong group-hover:bg-surface-03 transition-all flex items-center justify-center shrink-0 shadow-level-1">
+                      <div className="size-14 sm:size-16 rounded-md bg-surface-02 border border-border-default group-hover:border-border-strong group-hover:bg-surface-03 transition-all flex items-center justify-center shrink-0 shadow-level-1 p-2">
                         <TutorialComponentIcon
                           slug={comp.iconSlug}
-                          size={32}
+                          size={42}
+                          variant={iconVariant}
                           className="transition-transform duration-150 group-hover:scale-105"
                         />
                       </div>

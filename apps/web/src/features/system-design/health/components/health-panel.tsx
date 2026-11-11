@@ -13,6 +13,7 @@ import { Badge, Input, Select, SelectTrigger, SelectValue, SelectContent, Select
 import { cn } from "@nxtqr/utils";
 import { useArchitectureHealth } from "../hooks/use-architecture-health";
 import { HealthFindingCard } from "./health-finding-card";
+import { UnifiedRecommendationList } from "../../recommendations";
 import type { HealthDimension, HealthFinding } from "@nxtqr/architecture-intelligence";
 
 export interface HealthPanelProps {
@@ -53,6 +54,7 @@ export function HealthPanel({
   } = useArchitectureHealth();
 
   const [copied, setCopied] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<"health" | "recommendations">("recommendations");
 
   const handleSelectFinding = (finding: HealthFinding) => {
     focusFinding(finding);
@@ -131,134 +133,172 @@ export function HealthPanel({
         </div>
       </div>
 
-      {/* 2. 6-Dimension Score Grid */}
-      <div className="p-2 border-b border-border-subtle bg-surface-01 grid grid-cols-3 gap-1.5 shrink-0">
-        {DIMENSIONS.map((dim) => {
-          const dimData = report.dimensions[dim.id];
-          const isSelected = dimensionFilter === dim.id;
-          const dimScore = dimData?.score;
-          const dimGrade = dimData?.grade || "N/A";
+      {/* Tab Switcher */}
+      <div className="h-8 px-2 border-b border-border-default bg-surface-02 flex items-center justify-between shrink-0 font-mono text-[11px]">
+        <div className="flex items-center gap-1 w-full">
+          <button
+            type="button"
+            onClick={() => setActiveTab("recommendations")}
+            className={cn(
+              "flex-1 py-1 rounded text-center transition-colors font-medium",
+              activeTab === "recommendations"
+                ? "bg-surface-04 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground hover:bg-surface-03"
+            )}
+          >
+            Recommendations
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("health")}
+            className={cn(
+              "flex-1 py-1 rounded text-center transition-colors font-medium",
+              activeTab === "health"
+                ? "bg-surface-04 text-foreground font-semibold shadow-level-1"
+                : "text-text-muted hover:text-foreground hover:bg-surface-03"
+            )}
+          >
+            Health Findings ({findings.length})
+          </button>
+        </div>
+      </div>
 
-          return (
-            <button
-              key={dim.id}
-              type="button"
-              onClick={() => setDimensionFilter(isSelected ? "all" : dim.id)}
-              className={cn(
-                "p-1.5 rounded-md border text-left transition-colors flex flex-col justify-between",
-                isSelected
-                  ? "border-border-strong bg-surface-03 shadow-level-2"
-                  : "border-border-subtle bg-surface-02 hover:border-border-hover hover:bg-surface-03"
-              )}
-            >
-              <div className="flex items-center justify-between w-full">
-                <span className="font-mono text-[10px] text-text-muted uppercase truncate">
-                  {dim.label}
-                </span>
-                <span
+      {activeTab === "recommendations" ? (
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <UnifiedRecommendationList onFocusNode={onFocusNode} onFocusEdge={onFocusEdge} />
+        </div>
+      ) : (
+        <>
+          {/* 2. 6-Dimension Score Grid */}
+          <div className="p-2 border-b border-border-subtle bg-surface-01 grid grid-cols-3 gap-1.5 shrink-0">
+            {DIMENSIONS.map((dim) => {
+              const dimData = report.dimensions[dim.id];
+              const isSelected = dimensionFilter === dim.id;
+              const dimScore = dimData?.score;
+              const dimGrade = dimData?.grade || "N/A";
+
+              return (
+                <button
+                  key={dim.id}
+                  type="button"
+                  onClick={() => setDimensionFilter(isSelected ? "all" : dim.id)}
                   className={cn(
-                    "font-mono text-[9px] font-bold",
-                    dimScore !== null && dimScore >= 80
-                      ? "text-emerald-400"
-                      : dimScore !== null && dimScore >= 60
-                        ? "text-amber-400"
-                        : dimScore !== null
-                          ? "text-rose-400"
-                          : "text-text-disabled"
+                    "p-1.5 rounded-md border text-left transition-colors flex flex-col justify-between",
+                    isSelected
+                      ? "border-border-strong bg-surface-03 shadow-level-2"
+                      : "border-border-subtle bg-surface-02 hover:border-border-hover hover:bg-surface-03"
                   )}
                 >
-                  {dimGrade}
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between mt-1 w-full font-mono">
-                <span className="text-xs font-bold text-foreground">
-                  {dimScore !== null ? dimScore : "—"}
-                </span>
-                <span className="text-[9px] text-text-disabled">
-                  {dimData?.findings.length || 0} issues
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* 3. Search & Filters */}
-      <div className="p-2 border-b border-border-subtle bg-surface-02 space-y-1.5 shrink-0">
-        <div className="relative">
-          <Input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search findings, rules, assumptions..."
-            className="h-7 text-xs font-sans pl-7 bg-surface-01 border-border-default"
-          />
-          <SearchIcon className="w-3.5 h-3.5 absolute left-2 top-2 text-text-muted pointer-events-none" />
-        </div>
-
-        <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
-          {(["all", "critical", "high", "medium", "low", "info"] as const).map((sev) => (
-            <button
-              key={sev}
-              type="button"
-              onClick={() => setSeverityFilter(sev)}
-              className={cn(
-                "h-6 px-2 rounded-md font-mono text-[10px] uppercase transition-colors shrink-0",
-                severityFilter === sev
-                  ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-1"
-                  : "bg-surface-01 border border-border-default text-text-muted hover:text-foreground"
-              )}
-            >
-              {sev === "all" ? "All" : sev}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <Select
-            value={dimensionFilter}
-            onValueChange={(val) => setDimensionFilter(val as any)}
-          >
-            <SelectTrigger className="h-7 w-full px-2 font-mono text-[11px] bg-surface-01 border-border-default hover:border-border-hover text-foreground">
-              <SelectValue placeholder="All Dimensions" />
-            </SelectTrigger>
-            <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2">
-              <SelectItem value="all">All Dimensions (6)</SelectItem>
-              {DIMENSIONS.map((dim) => (
-                <SelectItem key={dim.id} value={dim.id}>
-                  {dim.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* 4. Findings List */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-0">
-        {findings.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center p-6 text-center text-text-muted">
-            <div className="w-8 h-8 rounded-md bg-surface-02 border border-border-default flex items-center justify-center text-emerald-400 mb-2 shadow-level-1">
-              <CheckCircleIcon className="w-4 h-4" />
-            </div>
-            <h5 className="font-sans text-xs font-semibold text-foreground mb-1">
-              No Architectural Health Risks
-            </h5>
-            <p className="font-sans text-[11px] text-text-muted max-w-[240px] leading-relaxed">
-              The current topology exhibits strong reliability, boundary isolation, and scalable decoupling based on declared modeling assumptions.
-            </p>
+                  <div className="flex items-center justify-between w-full">
+                    <span className="font-mono text-[10px] text-text-muted uppercase truncate">
+                      {dim.label}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-mono text-[9px] font-bold",
+                        dimScore !== null && dimScore >= 80
+                          ? "text-emerald-400"
+                          : dimScore !== null && dimScore >= 60
+                            ? "text-amber-400"
+                            : dimScore !== null
+                              ? "text-rose-400"
+                              : "text-text-disabled"
+                      )}
+                    >
+                      {dimGrade}
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between mt-1 w-full font-mono">
+                    <span className="text-xs font-bold text-foreground">
+                      {dimScore !== null ? dimScore : "—"}
+                    </span>
+                    <span className="text-[9px] text-text-disabled">
+                      {dimData?.findings.length || 0} issues
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
-        ) : (
-          findings.map((f) => (
-            <HealthFindingCard
-              key={f.id}
-              finding={f}
-              isSelected={activeFindingId === f.id}
-              onSelect={handleSelectFinding}
-              onOpenInspector={onFocusNode}
-            />
-          ))
-        )}
-      </div>
+
+          {/* 3. Search & Filters */}
+          <div className="p-2 border-b border-border-subtle bg-surface-02 space-y-1.5 shrink-0">
+            <div className="relative">
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search findings, rules, assumptions..."
+                className="h-7 text-xs font-sans pl-7 bg-surface-01 border-border-default"
+              />
+              <SearchIcon className="w-3.5 h-3.5 absolute left-2 top-2 text-text-muted pointer-events-none" />
+            </div>
+
+            <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
+              {(["all", "critical", "high", "medium", "low", "info"] as const).map((sev) => (
+                <button
+                  key={sev}
+                  type="button"
+                  onClick={() => setSeverityFilter(sev)}
+                  className={cn(
+                    "h-6 px-2 rounded-md font-mono text-[10px] uppercase transition-colors shrink-0",
+                    severityFilter === sev
+                      ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-1"
+                      : "bg-surface-01 border border-border-default text-text-muted hover:text-foreground"
+                  )}
+                >
+                  {sev === "all" ? "All" : sev}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <Select
+                value={dimensionFilter}
+                onValueChange={(val) => setDimensionFilter(val as any)}
+              >
+                <SelectTrigger className="h-7 w-full px-2 font-mono text-[11px] bg-surface-01 border-border-default hover:border-border-hover text-foreground">
+                  <SelectValue placeholder="All Dimensions" />
+                </SelectTrigger>
+                <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2">
+                  <SelectItem value="all">All Dimensions (6)</SelectItem>
+                  {DIMENSIONS.map((dim) => (
+                    <SelectItem key={dim.id} value={dim.id}>
+                      {dim.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* 4. Findings List */}
+          <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-0">
+            {findings.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center p-6 text-center text-text-muted">
+                <div className="w-8 h-8 rounded-md bg-surface-02 border border-border-default flex items-center justify-center text-emerald-400 mb-2 shadow-level-1">
+                  <CheckCircleIcon className="w-4 h-4" />
+                </div>
+                <h5 className="font-sans text-xs font-semibold text-foreground mb-1">
+                  No Architectural Health Risks
+                </h5>
+                <p className="font-sans text-[11px] text-text-muted max-w-[240px] leading-relaxed">
+                  The current topology exhibits strong reliability, boundary isolation, and scalable decoupling based on declared modeling assumptions.
+                </p>
+              </div>
+            ) : (
+              findings.map((f) => (
+                <HealthFindingCard
+                  key={f.id}
+                  finding={f}
+                  isSelected={activeFindingId === f.id}
+                  onSelect={handleSelectFinding}
+                  onOpenInspector={onFocusNode}
+                />
+              ))
+            )}
+          </div>
+        </>
+      )}
 
       {/* 5. Metrics Footer */}
       <div className="px-3 py-1.5 border-t border-border-subtle bg-surface-02 font-mono text-[10px] text-text-muted flex items-center justify-between shrink-0">

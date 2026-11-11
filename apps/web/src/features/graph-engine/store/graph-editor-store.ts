@@ -275,11 +275,11 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     canUndo: false,
     canRedo: false,
 
-    loadDocument: (doc, projectId = null) => {
+    loadDocument: (doc, projectId) => {
       history.clear();
       set({
         documentId: doc.id,
-        projectId: projectId ?? get().projectId,
+        projectId: projectId === undefined ? get().projectId : projectId,
         visualizerType: doc.visualizerType ?? "generic",
         title: doc.title,
         nodes: doc.nodes ?? [],

@@ -11,12 +11,12 @@ export const DesktopApplicationIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokePrimary = isColored ? "#2563EB" : "#A3A3A3";
-  const strokeStand = isColored ? "#60A5FA" : "#737373";
-  const fillTitleBar = isColored ? "#1E40AF" : "#262626";
-  const fillDot = isColored ? "#38BDF8" : "#E5E5E5";
-  const fillSidebar = isColored ? "#1E3A8A" : "#1A1A1A";
-  const strokeLines = isColored ? "#60A5FA" : "#737373";
+  const strokePrimary = isColored ? "#60A5FA" : "#D4D4D4";
+  const strokeStand = isColored ? "#93C5FD" : "#A3A3A3";
+  const fillTitleBar = isColored ? "#1D4ED8" : "#262626";
+  const fillDot = isColored ? "#38BDF8" : "#FFFFFF";
+  const fillSidebar = isColored ? "#1E293B" : "#1A1A1A";
+  const strokeLines = isColored ? "#93C5FD" : "#A3A3A3";
 
   return (
     <svg

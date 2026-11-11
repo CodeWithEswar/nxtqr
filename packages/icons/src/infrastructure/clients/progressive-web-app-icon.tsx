@@ -11,14 +11,14 @@ export const ProgressiveWebAppIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokeChassis = isColored ? "#2563EB" : "#A3A3A3";
-  const fillTitleBar = isColored ? "#1E40AF" : "#262626";
-  const fillDot1 = isColored ? "#38BDF8" : "#E5E5E5";
-  const fillDot2 = isColored ? "#60A5FA" : "#A3A3A3";
-  const strokeCircle = isColored ? "#A78BFA" : "#737373";
+  const strokeChassis = isColored ? "#60A5FA" : "#D4D4D4";
+  const fillTitleBar = isColored ? "#1D4ED8" : "#262626";
+  const fillDot1 = isColored ? "#38BDF8" : "#FFFFFF";
+  const fillDot2 = isColored ? "#60A5FA" : "#D4D4D4";
+  const strokeCircle = isColored ? "#A78BFA" : "#A3A3A3";
   const fillBadge = isColored ? "#0F172A" : "#141414";
-  const fillBolt = isColored ? "#38BDF8" : "#E5E5E5";
-  const strokeBolt = isColored ? "#60A5FA" : "#A3A3A3";
+  const fillBolt = isColored ? "#38BDF8" : "#FFFFFF";
+  const strokeBolt = isColored ? "#60A5FA" : "#D4D4D4";
 
   return (
     <svg

@@ -45,5 +45,15 @@ export * from "./security-analysis";
 // Scalability Recommendations Engine (Phase 05.3.6)
 export * from "./scalability";
 
+// Reliability & Resilience Analysis Engine (Phase 05.3.7)
+export * from "./reliability";
+
+// Disambiguate exports between submodules
+export type { EvidenceReference } from "./contracts/health.types";
+export type { RecommendationFeasibility } from "./scalability";
+
+// Unified Intelligent Architecture Recommendations Engine (Phase 05.3.8)
+export * from "./recommendations";
+
 
 

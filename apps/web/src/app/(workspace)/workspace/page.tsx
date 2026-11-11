@@ -2,63 +2,87 @@
 
 import * as React from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { AnimatedLogo } from "@nxtqr/branding";
+import { Button } from "@nxtqr/ui";
 
-import { useGraphEditorStore } from "@/features/graph-engine";
-import { getExampleBySlug } from "@/features/system-design-tutorials";
+import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
+import { getTutorialWorkspaceDocument } from "@/features/system-design-tutorials/lib/tutorial-workspace";
 
 const GraphEditor = dynamic(
-  () => import("@/features/graph-engine").then((m) => m.GraphEditor),
+  () => import("@/features/graph-engine/components/graph-editor").then((m) => m.GraphEditor),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-full w-full flex flex-col items-center justify-center bg-black select-none">
-        <div role="status" className="flex flex-col items-center gap-3">
-          <AnimatedLogo mode="loading" variant="minimal" size={48} />
-          <div className="flex flex-col items-center gap-1 font-mono text-xs text-text-muted">
-            <span className="font-semibold text-text-secondary">Initializing Graph Engine</span>
-            <span className="text-[10px] text-text-disabled">Mounting React Flow & ELK Layout Subsystems...</span>
-          </div>
-        </div>
-      </div>
-    ),
+    loading: () => <WorkspaceLoading message="Initializing Graph Engine" />,
   },
 );
+
+function WorkspaceLoading({ message }: { message: string }) {
+  return (
+    <div
+      role="status"
+      className="flex h-full w-full flex-col items-center justify-center gap-3 bg-black font-mono text-xs text-text-secondary"
+    >
+      <AnimatedLogo mode="loading" variant="minimal" size={48} />
+      {message}
+    </div>
+  );
+}
+
+function TutorialWorkspace({
+  templateSlug,
+  previewId,
+}: {
+  templateSlug: string | null;
+  previewId: string | null;
+}) {
+  const [status, setStatus] = React.useState<"loading" | "ready" | "unavailable">("loading");
+
+  React.useEffect(() => {
+    const document = getTutorialWorkspaceDocument(templateSlug, previewId);
+    if (!document) {
+      setStatus("unavailable");
+      return;
+    }
+    useGraphEditorStore.getState().loadDocument(document, null);
+    setStatus("ready");
+  }, [templateSlug, previewId]);
+
+  if (status === "loading") return <WorkspaceLoading message="Loading tutorial diagram…" />;
+  if (status === "unavailable") {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
+        <p role="status" className="text-sm text-text-secondary">
+          This tutorial diagram is unavailable.
+        </p>
+        <Button asChild variant="outline" size="sm">
+          <Link href="/tutorial/system-design">Return to tutorials</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  return <GraphEditor className="flex-1" fitViewOnMount />;
+}
 
 function WorkspaceContent() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get("project");
   const templateSlug = searchParams.get("template");
-
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    // Check for sessionStorage imported graph document from tutorials
-    const storedDoc = window.sessionStorage.getItem("nxtqr_import_document");
-    if (storedDoc) {
-      try {
-        const parsed = JSON.parse(storedDoc);
-        window.sessionStorage.removeItem("nxtqr_import_document");
-        useGraphEditorStore.getState().loadDocument(parsed);
-        return;
-      } catch (e) {
-        console.error("[Workspace] Failed to parse sessionStorage template doc:", e);
-      }
-    }
-
-    // Fallback: If template query parameter provided, load architecture example
-    if (templateSlug) {
-      const example = getExampleBySlug(templateSlug);
-      if (example) {
-        useGraphEditorStore.getState().loadDocument(example.graphDocument);
-      }
-    }
-  }, [templateSlug]);
+  const previewId = searchParams.get("tutorialPreview");
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden bg-black">
-      <GraphEditor projectId={projectId} className="flex-1" />
+      {!projectId && (templateSlug || previewId) ? (
+        <TutorialWorkspace
+          key={templateSlug ? `template:${templateSlug}` : `preview:${previewId}`}
+          templateSlug={templateSlug}
+          previewId={previewId}
+        />
+      ) : (
+        <GraphEditor projectId={projectId} className="flex-1" />
+      )}
     </div>
   );
 }

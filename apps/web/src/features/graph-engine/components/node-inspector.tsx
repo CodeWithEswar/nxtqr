@@ -26,6 +26,9 @@ import {
   failureAnalysisEngine,
   securityAnalysisEngine,
   scalabilityRecommendationsEngine,
+  recommendationEngine,
+  reliabilityEngine,
+  DEFAULT_WORKLOAD_SCENARIOS,
   type HealthFinding,
   type BottleneckFinding,
   type FailureFinding,
@@ -33,6 +36,7 @@ import {
   type SecurityFinding,
   type NodeSecurityProfile,
   type ScalabilityRecommendation,
+  type UnifiedRecommendation,
 } from "@nxtqr/architecture-intelligence";
 import { PRESET_WORKLOAD_SCENARIOS } from "@/features/system-design/scalability";
 import {
@@ -192,6 +196,35 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
     );
     return { recommendations };
   }, [selectedNode, nodes, edges, activeScenarioId]);
+
+  // Active unified architecture recommendations for this node
+  const nodeRecommendations = React.useMemo(() => {
+    if (!selectedNode) return [] as UnifiedRecommendation[];
+    try {
+      const scenario = DEFAULT_WORKLOAD_SCENARIOS.normal_traffic;
+      const validation = architectureValidationEngine.validateGraph(nodes, edges);
+      const health = architectureHealthEngine.assessGraph(nodes, edges);
+      const bottlenecks = bottleneckEngine.analyzeGraph(nodes, edges, scenario);
+      const failure = failureAnalysisEngine.analyzeGraph(nodes, edges);
+      const security = securityAnalysisEngine.analyzeGraph(nodes, edges);
+      const scalability = scalabilityRecommendationsEngine.evaluateGraph(nodes, edges, scenario);
+      const reliability = reliabilityEngine.analyzeGraph(nodes, edges);
+
+      const report = recommendationEngine.generateRecommendations(nodes, edges, {
+        validation,
+        healthFindings: health.allFindings,
+        bottleneckFindings: bottlenecks.findings,
+        failureFindings: failure.findings,
+        securityFindings: security.findings,
+        scalabilityRecommendations: scalability.recommendations,
+        reliabilityFindings: reliability.findings,
+      });
+
+      return report.recommendations.filter((r) => r.affectedNodeIds.includes(selectedNode.id));
+    } catch {
+      return [] as UnifiedRecommendation[];
+    }
+  }, [selectedNode, nodes, edges]);
 
   // Case 1: Edge Selection
   if (selectedNodeIds.length === 0 && selectedEdgeIds.length === 1) {
@@ -772,6 +805,49 @@ export function NodeInspector({ className, onClose }: NodeInspectorProps) {
                   </Badge>
                 </div>
                 <p className="font-sans text-[11px] text-text-secondary leading-relaxed">{f.explanation}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Unified Architecture Recommendations */}
+        {nodeRecommendations.length > 0 && (
+          <div className="p-2.5 rounded-md bg-surface-02 border border-border-default space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-cyan-400 font-mono uppercase tracking-wider font-semibold">
+                Unified Recommendations ({nodeRecommendations.length})
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setHealthOpen(true)}
+                className="h-5 px-1.5 text-[9px] font-mono text-text-muted hover:text-foreground"
+              >
+                Open Health Panel &rarr;
+              </Button>
+            </div>
+
+            {nodeRecommendations.slice(0, 3).map((rec: UnifiedRecommendation, idx: number) => (
+              <div key={idx} className="p-1.5 rounded bg-surface-03 border border-border-subtle space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold truncate text-foreground">
+                    {rec.title}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-[8px] font-mono h-3.5 px-1 uppercase border-border-default text-text-muted"
+                  >
+                    {rec.priority}
+                  </Badge>
+                </div>
+                <p className="font-sans text-[11px] text-text-secondary leading-relaxed">
+                  {rec.summary}
+                </p>
+                {rec.benefits.length > 0 && (
+                  <span className="font-mono text-[9px] text-emerald-400 block pt-0.5">
+                    &bull; {rec.benefits[0]}
+                  </span>
+                )}
               </div>
             ))}
           </div>

@@ -11,13 +11,13 @@ export const ThirdPartyClientIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokeBoundary = isColored ? "#2563EB" : "#737373";
-  const strokeCard = isColored ? "#60A5FA" : "#A3A3A3";
+  const strokeBoundary = isColored ? "#60A5FA" : "#A3A3A3";
+  const strokeCard = isColored ? "#93C5FD" : "#D4D4D4";
   const fillCard = isColored ? "#0F172A" : "#1A1A1A";
-  const strokeArrow = isColored ? "#38BDF8" : "#E5E5E5";
-  const fillNode = isColored ? "#A78BFA" : "#D4D4D4";
-  const strokeNode = isColored ? "#38BDF8" : "#858585";
-  const strokeHandshake = isColored ? "#CBD5E1" : "#737373";
+  const strokeArrow = isColored ? "#38BDF8" : "#FFFFFF";
+  const fillNode = isColored ? "#A78BFA" : "#E5E5E5";
+  const strokeNode = isColored ? "#38BDF8" : "#A3A3A3";
+  const strokeHandshake = isColored ? "#CBD5E1" : "#A3A3A3";
 
   return (
     <svg

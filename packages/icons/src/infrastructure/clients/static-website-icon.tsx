@@ -11,11 +11,11 @@ export const StaticWebsiteIcon: React.FC<InfrastructureIconProps> = ({
 }) => {
   const isColored = variant === "colored";
 
-  const strokeDoc = isColored ? "#2563EB" : "#A3A3A3";
-  const strokeFlap = isColored ? "#60A5FA" : "#737373";
-  const fillFlap = isColored ? "#1E3A8A" : "#262626";
-  const strokeCode = isColored ? "#38BDF8" : "#E5E5E5";
-  const strokeLines = isColored ? "#CBD5E1" : "#737373";
+  const strokeDoc = isColored ? "#60A5FA" : "#D4D4D4";
+  const strokeFlap = isColored ? "#93C5FD" : "#A3A3A3";
+  const fillFlap = isColored ? "#1D4ED8" : "#262626";
+  const strokeCode = isColored ? "#38BDF8" : "#FFFFFF";
+  const strokeLines = isColored ? "#CBD5E1" : "#A3A3A3";
 
   return (
     <svg
