@@ -93,4 +93,7 @@ export * from "./deployment";
 // Architecture Data Flow, Lineage & Privacy Analysis Engine (Phase 05.3.19)
 export * from "./lineage";
 
+// Architecture API Contracts & Service Interface Intelligence Engine (Phase 05.3.20)
+export * from "./api-contracts";
+
 

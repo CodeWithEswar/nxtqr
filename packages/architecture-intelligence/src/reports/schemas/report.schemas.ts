@@ -27,6 +27,7 @@ export const ReportEvidenceReferenceSchema = z.object({
     "benchmark",
     "deployment",
     "lineage",
+    "api_contract",
     "adr",
     "doc",
   ]),
@@ -61,6 +62,7 @@ export const ReportSectionKindSchema = z.enum([
   "benchmark",
   "deployment",
   "lineage",
+  "api_contracts",
   "adrs",
   "text",
 ]);
@@ -572,6 +574,38 @@ export const LineageSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const APIContractsSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("api_contracts"),
+  content: z.object({
+    totalContracts: z.number().int().min(0),
+    totalOperations: z.number().int().min(0),
+    totalConsumerDependencies: z.number().int().min(0),
+    coveragePercentage: z.number().min(0).max(100),
+    contracts: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        protocol: z.string(),
+        format: z.string(),
+        providerServiceId: z.string(),
+        lifecycleStatus: z.string(),
+        exposure: z.string(),
+        operationsCount: z.number().int().min(0),
+      })
+    ),
+    breakingChanges: z.array(
+      z.object({
+        contractName: z.string(),
+        ruleId: z.string(),
+        explanation: z.string(),
+        affectedOperations: z.array(z.string()),
+        affectedConsumers: z.array(z.string()),
+        remediation: z.string(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -611,6 +645,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   BenchmarkSectionSchema,
   DeploymentSectionSchema,
   LineageSectionSchema,
+  APIContractsSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

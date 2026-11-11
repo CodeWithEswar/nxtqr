@@ -739,5 +739,31 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-lineage",
     },
   },
+  {
+    id: "architecture_api_contracts",
+    category: "architecture",
+    title: "Phase 05.3.20: Architecture API Contracts & Service Interface Intelligence Engine",
+    description: "Production-grade API contract intelligence layer connecting architecture diagrams to the actual interfaces through which services communicate. Supports REST (OpenAPI 3.x), GraphQL SDL, Protobuf 3 (gRPC), and AsyncAPI event contracts. Features zero code execution multi-format spec parsing, normalized schema canonicalization with cycle safety, deterministic semantic contract diff engine detecting breaking, potentially breaking, and safe additive changes, wire format tag and wire type compatibility checks for Protobuf, consumer dependency and blast radius impact assessment, sequential phased migration plan synthesis, shadow endpoint & contract drift detection against observed telemetry, Architecture Reports Generator integration, and AI Architecture Assistant Tool #23 (get_api_contracts_and_compatibility).",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-contracts",
+      supportedProtocols: ["rest", "graphql", "grpc", "asyncapi"],
+      supportedFormats: ["openapi_v3", "graphql_sdl", "protobuf_v3", "asyncapi_v2"],
+      evidenceLevels: ["declared", "implemented", "observed", "inferred", "unknown"],
+      compatibilityRules: [
+        "rest_operation_removed",
+        "rest_required_param_added",
+        "graphql_output_field_removed",
+        "graphql_required_arg_added",
+        "grpc_field_tag_reused",
+        "grpc_field_wire_type_changed",
+        "asyncapi_event_payload_incompatible",
+      ],
+      aiAssistantToolRegistered: "get_api_contracts_and_compatibility (Tool #23)",
+      inspectionRoute: "/verify/architecture-contracts",
+    },
+  },
 ];
 

@@ -552,6 +552,66 @@ export class HtmlExporter {
           break;
         }
 
+        case "api_contracts": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Total Contracts</span>
+                  <span class="pillar-score">${c.totalContracts}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Operations Defined</span>
+                  <span class="pillar-score">${c.totalOperations}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Consumer Deps</span>
+                  <span class="pillar-score">${c.totalConsumerDependencies}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Contract Coverage</span>
+                  <span class="pillar-score">${c.coveragePercentage}%</span>
+                </div>
+              </div>
+            </div>
+            ${
+              c.contracts.length > 0
+                ? `<h4>Registered API Contracts</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Contract</th>
+                      <th>Protocol</th>
+                      <th>Format</th>
+                      <th>Provider Service</th>
+                      <th>Lifecycle</th>
+                      <th>Exposure</th>
+                      <th>Operations</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.contracts
+                      .map(
+                        (ct) => `<tr>
+                        <td><strong>${escapeHtml(ct.name)}</strong></td>
+                        <td><code>${escapeHtml(ct.protocol.toUpperCase())}</code></td>
+                        <td>${escapeHtml(ct.format)}</td>
+                        <td>${escapeHtml(ct.providerServiceId)}</td>
+                        <td><span class="badge badge-info">${escapeHtml(ct.lifecycleStatus)}</span></td>
+                        <td>${escapeHtml(ct.exposure)}</td>
+                        <td>${ct.operationsCount}</td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

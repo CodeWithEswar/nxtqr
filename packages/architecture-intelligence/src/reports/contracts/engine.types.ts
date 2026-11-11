@@ -33,6 +33,7 @@ import type {
 } from "../../deployment/contracts/deployment.types";
 import type { DeploymentReliabilityMetrics } from "../../deployment/analysis/deployment-reliability";
 import type { ArchitectureDataLineageModel } from "../../lineage/contracts/lineage.types";
+import type { APIContract, ConsumerDependency } from "../../api-contracts/contracts/contract.types";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -64,6 +65,8 @@ export interface ReportAnalysisContext {
     findings?: TopologyValidationFinding[];
   };
   lineage?: ArchitectureDataLineageModel;
+  apiContracts?: APIContract[];
+  consumerDependencies?: ConsumerDependency[];
 }
 
 export interface GenerateReportInput {

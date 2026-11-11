@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -44,6 +44,7 @@ export type ReportSectionKind =
   | "benchmark"
   | "deployment"
   | "lineage"
+  | "api_contracts"
   | "adrs"
   | "text";
 
@@ -488,6 +489,34 @@ export interface LineageSection extends BaseReportSection {
   };
 }
 
+export interface APIContractsSection extends BaseReportSection {
+  kind: "api_contracts";
+  content: {
+    totalContracts: number;
+    totalOperations: number;
+    totalConsumerDependencies: number;
+    coveragePercentage: number;
+    contracts: Array<{
+      id: string;
+      name: string;
+      protocol: string;
+      format: string;
+      providerServiceId: string;
+      lifecycleStatus: string;
+      exposure: string;
+      operationsCount: number;
+    }>;
+    breakingChanges: Array<{
+      contractName: string;
+      ruleId: string;
+      explanation: string;
+      affectedOperations: string[];
+      affectedConsumers: string[];
+      remediation: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -527,6 +556,7 @@ export type ReportSection =
   | BenchmarkSection
   | DeploymentSection
   | LineageSection
+  | APIContractsSection
   | ADRsSection
   | TextSection;
 

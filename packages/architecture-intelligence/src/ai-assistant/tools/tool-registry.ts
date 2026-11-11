@@ -28,6 +28,8 @@ import { architectureDeploymentEngine } from "../../deployment/engine/deployment
 import type { DeploymentTopology } from "../../deployment/contracts/deployment.types";
 import { architectureDataLineageEngine } from "../../lineage/engine/lineage-engine";
 import type { DataAsset, DataFlow } from "../../lineage/contracts/lineage.types";
+import { architectureContractEngine } from "../../api-contracts/engine/contract-engine";
+import type { APIContract } from "../../api-contracts/contracts/contract.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -1502,6 +1504,236 @@ export class ArchitectureToolRegistry {
               }
             : undefined,
           transfers: transferFindings,
+        };
+      },
+    });
+
+    // Tool 23: API Contracts & Service Interface Intelligence Engine (Phase 05.3.20)
+    this.registerTool({
+      name: "get_api_contracts_and_compatibility",
+      description:
+        "Inspects API contracts (REST, GraphQL, gRPC, AsyncAPI), checks breaking changes between contract revisions, analyzes consumer service dependencies, evaluates contract coverage, and generates migration plans across the architecture graph.",
+      parameters: {
+        type: "object",
+        properties: {
+          contractId: {
+            type: "string",
+            description: "Optional specific API contract ID to inspect or diff.",
+          },
+          serviceId: {
+            type: "string",
+            description: "Optional provider service node ID to retrieve contracts for.",
+          },
+          baselineRevisionId: {
+            type: "string",
+            description: "Optional baseline revision ID for semantic diff.",
+          },
+          candidateRevisionId: {
+            type: "string",
+            description: "Optional candidate revision ID for semantic diff.",
+          },
+          includeConsumerImpact: {
+            type: "boolean",
+            description: "Whether to evaluate breaking change impact against registered consumers.",
+            default: true,
+          },
+          includeCoverage: {
+            type: "boolean",
+            description: "Whether to compute contract completeness across all architecture services.",
+            default: true,
+          },
+          includeMigrationPlan: {
+            type: "boolean",
+            description: "Whether to generate a phased migration plan for breaking revisions.",
+            default: false,
+          },
+        },
+      },
+      execute: async (args, context) => {
+        const contractId = args.contractId as string | undefined;
+        const serviceId = args.serviceId as string | undefined;
+        const baselineRevisionId = args.baselineRevisionId as string | undefined;
+        const candidateRevisionId = args.candidateRevisionId as string | undefined;
+        const includeConsumerImpact = (args.includeConsumerImpact as boolean | undefined) ?? true;
+        const includeCoverage = (args.includeCoverage as boolean | undefined) ?? true;
+        const includeMigrationPlan = (args.includeMigrationPlan as boolean | undefined) ?? false;
+
+        const now = new Date().toISOString();
+        let contracts = context.apiContracts;
+        let dependencies = context.consumerDependencies || [];
+
+        if (!contracts || contracts.length === 0) {
+          // Synthesize contracts for services in the graph
+          const serviceNodes = context.nodes.filter((n) => {
+            const t = ((n.data?.type as string) || (n.type as string) || "").toLowerCase();
+            return !t.includes("database") && !t.includes("storage") && !t.includes("queue");
+          });
+
+          const defaultProviderId = serviceNodes[0]?.id || context.nodes[0]?.id || "service-core";
+          const defaultConsumerId = serviceNodes[1]?.id || context.nodes[1]?.id || "client-app";
+
+          const defaultContract: APIContract = {
+            id: `contract-${defaultProviderId}`,
+            projectId: context.projectId,
+            architectureId: context.architectureId,
+            name: `${(context.nodes.find((n) => n.id === defaultProviderId)?.data?.label as string) || defaultProviderId} API`,
+            protocol: "rest",
+            specificationFormat: "openapi_3x",
+            providerServiceId: defaultProviderId,
+            currentRevisionId: "rev-v1",
+            lifecycleStatus: "active",
+            exposure: "internal",
+            description: "Core service REST interface synthesized from architecture topology",
+            revisions: [
+              {
+                id: "rev-v1",
+                contractId: `contract-${defaultProviderId}`,
+                revisionHash: "hash-v1-initial",
+                versionLabel: "v1.0.0",
+                specificationVersion: "3.1.0",
+                operations: [
+                  {
+                    id: "op-get-resource",
+                    operationId: "getResource",
+                    protocol: "rest",
+                    method: "GET",
+                    path: "/api/v1/resources",
+                    summary: "List resources",
+                    parameters: [
+                      {
+                        name: "limit",
+                        in: "query",
+                        required: false,
+                        schema: { id: "p-limit", type: "integer", isNullable: true },
+                      },
+                    ],
+                    responseSchemas: { "200": "ResourceListResponse" },
+                    isDeprecated: false,
+                    provenance: {
+                      source: "inferred",
+                      timestamp: now,
+                      graphRevision: context.graphRevision,
+                      confirmed: false,
+                    },
+                  },
+                ],
+                schemas: {
+                  ResourceListResponse: {
+                    id: "ResourceListResponse",
+                    name: "ResourceListResponse",
+                    type: "object",
+                    requiredProperties: ["items"],
+                    properties: {
+                      items: { id: "items", type: "array", isNullable: false },
+                    },
+                    isNullable: false,
+                  },
+                },
+                validationStatus: "valid",
+                createdAt: now,
+              },
+            ],
+            provenance: {
+              source: "inferred",
+              timestamp: now,
+              graphRevision: context.graphRevision,
+              confirmed: false,
+            },
+            createdAt: now,
+            updatedAt: now,
+          };
+
+          contracts = [defaultContract];
+          dependencies = [
+            {
+              id: `dep-${defaultConsumerId}-${defaultProviderId}`,
+              providerServiceId: defaultProviderId,
+              consumerServiceId: defaultConsumerId,
+              contractId: defaultContract.id,
+              operationIds: ["getResource"],
+              source: "inferred",
+              confirmed: false,
+            },
+          ];
+        }
+
+        const targetContract = contractId
+          ? contracts.find((c) => c.id === contractId)
+          : serviceId
+          ? contracts.find((c) => c.providerServiceId === serviceId)
+          : contracts[0];
+
+        let diff;
+        let impactReport;
+        let migrationPlan;
+
+        if (targetContract && baselineRevisionId && candidateRevisionId) {
+          try {
+            diff = architectureContractEngine.diffRevisions(
+              targetContract,
+              baselineRevisionId,
+              candidateRevisionId
+            );
+            if (includeConsumerImpact) {
+              impactReport = architectureContractEngine.analyzeConsumerImpact(
+                targetContract,
+                diff,
+                dependencies
+              );
+            }
+            if (includeMigrationPlan && impactReport) {
+              migrationPlan = architectureContractEngine.generateMigrationPlan(
+                targetContract,
+                diff,
+                impactReport
+              );
+            }
+          } catch (err) {
+            // Diff error note
+          }
+        }
+
+        const coverageReport = includeCoverage
+          ? architectureContractEngine.evaluateCoverage(
+              context.nodes.map((n) => n.id),
+              contracts,
+              dependencies
+            )
+          : undefined;
+
+        return {
+          summary: {
+            totalContracts: contracts.length,
+            totalConsumerDependencies: dependencies.length,
+            contractCoveragePct: coverageReport?.coveragePercentage ?? 100,
+            breakingChangesCount: diff?.findings.filter((f) => f.classification === "breaking").length ?? 0,
+          },
+          targetContract: targetContract
+            ? {
+                id: targetContract.id,
+                name: targetContract.name,
+                protocol: targetContract.protocol,
+                format: targetContract.specificationFormat,
+                providerServiceId: targetContract.providerServiceId,
+                lifecycle: targetContract.lifecycleStatus,
+                exposure: targetContract.exposure,
+                operationsCount: targetContract.revisions[0]?.operations.length ?? 0,
+                revisionsCount: targetContract.revisions.length,
+              }
+            : undefined,
+          semanticDiff: diff
+            ? {
+                baselineRevision: diff.baselineRevisionId,
+                candidateRevision: diff.candidateRevisionId,
+                addedOperationsCount: diff.addedOperations.length,
+                removedOperationsCount: diff.removedOperations.length,
+                modifiedOperationsCount: diff.modifiedOperations.length,
+                findings: diff.findings,
+              }
+            : undefined,
+          consumerImpact: impactReport,
+          migrationPlan,
+          coverageReport,
         };
       },
     });

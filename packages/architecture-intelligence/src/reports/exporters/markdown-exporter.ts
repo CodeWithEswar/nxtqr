@@ -467,6 +467,34 @@ export class MarkdownExporter {
           break;
         }
 
+        case "api_contracts": {
+          const content = section.content;
+          lines.push(`- Total API Contracts: **${content.totalContracts}**`);
+          lines.push(`- Operations Defined: **${content.totalOperations}** | Consumer Dependencies: **${content.totalConsumerDependencies}**`);
+          lines.push(`- Contract Coverage: **${content.coveragePercentage}%**`);
+          lines.push("");
+
+          if (content.contracts.length > 0) {
+            lines.push("### Service Contracts & Interfaces");
+            lines.push("| Contract Name | Protocol | Format | Provider Service | Status | Exposure | Operations |");
+            lines.push("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |");
+            for (const c of content.contracts) {
+              lines.push(`| **${c.name}** | \`${c.protocol.toUpperCase()}\` | ${c.format} | ${c.providerServiceId} | \`${c.lifecycleStatus}\` | ${c.exposure} | ${c.operationsCount} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.breakingChanges.length > 0) {
+            lines.push("### Detected Breaking Changes & Compatibility Warnings");
+            for (const bc of content.breakingChanges) {
+              lines.push(`- [BREAKING] **${bc.contractName}** (\`${bc.ruleId}\`): ${bc.explanation}`);
+              lines.push(`  *Remediation:* ${bc.remediation}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

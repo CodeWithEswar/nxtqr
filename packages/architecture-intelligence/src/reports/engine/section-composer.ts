@@ -5,6 +5,7 @@ import type {
   BenchmarkSection,
   DeploymentSection,
   LineageSection,
+  APIContractsSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -932,6 +933,52 @@ export class SectionComposer {
             },
           };
           sections.push(lineageSection);
+          break;
+        }
+
+        case "api_contracts": {
+          const contracts = analysisContext?.apiContracts || [];
+          const dependencies = analysisContext?.consumerDependencies || [];
+          let totalOps = 0;
+          for (const c of contracts) {
+            const rev = c.revisions[0];
+            if (rev) totalOps += rev.operations.length;
+          }
+
+          const contractedServices = new Set(contracts.map((c) => c.providerServiceId));
+          const totalServices = nodes.length;
+          const coveragePct = totalServices > 0 ? Math.round((contractedServices.size / totalServices) * 100) : 100;
+
+          const contractsList = contracts.map((c) => ({
+            id: c.id,
+            name: c.name,
+            protocol: c.protocol,
+            format: c.specificationFormat,
+            providerServiceId: c.providerServiceId,
+            lifecycleStatus: c.lifecycleStatus,
+            exposure: c.exposure,
+            operationsCount: c.revisions[0]?.operations.length ?? 0,
+          }));
+
+          const apiContractsSection: APIContractsSection = {
+            id: `sec-api-contracts`,
+            kind: "api_contracts",
+            title: "API Contracts & Service Interface Intelligence",
+            description:
+              "Interface specifications, REST/GraphQL/gRPC/Event operations, consumer dependencies, breaking-change risk findings, and coverage metrics.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "api_contracts"),
+            content: {
+              totalContracts: contracts.length,
+              totalOperations: totalOps,
+              totalConsumerDependencies: dependencies.length,
+              coveragePercentage: coveragePct,
+              contracts: contractsList,
+              breakingChanges: [],
+            },
+          };
+          sections.push(apiContractsSection);
           break;
         }
 
