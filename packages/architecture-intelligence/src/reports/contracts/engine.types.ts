@@ -42,6 +42,7 @@ import type { GovernanceArchitectureTopology } from "../../governance/contracts/
 import type { MigrationProject } from "../../evolution/contracts/evolution.types";
 import type { OperationalProject } from "../../operations/contracts/operations.types";
 import type { VerificationProject } from "../../verification/contracts/verification.types";
+import type { UnifiedArchitectureAssessment } from "../../orchestration/contracts/orchestration.types";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -83,6 +84,7 @@ export interface ReportAnalysisContext {
   migrationProject?: MigrationProject;
   operationalProject?: OperationalProject;
   verificationProject?: VerificationProject;
+  orchestrationAssessment?: UnifiedArchitectureAssessment;
 }
 
 export interface GenerateReportInput {

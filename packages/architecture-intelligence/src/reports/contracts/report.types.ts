@@ -53,6 +53,7 @@ export type ReportSectionKind =
   | "migration_and_evolution"
   | "operational_readiness_and_dr"
   | "architecture_verification_and_readiness"
+  | "unified_architecture_intelligence"
   | "adrs"
   | "text";
 
@@ -876,6 +877,51 @@ export interface ADRsSection extends BaseReportSection {
   };
 }
 
+export interface UnifiedArchitectureIntelligenceSection extends BaseReportSection {
+  kind: "unified_architecture_intelligence";
+  content: {
+    completenessStatus: string;
+    healthScore: number;
+    durationMs: number;
+    analyzersRun: number;
+    analyzersCompleted: number;
+    analyzersFailed: number;
+    analyzersCached: number;
+    findingsSummary: {
+      total: number;
+      critical: number;
+      high: number;
+      medium: number;
+      low: number;
+    };
+    correlationGroups: Array<{
+      id: string;
+      title: string;
+      sharedComponentIds: string[];
+      findingsCount: number;
+      candidateRootCause: string;
+      recommendedUnifiedAction: string;
+    }>;
+    contradictions: Array<{
+      id: string;
+      type: string;
+      description: string;
+      involvedAnalyzers: string[];
+      affectedComponents: string[];
+      explanation: string;
+      resolutionGuidance: string;
+    }>;
+    unifiedRecommendations: Array<{
+      id: string;
+      title: string;
+      severity: string;
+      effort: string;
+      affectedComponentIds: string[];
+      remediationSteps: string[];
+    }>;
+  };
+}
+
 export interface TextSection extends BaseReportSection {
   kind: "text";
   content: {
@@ -916,6 +962,7 @@ export type ReportSection =
   | MigrationAndEvolutionSection
   | OperationalReadinessAndDRSection
   | ArchitectureVerificationAndReadinessSection
+  | UnifiedArchitectureIntelligenceSection
   | ADRsSection
   | TextSection;
 

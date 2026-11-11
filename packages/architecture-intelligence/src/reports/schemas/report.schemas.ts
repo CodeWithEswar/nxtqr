@@ -73,6 +73,7 @@ export const ReportSectionKindSchema = z.enum([
   "migration_and_evolution",
   "operational_readiness_and_dr",
   "architecture_verification_and_readiness",
+  "unified_architecture_intelligence",
   "adrs",
   "text",
 ]);
@@ -1013,6 +1014,57 @@ export const ArchitectureVerificationAndReadinessSectionSchema = BaseSectionSche
   }),
 });
 
+export const UnifiedArchitectureIntelligenceSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("unified_architecture_intelligence"),
+  content: z.object({
+    completenessStatus: z.string(),
+    healthScore: z.number().min(0).max(100),
+    durationMs: z.number().min(0),
+    analyzersRun: z.number().int().min(0),
+    analyzersCompleted: z.number().int().min(0),
+    analyzersFailed: z.number().int().min(0),
+    analyzersCached: z.number().int().min(0),
+    findingsSummary: z.object({
+      total: z.number().int().min(0),
+      critical: z.number().int().min(0),
+      high: z.number().int().min(0),
+      medium: z.number().int().min(0),
+      low: z.number().int().min(0),
+    }),
+    correlationGroups: z.array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        sharedComponentIds: z.array(z.string()),
+        findingsCount: z.number().int().min(0),
+        candidateRootCause: z.string(),
+        recommendedUnifiedAction: z.string(),
+      })
+    ),
+    contradictions: z.array(
+      z.object({
+        id: z.string(),
+        type: z.string(),
+        description: z.string(),
+        involvedAnalyzers: z.array(z.string()),
+        affectedComponents: z.array(z.string()),
+        explanation: z.string(),
+        resolutionGuidance: z.string(),
+      })
+    ),
+    unifiedRecommendations: z.array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        severity: z.string(),
+        effort: z.string(),
+        affectedComponentIds: z.array(z.string()),
+        remediationSteps: z.array(z.string()),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -1061,6 +1113,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   MigrationAndEvolutionSectionSchema,
   OperationalReadinessAndDRSectionSchema,
   ArchitectureVerificationAndReadinessSectionSchema,
+  UnifiedArchitectureIntelligenceSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

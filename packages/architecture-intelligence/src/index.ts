@@ -121,4 +121,7 @@ export * from "./operations";
 // Architecture Testing, Verification & Readiness Gates Intelligence Engine (Phase 05.3.28)
 export * from "./verification";
 
+// Architecture Intelligence Orchestration & Unified Analysis Engine (Phase 05.3.29)
+export * from "./orchestration";
+
 

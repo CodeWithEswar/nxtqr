@@ -52,6 +52,7 @@ import { architectureTestRegistry } from "../../verification/registry/test-regis
 import { suiteRegistry } from "../../verification/registry/suite-registry";
 import { gateRegistry } from "../../verification/registry/gate-registry";
 import type { VerificationProject } from "../../verification/contracts/verification.types";
+import { architectureOrchestrationEngine } from "../../orchestration/engine/orchestration-engine";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -3479,6 +3480,125 @@ export class ArchitectureToolRegistry {
                 title: t.requirementTitle,
                 criticality: t.criticality,
                 latestStatus: t.latestStatus,
+              }))
+            : undefined,
+        };
+      },
+    });
+
+    // 32. Orchestrated Architecture Intelligence & Unified Analysis
+    this.registerTool({
+      name: "get_orchestrated_architecture_intelligence",
+      description:
+        "Runs multi-wave dependency-aware architecture intelligence orchestration across all analyzers. Correlates findings, identifies compound architectural bottlenecks, detects contradictions, and derives unified recommendations.",
+      parameters: {
+        type: "object",
+        properties: {
+          requestedAnalyzerIds: {
+            type: "array",
+            items: { type: "string" },
+            description: "Optional subset of analyzer IDs to execute. If omitted, runs all standard analyzers.",
+          },
+          maxConcurrency: {
+            type: "number",
+            description: "Maximum parallel analyzers per wave. Defaults to 4.",
+          },
+          enableCache: {
+            type: "boolean",
+            description: "Whether to leverage the tenant-isolated result cache.",
+          },
+          includeFindings: {
+            type: "boolean",
+            description: "Whether to include detailed normalized findings. Defaults to true.",
+          },
+          includeCorrelations: {
+            type: "boolean",
+            description: "Whether to include compound multi-analyzer correlation groups. Defaults to true.",
+          },
+          includeContradictions: {
+            type: "boolean",
+            description: "Whether to include architectural contradiction records. Defaults to true.",
+          },
+          includeRecommendations: {
+            type: "boolean",
+            description: "Whether to include unified prioritized recommendations. Defaults to true.",
+          },
+        },
+      },
+      execute: async (args: Record<string, any>, context: AIExecutionContext) => {
+        const assessment = await architectureOrchestrationEngine.orchestrateAnalysis(
+          {
+            nodes: context.nodes,
+            edges: context.edges,
+            configuration: {
+              maxConcurrency: args.maxConcurrency ?? 4,
+              enableCache: args.enableCache ?? true,
+            },
+          },
+          args.requestedAnalyzerIds
+        );
+
+        const includeFindings = args.includeFindings ?? true;
+        const includeCorrelations = args.includeCorrelations ?? true;
+        const includeContradictions = args.includeContradictions ?? true;
+        const includeRecommendations = args.includeRecommendations ?? true;
+
+        return {
+          summary: {
+            assessmentId: assessment.id,
+            completenessStatus: assessment.completenessStatus,
+            healthScore: assessment.healthScore,
+            durationMs: assessment.executionDurationMs,
+            analyzersRun: assessment.analyzersRun,
+            analyzersCompleted: assessment.analyzersCompleted,
+            analyzersFailed: assessment.analyzersFailed,
+            analyzersCached: assessment.analyzersCached,
+            totalFindingsCount: assessment.totalFindingsCount,
+            criticalCount: assessment.criticalFindingsCount,
+            highCount: assessment.highFindingsCount,
+            mediumCount: assessment.mediumFindingsCount,
+            lowCount: assessment.lowFindingsCount,
+          },
+          correlationGroups: includeCorrelations
+            ? assessment.correlationGroups.slice(0, 5).map((cg) => ({
+                id: cg.id,
+                title: cg.title,
+                sharedComponentIds: cg.sharedComponentIds,
+                findingsCount: cg.findings.length,
+                candidateRootCause: cg.candidateRootCause,
+                recommendedUnifiedAction: cg.recommendedUnifiedAction,
+              }))
+            : undefined,
+          contradictions: includeContradictions
+            ? assessment.contradictions.map((c) => ({
+                id: c.id,
+                type: c.type,
+                description: c.description,
+                involvedAnalyzers: c.involvedAnalyzerIds,
+                affectedComponents: c.affectedComponentIds,
+                explanation: c.explanation,
+                resolutionGuidance: c.resolutionGuidance,
+              }))
+            : undefined,
+          recommendations: includeRecommendations
+            ? assessment.recommendations.slice(0, 5).map((r) => ({
+                id: r.id,
+                title: r.title,
+                severity: r.severity,
+                effort: r.effort,
+                affectedComponents: r.affectedComponentIds,
+                remediationSteps: r.remediationSteps,
+              }))
+            : undefined,
+          findings: includeFindings
+            ? assessment.findings.slice(0, 10).map((f) => ({
+                id: f.id,
+                sourceAnalyzerId: f.sourceAnalyzerId,
+                category: f.category,
+                severity: f.severity,
+                title: f.title,
+                affectedComponents: f.affectedComponentIds,
+                confidence: f.confidence,
               }))
             : undefined,
         };

@@ -1052,5 +1052,30 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-verification",
     },
   },
+  {
+    id: "arch_intelligence_orchestration",
+    category: "architecture",
+    title: "Phase 05.3.29: Architecture Intelligence Orchestration & Unified Analysis Engine",
+    description: "Coordinates 28 previously developed architecture intelligence features into a multi-wave execution DAG, shares progressive evidence, detects cross-analyzer contradictions, and produces unified architecture assessments.",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-orchestration",
+      registeredStandardAnalyzersCount: 11,
+      executionModes: ["local", "server"],
+      findingSeverities: ["critical", "high", "medium", "low", "informational"],
+      contradictionTypes: [
+        "topology_mismatch",
+        "redundancy_conflict",
+        "rto_verification_gap",
+        "security_boundary_conflict",
+        "scenario_assumption_conflict",
+      ],
+      aiAssistantToolRegistered: "get_orchestrated_architecture_intelligence (Tool #32)",
+      reportsSectionRegistered: "unified_architecture_intelligence",
+      inspectionRoute: "/verify/architecture-orchestration",
+    },
+  },
 ];
 

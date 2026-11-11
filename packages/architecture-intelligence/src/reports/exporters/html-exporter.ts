@@ -1370,6 +1370,128 @@ export class HtmlExporter {
           break;
         }
 
+        case "unified_architecture_intelligence": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Health Score</span>
+                  <span class="pillar-score" style="color: ${c.healthScore >= 80 ? "#22c55e" : "#FFAA00"};">${c.healthScore}/100</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Status</span>
+                  <span class="pillar-score" style="color: #22c55e;">${escapeHtml(c.completenessStatus.toUpperCase())}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Analyzers Run</span>
+                  <span class="pillar-score">${c.analyzersCompleted} / ${c.analyzersRun}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Total Findings</span>
+                  <span class="pillar-score" style="color: ${c.findingsSummary.critical > 0 ? "#ef4444" : "#858585"};">${c.findingsSummary.total}</span>
+                </div>
+              </div>
+            </div>
+
+            ${c.correlationGroups.length > 0 ? `
+            <div class="field-group">
+              <h4>Compound Architectural Vulnerabilities (Correlation Groups)</h4>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Correlation Group</th>
+                      <th>Affected Components</th>
+                      <th>Findings</th>
+                      <th>Candidate Root Cause & Recommended Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.correlationGroups
+                      .map(
+                        (cg) => `<tr>
+                      <td><strong>${escapeHtml(cg.title)}</strong></td>
+                      <td><code>${escapeHtml(cg.sharedComponentIds.join(", "))}</code></td>
+                      <td>${cg.findingsCount}</td>
+                      <td>
+                        <div><strong>Cause:</strong> ${escapeHtml(cg.candidateRootCause)}</div>
+                        <div style="margin-top: 4px; color: #b5b5b5;"><strong>Action:</strong> ${escapeHtml(cg.recommendedUnifiedAction)}</div>
+                      </td>
+                    </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>` : ""}
+
+            ${c.contradictions.length > 0 ? `
+            <div class="field-group">
+              <h4>Architectural Contradictions & Conflict Detections</h4>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Involved Analyzers</th>
+                      <th>Components</th>
+                      <th>Explanation & Resolution Guidance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.contradictions
+                      .map(
+                        (ct) => `<tr>
+                      <td><code>${escapeHtml(ct.type)}</code></td>
+                      <td>${escapeHtml(ct.involvedAnalyzers.join(", "))}</td>
+                      <td><code>${escapeHtml(ct.affectedComponents.join(", "))}</code></td>
+                      <td>
+                        <div style="color: #ef4444;">${escapeHtml(ct.explanation)}</div>
+                        <div style="margin-top: 4px; color: #b5b5b5;">${escapeHtml(ct.resolutionGuidance)}</div>
+                      </td>
+                    </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>` : ""}
+
+            ${c.unifiedRecommendations.length > 0 ? `
+            <div class="field-group">
+              <h4>Unified Architecture Recommendations</h4>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Recommendation</th>
+                      <th>Severity</th>
+                      <th>Effort</th>
+                      <th>Affected</th>
+                      <th>Remediation Steps</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.unifiedRecommendations
+                      .map(
+                        (r) => `<tr>
+                      <td><strong>${escapeHtml(r.title)}</strong></td>
+                      <td><span class="badge ${r.severity === "critical" ? "badge-error" : "badge-warning"}">${escapeHtml(r.severity.toUpperCase())}</span></td>
+                      <td>${escapeHtml(r.effort)}</td>
+                      <td><code>${escapeHtml(r.affectedComponentIds.join(", "))}</code></td>
+                      <td>${escapeHtml(r.remediationSteps.join("; "))}</td>
+                    </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>` : ""}
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

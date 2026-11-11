@@ -825,6 +825,45 @@ export class MarkdownExporter {
           break;
         }
 
+        case "unified_architecture_intelligence": {
+          const content = section.content;
+          lines.push(`- Completeness Status: **${content.completenessStatus.toUpperCase()}** | Health Score: **${content.healthScore}/100** | Execution: **${content.durationMs}ms**`);
+          lines.push(`- Analyzers Run: **${content.analyzersRun}** (Completed: **${content.analyzersCompleted}**, Failed: **${content.analyzersFailed}**, Cached: **${content.analyzersCached}**)`);
+          lines.push(`- Total Findings: **${content.findingsSummary.total}** (Critical: **${content.findingsSummary.critical}**, High: **${content.findingsSummary.high}**, Medium: **${content.findingsSummary.medium}**, Low: **${content.findingsSummary.low}**)`);
+          lines.push("");
+
+          if (content.correlationGroups.length > 0) {
+            lines.push("### Compound Architectural Vulnerabilities (Correlation Groups)");
+            lines.push("| Correlation Group | Affected Components | Findings | Root Cause & Unified Action |");
+            lines.push("|---|---|---|---|");
+            for (const cg of content.correlationGroups) {
+              lines.push(`| **${cg.title}** | \`${cg.sharedComponentIds.join(", ")}\` | ${cg.findingsCount} | **Root Cause:** ${cg.candidateRootCause}<br/>**Action:** ${cg.recommendedUnifiedAction} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.contradictions.length > 0) {
+            lines.push("### Architectural Contradictions & Conflict Detections");
+            lines.push("| Contradiction Type | Involved Analyzers | Affected Components | Explanation & Guidance |");
+            lines.push("|---|---|---|---|");
+            for (const c of content.contradictions) {
+              lines.push(`| \`${c.type}\` | ${c.involvedAnalyzers.join(", ")} | \`${c.affectedComponents.join(", ")}\` | **Conflict:** ${c.explanation}<br/>**Guidance:** ${c.resolutionGuidance} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.unifiedRecommendations.length > 0) {
+            lines.push("### Unified Architecture Recommendations");
+            lines.push("| Recommendation | Severity | Effort | Target Components | Remediation Steps |");
+            lines.push("|---|---|---|---|---|");
+            for (const r of content.unifiedRecommendations) {
+              lines.push(`| **${r.title}** | **${r.severity.toUpperCase()}** | ${r.effort} | \`${r.affectedComponentIds.join(", ")}\` | ${r.remediationSteps.join("; ")} |`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);

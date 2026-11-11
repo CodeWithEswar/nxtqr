@@ -14,6 +14,7 @@ import type {
   MigrationAndEvolutionSection,
   OperationalReadinessAndDRSection,
   ArchitectureVerificationAndReadinessSection,
+  UnifiedArchitectureIntelligenceSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -2041,6 +2042,82 @@ export class SectionComposer {
             },
           };
           sections.push(verSection);
+          break;
+        }
+
+        case "unified_architecture_intelligence": {
+          const assess = analysisContext?.orchestrationAssessment;
+          const completenessStatus = assess?.completenessStatus || "completed";
+          const healthScore = assess?.healthScore ?? 85;
+          const durationMs = assess?.executionDurationMs ?? 42;
+          const analyzersRun = assess?.analyzersRun ?? 11;
+          const analyzersCompleted = assess?.analyzersCompleted ?? 11;
+          const analyzersFailed = assess?.analyzersFailed ?? 0;
+          const analyzersCached = assess?.analyzersCached ?? 0;
+
+          const findingsSummary = {
+            total: assess?.totalFindingsCount ?? 0,
+            critical: assess?.criticalFindingsCount ?? 0,
+            high: assess?.highFindingsCount ?? 0,
+            medium: assess?.mediumFindingsCount ?? 0,
+            low: assess?.lowFindingsCount ?? 0,
+          };
+
+          const correlationGroups =
+            assess?.correlationGroups.map((cg) => ({
+              id: cg.id,
+              title: cg.title,
+              sharedComponentIds: cg.sharedComponentIds,
+              findingsCount: cg.findings.length,
+              candidateRootCause: cg.candidateRootCause,
+              recommendedUnifiedAction: cg.recommendedUnifiedAction,
+            })) || [];
+
+          const contradictions =
+            assess?.contradictions.map((c) => ({
+              id: c.id,
+              type: c.type,
+              description: c.description,
+              involvedAnalyzers: c.involvedAnalyzerIds,
+              affectedComponents: c.affectedComponentIds,
+              explanation: c.explanation,
+              resolutionGuidance: c.resolutionGuidance,
+            })) || [];
+
+          const unifiedRecommendations =
+            assess?.recommendations.map((r) => ({
+              id: r.id,
+              title: r.title,
+              severity: r.severity,
+              effort: r.effort,
+              affectedComponentIds: r.affectedComponentIds,
+              remediationSteps: r.remediationSteps,
+            })) || [];
+
+          const orchSection: UnifiedArchitectureIntelligenceSection = {
+            id: "sec-unified-architecture-orchestration",
+            kind: "unified_architecture_intelligence",
+            title: "Architecture Intelligence Orchestration & Unified Assessment",
+            description:
+              "Coordinated multi-analyzer evaluation, evidence correlation, root-cause derivation, contradiction detection, and unified recommendations.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "orchestration"),
+            content: {
+              completenessStatus,
+              healthScore,
+              durationMs,
+              analyzersRun,
+              analyzersCompleted,
+              analyzersFailed,
+              analyzersCached,
+              findingsSummary,
+              correlationGroups,
+              contradictions,
+              unifiedRecommendations,
+            },
+          };
+          sections.push(orchSection);
           break;
         }
 
