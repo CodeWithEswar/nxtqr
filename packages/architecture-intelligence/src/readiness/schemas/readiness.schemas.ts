@@ -169,3 +169,4 @@ export const ProductionReadinessAssessmentSchema = z.object({
   signedOffAt: z.string().optional(),
   nonFabricationVerified: z.boolean(),
 });
+

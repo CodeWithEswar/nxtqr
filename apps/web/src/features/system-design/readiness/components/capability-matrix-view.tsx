@@ -217,3 +217,4 @@ export const CapabilityMatrixView: React.FC<CapabilityMatrixViewProps> = ({
     </div>
   );
 };
+

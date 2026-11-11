@@ -152,3 +152,4 @@ export interface ProductionReadinessAssessment {
   signedOffAt?: string;
   nonFabricationVerified: boolean;
 }
+

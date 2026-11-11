@@ -134,3 +134,4 @@ export const ReleaseGateInspector: React.FC<ReleaseGateInspectorProps> = ({
     </div>
   );
 };
+

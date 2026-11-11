@@ -438,3 +438,4 @@ export const CAPABILITY_INVENTORY: CapabilityInventoryItem[] = [
     evidenceNotes: 'Produces verifiable, sign-off-ready production readiness assessments across 8 pillars.',
   },
 ];
+

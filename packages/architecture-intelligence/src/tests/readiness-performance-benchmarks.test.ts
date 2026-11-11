@@ -29,3 +29,4 @@ describe('Phase 05.3.30: Performance Benchmarker', () => {
     expect(metrics.nodesEvaluated).toBe(8);
   });
 });
+
