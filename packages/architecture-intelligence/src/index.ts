@@ -71,6 +71,10 @@ export * from "./cost";
 // Architecture Reports & Technical Documentation Generator (Phase 05.3.12)
 export * from "./reports";
 
+// Architecture Design Review & Collaboration Engine (Phase 05.3.13)
+export * from "./reviews";
+
+
 
 
 

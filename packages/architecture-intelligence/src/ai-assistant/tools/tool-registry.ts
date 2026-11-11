@@ -17,6 +17,8 @@ import { architectureReportEngine } from "../../reports/engine/report-engine";
 import { ReportExportCoordinator } from "../../reports/exporters";
 import type { ReportAudience } from "../../reports/contracts/report.types";
 import type { ReportExportFormat } from "../../reports/contracts/export.types";
+import { ReviewCheckRunner } from "../../reviews/checks/check-runner";
+import type { ArchitectureSnapshot } from "../../comparison/contracts/comparison.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -610,6 +612,57 @@ export class ArchitectureToolRegistry {
             isEnabled: s.isEnabled,
           })),
           export: exportPayload,
+        };
+      },
+    });
+
+    // 17. review_architecture_proposal
+    this.registerTool({
+      name: "review_architecture_proposal",
+      description: "Evaluates an architecture change proposal against automated engineering checks, review policies, and baseline regressions.",
+      parameters: {
+        type: "object",
+        properties: {
+          reviewTitle: { type: "string", description: "Title of the proposal to evaluate." },
+          description: { type: "string", description: "Rationale and background context for the change." },
+        },
+        required: [],
+      },
+      execute: async (args, context) => {
+        const title = String(args.reviewTitle || "Proposed Architecture Changes");
+        const description = String(args.description || "Automated copilot review analysis.");
+
+        const baselineSnapshot: ArchitectureSnapshot = {
+          id: `snap-base-${context.graphRevision}`,
+          projectId: context.projectId,
+          architectureId: context.architectureId,
+          title: "Baseline Architecture",
+          revision: context.graphRevision,
+          schemaVersion: 1,
+          nodes: context.nodes,
+          edges: context.edges,
+          createdAt: new Date().toISOString(),
+          provenance: "current-draft",
+        };
+
+        const checks = await ReviewCheckRunner.runAllChecks(baselineSnapshot, baselineSnapshot);
+
+        return {
+          title,
+          description,
+          targetRevision: context.graphRevision,
+          totalChecksEvaluated: checks.length,
+          passedChecksCount: checks.filter((c) => c.status === "passed").length,
+          warningChecksCount: checks.filter((c) => c.status === "warning").length,
+          failedChecksCount: checks.filter((c) => c.status === "failed").length,
+          checks: checks.map((c) => ({
+            name: c.name,
+            category: c.category,
+            status: c.status,
+            severity: c.severity,
+            message: c.message,
+          })),
+          readiness: checks.some((c) => c.status === "failed") ? "blocked" : "ready_for_review",
         };
       },
     });

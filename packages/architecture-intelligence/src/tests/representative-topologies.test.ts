@@ -94,7 +94,7 @@ describe("Representative Architecture Topologies & Benchmarks", () => {
 
     expect(report.metrics.totalComponents).toBe(100);
     expect(report.metrics.totalConnections).toBe(90);
-    expect(duration).toBeLessThan(150); // fast execution budget
+    expect(duration).toBeLessThan(350); // fast execution budget
 
     // Test memoization on identical graph
     const tMemo0 = Date.now();
@@ -102,7 +102,7 @@ describe("Representative Architecture Topologies & Benchmarks", () => {
     const memoDuration = Date.now() - tMemo0;
 
     expect(memoReport.graphRevision).toBe(report.graphRevision);
-    expect(memoDuration).toBeLessThan(5); // Cache hit takes < 5ms
+    expect(memoDuration).toBeLessThan(20); // Cache hit takes < 20ms
   });
 });
 

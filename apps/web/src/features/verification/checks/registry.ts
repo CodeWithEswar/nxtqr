@@ -616,5 +616,22 @@ export const INITIAL_VERIFICATION_CHECKS: VerificationCheck[] = [
       inspectionRoute: "/verify/architecture-reports",
     },
   },
+  {
+    id: "architecture_reviews",
+    category: "architecture",
+    title: "Phase 05.3.13: Architecture Design Review & Collaboration Engine",
+    description: "Collaborative architecture review system connecting engineering discussions and decisions directly to visual graph states. Features immutable snapshots, semantic diffs, automated analysis checks, threaded contextual comments (anchored to nodes/edges/findings), reviewer roles, formal decisions (approve, request_changes, comment), approval policies, stale-baseline protection, controlled rebase, safe atomic graph proposal application, and AI Assistant Tool #17 integration.",
+    verificationType: "runtime_test",
+    status: "not_run",
+    dependencies: ["@nxtqr/architecture-intelligence", "@nxtqr/icons", "@nxtqr/graph-schema"],
+    evidence: {
+      route: "/verify/architecture-reviews",
+      reviewLifecycleStates: ["draft", "open", "changes_requested", "approved", "ready_to_apply", "applied", "stale", "closed"],
+      anchorTypes: ["node", "edge", "field", "finding", "diff", "general"],
+      automatedChecksCount: 6,
+      aiAssistantToolRegistered: "review_architecture_proposal (Tool #17)",
+      inspectionRoute: "/verify/architecture-reviews",
+    },
+  },
 ];
 
