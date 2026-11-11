@@ -7,6 +7,7 @@ import type {
   LineageSection,
   APIContractsSection,
   MessagingSystemsSection,
+  CachingAndStateSection,
   BottlenecksSection,
   CapacitySection,
   ComparisonSection,
@@ -37,6 +38,7 @@ import { PrivacyRiskAnalyzer } from "../../lineage/analysis/privacy-risk-analyze
 import { RetentionCoverageAnalyzer } from "../../lineage/analysis/retention-coverage";
 import { TransferAnalyzer } from "../../lineage/analysis/transfer-analyzer";
 import { architectureMessagingEngine } from "../../messaging/engine/messaging-engine";
+import { architectureCacheStateEngine } from "../../cache-state/engine/cache-state-engine";
 
 export class SectionComposer {
   public static composeSections(params: {
@@ -1086,6 +1088,113 @@ export class SectionComposer {
             },
           };
           sections.push(messagingSection);
+          break;
+        }
+
+        case "caching_and_state": {
+          const rawTopology = analysisContext?.cacheTopology;
+          let cacheLayerCount = 0;
+          let sourceOfTruthCount = 0;
+          let invalidationRuleCount = 0;
+          let replicaGroupCount = 0;
+          let stateOwnerCount = 0;
+          let netOffloadPercentage = 0;
+          let criticalFindingsCount = 0;
+          let stampedeRiskCount = 0;
+          let staleReadRiskCount = 0;
+          let unfencedLockCount = 0;
+          let cacheLayersList: Array<{
+            id: string;
+            name: string;
+            cacheType: string;
+            technology: string;
+            strategy: string;
+            tierOrder: number;
+            allocatedMemoryMb: number;
+            defaultTtlSeconds: number;
+          }> = [];
+          let sourcesList: Array<{
+            id: string;
+            name: string;
+            type: string;
+            isAuthoritativeMaster: boolean;
+          }> = [];
+          let findingsList: Array<{
+            id: string;
+            category: string;
+            severity: string;
+            title: string;
+            explanation: string;
+            remediation: string;
+          }> = [];
+
+          if (rawTopology) {
+            const analysis = architectureCacheStateEngine.analyzeTopology(rawTopology);
+            cacheLayerCount = analysis.summary.cacheLayerCount;
+            sourceOfTruthCount = analysis.summary.sourceOfTruthCount;
+            invalidationRuleCount = analysis.summary.invalidationRuleCount;
+            replicaGroupCount = analysis.summary.replicaGroupCount;
+            stateOwnerCount = analysis.summary.stateOwnerCount;
+            netOffloadPercentage = analysis.summary.netOffloadPercentage;
+            criticalFindingsCount = analysis.summary.findingsCount.critical;
+            stampedeRiskCount = analysis.summary.stampedeRiskCount;
+            staleReadRiskCount = analysis.summary.staleReadRiskCount;
+            unfencedLockCount = analysis.summary.unfencedLockCount;
+
+            cacheLayersList = analysis.topology.cacheLayers.map((l) => ({
+              id: l.id,
+              name: l.name,
+              cacheType: l.cacheType,
+              technology: l.technology,
+              strategy: l.strategy,
+              tierOrder: l.tierOrder,
+              allocatedMemoryMb: l.allocatedMemoryMb,
+              defaultTtlSeconds: l.ttlConfig.defaultTtlSeconds,
+            }));
+
+            sourcesList = analysis.topology.sourcesOfTruth.map((s) => ({
+              id: s.id,
+              name: s.name,
+              type: s.type,
+              isAuthoritativeMaster: s.isAuthoritativeMaster,
+            }));
+
+            findingsList = analysis.findings.slice(0, 10).map((f) => ({
+              id: f.id,
+              category: f.category,
+              severity: f.severity,
+              title: f.title,
+              explanation: f.explanation,
+              remediation: f.remediation,
+            }));
+          }
+
+          const cacheSection: CachingAndStateSection = {
+            id: `sec-caching-and-state`,
+            kind: "caching_and_state",
+            title: "Architecture Caching, Data Consistency & State Management Intelligence",
+            description:
+              "Multi-layer cache hierarchies, TTL & eviction policies, stampede mitigation, stale reads, quorum consistency, and distributed lock fencing.",
+            isEnabled: true,
+            order,
+            evidenceIds: getEvidenceIds((e) => e.sourceEngine === "cache"),
+            content: {
+              cacheLayerCount,
+              sourceOfTruthCount,
+              invalidationRuleCount,
+              replicaGroupCount,
+              stateOwnerCount,
+              netOffloadPercentage,
+              cacheLayers: cacheLayersList,
+              sourcesOfTruth: sourcesList,
+              criticalFindingsCount,
+              stampedeRiskCount,
+              staleReadRiskCount,
+              unfencedLockCount,
+              findings: findingsList,
+            },
+          };
+          sections.push(cacheSection);
           break;
         }
 

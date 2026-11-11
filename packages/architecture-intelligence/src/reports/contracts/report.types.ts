@@ -12,7 +12,7 @@ export type ReportStatus = "draft" | "verified" | "published" | "archived";
 
 export interface EvidenceReference {
   id: string;
-  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "messaging" | "adr" | "doc";
+  kind: "node" | "edge" | "finding" | "recommendation" | "comparison" | "capacity" | "cost" | "simulation" | "observability" | "benchmark" | "deployment" | "lineage" | "api_contract" | "messaging" | "cache" | "adr" | "doc";
   title: string;
   sourceEngine: string;
   summary: string;
@@ -46,6 +46,7 @@ export type ReportSectionKind =
   | "lineage"
   | "api_contracts"
   | "messaging_systems"
+  | "caching_and_state"
   | "adrs"
   | "text";
 
@@ -557,6 +558,46 @@ export interface MessagingSystemsSection extends BaseReportSection {
   };
 }
 
+export interface CachingAndStateSection extends BaseReportSection {
+  kind: "caching_and_state";
+  content: {
+    cacheLayerCount: number;
+    sourceOfTruthCount: number;
+    invalidationRuleCount: number;
+    replicaGroupCount: number;
+    stateOwnerCount: number;
+    netOffloadPercentage: number;
+    cacheLayers: Array<{
+      id: string;
+      name: string;
+      cacheType: string;
+      technology: string;
+      strategy: string;
+      tierOrder: number;
+      allocatedMemoryMb: number;
+      defaultTtlSeconds: number;
+    }>;
+    sourcesOfTruth: Array<{
+      id: string;
+      name: string;
+      type: string;
+      isAuthoritativeMaster: boolean;
+    }>;
+    criticalFindingsCount: number;
+    stampedeRiskCount: number;
+    staleReadRiskCount: number;
+    unfencedLockCount: number;
+    findings: Array<{
+      id: string;
+      category: string;
+      severity: string;
+      title: string;
+      explanation: string;
+      remediation: string;
+    }>;
+  };
+}
+
 export interface ADRsSection extends BaseReportSection {
   kind: "adrs";
   content: {
@@ -598,6 +639,7 @@ export type ReportSection =
   | LineageSection
   | APIContractsSection
   | MessagingSystemsSection
+  | CachingAndStateSection
   | ADRsSection
   | TextSection;
 

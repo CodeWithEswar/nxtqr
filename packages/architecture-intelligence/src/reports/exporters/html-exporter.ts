@@ -681,6 +681,104 @@ export class HtmlExporter {
           break;
         }
 
+        case "caching_and_state": {
+          const c = section.content;
+          bodyHtml = `
+            <div class="field-group">
+              <div class="pillar-grid">
+                <div class="pillar-box">
+                  <span class="pillar-name">Cache Layers</span>
+                  <span class="pillar-score">${c.cacheLayerCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Sources of Truth</span>
+                  <span class="pillar-score">${c.sourceOfTruthCount}</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Net Offload</span>
+                  <span class="pillar-score">${c.netOffloadPercentage.toFixed(1)}%</span>
+                </div>
+                <div class="pillar-box">
+                  <span class="pillar-name">Critical Findings</span>
+                  <span class="pillar-score">${c.criticalFindingsCount}</span>
+                </div>
+              </div>
+            </div>
+            ${
+              c.cacheLayers.length > 0
+                ? `<h4>Cache Hierarchy Layers</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Layer Name</th>
+                      <th>Cache Type</th>
+                      <th>Technology</th>
+                      <th>Strategy</th>
+                      <th>Tier</th>
+                      <th>Memory</th>
+                      <th>Default TTL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.cacheLayers
+                      .map(
+                        (cl) => `<tr>
+                        <td><strong>${escapeHtml(cl.name)}</strong></td>
+                        <td><code>${escapeHtml(cl.cacheType)}</code></td>
+                        <td><code>${escapeHtml(cl.technology)}</code></td>
+                        <td><code>${escapeHtml(cl.strategy)}</code></td>
+                        <td>T${cl.tierOrder}</td>
+                        <td>${cl.allocatedMemoryMb}MB</td>
+                        <td>${cl.defaultTtlSeconds}s</td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+            ${
+              c.sourcesOfTruth.length > 0
+                ? `<h4>Sources of Truth & Data Stores</h4>
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Data Store Name</th>
+                      <th>Storage Type</th>
+                      <th>Authoritative Master</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${c.sourcesOfTruth
+                      .map(
+                        (sot) => `<tr>
+                        <td><strong>${escapeHtml(sot.name)}</strong></td>
+                        <td><code>${escapeHtml(sot.type)}</code></td>
+                        <td>${sot.isAuthoritativeMaster ? "Yes" : "No"}</td>
+                      </tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>`
+                : ""
+            }
+            ${
+              c.findings.length > 0
+                ? `<h4>Caching & Consistency Findings</h4>
+                <ul>
+                  ${c.findings
+                    .map(
+                      (f) =>
+                        `<li><span class="badge ${f.severity === "critical" || f.severity === "high" ? "badge-error" : "badge-info"}">${f.severity.toUpperCase()}</span> <strong>${escapeHtml(f.title)}</strong> (<code>${escapeHtml(f.category)}</code>): <em>${escapeHtml(f.remediation)}</em></li>`
+                    )
+                    .join("")}
+                </ul>`
+                : ""
+            }
+          `;
+          break;
+        }
+
         case "adrs": {
           const c = section.content;
           bodyHtml = `

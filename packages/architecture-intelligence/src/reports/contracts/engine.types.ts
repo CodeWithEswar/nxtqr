@@ -35,6 +35,7 @@ import type { DeploymentReliabilityMetrics } from "../../deployment/analysis/dep
 import type { ArchitectureDataLineageModel } from "../../lineage/contracts/lineage.types";
 import type { APIContract, ConsumerDependency } from "../../api-contracts/contracts/contract.types";
 import type { MessagingTopology } from "../../messaging/contracts/messaging.types";
+import type { DistributedStateTopology } from "../../cache-state/contracts/cache-state.types";
 
 export interface ReportAnalysisContext {
   health?: HealthAssessmentReport;
@@ -69,6 +70,7 @@ export interface ReportAnalysisContext {
   apiContracts?: APIContract[];
   consumerDependencies?: ConsumerDependency[];
   messagingTopology?: MessagingTopology;
+  cacheTopology?: DistributedStateTopology;
 }
 
 export interface GenerateReportInput {

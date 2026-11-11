@@ -32,6 +32,8 @@ import { architectureContractEngine } from "../../api-contracts/engine/contract-
 import type { APIContract } from "../../api-contracts/contracts/contract.types";
 import { architectureMessagingEngine } from "../../messaging/engine/messaging-engine";
 import type { MessagingTopology } from "../../messaging/contracts/messaging.types";
+import { architectureCacheStateEngine } from "../../cache-state/engine/cache-state-engine";
+import type { DistributedStateTopology } from "../../cache-state/contracts/cache-state.types";
 
 /**
  * Bounds output payload to prevent context window overflow.
@@ -1984,6 +1986,171 @@ export class ArchitectureToolRegistry {
           replaySafety: includeReplaySafety ? truncateOutput(filteredReplay) : undefined,
           sagas: includeSagas ? truncateOutput(analysis.sagas) : undefined,
           eventFlowTraces: truncateOutput(analysis.eventFlowTraces),
+        };
+      },
+    });
+
+    // Tool #25: get_caching_and_state_consistency
+    this.registerTool({
+      name: "get_caching_and_state_consistency",
+      description:
+        "Analyzes multi-tier cache hierarchies, cache strategies (cache-aside, write-through, write-behind), TTL expiration, invalidation propagation, cache stampedes, penetration, capacity exhaustion, read-after-write consistency, replication lag, and distributed lock safety.",
+      parameters: {
+        type: "object",
+        properties: {
+          includeStampedes: {
+            type: "boolean",
+            description: "Whether to evaluate cache stampede, penetration, and avalanche risks.",
+          },
+          includeStaleReads: {
+            type: "boolean",
+            description: "Whether to inspect stale read windows and read-after-write consistency hazards.",
+          },
+          includeCapacity: {
+            type: "boolean",
+            description: "Whether to analyze memory working-set saturation and eviction thrashing.",
+          },
+          includePathTraces: {
+            type: "boolean",
+            description: "Whether to trace multi-layer cache offload paths from edge to database.",
+          },
+          filterLayerId: {
+            type: "string",
+            description: "Optional cache layer ID to restrict analysis results.",
+          },
+        },
+      },
+      execute: async (args, context) => {
+        const includeStampedes = (args.includeStampedes as boolean | undefined) ?? true;
+        const includeStaleReads = (args.includeStaleReads as boolean | undefined) ?? true;
+        const includeCapacity = (args.includeCapacity as boolean | undefined) ?? true;
+        const includePathTraces = (args.includePathTraces as boolean | undefined) ?? true;
+        const filterLayerId = args.filterLayerId as string | undefined;
+
+        let topology: DistributedStateTopology | undefined = context.cacheTopology;
+
+        if (!topology) {
+          const now = new Date().toISOString();
+          const cacheNodes = context.nodes.filter((n) => {
+            const t = ((n.data?.type as string) || (n.type as string) || "").toLowerCase();
+            return t.includes("redis") || t.includes("cache") || t.includes("memcached") || t.includes("cdn");
+          });
+
+          const dbNodes = context.nodes.filter((n) => {
+            const t = ((n.data?.type as string) || (n.type as string) || "").toLowerCase();
+            return t.includes("database") || t.includes("postgres") || t.includes("sql") || t.includes("db");
+          });
+
+          const cacheId = cacheNodes[0]?.id || "cache-redis-default";
+          const dbId = dbNodes[0]?.id || "db-primary-default";
+
+          topology = {
+            id: `cache-topo-${context.architectureId}`,
+            projectId: context.projectId,
+            architectureId: context.architectureId,
+            graphRevision: context.graphRevision,
+            version: 1,
+            cacheLayers: [
+              {
+                id: cacheId,
+                name: (context.nodes.find((n) => n.id === cacheId)?.data?.label as string) || "Distributed Redis Cache",
+                cacheType: "distributed_cache",
+                technology: "redis",
+                strategy: "cache_aside",
+                tierOrder: 2,
+                evictionPolicy: "lru",
+                allocatedMemoryMb: 1024,
+                ttlConfig: {
+                  type: "absolute",
+                  defaultTtlSeconds: 300,
+                  jitterPercentage: 15,
+                  isSynchronizedExpirationRisk: false,
+                },
+                keySpaces: [
+                  {
+                    id: "ks-default",
+                    name: "User Profiles",
+                    namespacePattern: "tenant:{tenantId}:user:{userId}",
+                    includesTenantScope: true,
+                    includesEnvironmentScope: true,
+                    includesVersionScope: true,
+                    dataClassification: "internal",
+                    estimatedEntrySizeBytes: 2048,
+                    estimatedKeyCount: 50000,
+                    provenance: { source: "modeled", timestamp: now, graphRevision: context.graphRevision, confirmed: false },
+                  },
+                ],
+                readHitRatioModeled: 0.85,
+                fallbackBehavior: "database_direct",
+                requestCoalescingEnabled: true,
+                negativeCachingEnabled: true,
+                negativeCacheTtlSeconds: 60,
+                provenance: { source: "modeled", timestamp: now, graphRevision: context.graphRevision, confirmed: false },
+              },
+            ],
+            sourcesOfTruth: [
+              {
+                id: dbId,
+                name: (context.nodes.find((n) => n.id === dbId)?.data?.label as string) || "Primary PostgreSQL DB",
+                type: "primary_relational_database",
+                isAuthoritativeMaster: true,
+                provenance: { source: "modeled", timestamp: now, graphRevision: context.graphRevision, confirmed: false },
+              },
+            ],
+            invalidationRules: [
+              {
+                id: "inv-rule-default",
+                name: "User Profile Invalidation",
+                targetCacheLayerIds: [cacheId],
+                mechanism: "event_driven_messaging",
+                triggerEventOrTable: "users",
+                isAsynchronous: false,
+                invalidationKeyPattern: "tenant:{tenantId}:user:{userId}",
+                reRefillPolicy: "on_demand_lazy",
+                provenance: { source: "modeled", timestamp: now, graphRevision: context.graphRevision, confirmed: false },
+              },
+            ],
+            replicaGroups: [],
+            stateOwners: [
+              {
+                id: "owner-user-svc",
+                serviceId: context.nodes[0]?.id || "user-service",
+                stateDomain: "UserProfileState",
+                stateType: "entity",
+                isExclusiveAuthoritativeWriter: true,
+                sourceOfTruthId: dbId,
+                associatedCacheLayerIds: [cacheId],
+                optimisticConcurrencyField: "version",
+                provenance: { source: "modeled", timestamp: now, graphRevision: context.graphRevision, confirmed: false },
+              },
+            ],
+            createdAt: now,
+            updatedAt: now,
+          };
+        }
+
+        const analysis = architectureCacheStateEngine.analyzeTopology(topology);
+
+        let filteredFindings = analysis.findings;
+        let filteredStampedes = analysis.stampedeEvaluations;
+        let filteredCapacity = analysis.capacityEvaluations;
+        let filteredStale = analysis.staleReadEvaluations;
+
+        if (filterLayerId) {
+          filteredFindings = filteredFindings.filter((f) => f.affectedCacheLayerId === filterLayerId);
+          filteredStampedes = filteredStampedes.filter((s) => s.layerId === filterLayerId);
+          filteredCapacity = filteredCapacity.filter((c) => c.layerId === filterLayerId);
+          filteredStale = filteredStale.filter((st) => st.layerOrReplicaId === filterLayerId);
+        }
+
+        return {
+          summary: analysis.summary,
+          findingsCount: analysis.summary.findingsCount,
+          findings: truncateOutput(filteredFindings),
+          stampedeAnalysis: includeStampedes ? truncateOutput(filteredStampedes) : undefined,
+          staleReads: includeStaleReads ? truncateOutput(filteredStale) : undefined,
+          capacity: includeCapacity ? truncateOutput(filteredCapacity) : undefined,
+          pathTraces: includePathTraces ? truncateOutput(analysis.cachePathTraces) : undefined,
         };
       },
     });

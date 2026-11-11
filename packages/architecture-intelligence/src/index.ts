@@ -99,4 +99,7 @@ export * from "./api-contracts";
 // Architecture Event-Driven Systems & Distributed Messaging Intelligence Engine (Phase 05.3.21)
 export * from "./messaging";
 
+// Architecture Caching, Data Consistency & State Management Intelligence Engine (Phase 05.3.22)
+export * from "./cache-state";
+
 

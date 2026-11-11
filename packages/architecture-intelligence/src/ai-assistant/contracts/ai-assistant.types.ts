@@ -3,6 +3,7 @@ import type { GraphOperation } from "../../scalability/schemas/scalability.schem
 import type { ArchitectureDataLineageModel } from "../../lineage/contracts/lineage.types";
 import type { APIContract, ConsumerDependency } from "../../api-contracts/contracts/contract.types";
 import type { MessagingTopology } from "../../messaging/contracts/messaging.types";
+import type { DistributedStateTopology } from "../../cache-state/contracts/cache-state.types";
 
 export type AIMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -146,5 +147,6 @@ export interface AIExecutionContext {
   apiContracts?: APIContract[];
   consumerDependencies?: ConsumerDependency[];
   messagingTopology?: MessagingTopology;
+  cacheTopology?: DistributedStateTopology;
 }
 

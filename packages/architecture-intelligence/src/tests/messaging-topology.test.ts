@@ -195,3 +195,4 @@ describe("Phase 05.3.21: Messaging Topology & Broker Capabilities", () => {
     expect(parsed.consumers.length).toBe(1);
   });
 });
+

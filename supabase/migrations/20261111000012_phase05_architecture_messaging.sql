@@ -270,3 +270,4 @@ CREATE POLICY "Users can manage messaging findings in their projects"
         WHERE t.id = messaging_findings_records.topology_id
           AND public.check_user_messaging_access(t.project_id)
     ));
+

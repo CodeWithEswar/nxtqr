@@ -29,6 +29,7 @@ export const ReportEvidenceReferenceSchema = z.object({
     "lineage",
     "api_contract",
     "messaging",
+    "cache",
     "adr",
     "doc",
   ]),
@@ -65,6 +66,7 @@ export const ReportSectionKindSchema = z.enum([
   "lineage",
   "api_contracts",
   "messaging_systems",
+  "caching_and_state",
   "adrs",
   "text",
 ]);
@@ -653,6 +655,52 @@ export const MessagingSystemsSectionSchema = BaseSectionSchema.extend({
   }),
 });
 
+export const CachingAndStateSectionSchema = BaseSectionSchema.extend({
+  kind: z.literal("caching_and_state"),
+  content: z.object({
+    cacheLayerCount: z.number().int().min(0),
+    sourceOfTruthCount: z.number().int().min(0),
+    invalidationRuleCount: z.number().int().min(0),
+    replicaGroupCount: z.number().int().min(0),
+    stateOwnerCount: z.number().int().min(0),
+    netOffloadPercentage: z.number().min(0).max(100),
+    cacheLayers: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        cacheType: z.string(),
+        technology: z.string(),
+        strategy: z.string(),
+        tierOrder: z.number().int(),
+        allocatedMemoryMb: z.number(),
+        defaultTtlSeconds: z.number(),
+      })
+    ),
+    sourcesOfTruth: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        type: z.string(),
+        isAuthoritativeMaster: z.boolean(),
+      })
+    ),
+    criticalFindingsCount: z.number().int().min(0),
+    stampedeRiskCount: z.number().int().min(0),
+    staleReadRiskCount: z.number().int().min(0),
+    unfencedLockCount: z.number().int().min(0),
+    findings: z.array(
+      z.object({
+        id: z.string(),
+        category: z.string(),
+        severity: z.string(),
+        title: z.string(),
+        explanation: z.string(),
+        remediation: z.string(),
+      })
+    ),
+  }),
+});
+
 export const ADRsSectionSchema = BaseSectionSchema.extend({
   kind: z.literal("adrs"),
   content: z.object({
@@ -694,6 +742,7 @@ export const ReportSectionSchema = z.discriminatedUnion("kind", [
   LineageSectionSchema,
   APIContractsSectionSchema,
   MessagingSystemsSectionSchema,
+  CachingAndStateSectionSchema,
   ADRsSectionSchema,
   TextSectionSchema,
 ]);

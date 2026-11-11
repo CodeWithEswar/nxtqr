@@ -535,6 +535,46 @@ export class MarkdownExporter {
           break;
         }
 
+        case "caching_and_state": {
+          const content = section.content;
+          lines.push(`- Cache Layers: **${content.cacheLayerCount}** | Sources of Truth: **${content.sourceOfTruthCount}**`);
+          lines.push(`- Invalidation Rules: **${content.invalidationRuleCount}** | Replica Groups: **${content.replicaGroupCount}** | State Owners: **${content.stateOwnerCount}**`);
+          lines.push(`- Net Read Offload: **${content.netOffloadPercentage.toFixed(1)}%**`);
+          lines.push(`- Critical Reliability Findings: **${content.criticalFindingsCount}** | Stampede Risks: **${content.stampedeRiskCount}** | Stale Read Risks: **${content.staleReadRiskCount}** | Unfenced Locks: **${content.unfencedLockCount}**`);
+          lines.push("");
+
+          if (content.cacheLayers.length > 0) {
+            lines.push("### Cache Layers");
+            lines.push("| Layer Name | Cache Type | Technology | Strategy | Tier | Memory | TTL |");
+            lines.push("| :--- | :--- | :--- | :--- | :---: | :---: | :---: |");
+            for (const cl of content.cacheLayers) {
+              lines.push(`| **${cl.name}** | \`${cl.cacheType}\` | \`${cl.technology}\` | \`${cl.strategy}\` | T${cl.tierOrder} | ${cl.allocatedMemoryMb}MB | ${cl.defaultTtlSeconds}s |`);
+            }
+            lines.push("");
+          }
+
+          if (content.sourcesOfTruth.length > 0) {
+            lines.push("### Sources of Truth");
+            lines.push("| Data Store | Storage Type | Authoritative Master |");
+            lines.push("| :--- | :--- | :---: |");
+            for (const sot of content.sourcesOfTruth) {
+              lines.push(`| **${sot.name}** | \`${sot.type}\` | ${sot.isAuthoritativeMaster ? "Yes" : "No"} |`);
+            }
+            lines.push("");
+          }
+
+          if (content.findings.length > 0) {
+            lines.push("### Caching & Consistency Findings");
+            for (const f of content.findings) {
+              lines.push(`- [${f.severity.toUpperCase()}] **${f.title}** (\`${f.category}\`)`);
+              lines.push(`  *Risk & Explanation:* ${f.explanation}`);
+              lines.push(`  *Remediation:* ${f.remediation}`);
+            }
+            lines.push("");
+          }
+          break;
+        }
+
         case "adrs": {
           const content = section.content;
           lines.push(`Recorded Architecture Decisions: **${content.totalDecisions}**`);
