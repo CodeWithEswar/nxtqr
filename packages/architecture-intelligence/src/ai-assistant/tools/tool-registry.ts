@@ -10,6 +10,8 @@ import { recommendationEngine } from "../../recommendations/engine/recommendatio
 import { comparisonEngine } from "../../comparison/engine/comparison-engine";
 import { capacityPlanningEngine } from "../../capacity-planning/engine/capacity-planning-engine";
 import { DEFAULT_CAPACITY_SCENARIOS } from "../../capacity-planning/scenarios/capacity-scenarios";
+import { architectureCostEngine } from "../../cost/engine/cost-engine";
+import type { CloudProviderId } from "../../cost/contracts/pricing.types";
 import { infrastructureRegistry } from "@nxtqr/node-registry";
 
 /**
@@ -499,6 +501,38 @@ export class ArchitectureToolRegistry {
           source: "architecture-patterns",
           topic: query,
           guidance: `Architecture documentation for '${query}': When designing scalable systems, decouple critical synchronous paths with asynchronous buffers, implement retries with exponential backoff and jitter, and ensure stateful datastores have multi-AZ replication.`,
+        };
+      },
+    });
+
+    // 15. get_cost_estimate
+    this.registerTool({
+      name: "get_cost_estimate",
+      description: "Generates infrastructure cost estimates, resource spending breakdowns, and optimization savings for the architecture.",
+      parameters: {
+        type: "object",
+        properties: {
+          providerId: { type: "string", description: "Cloud provider: 'aws', 'gcp', 'azure', or 'cloudflare'. Default is 'aws'." },
+        },
+        required: [],
+      },
+      execute: async (args, context) => {
+        const providerId = (String(args.providerId || "aws").toLowerCase()) as CloudProviderId;
+        const estimate = architectureCostEngine.estimateCost(context.nodes, context.edges, { providerId });
+        const optimizations = architectureCostEngine.getOptimizationOpportunities(context.nodes, estimate);
+        return {
+          providerId: estimate.providerId,
+          currency: estimate.currency,
+          totalMonthlyCost: estimate.totalMonthlyCost,
+          totalAnnualCost: estimate.totalAnnualCost,
+          status: estimate.status,
+          unpricedCount: estimate.unpricedResourcesCount,
+          categorySummaries: estimate.categorySummaries,
+          topOptimizations: optimizations.slice(0, 3).map((o) => ({
+            title: o.title,
+            savings: o.estimatedMonthlySavings,
+            summary: o.summary,
+          })),
         };
       },
     });

@@ -64,5 +64,8 @@ export * from "./ai-assistant";
 // Capacity Planning & Workload Forecasting Engine (Phase 05.3.11)
 export * from "./capacity-planning";
 
+// Architecture Cost Estimation & Optimization Engine (Phase 05.3.14)
+export * from "./cost";
+
 
 
