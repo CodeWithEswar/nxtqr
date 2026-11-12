@@ -22,6 +22,7 @@ import {
   DISTRIBUTED_TRANSACTION_PRESET_METADATA,
   DISTRIBUTED_STORAGE_PRESET_METADATA,
   TRAFFIC_CONTROL_PRESET_METADATA,
+  OBS_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -440,6 +441,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...TRAFFIC_CONTROL_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `Traffic Control: ${p.label}`,
+    description: p.description,
+  })),
+  ...OBS_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `Obs: ${p.label}`,
     description: p.description,
   })),
   {

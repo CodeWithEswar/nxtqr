@@ -15,6 +15,7 @@ import type { RaftExecutionEvent } from "../raft/raft-events";
 import type { DistributedTransactionEvent } from "../distributed-transactions/transaction-events";
 import type { DistributedStorageEvent } from "../distributed-storage/storage-events";
 import type { TrafficControlEvent } from "../traffic-control/traffic-control-events";
+import type { ObservabilityExecutionEvent } from "../observability/observability-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -277,4 +278,5 @@ export type ExecutionEvent =
   | RaftExecutionEvent
   | DistributedTransactionEvent
   | DistributedStorageEvent
-  | TrafficControlEvent;
+  | TrafficControlEvent
+  | ObservabilityExecutionEvent;

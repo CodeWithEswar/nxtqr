@@ -33,6 +33,7 @@ import type { ModeledRaftRuntimeState } from "../raft/raft-schemas";
 import type { ModeledDistributedTransactionRuntimeState } from "../distributed-transactions/transaction-schemas";
 import type { ModeledDistributedStorageRuntimeState } from "../distributed-storage/storage-schemas";
 import type { ModeledTrafficControlRuntimeState } from "../traffic-control/traffic-control-schemas";
+import type { ModeledObservabilityRuntimeState } from "../observability/observability-schemas";
 
 export type { CacheEntry };
 
@@ -141,6 +142,9 @@ export interface ModeledRuntimeState {
 
   // Distributed Rate Limiting, Backpressure, Queueing & Load Shedding (Phase 05.4.16)
   trafficControlState?: ModeledTrafficControlRuntimeState;
+
+  // Distributed Observability, Metrics, Logs, Traces & Root-Cause Analysis (Phase 05.4.17)
+  observabilityState?: ModeledObservabilityRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -326,6 +330,9 @@ export class RuntimeStateHelper {
         : undefined,
       trafficControlState: state.trafficControlState
         ? JSON.parse(JSON.stringify(state.trafficControlState))
+        : undefined,
+      observabilityState: state.observabilityState
+        ? JSON.parse(JSON.stringify(state.observabilityState))
         : undefined,
     };
   }

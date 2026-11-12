@@ -115,6 +115,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const activeTrafficControlScenario = useExecutionStore(
     (s) => s.activeTrafficControlScenario
   );
+  const isObservabilityWorkspaceOpen = useExecutionStore(
+    (s) => s.isObservabilityWorkspaceOpen
+  );
+  const toggleObservabilityWorkspace = useExecutionStore(
+    (s) => s.toggleObservabilityWorkspace
+  );
+  const activeObservabilityScenario = useExecutionStore(
+    (s) => s.activeObservabilityScenario
+  );
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -600,6 +609,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <ActivityIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Rate/Shed</span>
+      </Button>
+
+      {/* Observability, Traces, Logs, SLOs & Incident RCA Workspace Button */}
+      <Button
+        variant={isObservabilityWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleObservabilityWorkspace()}
+        title="Toggle Distributed Observability, Traces, Logs, SLOs & Incident RCA Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isObservabilityWorkspaceOpen || activeObservabilityScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <TerminalIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Obs/RCA</span>
       </Button>
 
       {trafficComparison && (

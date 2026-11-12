@@ -82,6 +82,11 @@ import {
   TRAFFIC_CONTROL_PRESET_METADATA,
   createTrafficControlPresetScenario,
   TrafficControlExecutionEngine,
+  type ObservabilityScenario,
+  type ObservabilityPresetId,
+  OBS_PRESET_METADATA,
+  createObservabilityPresetScenario,
+  ObservabilityExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -99,7 +104,8 @@ export type AllScenarioPresetId =
   | RaftPresetId
   | DistributedTransactionPresetId
   | DistributedStoragePresetId
-  | TrafficControlPresetId;
+  | TrafficControlPresetId
+  | ObservabilityPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -127,6 +133,7 @@ export interface ExecutionStoreState {
   isDistributedTxWorkspaceOpen: boolean;
   isDistributedStorageWorkspaceOpen: boolean;
   isTrafficControlWorkspaceOpen: boolean;
+  isObservabilityWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -145,6 +152,7 @@ export interface ExecutionStoreState {
   activeDistributedTxScenario: DistributedTransactionScenario | null;
   activeDistributedStorageScenario: StorageScenario | null;
   activeTrafficControlScenario: TrafficControlScenario | null;
+  activeObservabilityScenario: ObservabilityScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -183,6 +191,7 @@ export interface ExecutionStoreState {
   toggleDistributedTxWorkspace: (open?: boolean) => void;
   toggleDistributedStorageWorkspace: (open?: boolean) => void;
   toggleTrafficControlWorkspace: (open?: boolean) => void;
+  toggleObservabilityWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -198,6 +207,7 @@ export interface ExecutionStoreState {
   setDistributedTxScenario: (scenario: DistributedTransactionScenario | null) => void;
   setDistributedStorageScenario: (scenario: StorageScenario | null) => void;
   setTrafficControlScenario: (scenario: TrafficControlScenario | null) => void;
+  setObservabilityScenario: (scenario: ObservabilityScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -236,6 +246,7 @@ export interface ExecutionStoreState {
   runDistributedTxSimulation: (scenario: DistributedTransactionScenario) => boolean;
   runDistributedStorageSimulation: (scenario: StorageScenario) => boolean;
   runTrafficControlSimulation: (scenario: TrafficControlScenario) => boolean;
+  runObservabilitySimulation: (scenario: ObservabilityScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -326,6 +337,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isDistributedTxWorkspaceOpen: false,
     isDistributedStorageWorkspaceOpen: false,
     isTrafficControlWorkspaceOpen: false,
+    isObservabilityWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -342,6 +354,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeDistributedTxScenario: null,
     activeDistributedStorageScenario: null,
     activeTrafficControlScenario: null,
+    activeObservabilityScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -379,6 +392,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isDistributedTxWorkspaceOpen: false,
           isDistributedStorageWorkspaceOpen: false,
           isTrafficControlWorkspaceOpen: false,
+          isObservabilityWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -540,6 +554,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleObservabilityWorkspace: (open) => {
+      set({
+        isObservabilityWorkspaceOpen:
+          open !== undefined ? open : !get().isObservabilityWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -601,7 +622,42 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeTrafficControlScenario: scenario });
     },
 
+    setObservabilityScenario: (scenario) => {
+      set({ activeObservabilityScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (OBS_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const obsScenario = createObservabilityPresetScenario(
+          presetId as ObservabilityPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeObservabilityScenario: obsScenario,
+          activeTrafficControlScenario: null,
+          activeDistributedStorageScenario: null,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isObservabilityWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runObservabilitySimulation(obsScenario);
+        return;
+      }
+
       if (TRAFFIC_CONTROL_PRESET_METADATA.some((p) => p.id === presetId)) {
         const tcScenario = createTrafficControlPresetScenario(
           presetId as TrafficControlPresetId
@@ -1600,6 +1656,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeTrafficControlScenario: scenario,
         isTimelineOpen: true,
         isTrafficControlWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runObservabilitySimulation: (scenario) => {
+      const trace = ObservabilityExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_observability_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeObservabilityScenario: scenario,
+        isTimelineOpen: true,
+        isObservabilityWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

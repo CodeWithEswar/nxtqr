@@ -49,6 +49,7 @@ import {
   DistributedTransactionWorkspace,
   DistributedStorageWorkspace,
   TrafficControlWorkspace,
+  ObservabilityWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -92,6 +93,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   );
   const isTrafficControlWorkspaceOpen = useExecutionStore(
     (s) => s.isTrafficControlWorkspaceOpen
+  );
+  const isObservabilityWorkspaceOpen = useExecutionStore(
+    (s) => s.isObservabilityWorkspaceOpen
   );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -607,6 +611,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Rate Limiting, Backpressure, Queueing & Load Shedding Drawer */}
       {isTrafficControlWorkspaceOpen && <TrafficControlWorkspace />}
+
+      {/* Distributed Observability, Traces, Logs, SLOs & Incident RCA Drawer */}
+      {isObservabilityWorkspaceOpen && <ObservabilityWorkspace />}
     </div>
   );
 }

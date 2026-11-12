@@ -192,5 +192,16 @@ export * from "./traffic-control/traffic-control-presets";
 export * from "./traffic-control/traffic-control-comparisons";
 export * from "./traffic-control/traffic-control-execution-engine";
 
+// Phase 05.4.17: Interactive Distributed Observability, Metrics, Logs, Traces & Incident Root-Cause Analysis Engine
+export * from "./observability/observability-schemas";
+export * from "./observability/observability-events";
+export * from "./observability/traces/trace-processor";
+export * from "./observability/reliability/slo-alert-engine";
+export * from "./observability/incidents/incident-investigation-engine";
+export * from "./observability/invariants/observability-invariants";
+export * from "./observability/observability-presets";
+export * from "./observability/observability-comparisons";
+export * from "./observability/observability-execution-engine";
+
 
 
