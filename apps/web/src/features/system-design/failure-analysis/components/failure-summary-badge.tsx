@@ -36,7 +36,7 @@ export function FailureSummaryBadge({
       title="Toggle Single Point of Failure (SPOF) Analysis Panel"
     >
       <ShieldIcon className={cn("w-3.5 h-3.5", isAnalyzing && "animate-pulse")} />
-      <span className="hidden sm:inline">Resiliency</span>
+      <span className="hidden xl:inline">Resiliency</span>
 
       <Badge
         variant="outline"

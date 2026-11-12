@@ -314,35 +314,170 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     setSnapToGrid: (snap) => set({ snapToGrid: snap }),
     setShowMinimap: (show) => set({ showMinimap: show }),
     toggleMinimap: () => set((s) => ({ showMinimap: !s.showMinimap })),
-    setInspectorOpen: (open) => set({ isInspectorOpen: open }),
-    toggleInspector: () => set((s) => ({ isInspectorOpen: !s.isInspectorOpen })),
-    setValidationOpen: (open) => set({ isValidationOpen: open }),
-    toggleValidation: () => set((s) => ({ isValidationOpen: !s.isValidationOpen })),
-    setHealthOpen: (open) => set({ isHealthOpen: open }),
-    toggleHealth: () => set((s) => ({ isHealthOpen: !s.isHealthOpen })),
-    setBottlenecksOpen: (open) => set({ isBottlenecksOpen: open }),
-    toggleBottlenecks: () => set((s) => ({ isBottlenecksOpen: !s.isBottlenecksOpen })),
-    setFailureAnalysisOpen: (open) => set({ isFailureAnalysisOpen: open }),
-    toggleFailureAnalysis: () => set((s) => ({ isFailureAnalysisOpen: !s.isFailureAnalysisOpen })),
-    setSecurityOpen: (open) => set({ isSecurityOpen: open }),
-    toggleSecurity: () => set((s) => ({ isSecurityOpen: !s.isSecurityOpen })),
-    setScalabilityOpen: (open) => set({ isScalabilityOpen: open }),
-    toggleScalability: () => set((s) => ({ isScalabilityOpen: !s.isScalabilityOpen })),
+    setInspectorOpen: (open) => {
+      set({ isInspectorOpen: open });
+      if (open && typeof window !== "undefined" && window.innerWidth < 1536) {
+        set({
+          activeEngineId: null,
+          isValidationOpen: false,
+          isHealthOpen: false,
+          isBottlenecksOpen: false,
+          isFailureAnalysisOpen: false,
+          isSecurityOpen: false,
+          isScalabilityOpen: false,
+        });
+      }
+    },
+    toggleInspector: () => {
+      const willOpen = !get().isInspectorOpen;
+      set({ isInspectorOpen: willOpen });
+      if (willOpen && typeof window !== "undefined" && window.innerWidth < 1536) {
+        set({
+          activeEngineId: null,
+          isValidationOpen: false,
+          isHealthOpen: false,
+          isBottlenecksOpen: false,
+          isFailureAnalysisOpen: false,
+          isSecurityOpen: false,
+          isScalabilityOpen: false,
+        });
+      }
+    },
+    setValidationOpen: (open) => {
+      if (open) get().setActiveEngineId("validation");
+      else if (get().activeEngineId === "validation") get().setActiveEngineId(null);
+      else set({ isValidationOpen: false });
+    },
+    toggleValidation: () => {
+      const willOpen = !get().isValidationOpen;
+      get().setActiveEngineId(willOpen ? "validation" : null);
+    },
+    setHealthOpen: (open) => {
+      if (open) get().setActiveEngineId("health");
+      else if (get().activeEngineId === "health") get().setActiveEngineId(null);
+      else set({ isHealthOpen: false });
+    },
+    toggleHealth: () => {
+      const willOpen = !get().isHealthOpen;
+      get().setActiveEngineId(willOpen ? "health" : null);
+    },
+    setBottlenecksOpen: (open) => {
+      if (open) get().setActiveEngineId("bottlenecks");
+      else if (get().activeEngineId === "bottlenecks") get().setActiveEngineId(null);
+      else set({ isBottlenecksOpen: false });
+    },
+    toggleBottlenecks: () => {
+      const willOpen = !get().isBottlenecksOpen;
+      get().setActiveEngineId(willOpen ? "bottlenecks" : null);
+    },
+    setFailureAnalysisOpen: (open) => {
+      if (open) get().setActiveEngineId("failure-analysis");
+      else if (get().activeEngineId === "failure-analysis") get().setActiveEngineId(null);
+      else set({ isFailureAnalysisOpen: false });
+    },
+    toggleFailureAnalysis: () => {
+      const willOpen = !get().isFailureAnalysisOpen;
+      get().setActiveEngineId(willOpen ? "failure-analysis" : null);
+    },
+    setSecurityOpen: (open) => {
+      if (open) get().setActiveEngineId("security-analysis");
+      else if (get().activeEngineId === "security-analysis") get().setActiveEngineId(null);
+      else set({ isSecurityOpen: false });
+    },
+    toggleSecurity: () => {
+      const willOpen = !get().isSecurityOpen;
+      get().setActiveEngineId(willOpen ? "security-analysis" : null);
+    },
+    setScalabilityOpen: (open) => {
+      if (open) get().setActiveEngineId("scalability");
+      else if (get().activeEngineId === "scalability") get().setActiveEngineId(null);
+      else set({ isScalabilityOpen: false });
+    },
+    toggleScalability: () => {
+      const willOpen = !get().isScalabilityOpen;
+      get().setActiveEngineId(willOpen ? "scalability" : null);
+    },
     setActiveEngineId: (engineId) => {
+      const shouldCloseInspector = Boolean(
+        engineId && typeof window !== "undefined" && window.innerWidth < 1536
+      );
       if (engineId === "validation") {
-        set({ isValidationOpen: true, activeEngineId: engineId });
+        set({
+          isValidationOpen: true,
+          isHealthOpen: false,
+          isBottlenecksOpen: false,
+          isFailureAnalysisOpen: false,
+          isSecurityOpen: false,
+          isScalabilityOpen: false,
+          activeEngineId: engineId,
+          ...(shouldCloseInspector ? { isInspectorOpen: false } : {}),
+        });
       } else if (engineId === "health") {
-        set({ isHealthOpen: true, activeEngineId: engineId });
+        set({
+          isValidationOpen: false,
+          isHealthOpen: true,
+          isBottlenecksOpen: false,
+          isFailureAnalysisOpen: false,
+          isSecurityOpen: false,
+          isScalabilityOpen: false,
+          activeEngineId: engineId,
+          ...(shouldCloseInspector ? { isInspectorOpen: false } : {}),
+        });
       } else if (engineId === "bottlenecks") {
-        set({ isBottlenecksOpen: true, activeEngineId: engineId });
+        set({
+          isValidationOpen: false,
+          isHealthOpen: false,
+          isBottlenecksOpen: true,
+          isFailureAnalysisOpen: false,
+          isSecurityOpen: false,
+          isScalabilityOpen: false,
+          activeEngineId: engineId,
+          ...(shouldCloseInspector ? { isInspectorOpen: false } : {}),
+        });
       } else if (engineId === "failure-analysis") {
-        set({ isFailureAnalysisOpen: true, activeEngineId: engineId });
+        set({
+          isValidationOpen: false,
+          isHealthOpen: false,
+          isBottlenecksOpen: false,
+          isFailureAnalysisOpen: true,
+          isSecurityOpen: false,
+          isScalabilityOpen: false,
+          activeEngineId: engineId,
+          ...(shouldCloseInspector ? { isInspectorOpen: false } : {}),
+        });
       } else if (engineId === "security-analysis") {
-        set({ isSecurityOpen: true, activeEngineId: engineId });
+        set({
+          isValidationOpen: false,
+          isHealthOpen: false,
+          isBottlenecksOpen: false,
+          isFailureAnalysisOpen: false,
+          isSecurityOpen: true,
+          isScalabilityOpen: false,
+          activeEngineId: engineId,
+          ...(shouldCloseInspector ? { isInspectorOpen: false } : {}),
+        });
       } else if (engineId === "scalability") {
-        set({ isScalabilityOpen: true, activeEngineId: engineId });
+        set({
+          isValidationOpen: false,
+          isHealthOpen: false,
+          isBottlenecksOpen: false,
+          isFailureAnalysisOpen: false,
+          isSecurityOpen: false,
+          isScalabilityOpen: true,
+          activeEngineId: engineId,
+          ...(shouldCloseInspector ? { isInspectorOpen: false } : {}),
+        });
       } else {
-        set({ activeEngineId: engineId });
+        set({
+          isValidationOpen: false,
+          isHealthOpen: false,
+          isBottlenecksOpen: false,
+          isFailureAnalysisOpen: false,
+          isSecurityOpen: false,
+          isScalabilityOpen: false,
+          activeEngineId: engineId,
+          ...(shouldCloseInspector ? { isInspectorOpen: false } : {}),
+        });
       }
     },
     toggleEngineId: (engineId) => {

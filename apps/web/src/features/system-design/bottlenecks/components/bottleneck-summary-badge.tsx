@@ -36,7 +36,7 @@ export function BottleneckSummaryBadge({
       title="Toggle Bottleneck Detection Panel"
     >
       <CpuIcon className={cn("w-3.5 h-3.5", isAnalyzing && "animate-pulse")} />
-      <span className="hidden sm:inline">Bottlenecks</span>
+      <span className="hidden xl:inline">Bottlenecks</span>
 
       <Badge
         variant="outline"

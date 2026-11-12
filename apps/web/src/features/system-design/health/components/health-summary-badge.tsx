@@ -36,7 +36,7 @@ export function HealthSummaryBadge({
       title="Toggle Architecture Health Analysis Panel"
     >
       <ActivityIcon className={cn("w-3.5 h-3.5", isAssessing && "animate-pulse")} />
-      <span className="hidden sm:inline">Health</span>
+      <span className="hidden xl:inline">Health</span>
 
       <Badge
         variant="outline"

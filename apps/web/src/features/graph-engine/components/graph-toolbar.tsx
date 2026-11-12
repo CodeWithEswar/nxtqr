@@ -86,7 +86,7 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
   return (
     <div
       className={cn(
-        "h-9 px-3 border-b border-border-default bg-surface-01 shrink-0 flex items-center justify-between text-xs font-mono select-none",
+        "h-9 px-3 border-b border-border-default bg-surface-01 shrink-0 flex items-center justify-between text-xs font-mono select-none w-full min-w-0 overflow-x-auto no-scrollbar",
         className
       )}
     >
@@ -174,7 +174,7 @@ export function GraphToolbar({ className }: GraphToolbarProps) {
           title="Auto-arrange graph layout via ELK.js (Left to Right)"
         >
           <LayersIcon className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Auto Layout</span>
+          <span className="hidden xl:inline">Auto Layout</span>
         </Button>
 
         {/* Viewport controls: Fit View + Snap to Grid + Minimap */}

@@ -37,7 +37,7 @@ export function SecuritySummaryBadge({
       title="Toggle Security Architecture Analysis Panel"
     >
       <ShieldIcon className={cn("w-3.5 h-3.5", isAnalyzing && "animate-pulse")} />
-      <span className="hidden sm:inline">Security</span>
+      <span className="hidden xl:inline">Security</span>
 
       <Badge
         variant="outline"

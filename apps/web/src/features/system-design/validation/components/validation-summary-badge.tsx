@@ -42,7 +42,7 @@ export function ValidationSummaryBadge({
         <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" strokeWidth={1.5} />
       )}
 
-      <span>Validation</span>
+      <span className="hidden xl:inline">Validation</span>
 
       {(hasErrors || hasWarnings) && (
         <span

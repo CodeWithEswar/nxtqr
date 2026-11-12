@@ -37,7 +37,7 @@ export function ScalabilitySummaryBadge({
       title="Toggle Scalability Recommendations & What-If Planner"
     >
       <LayersIcon className={cn("w-3.5 h-3.5", isEvaluating && "animate-pulse")} />
-      <span className="hidden sm:inline">Scalability</span>
+      <span className="hidden xl:inline">Scalability</span>
 
       <Badge
         variant="outline"

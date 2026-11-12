@@ -80,7 +80,7 @@ function InnerGraphEditor({ projectId, className, fitViewOnMount }: GraphEditorP
       }`}
     >
       {/* 1. Desktop & Tablet Top Canvas Toolbar */}
-      <div className="hidden md:block">
+      <div className="hidden md:block w-full min-w-0 overflow-hidden shrink-0">
         <GraphToolbar />
       </div>
 
@@ -109,7 +109,7 @@ function InnerGraphEditor({ projectId, className, fitViewOnMount }: GraphEditorP
       </div>
 
       {/* 3. Main Center Workspace: 3-column layout on Desktop, Fullscreen on Mobile */}
-      <div className="flex-1 flex relative overflow-hidden min-h-0">
+      <div className="flex-1 flex relative overflow-hidden min-h-0 w-full">
         {/* Left: Desktop Node Library (Resizable / Collapsible) */}
         {isNodeLibraryOpen && (
           <aside
@@ -137,7 +137,7 @@ function InnerGraphEditor({ projectId, className, fitViewOnMount }: GraphEditorP
         )}
 
         {/* Center: Graph Canvas Viewport */}
-        <main className="flex-1 relative h-full w-full overflow-hidden min-h-0">
+        <main className="flex-1 relative h-full min-w-[280px] overflow-hidden min-h-0">
           <GraphCanvas fitViewOnMount={fitViewOnMount} />
 
           {/* Mobile Bottom Floating Action Bar & Drawers */}
@@ -334,7 +334,7 @@ function InnerGraphEditor({ projectId, className, fitViewOnMount }: GraphEditorP
       </div>
 
       {/* 4. Desktop Status Strip */}
-      <footer className="hidden md:flex h-6 px-3 bg-surface-02 border-t border-border-default items-center justify-between font-mono text-[10px] text-text-muted shrink-0 z-20">
+      <footer className="hidden md:flex h-6 px-3 bg-surface-02 border-t border-border-default items-center justify-between font-mono text-[10px] text-text-muted shrink-0 z-20 w-full">
         <div className="flex items-center gap-2.5">
           <span className="font-semibold text-foreground truncate max-w-[200px]">
             {title}
