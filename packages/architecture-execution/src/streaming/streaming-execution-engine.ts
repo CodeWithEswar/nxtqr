@@ -45,13 +45,14 @@ import {
   RuntimeStateHelper,
   type ModeledRuntimeState,
 } from "../domain/runtime-state";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 
 export class StreamingExecutionEngine {
   /**
    * Deterministically executes an event streaming scenario in discrete virtual time.
    */
   public static executeScenario(scenario: StreamingScenario): ExecutionTrace {
-    const runId = `run_stream_${Date.now()}`;
+    const runId = createDeterministicId("run_stream", scenario.id);
     let sequence = 0;
     let virtualClockMs = 0;
 
@@ -819,8 +820,8 @@ export class StreamingExecutionEngine {
       runId,
       architectureId: "arch_stream_sim",
       architectureRevisionId: "rev_001",
-      snapshotHash: `hash_stream_${Date.now()}`,
-      createdAt: new Date().toISOString(),
+      snapshotHash: createDeterministicId("hash_stream", scenario.id),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
       visitedNodeIds: ["producer", "broker", "consumer"],
       traversedEdgeIds: [],
       configuration: config,

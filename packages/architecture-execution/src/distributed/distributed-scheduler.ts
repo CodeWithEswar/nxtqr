@@ -8,6 +8,7 @@ import { ExecutionLimitsGuard } from "../engine/execution-limits";
 import { RuntimeStateHelper, type ModeledRuntimeState } from "../domain/runtime-state";
 import { PriorityQueue } from "./priority-queue";
 import { CriticalPathAnalyzer } from "../tracing/critical-path";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 import type {
   DistributedScenarioConfig,
   TraceContext,
@@ -31,7 +32,8 @@ export class DistributedScheduler {
     scenario: DistributedScenarioConfig,
     configuration: ExecutionConfiguration
   ): ExecutionTrace {
-    const runId = `dist_run_${snapshot.snapshotHash.slice(5, 11)}_${Date.now()}`;
+    const distSeed = `${snapshot.snapshotHash}:${scenario.id}:${scenario.entryNodeId}`;
+    const runId = createDeterministicId("dist_run", distSeed);
     const clock = new VirtualClock(0);
     const limitsGuard = new ExecutionLimitsGuard(configuration.limits);
     const queue = new PriorityQueue<ScheduledTask>();
@@ -88,8 +90,8 @@ export class DistributedScheduler {
     // Initialize Root Trace Context
     // ------------------------------------------------------------------------
     const rootTraceContext: TraceContext = {
-      requestId: `req_${Date.now()}`,
-      correlationId: `corr_${Date.now()}`,
+      requestId: createDeterministicId("req", distSeed, 1),
+      correlationId: createDeterministicId("corr", distSeed, 1),
       traceId: `trace_${runId}`,
       spanId: `span_root_${runId}`,
       branchId: "branch_main",
@@ -224,7 +226,7 @@ export class DistributedScheduler {
     // Step 2: Parallel Branch Scheduling (Fan-Out & Fan-In)
     // ------------------------------------------------------------------------
     if (scenario.parallelBranches.length > 0) {
-      const barrierId = `barrier_${orchestratorNodeId}_${Date.now()}`;
+      const barrierId = createDeterministicId(`barrier_${orchestratorNodeId}`, distSeed, sequence);
       const barrier: FanInBarrier = {
         barrierId,
         parentBranchId: "branch_main",
@@ -498,7 +500,7 @@ export class DistributedScheduler {
       const publishTimeMs = clock.now() + msgDef.delayMs;
 
       const schedulePublish = () => {
-        const msgId = `msg_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+        const msgId = createDeterministicId("msg", `${distSeed}:${msgDef.destinationQueueId}`, sequence);
         const messageObj: ModeledMessage = {
           id: msgId,
           correlationId: rootTraceContext.correlationId,
@@ -905,7 +907,7 @@ export class DistributedScheduler {
       frames,
       spans: allSpans,
       criticalPathSpanIds,
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
     };
   }
 }

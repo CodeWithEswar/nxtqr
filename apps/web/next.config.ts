@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     "@nxtqr/database",
     "@nxtqr/auth",
     "@nxtqr/api-client",
+    "@nxtqr/architecture-execution",
     "@nxtqr/query",
     "@nxtqr/state",
     "@nxtqr/canvas-core",

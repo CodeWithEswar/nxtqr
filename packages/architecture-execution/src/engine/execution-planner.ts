@@ -12,6 +12,7 @@ import { ExecutionSnapshotManager } from "../domain/execution-snapshot";
 import { RequestLifecyclePlanner } from "./request-lifecycle-planner";
 import { DistributedScheduler } from "../distributed/distributed-scheduler";
 import { getDistributedScenarioPreset } from "../distributed/distributed-scenarios";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 
 export class ExecutionPlanner {
   public static planExecution(
@@ -36,7 +37,7 @@ export class ExecutionPlanner {
       return RequestLifecyclePlanner.planLifecycle(snapshot, configuration);
     }
 
-    const runId = `run_${snapshot.snapshotHash.slice(5, 11)}_${Date.now()}`;
+    const runId = createDeterministicId("run", `${snapshot.snapshotHash}:${configuration.entryNodeId}`);
     const validation = ExecutionSnapshotManager.validateSnapshot(snapshot);
 
     if (!validation.isValid) {
@@ -68,7 +69,7 @@ export class ExecutionPlanner {
         visitedNodeIds: [],
         traversedEdgeIds: [],
         frames: ExecutionTraceHelper.generateFrames(errorEvents),
-        createdAt: new Date().toISOString(),
+        createdAt: DETERMINISTIC_EPOCH_ISO,
       };
     }
 
@@ -294,7 +295,7 @@ export class ExecutionPlanner {
       visitedNodeIds,
       traversedEdgeIds,
       frames,
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
     };
   }
 }

@@ -4,6 +4,7 @@ import type {
 } from "../domain/execution-trace";
 import type { ModeledRuntimeState } from "../domain/runtime-state";
 import { RuntimeStateHelper } from "../domain/runtime-state";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 import type {
   SecurityScenario,
   ModeledSecurityRuntimeState,
@@ -169,7 +170,7 @@ export class SecurityExecutionEngine {
       };
 
       decisions.push({
-        id: `dec_route_404_${Date.now()}`,
+        id: createDeterministicId("dec_route_404", `${scenario.id}:${scenario.request.path}`, decisions.length + 1),
         middlewareId: "gateway_router",
         middlewareType: "service_identity",
         outcome: "deny",
@@ -1055,11 +1056,11 @@ export class SecurityExecutionEngine {
     }
 
     return {
-      runId: `run_sec_${Date.now()}`,
+      runId: createDeterministicId("run_sec", `${scenario.id}:${gatewayNodeId}`),
       architectureId: "arch_sec_sim",
       architectureRevisionId: "rev_001",
       snapshotHash: "hash_sec_001",
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
       visitedNodeIds: reachedBackend ? [gatewayNodeId, targetServiceNodeId] : [gatewayNodeId],
       traversedEdgeIds: [],
       configuration: {

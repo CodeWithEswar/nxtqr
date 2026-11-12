@@ -156,7 +156,7 @@ export function ContractImportModal({ isOpen, onClose, onImport }: ContractImpor
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 select-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-none p-4 select-none">
       <div className="w-full max-w-2xl bg-[#080808] border border-[#262626] rounded-md shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="p-4 border-b border-[#262626] flex items-center justify-between">

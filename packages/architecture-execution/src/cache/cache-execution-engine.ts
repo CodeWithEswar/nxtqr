@@ -39,6 +39,7 @@ import type {
 } from "./cache-events";
 import { EvictionManager } from "./policies/eviction-policies";
 import { BackingDatabaseAdapter } from "./strategies/cache-strategies";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 import {
   RequestCoalescingManager,
   InvalidationManager,
@@ -490,7 +491,7 @@ export class CacheExecutionEngine {
           } else if (scenario.configuration.cachingStrategy === "write_behind") {
             const flushInterval = scenario.configuration.writeBehindConfig?.flushIntervalMs || 200;
             const queueItem: WriteBehindQueueItem = {
-              id: `wb_${Date.now()}_${op.key}`,
+              id: `wb_${sequence}_${op.key}`,
               key: op.key,
               value: val,
               queuedAtMs: virtualClockMs,
@@ -848,11 +849,11 @@ export class CacheExecutionEngine {
     }
 
     return {
-      runId: `run_cache_${Date.now()}`,
+      runId: createDeterministicId("run_cache", `${scenario.id}:${cacheNodeId}`),
       architectureId: "arch_cache_sim",
       architectureRevisionId: "rev_001",
       snapshotHash: "hash_cache_001",
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
       visitedNodeIds: [cacheNodeId],
       traversedEdgeIds: [],
       configuration: {

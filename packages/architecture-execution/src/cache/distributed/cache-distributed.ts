@@ -58,8 +58,9 @@ export class DistributedCacheManager {
     virtualClockMs: number,
     sequence?: number
   ): { item: PendingReplicationItem; event: CacheSimReplicationScheduledEvent } {
+    const seq = sequence ?? this.eventSeq++;
     const item: PendingReplicationItem = {
-      id: `rep_${Date.now()}_${key}`,
+      id: `rep_${seq}_${key}`,
       key,
       entry: { ...entry },
       version: entry.version || 1,
@@ -76,8 +77,6 @@ export class DistributedCacheManager {
         rep.status = "lagging";
       }
     }
-
-    const seq = sequence ?? this.eventSeq++;
     const event: CacheSimReplicationScheduledEvent = {
       id: `evt_rep_sched_${item.id}`,
       sequence: seq,

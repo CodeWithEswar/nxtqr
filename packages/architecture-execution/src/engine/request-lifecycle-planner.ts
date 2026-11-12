@@ -10,13 +10,15 @@ import { componentBehaviorRegistry } from "../behavior/behavior-registry";
 import { RuntimeStateHelper, type ModeledRuntimeState } from "../domain/runtime-state";
 import { getScenarioPreset } from "../behavior/scenario-presets";
 import type { ModeledHttpRequest, ModeledHttpResponse, BehaviorScenario } from "../schemas/behavior.schemas";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 
 export class RequestLifecyclePlanner {
   public static planLifecycle(
     snapshot: ExecutionSnapshot,
     configuration: ExecutionConfiguration
   ): ExecutionTrace {
-    const runId = `run_${snapshot.snapshotHash.slice(5, 11)}_${Date.now()}`;
+    const runSeed = `${snapshot.snapshotHash}:${configuration.entryNodeId}:${configuration.presetId || "default"}`;
+    const runId = createDeterministicId("run", runSeed);
     const validation = ExecutionSnapshotManager.validateSnapshot(snapshot);
 
     if (!validation.isValid) {
@@ -48,7 +50,7 @@ export class RequestLifecyclePlanner {
         visitedNodeIds: [],
         traversedEdgeIds: [],
         frames: ExecutionTraceHelper.generateFrames([errorEvent]),
-        createdAt: new Date().toISOString(),
+        createdAt: DETERMINISTIC_EPOCH_ISO,
       };
     }
 
@@ -99,18 +101,19 @@ export class RequestLifecyclePlanner {
     const traversedPath: { node: BaseNode; edgeToTarget?: BaseEdge }[] = [];
 
     // Initialize Modeled HTTP Request
+    const corrId = createDeterministicId("corr", runSeed, 1);
     let currentRequest: ModeledHttpRequest = {
-      id: configuration.request.id || `req_${Date.now()}`,
+      id: configuration.request.id || createDeterministicId("req", runSeed, 1),
       method: configuration.request.method,
       path: configuration.request.path,
       headers: configuration.request.headers || {
         "content-type": "application/json",
-        "x-correlation-id": `corr_${Date.now()}`,
+        "x-correlation-id": corrId,
       },
       query: {},
       body: configuration.request.body,
       sourceNodeId: configuration.entryNodeId,
-      correlationId: `corr_${Date.now()}`,
+      correlationId: corrId,
     };
     runtimeState.activeRequest = currentRequest;
 
@@ -306,7 +309,7 @@ export class RequestLifecyclePlanner {
       visitedNodeIds,
       traversedEdgeIds,
       frames,
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
     };
   }
 }

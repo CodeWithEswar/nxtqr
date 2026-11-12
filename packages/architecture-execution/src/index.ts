@@ -284,5 +284,8 @@ export * from "./templates/template-registry";
 export * from "./templates/template-presets";
 export * from "./templates/template-execution-engine";
 
+// Phase 05.4.25: Unified Simulation Orchestrator, Capability Registry, Integrity & Findings
+export * from "./orchestrator";
+
 
 

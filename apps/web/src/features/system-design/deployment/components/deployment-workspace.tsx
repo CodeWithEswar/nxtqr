@@ -165,7 +165,7 @@ export function DeploymentWorkspace({
               onClick={() => setLeftTab("catalog")}
               className={`flex-1 py-2 text-xs font-mono font-medium transition-colors border-b-2 ${
                 leftTab === "catalog"
-                  ? "border-[#FFFFFF] text-[#FFFFFF] bg-[#080808]"
+                  ? "border-[#404040] text-[#FFFFFF] bg-[#080808]"
                   : "border-transparent text-[#858585] hover:text-[#FFFFFF]"
               }`}
             >
@@ -175,7 +175,7 @@ export function DeploymentWorkspace({
               onClick={() => setLeftTab("mappings")}
               className={`flex-1 py-2 text-xs font-mono font-medium transition-colors border-b-2 ${
                 leftTab === "mappings"
-                  ? "border-[#FFFFFF] text-[#FFFFFF] bg-[#080808]"
+                  ? "border-[#404040] text-[#FFFFFF] bg-[#080808]"
                   : "border-transparent text-[#858585] hover:text-[#FFFFFF]"
               }`}
             >
@@ -227,7 +227,7 @@ export function DeploymentWorkspace({
               onClick={() => setRightTab("inspector")}
               className={`flex-1 py-2 text-xs font-mono font-medium transition-colors border-b-2 ${
                 rightTab === "inspector"
-                  ? "border-[#FFFFFF] text-[#FFFFFF] bg-[#080808]"
+                  ? "border-[#404040] text-[#FFFFFF] bg-[#080808]"
                   : "border-transparent text-[#858585] hover:text-[#FFFFFF]"
               }`}
             >
@@ -237,7 +237,7 @@ export function DeploymentWorkspace({
               onClick={() => setRightTab("network")}
               className={`flex-1 py-2 text-xs font-mono font-medium transition-colors border-b-2 ${
                 rightTab === "network"
-                  ? "border-[#FFFFFF] text-[#FFFFFF] bg-[#080808]"
+                  ? "border-[#404040] text-[#FFFFFF] bg-[#080808]"
                   : "border-transparent text-[#858585] hover:text-[#FFFFFF]"
               }`}
             >
@@ -247,7 +247,7 @@ export function DeploymentWorkspace({
               onClick={() => setRightTab("drift")}
               className={`flex-1 py-2 text-xs font-mono font-medium transition-colors border-b-2 ${
                 rightTab === "drift"
-                  ? "border-[#FFFFFF] text-[#FFFFFF] bg-[#080808]"
+                  ? "border-[#404040] text-[#FFFFFF] bg-[#080808]"
                   : "border-transparent text-[#858585] hover:text-[#FFFFFF]"
               }`}
             >
@@ -257,7 +257,7 @@ export function DeploymentWorkspace({
               onClick={() => setRightTab("assessment")}
               className={`flex-1 py-2 text-xs font-mono font-medium transition-colors border-b-2 ${
                 rightTab === "assessment"
-                  ? "border-[#FFFFFF] text-[#FFFFFF] bg-[#080808]"
+                  ? "border-[#404040] text-[#FFFFFF] bg-[#080808]"
                   : "border-transparent text-[#858585] hover:text-[#FFFFFF]"
               }`}
             >

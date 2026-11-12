@@ -125,7 +125,7 @@ export function TrafficScenarioDialog({ onClose }: TrafficScenarioDialogProps) {
               className={cn(
                 "py-2.5 px-3 text-xs font-mono font-medium border-b-2 transition-colors",
                 activeTab === tab.id
-                  ? "border-foreground text-foreground bg-surface-02"
+                  ? "border-border-strong text-foreground bg-surface-02"
                   : "border-transparent text-text-muted hover:text-text-secondary"
               )}
             >

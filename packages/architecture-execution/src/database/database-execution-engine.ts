@@ -41,6 +41,7 @@ import { DeadlockDetector } from "./transactions/deadlock-detector";
 import { TransactionManager } from "./transactions/transaction-manager";
 import { ReplicationEngine } from "./replication/replication-engine";
 import { ConnectionPoolManager } from "./capacity/connection-pool";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 
 export class DatabaseExecutionEngine {
   /**
@@ -525,7 +526,7 @@ export class DatabaseExecutionEngine {
 
     // 7b. Handle INSERT WAL log if primary write
     if (ast.type === "INSERT" && ast.insertValues) {
-      const rowId = String(ast.insertValues.id || Date.now());
+      const rowId = String(ast.insertValues.id || `row_${sequence}`);
       const { event: repEvt } = replicationEngine.logChange(
         "tx_main",
         ast.table,
@@ -632,7 +633,7 @@ export class DatabaseExecutionEngine {
     }
 
     return {
-      runId: `run_db_${Date.now()}`,
+      runId: createDeterministicId("run_db", `${scenario.id}:${databaseNodeId}`),
       architectureId: "arch_db_sim",
       architectureRevisionId: "rev_001",
       snapshotHash: "hash_db_001",
@@ -651,7 +652,7 @@ export class DatabaseExecutionEngine {
       },
       visitedNodeIds: [databaseNodeId],
       traversedEdgeIds: [],
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
       events,
       totalDurationMs: virtualClockMs,
       totalEvents: events.length,
@@ -705,7 +706,7 @@ export class DatabaseExecutionEngine {
     }));
 
     return {
-      runId: `run_db_fail_${Date.now()}`,
+      runId: createDeterministicId("run_db_fail", `${scenario.id}:${databaseNodeId}`),
       architectureId: "arch_db_sim",
       architectureRevisionId: "rev_001",
       snapshotHash: "hash_db_fail",
@@ -724,7 +725,7 @@ export class DatabaseExecutionEngine {
       },
       visitedNodeIds: [databaseNodeId],
       traversedEdgeIds: [],
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
       events,
       totalDurationMs: virtualClockMs,
       totalEvents: events.length,

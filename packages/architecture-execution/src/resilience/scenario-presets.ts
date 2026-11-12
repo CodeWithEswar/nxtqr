@@ -129,7 +129,7 @@ export class ResiliencePresetFactory {
 
     const baseScenario: FailureScenario = {
       version: 1,
-      id: `resilience_${presetId}_${Date.now()}`,
+      id: `resilience_${presetId}_preset`,
       name: RESILIENCE_PRESET_DEFINITIONS.find((p) => p.id === presetId)?.name || presetId,
       description: RESILIENCE_PRESET_DEFINITIONS.find((p) => p.id === presetId)?.description,
       seed: 42,
@@ -150,7 +150,7 @@ export class ResiliencePresetFactory {
       case "database_outage": {
         const targetId = dbNode?.id || "db_primary";
         const fault: FaultDefinition = {
-          id: `fault_db_outage_${Date.now()}`,
+          id: `fault_db_outage_preset`,
           name: "PostgreSQL Database Engine Crash",
           type: "component.outage",
           target: { type: "node", targetId, targetLabel: dbNode?.label || targetId },
@@ -172,7 +172,7 @@ export class ResiliencePresetFactory {
       case "service_crash": {
         const targetId = serviceNode?.id || "service_target";
         const fault: FaultDefinition = {
-          id: `fault_svc_crash_${Date.now()}`,
+          id: `fault_svc_crash_preset`,
           name: "Microservice Process Crash (RST)",
           type: "service.connection_refused",
           target: { type: "node", targetId, targetLabel: serviceNode?.label || targetId, port: 8080 },
@@ -197,7 +197,7 @@ export class ResiliencePresetFactory {
       case "latency_spike": {
         const edgeId = targetEdge.id;
         const fault: FaultDefinition = {
-          id: `fault_latency_spike_${Date.now()}`,
+          id: `fault_latency_spike_preset`,
           name: "Cross-AZ Fiber Congestion (+800ms)",
           type: "network.latency",
           target: { type: "edge", targetId: edgeId, targetLabel: `Edge ${edgeId}` },
@@ -206,7 +206,7 @@ export class ResiliencePresetFactory {
           parameters: { additionalLatencyMs: 850, jitterMs: 50 },
         };
         const timeoutFault: FaultDefinition = {
-          id: `fault_req_timeout_${Date.now()}`,
+          id: `fault_req_timeout_preset`,
           name: "Upstream SLA Deadline Enforced (1200ms)",
           type: "request.timeout",
           target: { type: "node", targetId: clientOrGatewayNode?.id || "caller" },
@@ -220,7 +220,7 @@ export class ResiliencePresetFactory {
       case "disconnection": {
         const edgeId = targetEdge.id;
         const fault: FaultDefinition = {
-          id: `fault_partition_${Date.now()}`,
+          id: `fault_partition_preset`,
           name: "Inter-VPC Network Partition",
           type: "network.disconnected",
           target: { type: "edge", targetId: edgeId, targetLabel: `Edge ${edgeId}` },
@@ -235,7 +235,7 @@ export class ResiliencePresetFactory {
       case "packet_loss": {
         const edgeId = targetEdge.id;
         const fault: FaultDefinition = {
-          id: `fault_packet_loss_${Date.now()}`,
+          id: `fault_packet_loss_preset`,
           name: "Unstable Link 50% Packet Drop",
           type: "network.packet_loss",
           target: { type: "edge", targetId: edgeId, targetLabel: `Edge ${edgeId}` },
@@ -260,7 +260,7 @@ export class ResiliencePresetFactory {
       case "retry_storm": {
         const targetId = serviceNode?.id || "service_target";
         const fault: FaultDefinition = {
-          id: `fault_transient_${Date.now()}`,
+          id: `fault_transient_preset`,
           name: "Temporary Rate Limiter Throttling (429/503)",
           type: "service.transient_failure",
           target: { type: "node", targetId, targetLabel: serviceNode?.label || targetId },
@@ -285,7 +285,7 @@ export class ResiliencePresetFactory {
       case "circuit_breaker": {
         const targetId = serviceNode?.id || "service_target";
         const fault: FaultDefinition = {
-          id: `fault_degraded_${Date.now()}`,
+          id: `fault_degraded_preset`,
           name: "Dependency Degradation & 500 Spike",
           type: "component.degraded",
           target: { type: "node", targetId, targetLabel: serviceNode?.label || targetId },
@@ -311,7 +311,7 @@ export class ResiliencePresetFactory {
         const primaryId = serviceNode?.id || "primary_service";
         const secondaryId = secondaryServiceNode?.id !== primaryId ? secondaryServiceNode.id : "replica_service";
         const fault: FaultDefinition = {
-          id: `fault_primary_outage_${Date.now()}`,
+          id: `fault_primary_outage_preset`,
           name: "Primary Host Hard Failure",
           type: "component.outage",
           target: { type: "node", targetId: primaryId, targetLabel: serviceNode?.label || primaryId },
@@ -334,7 +334,7 @@ export class ResiliencePresetFactory {
       case "consumer_failure": {
         const workerId = serviceNode?.id || "queue_worker";
         const fault: FaultDefinition = {
-          id: `fault_worker_offline_${Date.now()}`,
+          id: `fault_worker_offline_preset`,
           name: "Asynchronous Worker Node Offline",
           type: "consumer.unavailable",
           target: { type: "consumer", targetId: workerId, targetLabel: serviceNode?.label || workerId },
@@ -349,7 +349,7 @@ export class ResiliencePresetFactory {
       case "queue_backlog": {
         const workerId = serviceNode?.id || "queue_worker";
         const fault: FaultDefinition = {
-          id: `fault_poison_pill_${Date.now()}`,
+          id: `fault_poison_pill_preset`,
           name: "Poison Pill Exception (Dead-Letter Routing)",
           type: "consumer.processing_failure",
           target: { type: "consumer", targetId: workerId, targetLabel: serviceNode?.label || workerId },

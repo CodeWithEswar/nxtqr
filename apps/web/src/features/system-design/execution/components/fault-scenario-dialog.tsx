@@ -124,7 +124,7 @@ export function FaultScenarioDialog({ onClose }: FaultScenarioDialogProps) {
             className={cn(
               "px-3 py-1.5 text-xs font-mono border-b-2 transition-colors",
               activeTab === "presets"
-                ? "border-foreground text-foreground font-semibold"
+                ? "border-border-strong text-foreground font-semibold bg-surface-02"
                 : "border-transparent text-text-muted hover:text-text-secondary"
             )}
           >
@@ -136,7 +136,7 @@ export function FaultScenarioDialog({ onClose }: FaultScenarioDialogProps) {
             className={cn(
               "px-3 py-1.5 text-xs font-mono border-b-2 transition-colors",
               activeTab === "policies"
-                ? "border-foreground text-foreground font-semibold"
+                ? "border-border-strong text-foreground font-semibold bg-surface-02"
                 : "border-transparent text-text-muted hover:text-text-secondary"
             )}
           >
@@ -148,7 +148,7 @@ export function FaultScenarioDialog({ onClose }: FaultScenarioDialogProps) {
             className={cn(
               "px-3 py-1.5 text-xs font-mono border-b-2 transition-colors",
               activeTab === "blast_radius"
-                ? "border-foreground text-foreground font-semibold"
+                ? "border-border-strong text-foreground font-semibold bg-surface-02"
                 : "border-transparent text-text-muted hover:text-text-secondary"
             )}
           >

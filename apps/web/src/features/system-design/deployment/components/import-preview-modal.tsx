@@ -47,7 +47,7 @@ export function ImportPreviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#000000]/80 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#000000]/80 backdrop-blur-none p-4">
       <div className="w-full max-w-2xl bg-[#080808] border border-[#262626] rounded-md shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[#202020]">
@@ -160,7 +160,7 @@ export function ImportPreviewModal({
           <button
             onClick={handleApply}
             disabled={!preview || preview.newResources.length === 0}
-            className="px-3 py-1.5 rounded-md bg-[#FFFFFF] border border-[#FFFFFF] disabled:opacity-30 text-xs font-mono text-[#000000] font-semibold transition-opacity"
+            className="px-3 py-1.5 rounded-md bg-[#FFFFFF] border border-[#404040] disabled:opacity-30 text-xs font-mono text-[#000000] font-semibold transition-opacity"
           >
             Apply to Topology
           </button>

@@ -3,6 +3,7 @@ import type {
   OAuthStepOutcome,
   Principal,
 } from "../security-schemas";
+import { createDeterministicId } from "../../orchestrator/deterministic-id";
 
 export interface OAuthFlowResult {
   success: boolean;
@@ -54,7 +55,7 @@ export class OAuthSimulator {
       });
 
       // Step 3: Authorization Code Exchange with Code Verifier
-      const code = "auth_code_" + Math.random().toString(36).substring(2, 9);
+      const code = createDeterministicId("auth_code", `${config.clientId}:${config.flowType}:${virtualClockMs}`, steps.length + 1);
       steps.push({
         step: "code_exchange",
         succeeded: true,

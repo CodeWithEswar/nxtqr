@@ -84,7 +84,7 @@ export function BenchmarkImportModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm select-none p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-none select-none p-4">
       <div className="w-full max-w-2xl bg-[#080808] border border-[#262626] rounded-md shadow-level-2 flex flex-col max-h-[85vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-3.5 bg-[#0D0D0D] border-b border-[#262626]">

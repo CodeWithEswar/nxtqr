@@ -126,7 +126,18 @@ import {
   createTemplatePresetScenario,
   TemplateExecutionEngine,
   templateRegistry,
+  type SimulationRunConfig,
+  type SimulationRunRecord,
+  type TopologyCapabilityInspection,
+  type CrossModulePipelineResult,
+  type UnifiedFinding,
+  CapabilityRegistry,
+  CrossModuleExecutionPipeline,
+  SimulationOrchestrator,
+  SimulationRunConfigSchema,
 } from "@nxtqr/architecture-execution";
+
+const workspaceOrchestrator = new SimulationOrchestrator();
 
 export type AllScenarioPresetId =
   | ScenarioPresetId
@@ -228,6 +239,14 @@ export interface ExecutionStoreState {
   baselineTrace: ExecutionTrace | null;
   scenarioComparison: ScenarioComparison | null;
   trafficComparison: SimulationComparison | null;
+
+  // Phase 05.4.25: Unified Simulation Orchestrator & Findings
+  isUnifiedStudioOpen: boolean;
+  unifiedRunRecord: SimulationRunRecord | null;
+  capabilityInspection: TopologyCapabilityInspection | null;
+  crossModulePipelineResult: CrossModulePipelineResult | null;
+  unifiedFindings: UnifiedFinding[];
+  timelineSearchQuery: string;
 
   // Playback state
   playbackState: PlaybackState;
@@ -333,6 +352,24 @@ export interface ExecutionStoreState {
   runAnalysisExperiment: (experiment: AnalysisExperiment) => boolean;
   runPracticeScenario: (scenario: PracticeScenario) => boolean;
   toggleTemplatesWorkspace: (open?: boolean) => void;
+  toggleUnifiedStudio: (open?: boolean) => void;
+  setTimelineSearchQuery: (query: string) => void;
+  inspectTopologyCapabilities: (
+    nodes: BaseNode[],
+    edges: BaseEdge[]
+  ) => TopologyCapabilityInspection;
+  runUnifiedSimulation: (
+    nodes: BaseNode[],
+    edges: BaseEdge[],
+    config?: Partial<SimulationRunConfig>
+  ) => SimulationRunRecord;
+  runCrossModulePipeline: (
+    nodes: BaseNode[],
+    edges: BaseEdge[],
+    config?: Partial<SimulationRunConfig>
+  ) => CrossModulePipelineResult;
+  cancelUnifiedSimulation: (runId?: string) => void;
+  seekUnifiedCheckpoint: (stepIndex: number) => void;
   setSelectedTemplateId: (templateId: string) => void;
   setTemplateScenario: (scenario: TemplateScenarioRunInput | null) => void;
   runTemplateScenario: (
@@ -478,6 +515,12 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     baselineTrace: null,
     scenarioComparison: null,
     trafficComparison: null,
+    isUnifiedStudioOpen: false,
+    unifiedRunRecord: null,
+    capabilityInspection: null,
+    crossModulePipelineResult: null,
+    unifiedFindings: [],
+    timelineSearchQuery: "",
     playbackState: initialPlaybackState,
     selectedEventId: null,
 
@@ -517,6 +560,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isAnalysisWorkspaceOpen: false,
           isPracticeWorkspaceOpen: false,
           isTemplatesWorkspaceOpen: false,
+          isUnifiedStudioOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -2480,6 +2524,102 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           speed,
         },
       }));
+    },
+
+    // Phase 05.4.25 Unified Orchestrator & Workspace Actions
+    toggleUnifiedStudio: (open) =>
+      set((state) => ({
+        isUnifiedStudioOpen: open !== undefined ? open : !state.isUnifiedStudioOpen,
+      })),
+
+    setTimelineSearchQuery: (query) => set({ timelineSearchQuery: query }),
+
+    inspectTopologyCapabilities: (nodes, edges) => {
+      const inspection = CapabilityRegistry.inspectTopology(nodes, edges);
+      set({ capabilityInspection: inspection });
+      return inspection;
+    },
+
+    runUnifiedSimulation: (nodes, edges, rawConfig = {}) => {
+      const created = workspaceOrchestrator.createRun(nodes, edges, rawConfig);
+      const completed = workspaceOrchestrator.executeRun(created.runId);
+      const trace = completed.trace;
+      const controller = ensureController();
+
+      if (trace) {
+        controller.loadTrace(trace);
+        controller.play();
+      }
+
+      set({
+        isExecutionModeActive: true,
+        isTimelineOpen: Boolean(trace),
+        unifiedRunRecord: completed,
+        capabilityInspection: completed.capabilityInspection,
+        unifiedFindings: completed.findings,
+        trace: trace || get().trace,
+        playbackState: controller.getState(),
+      });
+      return completed;
+    },
+
+    runCrossModulePipeline: (nodes, edges, rawConfig = {}) => {
+      const parsed = SimulationRunConfigSchema.parse(rawConfig);
+      const result = CrossModuleExecutionPipeline.execute({
+        nodes,
+        edges,
+        config: parsed,
+      });
+      const inspection = CapabilityRegistry.inspectTopology(nodes, edges);
+      const controller = ensureController();
+      controller.loadTrace(result.trace);
+      controller.play();
+
+      set({
+        isExecutionModeActive: true,
+        isTimelineOpen: true,
+        isUnifiedStudioOpen: true,
+        crossModulePipelineResult: result,
+        capabilityInspection: inspection,
+        unifiedFindings: result.findings,
+        trace: result.trace,
+        playbackState: controller.getState(),
+      });
+      return result;
+    },
+
+    cancelUnifiedSimulation: (runId) => {
+      const targetId = runId || get().unifiedRunRecord?.runId;
+      if (!targetId) return;
+      try {
+        const cancelled = workspaceOrchestrator.cancelRun(targetId, "Cancelled from studio UI.");
+        ensureController().stop();
+        set({
+          unifiedRunRecord: cancelled,
+          playbackState: ensureController().getState(),
+        });
+      } catch {
+        // Already disposed
+      }
+    },
+
+    seekUnifiedCheckpoint: (stepIndex) => {
+      const currentRun = get().unifiedRunRecord;
+      const controller = ensureController();
+      if (currentRun) {
+        try {
+          const { record } = workspaceOrchestrator.seekStep(currentRun.runId, stepIndex);
+          controller.seekToStep(stepIndex);
+          set({
+            unifiedRunRecord: { ...record },
+            playbackState: controller.getState(),
+          });
+          return;
+        } catch {
+          // Fall back to direct playback seek
+        }
+      }
+      controller.seekToStep(stepIndex);
     },
   };
 });

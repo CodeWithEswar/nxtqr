@@ -28,6 +28,7 @@ export default defineConfig({
       "@nxtqr/database": path.resolve(__dirname, "./packages/database/src"),
       "@nxtqr/auth": path.resolve(__dirname, "./packages/auth/src"),
       "@nxtqr/api-client": path.resolve(__dirname, "./packages/api-client/src"),
+      "@nxtqr/architecture-execution": path.resolve(__dirname, "./packages/architecture-execution/src"),
       "@nxtqr/query": path.resolve(__dirname, "./packages/query/src"),
       "@nxtqr/state": path.resolve(__dirname, "./packages/state/src"),
       "@nxtqr/canvas-core": path.resolve(__dirname, "./packages/canvas-core/src"),

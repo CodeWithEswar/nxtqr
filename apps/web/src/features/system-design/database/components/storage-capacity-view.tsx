@@ -112,7 +112,7 @@ export function StorageCapacityView({ storageForecast }: StorageCapacityViewProp
         {/* Legend */}
         <div className="grid grid-cols-3 gap-4 text-xs font-mono pt-2 border-t border-[#1A1A1A]">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#FFFFFF]" />
+            <span className="w-2.5 h-2.5 rounded-md bg-[#FFFFFF]" />
             <span className="text-[#858585]">
               Logical Data:{" "}
               <strong className="text-[#FFFFFF]">
@@ -121,7 +121,7 @@ export function StorageCapacityView({ storageForecast }: StorageCapacityViewProp
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#B5B5B5]" />
+            <span className="w-2.5 h-2.5 rounded-md bg-[#B5B5B5]" />
             <span className="text-[#858585]">
               Indexes:{" "}
               <strong className="text-[#FFFFFF]">
@@ -130,7 +130,7 @@ export function StorageCapacityView({ storageForecast }: StorageCapacityViewProp
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#666666]" />
+            <span className="w-2.5 h-2.5 rounded-md bg-[#666666]" />
             <span className="text-[#858585]">
               WAL / Logs:{" "}
               <strong className="text-[#FFFFFF]">

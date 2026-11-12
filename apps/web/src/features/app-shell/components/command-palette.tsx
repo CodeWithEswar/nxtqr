@@ -19,6 +19,8 @@ import {
   CheckCircleIcon,
 } from "@nxtqr/icons";
 import { useShellStore } from "../store/shell-store";
+import { useExecutionStore } from "@/features/system-design/execution/store/execution-store";
+import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
 import { ALL_NAVIGATION_ITEMS } from "../config/navigation";
 
 export function CommandPalette() {
@@ -28,6 +30,9 @@ export function CommandPalette() {
   const toggleSidebar = useShellStore((s) => s.toggleSidebar);
   const resetWorkspaceLayout = useShellStore((s) => s.resetWorkspaceLayout);
   const toggleSecondaryPanel = useShellStore((s) => s.toggleSecondaryPanel);
+  const toggleUnifiedStudio = useExecutionStore((s) => s.toggleUnifiedStudio);
+  const inspectTopologyCapabilities = useExecutionStore((s) => s.inspectTopologyCapabilities);
+  const runCrossModulePipeline = useExecutionStore((s) => s.runCrossModulePipeline);
 
   const runCommand = React.useCallback(
     (action: () => void) => {
@@ -92,6 +97,48 @@ export function CommandPalette() {
           >
             <RefreshIcon className="h-4 w-4 text-text-muted" />
             <span className="flex-1 font-medium">Reset Workspace Layout</span>
+          </CommandItem>
+        </CommandGroup>
+
+        <CommandSeparator />
+
+        {/* Phase 05.4 Simulation Studio */}
+        <CommandGroup heading="Simulation Studio (Phase 05.4)">
+          <CommandItem
+            onSelect={() => runCommand(() => toggleUnifiedStudio(true))}
+            className="flex items-center gap-2.5 px-3 py-2 text-xs font-mono rounded-md cursor-pointer hover:bg-surface-03 transition-colors"
+          >
+            <SlidersIcon className="h-4 w-4 text-text-muted" />
+            <span className="flex-1 font-medium">Open Unified Simulation Studio</span>
+          </CommandItem>
+          <CommandItem
+            onSelect={() =>
+              runCommand(() => {
+                const { nodes, edges } = useGraphEditorStore.getState();
+                inspectTopologyCapabilities(nodes, edges);
+                toggleUnifiedStudio(true);
+              })
+            }
+            className="flex items-center gap-2.5 px-3 py-2 text-xs font-mono rounded-md cursor-pointer hover:bg-surface-03 transition-colors"
+          >
+            <CheckCircleIcon className="h-4 w-4 text-text-muted" />
+            <span className="flex-1 font-medium">Scan Topology Capabilities (24 Modules)</span>
+          </CommandItem>
+          <CommandItem
+            onSelect={() =>
+              runCommand(() => {
+                const { nodes, edges } = useGraphEditorStore.getState();
+                if (nodes.length > 0) {
+                  runCrossModulePipeline(nodes, edges, { incomingRps: 300, seed: 42 });
+                } else {
+                  toggleUnifiedStudio(true);
+                }
+              })
+            }
+            className="flex items-center gap-2.5 px-3 py-2 text-xs font-mono rounded-md cursor-pointer hover:bg-surface-03 transition-colors"
+          >
+            <CheckCircleIcon className="h-4 w-4 text-text-muted" />
+            <span className="flex-1 font-medium">Run Cross-Module Pipeline</span>
           </CommandItem>
         </CommandGroup>
 

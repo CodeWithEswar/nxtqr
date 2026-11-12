@@ -20,6 +20,7 @@ import type {
   ScenarioComparison,
 } from "./fault-schemas";
 import type { TraceContext, TraceSpan, ExecutionBranch } from "../schemas/distributed.schemas";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 
 interface ScheduledSimulationTask {
   id: string;
@@ -38,7 +39,8 @@ export class ResilienceSimulationEngine {
     scenario: FailureScenario,
     configuration: ExecutionConfiguration
   ): ExecutionTrace {
-    const runId = `resil_run_${snapshot.snapshotHash.slice(5, 11)}_${Date.now()}`;
+    const resilSeed = `${snapshot.snapshotHash}:${scenario.id}:${scenario.seed || "default"}`;
+    const runId = createDeterministicId("resil_run", resilSeed);
     const clock = new VirtualClock(0);
     const limitsGuard = new ExecutionLimitsGuard({
       maxEvents: scenario.limits?.maxEvents || configuration.limits.maxEvents || 400,
@@ -212,8 +214,8 @@ export class ResilienceSimulationEngine {
     visitedNodeIds.add(entryNodeId);
 
     const rootTraceContext: TraceContext = {
-      requestId: `req_${Date.now()}`,
-      correlationId: `corr_${Date.now()}`,
+      requestId: createDeterministicId("req", `${snapshot.snapshotHash}:${scenario.id}`, 1),
+      correlationId: createDeterministicId("corr", `${snapshot.snapshotHash}:${scenario.id}`, 1),
       traceId: `trace_${runId}`,
       spanId: `span_root_${runId}`,
       branchId: "branch_main",
@@ -765,7 +767,7 @@ export class ResilienceSimulationEngine {
       frames,
       spans: allSpans,
       criticalPathSpanIds,
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
     };
   }
 

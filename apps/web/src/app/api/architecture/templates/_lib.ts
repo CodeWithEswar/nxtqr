@@ -15,12 +15,15 @@ export async function resolveAuthenticatedUser(request: NextRequest): Promise<{
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       )
     ) {
-      // Fall back to explicit header only in local test harnesses without Supabase env
-      const headerUser = request.headers.get("x-nxtqr-test-user");
-      return {
-        userId: headerUser || null,
-        workspaceIds: [],
-      };
+      // Strictly allow explicit test-user header only inside Vitest/test harnesses
+      if (process.env.NODE_ENV === "test") {
+        const headerUser = request.headers.get("x-nxtqr-test-user");
+        return {
+          userId: headerUser || null,
+          workspaceIds: [],
+        };
+      }
+      return { userId: null, workspaceIds: [] };
     }
 
     const cookieStore = await cookies();

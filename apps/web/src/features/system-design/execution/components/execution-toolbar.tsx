@@ -189,6 +189,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const activeTemplateScenario = useExecutionStore(
     (s) => s.activeTemplateScenario
   );
+  const isUnifiedStudioOpen = useExecutionStore((s) => s.isUnifiedStudioOpen);
+  const toggleUnifiedStudio = useExecutionStore((s) => s.toggleUnifiedStudio);
+  const unifiedFindingsCount = useExecutionStore((s) => s.unifiedFindings.length);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -810,6 +813,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <FolderIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Templates</span>
+      </Button>
+
+      {/* Unified Simulation Studio (Capabilities, Cross-Module Flow, Findings & Checkpoints) */}
+      <Button
+        variant={isUnifiedStudioOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleUnifiedStudio()}
+        title="Toggle Unified Simulation Studio (Capabilities, Cross-Module Pipeline, Findings & Checkpoints)"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isUnifiedStudioOpen || unifiedFindingsCount > 0
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <LayersIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Studio</span>
       </Button>
 
       {trafficComparison && (

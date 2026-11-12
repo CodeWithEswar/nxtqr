@@ -101,12 +101,13 @@ export class ServiceBehaviorAdapter implements ComponentBehaviorAdapter {
       const targetDb = dbEdge ? nodeMap.get(dbEdge.target) : null;
       const targetDbId = targetDb?.id || "database_default";
       const table = "orders";
-      const recordKey = `ord_${Date.now().toString().slice(-4)}`;
+      const nextSeq = ctx.getSequence();
+      const recordKey = `ord_${String(nextSeq).padStart(4, "0")}`;
       const payload = (request.body && typeof request.body === "object" ? request.body : { item: "Widget", amount: 99 }) as Record<string, unknown>;
 
       events.push({
-        id: `evt_${runId}_${getSequence()}_db_write_${node.id}`,
-        sequence: ctx.getSequence(),
+        id: `evt_${runId}_${nextSeq}_db_write_${node.id}`,
+        sequence: nextSeq,
         type: "database.write.completed",
         atMs: currentTime,
         durationMs: 60,

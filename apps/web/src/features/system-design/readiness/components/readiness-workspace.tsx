@@ -95,7 +95,7 @@ export const ReadinessWorkspace: React.FC<ReadinessWorkspaceProps> = ({
           onClick={() => setActiveTab('dashboard')}
           className={`flex items-center gap-2 border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
             activeTab === 'dashboard'
-              ? 'border-white text-white'
+              ? 'border-[#404040] text-white'
               : 'border-transparent text-neutral-400 hover:text-white'
           }`}
         >
@@ -108,7 +108,7 @@ export const ReadinessWorkspace: React.FC<ReadinessWorkspaceProps> = ({
           onClick={() => setActiveTab('capabilities')}
           className={`flex items-center gap-2 border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
             activeTab === 'capabilities'
-              ? 'border-white text-white'
+              ? 'border-[#404040] text-white'
               : 'border-transparent text-neutral-400 hover:text-white'
           }`}
         >
@@ -121,7 +121,7 @@ export const ReadinessWorkspace: React.FC<ReadinessWorkspaceProps> = ({
           onClick={() => setActiveTab('gates')}
           className={`flex items-center gap-2 border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
             activeTab === 'gates'
-              ? 'border-white text-white'
+              ? 'border-[#404040] text-white'
               : 'border-transparent text-neutral-400 hover:text-white'
           }`}
         >
@@ -134,7 +134,7 @@ export const ReadinessWorkspace: React.FC<ReadinessWorkspaceProps> = ({
           onClick={() => setActiveTab('benchmarks')}
           className={`flex items-center gap-2 border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
             activeTab === 'benchmarks'
-              ? 'border-white text-white'
+              ? 'border-[#404040] text-white'
               : 'border-transparent text-neutral-400 hover:text-white'
           }`}
         >
@@ -147,7 +147,7 @@ export const ReadinessWorkspace: React.FC<ReadinessWorkspaceProps> = ({
           onClick={() => setActiveTab('audit')}
           className={`flex items-center gap-2 border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
             activeTab === 'audit'
-              ? 'border-white text-white'
+              ? 'border-[#404040] text-white'
               : 'border-transparent text-neutral-400 hover:text-white'
           }`}
         >

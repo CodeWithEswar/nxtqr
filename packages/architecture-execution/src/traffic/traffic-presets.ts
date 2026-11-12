@@ -139,7 +139,7 @@ export class TrafficPresetFactory {
 
     const baseScenario: TrafficScenario = {
       version: 1,
-      id: `traffic_${presetId}_${Date.now()}`,
+      id: `traffic_${presetId}_preset`,
       name: TRAFFIC_PRESET_DEFINITIONS.find((p) => p.id === presetId)?.name || presetId,
       description: TRAFFIC_PRESET_DEFINITIONS.find((p) => p.id === presetId)?.description,
       entryNodeId,

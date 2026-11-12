@@ -1,5 +1,6 @@
 import type { BaseNode, BaseEdge } from "@nxtqr/graph-schema";
 import type { ExecutionConfiguration } from "../schemas/execution.schemas";
+import { DETERMINISTIC_EPOCH_ISO } from "../orchestrator/deterministic-id";
 
 export interface ExecutionSnapshotValidationResult {
   isValid: boolean;
@@ -72,14 +73,14 @@ export class ExecutionSnapshotManager {
     );
 
     return {
-      id: `snap_${Date.now()}_${snapshotHash.slice(5, 11)}`,
+      id: `snap_${snapshotHash.slice(5, 17)}`,
       architectureId,
       architectureRevisionId: revisionId,
       title,
       nodes: clonedNodes,
       edges: clonedEdges,
       snapshotHash,
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
       configuration: configuration ? JSON.parse(JSON.stringify(configuration)) : ({} as any),
     };
   }

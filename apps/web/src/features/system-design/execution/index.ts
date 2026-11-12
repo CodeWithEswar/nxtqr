@@ -34,5 +34,6 @@ export * from "./components/capacity-workspace";
 export * from "./components/analysis-workspace";
 export * from "./components/practice-workspace";
 export * from "./components/templates-workspace";
+export * from "./components/unified-studio-dock";
 export * from "./hooks/use-execution-playback";
 

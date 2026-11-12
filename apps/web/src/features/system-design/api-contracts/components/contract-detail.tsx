@@ -171,7 +171,7 @@ export function ContractDetail({
               onClick={() => setActiveTab(tab.id as ContractTab)}
               className={`flex items-center gap-2 px-3 py-2 text-xs font-medium border-b-2 transition-all whitespace-nowrap ${
                 isActive
-                  ? "border-[#FFFFFF] text-[#FFFFFF] bg-[#141414]"
+                  ? "border-[#404040] text-[#FFFFFF] bg-[#141414]"
                   : "border-transparent text-[#858585] hover:text-[#FFFFFF] hover:bg-[#0D0D0D]"
               }`}
             >

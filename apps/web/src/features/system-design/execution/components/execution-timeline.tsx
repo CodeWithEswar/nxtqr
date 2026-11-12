@@ -3,15 +3,24 @@
 import * as React from "react";
 import { cn } from "@nxtqr/utils";
 import { Button, Badge } from "@nxtqr/ui";
-import { CloseIcon, ActivityIcon } from "@nxtqr/icons";
+import { CloseIcon, ActivityIcon, SearchIcon } from "@nxtqr/icons";
 import { useExecutionStore } from "../store/execution-store";
+import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
 
 export interface ExecutionTimelineProps {
   className?: string;
   onClose?: () => void;
 }
 
-type TimelineFilter = "all" | "request" | "response" | "cache" | "database" | "routing";
+type TimelineFilter =
+  | "all"
+  | "request"
+  | "response"
+  | "cache"
+  | "database"
+  | "routing"
+  | "security"
+  | "faults";
 
 const EVENT_TYPE_BADGES: Record<
   string,
@@ -54,6 +63,9 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
   const seekToStep = useExecutionStore((s) => s.seekToStep);
   const toggleTimeline = useExecutionStore((s) => s.toggleTimeline);
   const selectedEventId = useExecutionStore((s) => s.selectedEventId);
+  const searchQuery = useExecutionStore((s) => s.timelineSearchQuery);
+  const setSearchQuery = useExecutionStore((s) => s.setTimelineSearchQuery);
+  const selectNode = useGraphEditorStore((s) => s.selectNode);
 
   const [filter, setFilter] = React.useState<TimelineFilter>("all");
   const listRef = React.useRef<HTMLDivElement>(null);
@@ -88,12 +100,22 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
   const filteredEvents = trace.events
     .map((evt, originalIdx) => ({ evt, originalIdx }))
     .filter(({ evt }) => {
+      const normalizedQuery = searchQuery.trim().toLowerCase();
+      if (normalizedQuery) {
+        const rec = evt as unknown as Record<string, unknown>;
+        const hay = `${evt.type} ${evt.explanation} ${String(rec.nodeId || "")} ${String(rec.nodeLabel || "")} ${String(rec.correlationId || "")}`.toLowerCase();
+        if (!hay.includes(normalizedQuery)) return false;
+      }
       if (filter === "all") return true;
       if (filter === "request") return evt.type.startsWith("request.") || evt.type === "node.entered";
       if (filter === "response") return evt.type.startsWith("response.");
       if (filter === "cache") return evt.type.startsWith("cache.");
       if (filter === "database") return evt.type.startsWith("database.");
       if (filter === "routing") return evt.type.startsWith("route.");
+      if (filter === "security")
+        return evt.type.includes("zero_trust") || evt.type.includes("security") || evt.type.includes("waf") || evt.type.includes("auth");
+      if (filter === "faults")
+        return evt.type.includes("failed") || evt.type.includes("outage") || evt.type.includes("rejected") || evt.type.includes("circuit");
       return true;
     });
 
@@ -129,35 +151,50 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="flex items-center gap-1 px-2.5 py-1.5 bg-surface-01/60 border-b border-border-subtle font-mono text-[9px] overflow-x-auto shrink-0">
-        {(
-          [
-            { id: "all", label: "All" },
-            { id: "request", label: "Requests" },
-            { id: "response", label: "Responses" },
-            { id: "cache", label: "Cache" },
-            { id: "database", label: "Database" },
-            { id: "routing", label: "Routing" },
-          ] as const
-        ).map((tab) => {
-          const isSelected = filter === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setFilter(tab.id)}
-              className={cn(
-                "px-2 py-0.5 rounded transition-colors uppercase border",
-                isSelected
-                  ? "bg-surface-04 border-border-strong text-foreground font-semibold shadow-level-3"
-                  : "bg-surface-02 border-border-subtle text-text-muted hover:text-foreground"
-              )}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
+      {/* Filter Bar + Component / Correlation Search */}
+      <div className="flex flex-wrap items-center justify-between gap-1.5 px-2.5 py-1.5 bg-surface-01/60 border-b border-border-subtle font-mono text-[9px] shrink-0">
+        <div className="flex items-center gap-1 overflow-x-auto">
+          {(
+            [
+              { id: "all", label: "All" },
+              { id: "request", label: "Requests" },
+              { id: "response", label: "Responses" },
+              { id: "cache", label: "Cache" },
+              { id: "database", label: "Database" },
+              { id: "routing", label: "Routing" },
+              { id: "security", label: "Security" },
+              { id: "faults", label: "Faults" },
+            ] as const
+          ).map((tab) => {
+            const isSelected = filter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setFilter(tab.id)}
+                className={cn(
+                  "px-2 py-0.5 rounded-md transition-colors uppercase border",
+                  isSelected
+                    ? "bg-surface-04 border-border-strong text-foreground font-semibold shadow-level-3"
+                    : "bg-surface-02 border-border-subtle text-text-muted hover:text-foreground"
+                )}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+        <div className="relative min-w-[140px]">
+          <SearchIcon className="w-3 h-3 text-text-disabled absolute left-2 top-1/2 -translate-y-1/2" />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Filter node / trace..."
+            aria-label="Filter timeline events by component or explanation"
+            className="w-full pl-6 pr-2 py-0.5 rounded-md bg-surface-02 border border-border-subtle text-[10px] font-mono text-foreground placeholder:text-text-disabled focus:outline-none focus:border-border-strong"
+          />
+        </div>
       </div>
 
       {/* Events List */}
@@ -176,12 +213,30 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
             <div
               key={evt.id}
               data-step-index={originalIdx}
-              onClick={() => seekToStep(originalIdx)}
+              onClick={() => {
+                seekToStep(originalIdx);
+                const rec = evt as unknown as Record<string, unknown>;
+                const nid =
+                  typeof rec.nodeId === "string"
+                    ? rec.nodeId
+                    : typeof rec.entryNodeId === "string"
+                      ? rec.entryNodeId
+                      : undefined;
+                if (nid) selectNode(nid);
+              }}
               role="article"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   seekToStep(originalIdx);
+                  const rec = evt as unknown as Record<string, unknown>;
+                  const nid =
+                    typeof rec.nodeId === "string"
+                      ? rec.nodeId
+                      : typeof rec.entryNodeId === "string"
+                        ? rec.entryNodeId
+                        : undefined;
+                  if (nid) selectNode(nid);
                 }
               }}
               className={cn(

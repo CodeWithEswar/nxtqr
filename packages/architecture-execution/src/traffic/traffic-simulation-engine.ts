@@ -15,6 +15,7 @@ import { LoadDistributionEngine } from "./load-distribution";
 import { RateLimiterEngine } from "./rate-limiter";
 import { AutoscalingEngine } from "./autoscaling-engine";
 import { MetricAggregator, type CompletedRequestRecord } from "./metric-aggregator";
+import { DETERMINISTIC_EPOCH_ISO, createDeterministicId } from "../orchestrator/deterministic-id";
 import type {
   TrafficScenario,
   PerformanceSample,
@@ -47,7 +48,7 @@ export class TrafficSimulationEngine {
     scenario: TrafficScenario,
     configuration: ExecutionConfiguration
   ): ExecutionTrace {
-    const runId = `traffic_run_${snapshot.snapshotHash.slice(5, 11)}_${Date.now()}`;
+    const runId = createDeterministicId("traffic_run", `${snapshot.snapshotHash}:${scenario.id}:${scenario.seed}`);
     const clock = new VirtualClock(0);
     const limitsGuard = new ExecutionLimitsGuard({
       maxEvents: scenario.limits.maxEvents,
@@ -696,7 +697,7 @@ export class TrafficSimulationEngine {
       trafficScenario: scenario,
       performanceSamples: samples,
       performanceSummary: summary,
-      createdAt: new Date().toISOString(),
+      createdAt: DETERMINISTIC_EPOCH_ISO,
     };
   }
 

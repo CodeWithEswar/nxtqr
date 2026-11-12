@@ -57,6 +57,7 @@ import {
   AnalysisWorkspace,
   PracticeWorkspace,
   TemplatesWorkspace,
+  UnifiedStudioDock,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -125,6 +126,7 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isTemplatesWorkspaceOpen = useExecutionStore(
     (s) => s.isTemplatesWorkspaceOpen
   );
+  const isUnifiedStudioOpen = useExecutionStore((s) => s.isUnifiedStudioOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
     s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
@@ -663,6 +665,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Architecture Templates, Reference Designs & Interactive Scenario Library Drawer */}
       {isTemplatesWorkspaceOpen && <TemplatesWorkspace />}
+
+      {/* Unified Phase 05.4.25 Simulation Studio Dock */}
+      {isUnifiedStudioOpen && <UnifiedStudioDock />}
     </div>
   );
 }
