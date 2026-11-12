@@ -34,6 +34,7 @@ export interface VisualizationFrame {
   activeSpans?: TraceSpan[];
   activeBranches?: ExecutionBranch[];
   criticalPathSpanIds?: string[];
+  metrics?: Record<string, any>;
 }
 
 export interface ExecutionTrace {

@@ -23,13 +23,9 @@ import type {
   PerformanceSummary,
 } from "../traffic/traffic-schemas";
 import type { ModeledDatabaseRuntimeState } from "../database/database-schemas";
+import type { ModeledCacheRuntimeState, CacheEntry } from "../cache/cache-schemas";
 
-export interface CacheEntry {
-  key: string;
-  value: unknown;
-  createdAtMs: number;
-  expiresAtMs: number;
-}
+export type { CacheEntry };
 
 export interface CallStackFrame {
   frameId: string;
@@ -106,6 +102,9 @@ export interface ModeledRuntimeState {
 
   // Database Query Execution & Concurrency (Phase 05.4.6)
   databaseState?: ModeledDatabaseRuntimeState;
+
+  // Cache Execution, Eviction & Distributed Consistency (Phase 05.4.7)
+  cacheState?: ModeledCacheRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -116,8 +115,13 @@ export class RuntimeStateHelper {
         cache[item.key] = {
           key: item.key,
           value: item.value,
+          sizeBytes: 64,
           createdAtMs: 0,
           expiresAtMs: item.ttlMs > 0 ? item.ttlMs : Number.MAX_SAFE_INTEGER,
+          lastAccessedAtMs: 0,
+          accessCount: 0,
+          insertionSequence: 0,
+          version: 1,
         };
       }
     }
@@ -257,6 +261,9 @@ export class RuntimeStateHelper {
       databaseState: state.databaseState
         ? JSON.parse(JSON.stringify(state.databaseState))
         : undefined,
+      cacheState: state.cacheState
+        ? JSON.parse(JSON.stringify(state.cacheState))
+        : undefined,
     };
   }
 
@@ -269,7 +276,7 @@ export class RuntimeStateHelper {
     if (!entry) {
       return { hit: false, reason: `Cache key "${key}" not found in Redis (cold cache).` };
     }
-    if (nowMs > entry.expiresAtMs) {
+    if (entry.expiresAtMs !== undefined && nowMs > entry.expiresAtMs) {
       delete state.cache[key];
       return { hit: false, reason: `Cache key "${key}" expired at +${entry.expiresAtMs}ms (TTL exceeded).` };
     }
@@ -290,8 +297,13 @@ export class RuntimeStateHelper {
     state.cache[key] = {
       key,
       value,
+      sizeBytes: 64,
       createdAtMs: nowMs,
       expiresAtMs,
+      lastAccessedAtMs: nowMs,
+      accessCount: prev ? prev.accessCount + 1 : 1,
+      insertionSequence: prev ? prev.insertionSequence : sequence,
+      version: prev ? prev.version + 1 : 1,
     };
 
     state.stateTransitions.push({

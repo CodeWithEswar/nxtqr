@@ -109,7 +109,14 @@ function InnerGraphEditor({ projectId, className, fitViewOnMount }: GraphEditorP
       </div>
 
       {/* 3. Main Center Workspace: 3-column layout on Desktop, Fullscreen on Mobile */}
-      <div className="flex-1 flex relative overflow-hidden min-h-0 w-full">
+      <div
+        onScroll={(e) => {
+          if (e.currentTarget.scrollLeft !== 0) {
+            e.currentTarget.scrollLeft = 0;
+          }
+        }}
+        className="flex-1 flex relative overflow-x-hidden overflow-y-hidden min-h-0 w-full"
+      >
         {/* Left: Desktop Node Library (Resizable / Collapsible) */}
         {isNodeLibraryOpen && (
           <aside

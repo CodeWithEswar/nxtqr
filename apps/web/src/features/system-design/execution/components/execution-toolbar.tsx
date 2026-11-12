@@ -13,6 +13,7 @@ import {
   LayersIcon,
   TerminalIcon,
   ShieldIcon,
+  DatabaseIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
@@ -71,6 +72,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isDatabaseWorkspaceOpen = useExecutionStore((s) => s.isDatabaseWorkspaceOpen);
   const toggleDatabaseWorkspace = useExecutionStore((s) => s.toggleDatabaseWorkspace);
   const activeDatabaseScenario = useExecutionStore((s) => s.activeDatabaseScenario);
+  const isCacheWorkspaceOpen = useExecutionStore((s) => s.isCacheWorkspaceOpen);
+  const toggleCacheWorkspace = useExecutionStore((s) => s.toggleCacheWorkspace);
+  const activeCacheScenario = useExecutionStore((s) => s.activeCacheScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -386,6 +390,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <LayersIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">DB Exec</span>
+      </Button>
+
+      {/* Cache Execution Workspace Button */}
+      <Button
+        variant={isCacheWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleCacheWorkspace()}
+        title="Toggle Cache Execution, Eviction & Consistency Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isCacheWorkspaceOpen || activeCacheScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <DatabaseIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Cache</span>
       </Button>
 
       {trafficComparison && (

@@ -61,11 +61,13 @@ export function AssistantPanel({
     newConversation,
   } = useAIAssistant(projectId, architectureId);
 
-  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const messagesContainerRef = React.useRef<HTMLDivElement>(null);
 
-  // Auto-scroll on new message or stream chunk
+  // Auto-scroll chat vertically on new message or stream chunk without affecting ancestor horizontal scroll
   React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages, currentStreamingText]);
 
   const handleSend = (text: string) => {
@@ -173,7 +175,7 @@ export function AssistantPanel({
       )}
 
       {/* Message Stream */}
-      <div className="flex-1 overflow-y-auto px-3.5 py-2 scrollbar-thin">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-3.5 py-2 scrollbar-thin">
         {messages.map((msg) => (
           <AssistantMessage
             key={msg.id}
@@ -227,8 +229,6 @@ export function AssistantPanel({
             </div>
           </div>
         )}
-
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Composer */}

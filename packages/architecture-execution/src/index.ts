@@ -90,5 +90,15 @@ export * from "./database/capacity/connection-pool";
 export * from "./database/database-presets";
 export * from "./database/database-execution-engine";
 
+// Phase 05.4.7: Interactive Cache Execution, Eviction Policies & Distributed Consistency Engine
+export * from "./cache/cache-schemas";
+export * from "./cache/cache-events";
+export * from "./cache/policies/eviction-policies";
+export * from "./cache/strategies/cache-strategies";
+export * from "./cache/consistency/cache-consistency";
+export * from "./cache/distributed/cache-distributed";
+export * from "./cache/cache-presets";
+export * from "./cache/cache-execution-engine";
+
 
 

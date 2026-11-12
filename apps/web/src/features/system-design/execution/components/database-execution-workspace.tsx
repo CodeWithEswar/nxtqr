@@ -7,7 +7,15 @@ import {
   LayersIcon,
   CheckIcon,
 } from "@nxtqr/icons";
-import { Button, Badge } from "@nxtqr/ui";
+import {
+  Button,
+  Badge,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
 import { useExecutionStore } from "../store/execution-store";
 import {
@@ -314,17 +322,21 @@ export function DatabaseExecutionWorkspace({ onClose }: DatabaseExecutionWorkspa
             <div className="flex items-center justify-between pb-2 mb-2 border-b border-border-subtle shrink-0">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-semibold text-foreground">Operator Intermediate Rows</span>
-                <select
+                <Select
                   value={selectedOperator?.id || ""}
-                  onChange={(e) => setSelectedOperatorId(e.target.value)}
-                  className="bg-surface-01 border border-border-default rounded-md px-2 py-0.5 text-xs font-mono text-foreground focus:outline-none"
+                  onValueChange={(val) => setSelectedOperatorId(val)}
                 >
-                  {operatorsList.map((op) => (
-                    <option key={op.id} value={op.id}>
-                      {op.physicalOperator} ({op.id}) - {op.actualRows} rows
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="h-7 w-64 font-mono text-xs bg-surface-01 border-border-default hover:border-border-hover text-foreground">
+                    <SelectValue placeholder="Select operator..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2 z-[60]">
+                    {operatorsList.map((op) => (
+                      <SelectItem key={op.id} value={op.id}>
+                        {op.physicalOperator} ({op.id}) - {op.actualRows} rows
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <span className="text-[10px] font-mono text-text-muted">
                 {intermediateRows.length} rows produced at this stage

@@ -5,6 +5,7 @@ import type { CausalExecutionEvent } from "./causal-event";
 import type { ResilienceEvent } from "../resilience/fault-events";
 import type { TrafficExecutionEvent } from "../traffic/traffic-events";
 import type { DatabaseExecutionEvent } from "../database/database-events";
+import type { CacheExecutionEvent } from "../cache/cache-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -257,4 +258,5 @@ export type ExecutionEvent =
   | CausalExecutionEvent
   | ResilienceEvent
   | TrafficExecutionEvent
-  | DatabaseExecutionEvent;
+  | DatabaseExecutionEvent
+  | CacheExecutionEvent;

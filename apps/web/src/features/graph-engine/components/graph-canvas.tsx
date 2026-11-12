@@ -39,6 +39,7 @@ import {
   TrafficScenarioDialog,
   TrafficComparisonView,
   DatabaseExecutionWorkspace,
+  CacheExecutionWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -69,6 +70,7 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isTrafficScenarioDialogOpen = useExecutionStore((s) => s.isTrafficScenarioDialogOpen);
   const isTrafficComparisonOpen = useExecutionStore((s) => s.isTrafficComparisonOpen);
   const isDatabaseWorkspaceOpen = useExecutionStore((s) => s.isDatabaseWorkspaceOpen);
+  const isCacheWorkspaceOpen = useExecutionStore((s) => s.isCacheWorkspaceOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
     s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
@@ -553,6 +555,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Database Query Execution & Concurrency Drawer */}
       {isDatabaseWorkspaceOpen && <DatabaseExecutionWorkspace />}
+
+      {/* Cache Execution, Eviction & Distributed Consistency Drawer */}
+      {isCacheWorkspaceOpen && <CacheExecutionWorkspace />}
     </div>
   );
 }

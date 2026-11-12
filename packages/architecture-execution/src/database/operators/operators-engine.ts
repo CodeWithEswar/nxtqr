@@ -270,3 +270,4 @@ export class OperatorsEngine {
     return row[pure];
   }
 }
+

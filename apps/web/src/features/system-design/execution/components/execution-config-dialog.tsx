@@ -164,6 +164,81 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
     description: "Pool size limited to 2 connections with queued requests exceeding capacity.",
   },
   {
+    id: "basic_cache_hit",
+    label: "Cache: Memory Hit (1ms)",
+    description: "Evaluates unexpired key in cache memory, returning data in 1ms without database I/O.",
+  },
+  {
+    id: "basic_cache_miss",
+    label: "Cache: Memory Miss & DB Fetch",
+    description: "Key is absent from memory, resulting in cache miss, persistent database query, and repopulation.",
+  },
+  {
+    id: "lru_eviction",
+    label: "Cache: LRU Eviction Policy",
+    description: "Capacity 3. Adding 4th item evicts least recently accessed entry with insertion sequence tie-breaking.",
+  },
+  {
+    id: "lfu_eviction",
+    label: "Cache: LFU Eviction Policy",
+    description: "Capacity 3. Accesses item multiple times; new insert evicts least frequently accessed entry.",
+  },
+  {
+    id: "fifo_eviction",
+    label: "Cache: FIFO Eviction Policy",
+    description: "Capacity 3. Oldest inserted entry is evicted regardless of recent read hits or frequency.",
+  },
+  {
+    id: "ttl_expiration",
+    label: "Cache: TTL Virtual Expiration",
+    description: "Entry has 100ms TTL. At t=150ms, lookup results in an expired cache miss.",
+  },
+  {
+    id: "cache_aside",
+    label: "Cache Strategy: Cache-Aside (Lazy Loading)",
+    description: "Application misses cache, queries backing PostgreSQL database, and populates cache.",
+  },
+  {
+    id: "read_through",
+    label: "Cache Strategy: Read-Through",
+    description: "Cache abstraction transparently handles database lookup on miss and caches result.",
+  },
+  {
+    id: "write_through",
+    label: "Cache Strategy: Write-Through",
+    description: "Synchronous coordinated write to both cache and database before acknowledging success.",
+  },
+  {
+    id: "write_behind",
+    label: "Cache Strategy: Write-Behind (Deferred Queue)",
+    description: "Fast in-memory write acknowledged immediately; deferred write queue flushes asynchronously to DB.",
+  },
+  {
+    id: "cache_stampede",
+    label: "Cache Concurrency: Cache Stampede (Thundering Herd)",
+    description: "5 concurrent requests miss the same hot key simultaneously, duplicating database load.",
+  },
+  {
+    id: "request_coalescing",
+    label: "Cache Concurrency: Single-Flight Request Coalescing",
+    description: "5 concurrent requests for missing key: 1 leader fetches from DB, 4 followers wait and share result.",
+  },
+  {
+    id: "stale_while_revalidate",
+    label: "Cache Concurrency: Stale-While-Revalidate",
+    description: "Serves expired entry immediately within stale window while background refresh repopulates cache.",
+  },
+  {
+    id: "cache_outage",
+    label: "Cache Resilience: Node Outage Fallback",
+    description: "Cache becomes unavailable; requests gracefully fall back directly to persistent storage.",
+  },
+  {
+    id: "invalidation_race",
+    label: "Cache Consistency: Invalidation Race Condition",
+    description: "Slow read attempts to populate cache after a concurrent write already updated the database.",
+  },
+  {
     id: "custom",
     label: "Custom Flow",
     description: "Manual path, method, and branch configuration.",

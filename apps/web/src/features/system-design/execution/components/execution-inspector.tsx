@@ -407,7 +407,7 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
                       <div className="flex items-center justify-between">
                         <span className="text-foreground font-semibold">{key}</span>
                         <span className="text-text-secondary text-[9px]">
-                          TTL: {Math.max(0, Math.round((fixture.expiresAtMs - (currentFrame?.virtualTimeMs || 0)) / 1000))}s
+                          TTL: {fixture.expiresAtMs ? `${Math.max(0, Math.round((fixture.expiresAtMs - (currentFrame?.virtualTimeMs || 0)) / 1000))}s` : "∞"}
                         </span>
                       </div>
                       <pre className="text-[9px] text-text-secondary truncate bg-surface-02 p-1 rounded border border-border-subtle">

@@ -32,6 +32,11 @@ import {
   DATABASE_PRESET_METADATA,
   createDatabasePresetScenario,
   DatabaseExecutionEngine,
+  type CacheScenario,
+  type CacheScenarioPresetId,
+  CACHE_PRESET_METADATA,
+  createCachePresetScenario,
+  CacheExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -39,7 +44,8 @@ export type AllScenarioPresetId =
   | DistributedScenarioPresetId
   | ResiliencePresetId
   | TrafficPresetId
-  | DatabaseScenarioPresetId;
+  | DatabaseScenarioPresetId
+  | CacheScenarioPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -57,6 +63,7 @@ export interface ExecutionStoreState {
   isTrafficScenarioDialogOpen: boolean;
   isTrafficComparisonOpen: boolean;
   isDatabaseWorkspaceOpen: boolean;
+  isCacheWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -65,6 +72,7 @@ export interface ExecutionStoreState {
   activeFailureScenario: FailureScenario | null;
   activeTrafficScenario: TrafficScenario | null;
   activeDatabaseScenario: DatabaseScenario | null;
+  activeCacheScenario: CacheScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -93,11 +101,13 @@ export interface ExecutionStoreState {
   toggleTrafficScenarioDialog: (open?: boolean) => void;
   toggleTrafficComparison: (open?: boolean) => void;
   toggleDatabaseWorkspace: (open?: boolean) => void;
+  toggleCacheWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
   setTrafficScenario: (scenario: TrafficScenario | null) => void;
   setDatabaseScenario: (scenario: DatabaseScenario | null) => void;
+  setCacheScenario: (scenario: CacheScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -126,6 +136,7 @@ export interface ExecutionStoreState {
   ) => boolean;
   runDatabaseSimulation: (scenario: DatabaseScenario) => boolean;
   executeCustomDatabaseQuery: (sql: string) => boolean;
+  runCacheSimulation: (scenario: CacheScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -206,12 +217,14 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isTrafficScenarioDialogOpen: false,
     isTrafficComparisonOpen: false,
     isDatabaseWorkspaceOpen: false,
+    isCacheWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
     activeFailureScenario: null,
     activeTrafficScenario: null,
     activeDatabaseScenario: null,
+    activeCacheScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -239,6 +252,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isTrafficScenarioDialogOpen: false,
           isTrafficComparisonOpen: false,
           isDatabaseWorkspaceOpen: false,
+          isCacheWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -330,6 +344,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleCacheWorkspace: (open) => {
+      set({
+        isCacheWorkspaceOpen:
+          open !== undefined ? open : !get().isCacheWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -351,7 +372,30 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeDatabaseScenario: scenario });
     },
 
+    setCacheScenario: (scenario) => {
+      set({ activeCacheScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (presetId in CACHE_PRESET_METADATA) {
+        const cacheScenario = createCachePresetScenario(presetId as CacheScenarioPresetId);
+        set((state) => ({
+          activePresetId: presetId,
+          activeCacheScenario: cacheScenario,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isCacheWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runCacheSimulation(cacheScenario);
+        return;
+      }
+
       if (presetId in DATABASE_PRESET_METADATA) {
         const dbScenario = createDatabasePresetScenario(presetId as DatabaseScenarioPresetId);
         set((state) => ({
@@ -818,6 +862,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         primaryQuery: sql,
       };
       return get().runDatabaseSimulation(updated);
+    },
+
+    runCacheSimulation: (scenario) => {
+      const trace = CacheExecutionEngine.executeScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_cache_sim",
+        architectureRevisionId: "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeCacheScenario: scenario,
+        isTimelineOpen: true,
+        isCacheWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
     },
 
     play: () => {

@@ -316,7 +316,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     toggleMinimap: () => set((s) => ({ showMinimap: !s.showMinimap })),
     setInspectorOpen: (open) => {
       set({ isInspectorOpen: open });
-      if (open && typeof window !== "undefined" && window.innerWidth < 1536) {
+      if (open && typeof window !== "undefined" && window.innerWidth < 1800) {
         set({
           activeEngineId: null,
           isValidationOpen: false,
@@ -331,7 +331,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     toggleInspector: () => {
       const willOpen = !get().isInspectorOpen;
       set({ isInspectorOpen: willOpen });
-      if (willOpen && typeof window !== "undefined" && window.innerWidth < 1536) {
+      if (willOpen && typeof window !== "undefined" && window.innerWidth < 1800) {
         set({
           activeEngineId: null,
           isValidationOpen: false,
@@ -399,7 +399,7 @@ export const useGraphEditorStore = create<GraphEditorState>((set, get) => {
     },
     setActiveEngineId: (engineId) => {
       const shouldCloseInspector = Boolean(
-        engineId && typeof window !== "undefined" && window.innerWidth < 1536
+        engineId && typeof window !== "undefined" && window.innerWidth < 1800
       );
       if (engineId === "validation") {
         set({

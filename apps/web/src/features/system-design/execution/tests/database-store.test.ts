@@ -58,3 +58,4 @@ describe("Execution Store - Database Execution & Workspace Integration", () => {
     expect(state.activeDatabaseScenario?.primaryQuery).toBe("SELECT * FROM products WHERE id = 42;");
   });
 });
+
