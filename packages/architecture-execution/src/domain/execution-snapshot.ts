@@ -56,17 +56,19 @@ export class ExecutionSnapshotManager {
     title: string,
     nodes: BaseNode[],
     edges: BaseEdge[],
-    configuration: ExecutionConfiguration
+    configuration?: ExecutionConfiguration
   ): ExecutionSnapshot {
     // Deep clone nodes and edges to ensure absolute immutability during execution runs
     const clonedNodes: BaseNode[] = JSON.parse(JSON.stringify(nodes));
     const clonedEdges: BaseEdge[] = JSON.parse(JSON.stringify(edges));
 
+    const entryNodeId = configuration?.entryNodeId || clonedNodes[0]?.id || "entry";
+
     const snapshotHash = this.computeHash(
       clonedNodes,
       clonedEdges,
       revisionId,
-      configuration.entryNodeId
+      entryNodeId
     );
 
     return {
@@ -78,7 +80,7 @@ export class ExecutionSnapshotManager {
       edges: clonedEdges,
       snapshotHash,
       createdAt: new Date().toISOString(),
-      configuration: JSON.parse(JSON.stringify(configuration)),
+      configuration: configuration ? JSON.parse(JSON.stringify(configuration)) : ({} as any),
     };
   }
 

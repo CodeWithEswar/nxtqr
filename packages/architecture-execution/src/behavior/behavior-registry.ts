@@ -30,3 +30,4 @@ export class ComponentBehaviorRegistry {
 }
 
 export const componentBehaviorRegistry = new ComponentBehaviorRegistry();
+

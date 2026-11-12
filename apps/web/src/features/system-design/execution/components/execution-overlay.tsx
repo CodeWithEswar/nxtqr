@@ -28,7 +28,12 @@ export function ExecutionOverlay() {
   }
 
   const activeNodeIds = currentFrame.activeNodeIds ?? EMPTY_STRING_ARRAY;
-  const traveling = currentFrame.travelingRequest;
+  const packets =
+    currentFrame.travelingPackets && currentFrame.travelingPackets.length > 0
+      ? currentFrame.travelingPackets
+      : currentFrame.travelingRequest
+        ? [currentFrame.travelingRequest]
+        : [];
 
   return (
     <div
@@ -69,16 +74,20 @@ export function ExecutionOverlay() {
         );
       })}
 
-      {/* 2. Traveling Request / Response Packet along Edge */}
-      {traveling && (
+      {/* 2. Traveling Request / Response / Message Packets along Edges */}
+      {packets.map((pkt, idx) => (
         <TravelingPacketMarker
-          edgeId={traveling.edgeId}
-          sourceNodeId={traveling.sourceNodeId}
-          targetNodeId={traveling.targetNodeId}
-          direction={traveling.direction || "request"}
+          key={pkt.id || `${pkt.edgeId}_${pkt.sourceNodeId}_${pkt.targetNodeId}_${idx}`}
+          edgeId={pkt.edgeId}
+          sourceNodeId={pkt.sourceNodeId}
+          targetNodeId={pkt.targetNodeId}
+          direction={pkt.direction || "request"}
+          kind={pkt.kind || (pkt.direction as any) || "request"}
+          label={pkt.label}
+          indexOffset={(idx % 3) * 6}
           prefersReducedMotion={prefersReducedMotion}
         />
-      )}
+      ))}
     </div>
   );
 }
@@ -87,7 +96,10 @@ interface TravelingPacketMarkerProps {
   edgeId: string;
   sourceNodeId: string;
   targetNodeId: string;
-  direction: "request" | "response";
+  direction: "request" | "response" | "message" | "acknowledgment";
+  kind?: "request" | "response" | "message" | "acknowledgment";
+  label?: string;
+  indexOffset?: number;
   prefersReducedMotion: boolean;
 }
 
@@ -96,6 +108,9 @@ function TravelingPacketMarker({
   sourceNodeId,
   targetNodeId,
   direction,
+  kind = "request",
+  label,
+  indexOffset = 0,
   prefersReducedMotion,
 }: TravelingPacketMarkerProps) {
   const { getNode } = useReactFlow();
@@ -115,12 +130,12 @@ function TravelingPacketMarker({
         try {
           const totalLength = edgeEl.getTotalLength();
           if (totalLength > 0) {
-            // If direction is response, reverse percentage position along path
+            // Position along edge path based on direction and motion preference
             let ratio = 0.5;
             if (prefersReducedMotion) {
-              ratio = direction === "response" ? 0.1 : 0.9;
+              ratio = direction === "response" || direction === "acknowledgment" ? 0.15 : 0.85;
             } else {
-              ratio = direction === "response" ? 0.45 : 0.55;
+              ratio = direction === "response" || direction === "acknowledgment" ? 0.45 : 0.55;
             }
             const pos = totalLength * ratio;
             const pt = edgeEl.getPointAtLength(pos);
@@ -150,30 +165,43 @@ function TravelingPacketMarker({
 
   if (!coords) return null;
 
-  const isResponse = direction === "response";
+  const isResponse = kind === "response";
+  const isMessage = kind === "message";
+  const isAck = kind === "acknowledgment";
+
+  const defaultLabel = isResponse
+    ? "RES ◀"
+    : isMessage
+      ? "MSG ✉"
+      : isAck
+        ? "ACK ✓"
+        : "REQ ▶";
 
   return (
     <div
       style={{
-        transform: `translate(${coords.x - 18}px, ${coords.y - 10}px)`,
+        transform: `translate(${coords.x - 20 + indexOffset}px, ${coords.y - 10 + indexOffset}px)`,
       }}
       className="absolute top-0 left-0 transition-transform duration-100 ease-linear pointer-events-none z-30"
     >
       <div
         className={cn(
-          "flex items-center gap-1 px-1.5 py-0.5 rounded-full font-mono text-[9px] font-bold shadow-level-3 border",
-          isResponse
-            ? "bg-surface-04 border-border-strong text-emerald-400"
-            : "bg-foreground text-background border-border-strong"
+          "flex items-center gap-1.5 px-2 py-0.5 rounded-full font-mono text-[9px] font-bold shadow-level-3 border select-none",
+          kind === "request" && "bg-foreground text-background border-border-strong",
+          isResponse && "bg-surface-04 text-foreground border-border-strong",
+          isMessage && "bg-surface-03 text-foreground border-border-default",
+          isAck && "bg-surface-02 text-text-secondary border-border-subtle"
         )}
       >
         <span
           className={cn(
             "w-1.5 h-1.5 rounded-full shrink-0",
-            isResponse ? "bg-emerald-400 animate-ping" : "bg-background animate-ping"
+            kind === "request"
+              ? "bg-background animate-ping"
+              : "bg-foreground animate-pulse"
           )}
         />
-        <span>{isResponse ? "RES ◀" : "REQ ▶"}</span>
+        <span>{label || defaultLabel}</span>
       </div>
     </div>
   );

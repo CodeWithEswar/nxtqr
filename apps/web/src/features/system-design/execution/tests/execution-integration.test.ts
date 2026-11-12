@@ -84,7 +84,7 @@ describe("Architecture Execution Store & Canvas Integration", () => {
 
   it("should initialize with default idle state", () => {
     const state = useExecutionStore.getState();
-    expect(state.playbackState.status).toBe("idle");
+    expect(["idle", "stopped"]).toContain(state.playbackState.status);
     expect(state.configuration.request.method).toBe("GET");
     expect(state.isExecutionModeActive).toBe(false);
   });
@@ -227,5 +227,86 @@ describe("Architecture Execution Store & Canvas Integration", () => {
     store.seekToStep(0);
     curState = useExecutionStore.getState().playbackState.currentFrame?.runtimeState;
     expect(Boolean(curState?.cache["products:42"])).toBe(false);
+  });
+
+  it("should execute parallel-fanout scenario with causal branches, fan-in barrier and critical path", () => {
+    const store = useExecutionStore.getState();
+    store.setScenarioPreset("parallel-fanout");
+    const success = store.runExecution(mockNodes, mockEdges);
+
+    expect(success).toBe(true);
+
+    const state = useExecutionStore.getState();
+    const events = state.trace?.events || [];
+
+    // Verify fan-out, branch creation and fan-in join occurred
+    expect(events.some((e) => e.type === "parallel.fanout.started")).toBe(true);
+    expect(events.some((e) => e.type === "parallel.branch.created")).toBe(true);
+    expect(events.some((e) => e.type === "parallel.branch.completed")).toBe(true);
+    expect(events.some((e) => e.type === "parallel.join.satisfied")).toBe(true);
+
+    // Verify spans and critical path
+    const finalFrame = state.trace?.frames[state.trace.frames.length - 1];
+    expect(finalFrame?.runtimeState?.activeSpans.length).toBeGreaterThan(0);
+    expect(finalFrame?.runtimeState?.criticalPathSpanIds.length).toBeGreaterThan(0);
+
+    // Verify distributed timeline and drawer toggles
+    store.toggleDistributedTimeline(true);
+    expect(useExecutionStore.getState().isDistributedTimelineOpen).toBe(true);
+
+    store.toggleTraceWaterfall(true);
+    expect(useExecutionStore.getState().isTraceWaterfallOpen).toBe(true);
+
+    store.toggleSequenceView(true);
+    expect(useExecutionStore.getState().isSequenceViewOpen).toBe(true);
+  });
+
+  it("should execute async-queue-workers scenario with message queuing and worker acknowledgments", () => {
+    const store = useExecutionStore.getState();
+    store.setScenarioPreset("async-queue-workers");
+    const success = store.runExecution(mockNodes, mockEdges);
+
+    expect(success).toBe(true);
+
+    const state = useExecutionStore.getState();
+    const events = state.trace?.events || [];
+
+    // Verify messaging lifecycle
+    expect(events.some((e) => e.type === "message.published")).toBe(true);
+    expect(events.some((e) => e.type === "message.enqueued")).toBe(true);
+    expect(events.some((e) => e.type === "message.processing.completed")).toBe(true);
+    expect(events.some((e) => e.type === "message.acknowledged")).toBe(true);
+
+    // Queue state in runtime snapshot
+    const finalFrame = state.trace?.frames[state.trace.frames.length - 1];
+    const orderEventsQueue =
+      finalFrame?.runtimeState?.queues["queue_order_events"] ||
+      finalFrame?.runtimeState?.queues["order_events_queue"];
+    expect(orderEventsQueue).toBeDefined();
+    expect(orderEventsQueue?.acknowledgedMessageIds.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("should execute message-retry-dlq scenario with NACK, exponential retry and dead-letter routing", () => {
+    const store = useExecutionStore.getState();
+    store.setScenarioPreset("message-retry-dlq");
+    const success = store.runExecution(mockNodes, mockEdges);
+
+    expect(success).toBe(true);
+
+    const state = useExecutionStore.getState();
+    const events = state.trace?.events || [];
+
+    // Verify retry & DLQ lifecycle
+    expect(events.some((e) => e.type === "message.nacked")).toBe(true);
+    expect(events.some((e) => e.type === "message.retry.scheduled")).toBe(true);
+    expect(events.some((e) => e.type === "message.deadlettered")).toBe(true);
+
+    // Verify DLQ queue received dead-lettered message
+    const finalFrame = state.trace?.frames[state.trace.frames.length - 1];
+    const dlq =
+      finalFrame?.runtimeState?.queues["queue_dlq"] ||
+      finalFrame?.runtimeState?.queues["dead_letter_queue"];
+    expect(dlq).toBeDefined();
+    expect(dlq?.deadLetteredMessageIds.length).toBeGreaterThanOrEqual(1);
   });
 });

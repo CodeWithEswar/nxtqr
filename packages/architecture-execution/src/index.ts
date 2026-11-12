@@ -36,6 +36,15 @@ export * from "./behavior/scenario-presets";
 // Lifecycle Planner
 export * from "./engine/request-lifecycle-planner";
 
+// Phase 05.4.3: Distributed Request Tracing & Async Messaging
+export * from "./schemas/distributed.schemas";
+export * from "./domain/causal-event";
+export * from "./distributed/priority-queue";
+export * from "./distributed/distributed-scenarios";
+export * from "./distributed/distributed-scheduler";
+export * from "./tracing/critical-path";
+export * from "./tracing/trace-tree";
+
 // Playback
 export * from "./playback/playback-machine";
 export * from "./playback/playback-controller";

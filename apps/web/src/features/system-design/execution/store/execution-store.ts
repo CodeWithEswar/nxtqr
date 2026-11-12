@@ -8,23 +8,32 @@ import {
   type PlaybackState,
   type BehaviorScenario,
   type ScenarioPresetId,
+  type DistributedScenarioConfig,
+  type DistributedScenarioPresetId,
   ExecutionSnapshotManager,
   ExecutionPlanner,
   PlaybackController,
   getScenarioPreset,
+  getDistributedScenarioPreset,
 } from "@nxtqr/architecture-execution";
+
+export type AllScenarioPresetId = ScenarioPresetId | DistributedScenarioPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
   isExecutionModeActive: boolean;
   isTimelineOpen: boolean;
+  isDistributedTimelineOpen: boolean;
+  isTraceWaterfallOpen: boolean;
+  isSequenceViewOpen: boolean;
   isConfigDialogOpen: boolean;
   isExecutionInspectorOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
   scenario: BehaviorScenario;
-  activePresetId: ScenarioPresetId;
+  distributedScenario: DistributedScenarioConfig | null;
+  activePresetId: AllScenarioPresetId;
 
   // Active run & trace
   activeRun: ExecutionRun | null;
@@ -37,10 +46,13 @@ export interface ExecutionStoreState {
   // Actions
   toggleExecutionMode: (active?: boolean) => void;
   toggleTimeline: (open?: boolean) => void;
+  toggleDistributedTimeline: (open?: boolean) => void;
+  toggleTraceWaterfall: (open?: boolean) => void;
+  toggleSequenceView: (open?: boolean) => void;
   toggleConfigDialog: (open?: boolean) => void;
   toggleExecutionInspector: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
-  setScenarioPreset: (presetId: ScenarioPresetId) => void;
+  setScenarioPreset: (presetId: AllScenarioPresetId) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -111,7 +123,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       playbackController.subscribe((pbState) => {
         set({
           playbackState: pbState,
-          selectedEventId: pbState.currentFrame?.activeEvent?.id || get().selectedEventId,
+          selectedEventId: pbState.currentFrame?.activeEvent.id || null,
         });
       });
     }
@@ -121,10 +133,14 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
   return {
     isExecutionModeActive: false,
     isTimelineOpen: false,
+    isDistributedTimelineOpen: false,
+    isTraceWaterfallOpen: false,
+    isSequenceViewOpen: false,
     isConfigDialogOpen: false,
     isExecutionInspectorOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
+    distributedScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -138,6 +154,9 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         set({
           isExecutionModeActive: false,
           isTimelineOpen: false,
+          isDistributedTimelineOpen: false,
+          isTraceWaterfallOpen: false,
+          isSequenceViewOpen: false,
           isExecutionInspectorOpen: false,
         });
       } else {
@@ -149,13 +168,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ isTimelineOpen: open !== undefined ? open : !get().isTimelineOpen });
     },
 
+    toggleDistributedTimeline: (open) => {
+      set({
+        isDistributedTimelineOpen:
+          open !== undefined ? open : !get().isDistributedTimelineOpen,
+      });
+    },
+
+    toggleTraceWaterfall: (open) => {
+      set({
+        isTraceWaterfallOpen:
+          open !== undefined ? open : !get().isTraceWaterfallOpen,
+      });
+    },
+
+    toggleSequenceView: (open) => {
+      set({
+        isSequenceViewOpen:
+          open !== undefined ? open : !get().isSequenceViewOpen,
+      });
+    },
+
     toggleConfigDialog: (open) => {
       set({ isConfigDialogOpen: open !== undefined ? open : !get().isConfigDialogOpen });
     },
 
     toggleExecutionInspector: (open) => {
       set({
-        isExecutionInspectorOpen: open !== undefined ? open : !get().isExecutionInspectorOpen,
+        isExecutionInspectorOpen:
+          open !== undefined ? open : !get().isExecutionInspectorOpen,
       });
     },
 
@@ -169,14 +210,44 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     },
 
     setScenarioPreset: (presetId) => {
-      const preset = getScenarioPreset(presetId);
+      const isDistributed =
+        presetId === "parallel-fanout" ||
+        presetId === "async-queue-workers" ||
+        presetId === "message-retry-dlq" ||
+        presetId === "fanin-partial-failure" ||
+        presetId === "custom-distributed";
+
+      if (isDistributed) {
+        const distPreset = getDistributedScenarioPreset(presetId as DistributedScenarioPresetId);
+        set((state) => ({
+          activePresetId: presetId,
+          distributedScenario: distPreset,
+          configuration: {
+            ...state.configuration,
+            presetId,
+            distributedScenario: distPreset,
+            request: {
+              ...state.configuration.request,
+              method: distPreset.entryRequest.method as any,
+              path: distPreset.entryRequest.path,
+              body: distPreset.entryRequest.body,
+              headers: distPreset.entryRequest.headers,
+            },
+          },
+        }));
+        return;
+      }
+
+      const preset = getScenarioPreset(presetId as ScenarioPresetId);
       set((state) => ({
         activePresetId: presetId,
         scenario: preset,
+        distributedScenario: null,
         configuration: {
           ...state.configuration,
           presetId,
           scenario: preset,
+          distributedScenario: undefined,
           request: {
             ...state.configuration.request,
             path:
@@ -235,7 +306,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     },
 
     runExecution: (nodes, edges, architectureId = "arch_canvas", revisionId = "rev_v1") => {
-      const { configuration } = get();
+      const { configuration, activePresetId } = get();
 
       // Fallback: if no entry node selected, pick first input or first node
       let activeEntryNodeId = configuration.entryNodeId;
@@ -258,7 +329,8 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         ...configuration,
         entryNodeId: activeEntryNodeId,
         scenario: get().scenario,
-        presetId: get().activePresetId,
+        distributedScenario: get().distributedScenario || undefined,
+        presetId: activePresetId,
       };
 
       // 1. Snapshot creation & validation
@@ -284,69 +356,63 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         createdAt: new Date().toISOString(),
       };
 
-      // 3. Initialize playback controller
-      const ctrl = ensureController();
-      ctrl.loadTrace(trace);
-      ctrl.play();
+      // 3. Initialize Controller & State
+      const controller = ensureController();
+      controller.loadTrace(trace);
 
       set({
         isExecutionModeActive: true,
         activeRun: run,
         trace,
-        selectedEventId: trace.events[0]?.id || null,
+        playbackState: controller.getState(),
       });
 
+      // Automatically play trace
+      controller.play();
       return true;
     },
 
     play: () => {
-      const ctrl = ensureController();
-      ctrl.play();
+      ensureController().play();
     },
 
     pause: () => {
-      const ctrl = ensureController();
-      ctrl.pause();
+      ensureController().pause();
     },
 
     resume: () => {
-      const ctrl = ensureController();
-      ctrl.resume();
+      ensureController().resume();
     },
 
     stop: () => {
-      const ctrl = ensureController();
-      ctrl.stop();
+      ensureController().stop();
       set({
         isExecutionModeActive: false,
-        isTimelineOpen: false,
-        isExecutionInspectorOpen: false,
+        playbackState: {
+          ...initialPlaybackState,
+          status: "stopped",
+        },
       });
     },
 
     restart: () => {
-      const ctrl = ensureController();
-      ctrl.restart();
+      ensureController().restart();
     },
 
     nextStep: () => {
-      const ctrl = ensureController();
-      ctrl.nextStep();
+      ensureController().nextStep();
     },
 
     previousStep: () => {
-      const ctrl = ensureController();
-      ctrl.previousStep();
+      ensureController().previousStep();
     },
 
     seekToStep: (index: number) => {
-      const ctrl = ensureController();
-      ctrl.seekToStep(index);
+      ensureController().seekToStep(index);
     },
 
     setSpeed: (speed: PlaybackSpeed) => {
-      const ctrl = ensureController();
-      ctrl.setSpeed(speed);
+      ensureController().setSpeed(speed);
       set((state) => ({
         playbackState: {
           ...state.playbackState,

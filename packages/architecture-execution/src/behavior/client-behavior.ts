@@ -66,3 +66,4 @@ export class ClientBehaviorAdapter implements ComponentBehaviorAdapter {
     };
   }
 }
+

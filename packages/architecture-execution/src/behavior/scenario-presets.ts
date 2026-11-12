@@ -173,3 +173,4 @@ export const SCENARIO_PRESETS: Record<string, BehaviorScenario> = {
 export function getScenarioPreset(presetId: string): BehaviorScenario {
   return SCENARIO_PRESETS[presetId] || SCENARIO_PRESETS["cache-miss"];
 }
+

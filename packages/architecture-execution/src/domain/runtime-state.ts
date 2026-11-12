@@ -3,6 +3,13 @@ import type {
   ModeledHttpRequest,
   ModeledHttpResponse,
 } from "../schemas/behavior.schemas";
+import type {
+  TraceSpan,
+  ExecutionBranch,
+  ModeledQueueState,
+  ModeledMessage,
+  FanInBarrier,
+} from "../schemas/distributed.schemas";
 
 export interface CacheEntry {
   key: string;
@@ -39,6 +46,14 @@ export interface ModeledRuntimeState {
   activeRequest: ModeledHttpRequest | null;
   activeResponse: ModeledHttpResponse | null;
   stateTransitions: StateTransitionRecord[];
+
+  // Distributed Tracing & Parallel Execution (Phase 05.4.3)
+  activeSpans: TraceSpan[];
+  activeBranches: ExecutionBranch[];
+  queues: Record<string, ModeledQueueState>;
+  activeMessages: ModeledMessage[];
+  fanInBarriers: Record<string, FanInBarrier>;
+  criticalPathSpanIds: string[];
 }
 
 export class RuntimeStateHelper {
@@ -73,6 +88,12 @@ export class RuntimeStateHelper {
       activeRequest: null,
       activeResponse: null,
       stateTransitions: [],
+      activeSpans: [],
+      activeBranches: [],
+      queues: {},
+      activeMessages: [],
+      fanInBarriers: {},
+      criticalPathSpanIds: [],
     };
   }
 
@@ -90,14 +111,41 @@ export class RuntimeStateHelper {
       }
     }
 
+    const clonedQueues: Record<string, ModeledQueueState> = {};
+    for (const [qId, qState] of Object.entries(state.queues || {})) {
+      clonedQueues[qId] = {
+        ...qState,
+        readyMessageIds: [...qState.readyMessageIds],
+        inFlightMessageIds: [...qState.inFlightMessageIds],
+        acknowledgedMessageIds: [...qState.acknowledgedMessageIds],
+        deadLetteredMessageIds: [...qState.deadLetteredMessageIds],
+      };
+    }
+
+    const clonedBarriers: Record<string, FanInBarrier> = {};
+    for (const [bId, barrier] of Object.entries(state.fanInBarriers || {})) {
+      clonedBarriers[bId] = {
+        ...barrier,
+        expectedBranchIds: [...barrier.expectedBranchIds],
+        completedBranchIds: [...barrier.completedBranchIds],
+        failedBranchIds: [...barrier.failedBranchIds],
+      };
+    }
+
     return {
       cache: clonedCache,
       database: clonedDb,
       loadBalancerCounters: { ...state.loadBalancerCounters },
-      callStack: state.callStack.map((f) => ({ ...f })),
+      callStack: (state.callStack || []).map((f) => ({ ...f })),
       activeRequest: state.activeRequest ? { ...state.activeRequest } : null,
       activeResponse: state.activeResponse ? { ...state.activeResponse } : null,
-      stateTransitions: state.stateTransitions.map((t) => ({ ...t })),
+      stateTransitions: (state.stateTransitions || []).map((t) => ({ ...t })),
+      activeSpans: (state.activeSpans || []).map((s) => ({ ...s, attributes: { ...s.attributes } })),
+      activeBranches: (state.activeBranches || []).map((b) => ({ ...b })),
+      queues: clonedQueues,
+      activeMessages: (state.activeMessages || []).map((m) => ({ ...m, traceContext: { ...m.traceContext } })),
+      fanInBarriers: clonedBarriers,
+      criticalPathSpanIds: [...(state.criticalPathSpanIds || [])],
     };
   }
 
@@ -108,44 +156,41 @@ export class RuntimeStateHelper {
   ): { hit: boolean; value?: unknown; reason: string } {
     const entry = state.cache[key];
     if (!entry) {
-      return { hit: false, reason: `Key "${key}" does not exist in modeled cache.` };
+      return { hit: false, reason: `Cache key "${key}" not found in Redis (cold cache).` };
     }
     if (nowMs > entry.expiresAtMs) {
-      return {
-        hit: false,
-        reason: `Key "${key}" expired at virtual time ${entry.expiresAtMs}ms (current: ${nowMs}ms).`,
-      };
+      delete state.cache[key];
+      return { hit: false, reason: `Cache key "${key}" expired at +${entry.expiresAtMs}ms (TTL exceeded).` };
     }
-    return { hit: true, value: entry.value, reason: `Cache hit for key "${key}".` };
+    return { hit: true, value: entry.value, reason: `Cache key "${key}" hit in Redis (TTL valid).` };
   }
 
   public static cacheSet(
     state: ModeledRuntimeState,
     key: string,
     value: unknown,
-    ttlMs: number,
+    ttlSeconds: number,
     nowMs: number,
     sequence: number,
     componentId: string
   ): void {
-    const before = state.cache[key] ? { ...state.cache[key] } : null;
-    const expiresAtMs = ttlMs > 0 ? nowMs + ttlMs : Number.MAX_SAFE_INTEGER;
-    const newEntry: CacheEntry = {
+    const expiresAtMs = ttlSeconds > 0 ? nowMs + ttlSeconds * 1000 : Number.MAX_SAFE_INTEGER;
+    const prev = state.cache[key];
+    state.cache[key] = {
       key,
       value,
       createdAtMs: nowMs,
       expiresAtMs,
     };
-    state.cache[key] = newEntry;
 
     state.stateTransitions.push({
       sequence,
       atMs: nowMs,
       type: "cache.set",
       componentId,
-      summary: `Stored key "${key}" with TTL ${ttlMs}ms in modeled cache.`,
-      before,
-      after: newEntry,
+      summary: `Stored key "${key}" with TTL ${ttlSeconds}s.`,
+      before: prev ? prev.value : null,
+      after: value,
     });
   }
 

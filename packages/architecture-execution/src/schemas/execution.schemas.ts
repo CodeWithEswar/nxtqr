@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { BehaviorScenario } from "./behavior.schemas";
+import type { DistributedScenarioConfig } from "./distributed.schemas";
 
 export const HttpMethodSchema = z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]);
 export type HttpMethod = z.infer<typeof HttpMethodSchema>;
@@ -54,6 +55,7 @@ export const ExecutionConfigurationSchema = z.object({
 });
 export type ExecutionConfiguration = z.infer<typeof ExecutionConfigurationSchema> & {
   scenario?: BehaviorScenario;
+  distributedScenario?: DistributedScenarioConfig;
   presetId?: string;
 };
 

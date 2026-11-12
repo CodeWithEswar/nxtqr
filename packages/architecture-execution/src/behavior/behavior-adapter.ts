@@ -34,3 +34,4 @@ export interface ComponentBehaviorAdapter {
   supportedTypes: string[];
   execute(ctx: ComponentBehaviorContext): ComponentBehaviorResult;
 }
+

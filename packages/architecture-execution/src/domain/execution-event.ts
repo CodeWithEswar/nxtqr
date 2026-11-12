@@ -1,6 +1,7 @@
 import type { ExecutionOutcome, ExecutionRequest } from "../schemas/execution.schemas";
 import type { ModeledHttpRequest, ModeledHttpResponse } from "../schemas/behavior.schemas";
 import type { ModeledRuntimeState } from "./runtime-state";
+import type { CausalExecutionEvent } from "./causal-event";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -8,6 +9,9 @@ export interface BaseExecutionEvent {
   atMs: number;
   durationMs: number;
   explanation: string;
+  branchId?: string;
+  traceId?: string;
+  spanId?: string;
   stateSnapshot?: ModeledRuntimeState;
 }
 
@@ -65,6 +69,7 @@ export interface RunCompletedEvent extends BaseExecutionEvent {
 export interface RequestCreatedEvent extends BaseExecutionEvent {
   type: "request.created";
   request: ModeledHttpRequest;
+  nodeId?: string;
 }
 
 export interface RequestDispatchedEvent extends BaseExecutionEvent {
@@ -245,4 +250,5 @@ export type ExecutionEvent =
   | DatabaseWriteCompletedEvent
   | DatabaseOperationFailedEvent
   | ComponentProcessingStartedEvent
-  | ComponentProcessingCompletedEvent;
+  | ComponentProcessingCompletedEvent
+  | CausalExecutionEvent;

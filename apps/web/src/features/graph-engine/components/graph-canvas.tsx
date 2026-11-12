@@ -28,6 +28,9 @@ import {
   ExecutionToolbar,
   ExecutionOverlay,
   ExecutionTimeline,
+  DistributedTimeline,
+  TraceWaterfall,
+  SequenceView,
   ExecutionInspector,
   ExecutionConfigDialog,
   useExecutionPlayback,
@@ -50,6 +53,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
   const isExecutionModeActive = useExecutionStore((s) => s.isExecutionModeActive);
   const isTimelineOpen = useExecutionStore((s) => s.isTimelineOpen);
+  const isDistributedTimelineOpen = useExecutionStore((s) => s.isDistributedTimelineOpen);
+  const isTraceWaterfallOpen = useExecutionStore((s) => s.isTraceWaterfallOpen);
+  const isSequenceViewOpen = useExecutionStore((s) => s.isSequenceViewOpen);
   const isConfigDialogOpen = useExecutionStore((s) => s.isConfigDialogOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -491,6 +497,21 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
       {/* Synchronized Event Timeline (Bottom-Left Drawer) */}
       {isExecutionModeActive && isTimelineOpen && (
         <ExecutionTimeline className="absolute bottom-12 left-3 w-80 md:w-96 max-h-72 z-30 pointer-events-auto" />
+      )}
+
+      {/* Multi-Lane Distributed Execution Timeline (Bottom-Left Drawer) */}
+      {isExecutionModeActive && isDistributedTimelineOpen && (
+        <DistributedTimeline className="absolute bottom-12 left-3 w-[640px] max-w-[90vw] z-30 pointer-events-auto" />
+      )}
+
+      {/* Distributed Trace Waterfall Tree (Bottom-Left Drawer) */}
+      {isExecutionModeActive && isTraceWaterfallOpen && (
+        <TraceWaterfall className="absolute bottom-12 left-3 w-[680px] max-w-[90vw] z-30 pointer-events-auto" />
+      )}
+
+      {/* Synchronized Sequence Diagram View (Bottom-Left Drawer) */}
+      {isExecutionModeActive && isSequenceViewOpen && (
+        <SequenceView className="absolute bottom-12 left-3 w-[680px] max-w-[90vw] z-30 pointer-events-auto" />
       )}
 
       {/* Contextual Execution Step Inspector (Floating Right) */}

@@ -10,16 +10,19 @@ import {
   DatabaseIcon,
   LayersIcon,
   ActivityIcon,
+  CpuIcon,
 } from "@nxtqr/icons";
 import { useExecutionStore } from "../store/execution-store";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
+import { QueueInspector } from "./queue-inspector";
+import { MessageInspector } from "./message-inspector";
 
 export interface ExecutionInspectorProps {
   className?: string;
   onClose?: () => void;
 }
 
-type InspectorTab = "overview" | "payloads" | "state";
+type InspectorTab = "overview" | "payloads" | "state" | "spans" | "queues";
 
 export function ExecutionInspector({ className, onClose }: ExecutionInspectorProps) {
   const currentFrame = useExecutionStore((s) => s.playbackState.currentFrame);
@@ -67,6 +70,8 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
 
   const res = currentFrame?.activeResponse;
   const runtimeState = currentFrame?.runtimeState;
+  const activeSpans = currentFrame?.activeSpans || [];
+  const criticalPathIds = new Set(currentFrame?.criticalPathSpanIds || []);
 
   // Determine HTTP status badge styling
   const statusColor = res?.status
@@ -111,12 +116,12 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center border-b border-border-subtle bg-surface-01/50 px-2 shrink-0">
+      <div className="flex items-center border-b border-border-subtle bg-surface-01/50 px-2 shrink-0 overflow-x-auto">
         <button
           type="button"
           onClick={() => setActiveTab("overview")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px",
+            "flex items-center gap-1.5 px-2 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px shrink-0",
             activeTab === "overview"
               ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
               : "border-transparent text-text-muted hover:text-text-secondary"
@@ -130,28 +135,56 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
           type="button"
           onClick={() => setActiveTab("payloads")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px",
+            "flex items-center gap-1.5 px-2 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px shrink-0",
             activeTab === "payloads"
               ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
               : "border-transparent text-text-muted hover:text-text-secondary"
           )}
         >
           <LayersIcon className="w-3 h-3" />
-          <span>Payloads {res ? "(2)" : "(1)"}</span>
+          <span>Payloads</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab("state")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px",
+            "flex items-center gap-1.5 px-2 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px shrink-0",
             activeTab === "state"
               ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
               : "border-transparent text-text-muted hover:text-text-secondary"
           )}
         >
           <DatabaseIcon className="w-3 h-3" />
-          <span>State & Fixtures</span>
+          <span>State & Cache</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("spans")}
+          className={cn(
+            "flex items-center gap-1.5 px-2 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px shrink-0",
+            activeTab === "spans"
+              ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
+              : "border-transparent text-text-muted hover:text-text-secondary"
+          )}
+        >
+          <CpuIcon className="w-3 h-3" />
+          <span>Spans ({activeSpans.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("queues")}
+          className={cn(
+            "flex items-center gap-1.5 px-2 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px shrink-0",
+            activeTab === "queues"
+              ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
+              : "border-transparent text-text-muted hover:text-text-secondary"
+          )}
+        >
+          <LayersIcon className="w-3 h-3" />
+          <span>Queues & Msgs</span>
         </button>
       </div>
 
@@ -203,19 +236,15 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
               </div>
             )}
 
-            {/* 4. Route Selection Rationale if routing event */}
-            {"decisionReason" in activeEvent && (
+            {/* 4. Branch Information if distributed */}
+            {"branchId" in activeEvent && (activeEvent as any).branchId && (
               <div className="space-y-1.5">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold block">
-                  Routing Decision
+                  Logical Branch Context
                 </span>
-                <div className="p-2 rounded bg-surface-03 border border-border-strong space-y-1 text-[11px] font-mono">
-                  <div className="text-foreground font-semibold">
-                    Wire: {(activeEvent as any).selectedEdgeId || (activeEvent as any).upstreamNodeId}
-                  </div>
-                  <div className="text-text-secondary text-[10px]">
-                    Reason: {(activeEvent as any).decisionReason || (activeEvent as any).matchType}
-                  </div>
+                <div className="p-2 rounded bg-surface-01 border border-border-subtle flex items-center justify-between font-mono text-[10px]">
+                  <span className="text-text-secondary">Active Branch:</span>
+                  <span className="text-foreground font-semibold">{(activeEvent as any).branchId}</span>
                 </div>
               </div>
             )}
@@ -327,7 +356,7 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
                 </div>
               ) : (
                 <div className="p-3 rounded bg-surface-01 border border-border-subtle text-center text-[10px] font-mono text-text-muted">
-                  No response emitted at this step. Response generates once target service or handler processes the request.
+                  No response emitted at this step.
                 </div>
               )}
             </div>
@@ -437,6 +466,70 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: TRACE SPANS */}
+        {activeTab === "spans" && (
+          <div className="space-y-2 font-mono text-[10px]">
+            {activeSpans.length === 0 ? (
+              <div className="p-3 rounded bg-surface-01 border border-border-subtle text-center text-text-muted">
+                No active distributed spans for current step.
+              </div>
+            ) : (
+              activeSpans.map((span) => {
+                const isCritical = criticalPathIds.has(span.spanId);
+                const isError = span.status === "error";
+
+                return (
+                  <div
+                    key={span.spanId}
+                    className={cn(
+                      "p-2 rounded border space-y-1 transition-colors",
+                      isCritical ? "bg-surface-03 border-border-strong shadow-level-2" : "bg-surface-01 border-border-subtle"
+                    )}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 truncate">
+                        <span className="font-semibold text-foreground truncate">{span.name}</span>
+                        {isCritical && (
+                          <Badge variant="outline" className="text-[8px] font-mono px-1 py-0 border-border-strong bg-surface-04 text-foreground uppercase">
+                            Critical Path
+                          </Badge>
+                        )}
+                      </div>
+                      <span className={cn("text-[8px] uppercase font-bold", isError ? "text-rose-400" : "text-emerald-400")}>
+                        {span.status}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[9px] text-text-muted">
+                      <span>Component: {span.componentLabel || span.componentId}</span>
+                      <span>+{span.startMs}ms → +{span.endMs ?? "?"}ms</span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+
+        {/* TAB 5: QUEUES & MESSAGES */}
+        {activeTab === "queues" && (
+          <div className="space-y-4">
+            <div>
+              <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold block mb-1.5">
+                Modeled Message Queues
+              </span>
+              <QueueInspector />
+            </div>
+
+            <div className="border-t border-border-subtle pt-3">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold block mb-1.5">
+                Active In-Flight & Acknowledged Messages
+              </span>
+              <MessageInspector />
             </div>
           </div>
         )}

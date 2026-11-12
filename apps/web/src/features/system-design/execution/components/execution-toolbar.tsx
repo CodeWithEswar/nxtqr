@@ -10,6 +10,8 @@ import {
   CloseIcon,
   SlidersIcon,
   ActivityIcon,
+  LayersIcon,
+  TerminalIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
@@ -29,6 +31,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
 
   const isExecutionModeActive = useExecutionStore((s) => s.isExecutionModeActive);
   const isTimelineOpen = useExecutionStore((s) => s.isTimelineOpen);
+  const isDistributedTimelineOpen = useExecutionStore((s) => s.isDistributedTimelineOpen);
+  const isTraceWaterfallOpen = useExecutionStore((s) => s.isTraceWaterfallOpen);
+  const isSequenceViewOpen = useExecutionStore((s) => s.isSequenceViewOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const status = useExecutionStore((s) => s.playbackState.status);
   const currentStepIndex = useExecutionStore((s) => s.playbackState.currentStepIndex);
@@ -44,6 +49,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const seekToStep = useExecutionStore((s) => s.seekToStep);
   const setSpeed = useExecutionStore((s) => s.setSpeed);
   const toggleTimeline = useExecutionStore((s) => s.toggleTimeline);
+  const toggleDistributedTimeline = useExecutionStore((s) => s.toggleDistributedTimeline);
+  const toggleTraceWaterfall = useExecutionStore((s) => s.toggleTraceWaterfall);
+  const toggleSequenceView = useExecutionStore((s) => s.toggleSequenceView);
   const toggleConfigDialog = useExecutionStore((s) => s.toggleConfigDialog);
   const toggleExecutionInspector = useExecutionStore((s) => s.toggleExecutionInspector);
 
@@ -195,13 +203,13 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
             ))}
           </div>
 
-          {/* 6. Timeline & Inspector Toggles */}
+          {/* 6. Timeline, Distributed Views & Inspector Toggles */}
           <div className="flex items-center gap-1 border-l border-border-subtle pl-1.5">
             <Button
               variant={isTimelineOpen ? "secondary" : "ghost"}
               size="sm"
               onClick={() => toggleTimeline()}
-              title="Toggle Execution Timeline"
+              title="Toggle Linear Execution Timeline"
               className={cn(
                 "h-7 px-2 text-[10px] font-mono rounded-md gap-1",
                 isTimelineOpen && "bg-surface-04 border border-border-strong text-foreground shadow-level-3"
@@ -209,6 +217,48 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
             >
               <ActivityIcon className="w-3 h-3" />
               <span className="hidden sm:inline">Timeline</span>
+            </Button>
+
+            <Button
+              variant={isDistributedTimelineOpen ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => toggleDistributedTimeline()}
+              title="Toggle Multi-Lane Distributed Timeline"
+              className={cn(
+                "h-7 px-2 text-[10px] font-mono rounded-md gap-1",
+                isDistributedTimelineOpen && "bg-surface-04 border border-border-strong text-foreground shadow-level-3"
+              )}
+            >
+              <ActivityIcon className="w-3 h-3" />
+              <span className="hidden sm:inline">Lanes</span>
+            </Button>
+
+            <Button
+              variant={isTraceWaterfallOpen ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => toggleTraceWaterfall()}
+              title="Toggle Distributed Trace Waterfall"
+              className={cn(
+                "h-7 px-2 text-[10px] font-mono rounded-md gap-1",
+                isTraceWaterfallOpen && "bg-surface-04 border border-border-strong text-foreground shadow-level-3"
+              )}
+            >
+              <LayersIcon className="w-3 h-3" />
+              <span className="hidden sm:inline">Waterfall</span>
+            </Button>
+
+            <Button
+              variant={isSequenceViewOpen ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => toggleSequenceView()}
+              title="Toggle Distributed Sequence Diagram"
+              className={cn(
+                "h-7 px-2 text-[10px] font-mono rounded-md gap-1",
+                isSequenceViewOpen && "bg-surface-04 border border-border-strong text-foreground shadow-level-3"
+              )}
+            >
+              <TerminalIcon className="w-3 h-3" />
+              <span className="hidden sm:inline">Sequence</span>
             </Button>
 
             <Button

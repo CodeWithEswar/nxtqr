@@ -10,12 +10,28 @@ import { ExecutionLimitsGuard } from "./execution-limits";
 import { componentAdapterRegistry } from "../adapters/adapter-registry";
 import { ExecutionSnapshotManager } from "../domain/execution-snapshot";
 import { RequestLifecyclePlanner } from "./request-lifecycle-planner";
+import { DistributedScheduler } from "../distributed/distributed-scheduler";
+import { getDistributedScenarioPreset } from "../distributed/distributed-scenarios";
 
 export class ExecutionPlanner {
   public static planExecution(
     snapshot: ExecutionSnapshot,
     configuration: ExecutionConfiguration
   ): ExecutionTrace {
+    if (
+      configuration.presetId === "parallel-fanout" ||
+      configuration.presetId === "async-queue-workers" ||
+      configuration.presetId === "message-retry-dlq" ||
+      configuration.presetId === "fanin-partial-failure" ||
+      configuration.presetId === "custom-distributed" ||
+      configuration.distributedScenario
+    ) {
+      const distScenario =
+        configuration.distributedScenario ||
+        getDistributedScenarioPreset(configuration.presetId || "parallel-fanout");
+      return DistributedScheduler.planDistributedExecution(snapshot, distScenario, configuration);
+    }
+
     if (configuration.presetId || configuration.scenario) {
       return RequestLifecyclePlanner.planLifecycle(snapshot, configuration);
     }

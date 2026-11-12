@@ -12,9 +12,9 @@ import {
   SelectItem,
 } from "@nxtqr/ui";
 import { CloseIcon, SlidersIcon, PlayIcon } from "@nxtqr/icons";
-import { useExecutionStore } from "../store/execution-store";
+import { useExecutionStore, type AllScenarioPresetId } from "../store/execution-store";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
-import type { HttpMethod, ScenarioPresetId } from "@nxtqr/architecture-execution";
+import type { HttpMethod } from "@nxtqr/architecture-execution";
 
 export interface ExecutionConfigDialogProps {
   onClose?: () => void;
@@ -22,7 +22,27 @@ export interface ExecutionConfigDialogProps {
 
 const METHODS: HttpMethod[] = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
-const PRESET_OPTIONS: { id: ScenarioPresetId; label: string; description: string }[] = [
+const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: string }[] = [
+  {
+    id: "parallel-fanout",
+    label: "Parallel API Calls (Fan-Out / Fan-In)",
+    description: "Concurrently dispatches parallel calls to Payment & Inventory services, synchronizing at a fan-in barrier.",
+  },
+  {
+    id: "async-queue-workers",
+    label: "Asynchronous Queue Workers (Pub/Sub)",
+    description: "Publishes events to an async topic delivering to Email and Analytics workers independently with acknowledgments.",
+  },
+  {
+    id: "message-retry-dlq",
+    label: "Message Failure, Exponential Retry & DLQ",
+    description: "Models worker failure, negative acknowledgment, exponential backoff retries, and dead-letter queue routing.",
+  },
+  {
+    id: "fanin-partial-failure",
+    label: "Fan-In Barrier with Partial Failure",
+    description: "Evaluates fan-in policy when one parallel service fails and another succeeds.",
+  },
   {
     id: "cache-miss",
     label: "Cache Miss → DB Read & Repopulate",
@@ -81,7 +101,7 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
 
   const selectedEntryNodeId = configuration.entryNodeId || nodes[0]?.id || "";
 
-  const handlePresetChange = (presetId: ScenarioPresetId) => {
+  const handlePresetChange = (presetId: AllScenarioPresetId) => {
     setScenarioPreset(presetId);
     if (presetId === "cache-miss" || presetId === "cache-hit") {
       setActiveMethod("GET");
@@ -93,6 +113,22 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
     } else if (presetId === "gateway-404") {
       setActiveMethod("GET");
       setActivePath("/api/v2/secure-only");
+    } else if (presetId === "parallel-fanout") {
+      setActiveMethod("POST");
+      setActivePath("/api/v1/orders");
+      setBodyText(JSON.stringify({ item: "MacBook Pro M4 Max", amount: 3999.0 }, null, 2));
+    } else if (presetId === "async-queue-workers") {
+      setActiveMethod("POST");
+      setActivePath("/api/v1/checkout");
+      setBodyText(JSON.stringify({ orderId: "ord_9981", status: "confirmed" }, null, 2));
+    } else if (presetId === "message-retry-dlq") {
+      setActiveMethod("POST");
+      setActivePath("/api/v1/settlements");
+      setBodyText(JSON.stringify({ settlementId: "stl_550", amount: 15000.0 }, null, 2));
+    } else if (presetId === "fanin-partial-failure") {
+      setActiveMethod("POST");
+      setActivePath("/api/v1/orders/sensitive");
+      setBodyText(JSON.stringify({ flagged: true }, null, 2));
     }
   };
 
@@ -182,7 +218,7 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
             </div>
             <Select
               value={activePresetId}
-              onValueChange={(val) => handlePresetChange(val as ScenarioPresetId)}
+              onValueChange={(val) => handlePresetChange(val as AllScenarioPresetId)}
             >
               <SelectTrigger className="h-8 w-full font-mono text-xs bg-surface-01 border-border-default hover:border-border-hover text-foreground">
                 <SelectValue placeholder="Select scenario preset..." />

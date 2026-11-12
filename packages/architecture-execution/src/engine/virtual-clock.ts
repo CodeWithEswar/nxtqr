@@ -17,5 +17,10 @@ export class VirtualClock {
   public reset(toMs = 0): void {
     this.currentTimeMs = toMs;
   }
+
+  public setTime(toMs: number): number {
+    this.currentTimeMs = toMs;
+    return this.currentTimeMs;
+  }
 }
 
