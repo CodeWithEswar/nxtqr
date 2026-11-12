@@ -14,6 +14,7 @@ import {
   TerminalIcon,
   ShieldIcon,
   DatabaseIcon,
+  CpuIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
@@ -78,6 +79,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isSecurityWorkspaceOpen = useExecutionStore((s) => s.isSecurityWorkspaceOpen);
   const toggleSecurityWorkspace = useExecutionStore((s) => s.toggleSecurityWorkspace);
   const activeSecurityScenario = useExecutionStore((s) => s.activeSecurityScenario);
+  const isStreamingWorkspaceOpen = useExecutionStore((s) => s.isStreamingWorkspaceOpen);
+  const toggleStreamingWorkspace = useExecutionStore((s) => s.toggleStreamingWorkspace);
+  const activeStreamingScenario = useExecutionStore((s) => s.activeStreamingScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -427,6 +431,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <ShieldIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Security</span>
+      </Button>
+
+      {/* Streaming Event & Partition Workspace Button */}
+      <Button
+        variant={isStreamingWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleStreamingWorkspace()}
+        title="Toggle Event Streaming, Kafka Partitions & Consumer Groups Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isStreamingWorkspaceOpen || activeStreamingScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <CpuIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Streams</span>
       </Button>
 
       {trafficComparison && (

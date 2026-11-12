@@ -7,6 +7,7 @@ import type { TrafficExecutionEvent } from "../traffic/traffic-events";
 import type { DatabaseExecutionEvent } from "../database/database-events";
 import type { CacheExecutionEvent } from "../cache/cache-events";
 import type { SecurityExecutionEvent } from "../security/security-events";
+import type { StreamingExecutionEvent } from "../streaming/streaming-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -261,4 +262,5 @@ export type ExecutionEvent =
   | TrafficExecutionEvent
   | DatabaseExecutionEvent
   | CacheExecutionEvent
-  | SecurityExecutionEvent;
+  | SecurityExecutionEvent
+  | StreamingExecutionEvent;

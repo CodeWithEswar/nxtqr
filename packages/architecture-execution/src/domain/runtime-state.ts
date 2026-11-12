@@ -25,6 +25,7 @@ import type {
 import type { ModeledDatabaseRuntimeState } from "../database/database-schemas";
 import type { ModeledCacheRuntimeState, CacheEntry } from "../cache/cache-schemas";
 import type { ModeledSecurityRuntimeState } from "../security/security-schemas";
+import type { ModeledStreamingRuntimeState } from "../streaming/streaming-schemas";
 
 export type { CacheEntry };
 
@@ -109,6 +110,9 @@ export interface ModeledRuntimeState {
 
   // Security & API Gateway Execution (Phase 05.4.8)
   securityState?: ModeledSecurityRuntimeState;
+
+  // Event Streaming, Kafka Partitions & Consumer Groups (Phase 05.4.9)
+  streamingState?: ModeledStreamingRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -270,6 +274,9 @@ export class RuntimeStateHelper {
         : undefined,
       securityState: state.securityState
         ? JSON.parse(JSON.stringify(state.securityState))
+        : undefined,
+      streamingState: state.streamingState
+        ? JSON.parse(JSON.stringify(state.streamingState))
         : undefined,
     };
   }

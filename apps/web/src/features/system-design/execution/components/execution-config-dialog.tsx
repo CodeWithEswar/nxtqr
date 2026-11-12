@@ -319,6 +319,86 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
     description: "Client presents expired certificate. Handshake aborted immediately before application payload processing.",
   },
   {
+    id: "single_partition_basic",
+    label: "Streaming: Single Partition Append & Consume",
+    description: "A single partition append-only log with 1 producer and 1 consumer demonstrating sequential monotonic offsets.",
+  },
+  {
+    id: "multi_partition_round_robin",
+    label: "Streaming: Round-Robin Multi-Partition Stream",
+    description: "Keyless records distributed cyclically across 3 partitions (P0, P1, P2) maximizing write throughput.",
+  },
+  {
+    id: "key_based_ordering",
+    label: "Streaming: Key-Based Consistent Hash Ordering",
+    description: "FNV-1a hash routes records with the same partition key (customer-42) to the exact same partition for strict order.",
+  },
+  {
+    id: "multiple_consumer_groups",
+    label: "Streaming: Multiple Independent Consumer Groups",
+    description: "Two separate consumer groups (order-processors and analytics-ingest) consume the same topic at their own offset pace.",
+  },
+  {
+    id: "consumer_scaling_idle",
+    label: "Streaming: Consumer Scaling Beyond Partitions (Idle Worker)",
+    description: "A topic has 3 partitions but 4 consumers in one group; the 4th consumer remains idle under exclusive ownership rules.",
+  },
+  {
+    id: "consumer_crash_rebalance",
+    label: "Streaming: Consumer Crash & Group Rebalance",
+    description: "Consumer instance crashes midway; group rebalance revokes its partition and reassigns it to the surviving consumer.",
+  },
+  {
+    id: "at_most_once_skip",
+    label: "Streaming: At-Most-Once Delivery (Risky Pre-Commit)",
+    description: "Consumer commits offset before processing. A crash during processing causes the record to be skipped on restart.",
+  },
+  {
+    id: "at_least_once_duplicate",
+    label: "Streaming: At-Least-Once Delivery (Reprocessing Duplicate)",
+    description: "Consumer processes record but crashes right before committing; replacement consumer reprocesses the same offset.",
+  },
+  {
+    id: "idempotent_consumer_dedup",
+    label: "Streaming: Idempotent Consumer Deduplication",
+    description: "Duplicate record delivery is detected via a modeled unique event deduplication table and gracefully suppressed.",
+  },
+  {
+    id: "slow_consumer_lag",
+    label: "Streaming: Slow Consumer & Growing Lag",
+    description: "High producer ingress with high consumer processing latency causes unconsumed lag to accumulate rapidly.",
+  },
+  {
+    id: "leader_failover_clean",
+    label: "Streaming: Clean Leader Failover (Zero Data Loss)",
+    description: "Partition leader broker crashes; In-Sync Replica (ISR) with matching high watermark is elected new leader safely.",
+  },
+  {
+    id: "unclean_leader_failover",
+    label: "Streaming: Unclean Leader Failover (Data Truncation)",
+    description: "Leader broker fails when replicas lag; electing a lagging replica truncates un-replicated records with data loss.",
+  },
+  {
+    id: "log_retention_cleanup",
+    label: "Streaming: Bounded Log Retention Pruning",
+    description: "Partition log exceeds maximum record capacity; oldest records are trimmed, monotonically advancing logStartOffset.",
+  },
+  {
+    id: "record_replay_rewind",
+    label: "Streaming: Historical Record Replay & Offset Rewind",
+    description: "Consumer rewind from offset 5 back to offset 0, replaying historical event stream without mutating log history.",
+  },
+  {
+    id: "dead_letter_queue_routing",
+    label: "Streaming: Dead-Letter Queue (DLQ) Fallback Routing",
+    description: "A poisoned record repeatedly fails consumer processing and is safely diverted to orders.created.dlq topic.",
+  },
+  {
+    id: "producer_idempotence",
+    label: "Streaming: Idempotent Producer Duplicate Suppression",
+    description: "Producer retries network glitch with duplicate sequence ID; broker identifies sequence number and suppresses duplicate.",
+  },
+  {
     id: "custom",
     label: "Custom Flow",
     description: "Manual path, method, and branch configuration.",

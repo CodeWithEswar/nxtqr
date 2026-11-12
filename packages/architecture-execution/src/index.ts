@@ -114,5 +114,16 @@ export * from "./security/service-security/mtls-simulator";
 export * from "./security/security-presets";
 export * from "./security/security-execution-engine";
 
+// Phase 05.4.9: Interactive Event Streaming, Kafka Partitions & Consumer Group Engine
+export * from "./streaming/streaming-schemas";
+export * from "./streaming/streaming-events";
+export * from "./streaming/producer/partitioner";
+export * from "./streaming/consumer/assignment-strategy";
+export * from "./streaming/consumer/lag-calculator";
+export * from "./streaming/retention/retention-engine";
+export * from "./streaming/replication/replication-engine";
+export * from "./streaming/streaming-presets";
+export * from "./streaming/streaming-execution-engine";
+
 
 

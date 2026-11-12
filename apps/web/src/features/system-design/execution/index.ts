@@ -18,5 +18,6 @@ export * from "./components/traffic-comparison-view";
 export * from "./components/database-execution-workspace";
 export * from "./components/cache-execution-workspace";
 export * from "./components/security-execution-workspace";
+export * from "./components/streaming-execution-workspace";
 export * from "./hooks/use-execution-playback";
 

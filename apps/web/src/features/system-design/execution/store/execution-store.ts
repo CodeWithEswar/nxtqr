@@ -42,6 +42,11 @@ import {
   SECURITY_PRESET_METADATA,
   createSecurityPresetScenario,
   SecurityExecutionEngine,
+  type StreamingScenario,
+  type StreamingScenarioPresetId,
+  STREAMING_PRESET_METADATA,
+  createStreamingPresetScenario,
+  StreamingExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -51,7 +56,8 @@ export type AllScenarioPresetId =
   | TrafficPresetId
   | DatabaseScenarioPresetId
   | CacheScenarioPresetId
-  | SecurityScenarioPresetId;
+  | SecurityScenarioPresetId
+  | StreamingScenarioPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -71,6 +77,7 @@ export interface ExecutionStoreState {
   isDatabaseWorkspaceOpen: boolean;
   isCacheWorkspaceOpen: boolean;
   isSecurityWorkspaceOpen: boolean;
+  isStreamingWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -81,6 +88,7 @@ export interface ExecutionStoreState {
   activeDatabaseScenario: DatabaseScenario | null;
   activeCacheScenario: CacheScenario | null;
   activeSecurityScenario: SecurityScenario | null;
+  activeStreamingScenario: StreamingScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -111,6 +119,7 @@ export interface ExecutionStoreState {
   toggleDatabaseWorkspace: (open?: boolean) => void;
   toggleCacheWorkspace: (open?: boolean) => void;
   toggleSecurityWorkspace: (open?: boolean) => void;
+  toggleStreamingWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -118,6 +127,7 @@ export interface ExecutionStoreState {
   setDatabaseScenario: (scenario: DatabaseScenario | null) => void;
   setCacheScenario: (scenario: CacheScenario | null) => void;
   setSecurityScenario: (scenario: SecurityScenario | null) => void;
+  setStreamingScenario: (scenario: StreamingScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -148,6 +158,7 @@ export interface ExecutionStoreState {
   executeCustomDatabaseQuery: (sql: string) => boolean;
   runCacheSimulation: (scenario: CacheScenario) => boolean;
   runSecuritySimulation: (scenario: SecurityScenario) => boolean;
+  runStreamingSimulation: (scenario: StreamingScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -230,6 +241,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isDatabaseWorkspaceOpen: false,
     isCacheWorkspaceOpen: false,
     isSecurityWorkspaceOpen: false,
+    isStreamingWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -238,6 +250,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeDatabaseScenario: null,
     activeCacheScenario: null,
     activeSecurityScenario: null,
+    activeStreamingScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -267,6 +280,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isDatabaseWorkspaceOpen: false,
           isCacheWorkspaceOpen: false,
           isSecurityWorkspaceOpen: false,
+          isStreamingWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -372,6 +386,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleStreamingWorkspace: (open) => {
+      set({
+        isStreamingWorkspaceOpen:
+          open !== undefined ? open : !get().isStreamingWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -401,7 +422,32 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeSecurityScenario: scenario });
     },
 
+    setStreamingScenario: (scenario) => {
+      set({ activeStreamingScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (presetId in STREAMING_PRESET_METADATA) {
+        const streamScenario = createStreamingPresetScenario(presetId as StreamingScenarioPresetId);
+        set((state) => ({
+          activePresetId: presetId,
+          activeStreamingScenario: streamScenario,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isStreamingWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runStreamingSimulation(streamScenario);
+        return;
+      }
+
       if (presetId in SECURITY_PRESET_METADATA) {
         const securityScenario = createSecurityPresetScenario(presetId as SecurityScenarioPresetId);
         set((state) => ({
@@ -960,6 +1006,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeSecurityScenario: scenario,
         isTimelineOpen: true,
         isSecurityWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runStreamingSimulation: (scenario) => {
+      const trace = StreamingExecutionEngine.executeScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_stream_sim",
+        architectureRevisionId: "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeStreamingScenario: scenario,
+        isTimelineOpen: true,
+        isStreamingWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

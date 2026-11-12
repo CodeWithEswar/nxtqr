@@ -41,6 +41,7 @@ import {
   DatabaseExecutionWorkspace,
   CacheExecutionWorkspace,
   SecurityExecutionWorkspace,
+  StreamingExecutionWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -73,6 +74,7 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isDatabaseWorkspaceOpen = useExecutionStore((s) => s.isDatabaseWorkspaceOpen);
   const isCacheWorkspaceOpen = useExecutionStore((s) => s.isCacheWorkspaceOpen);
   const isSecurityWorkspaceOpen = useExecutionStore((s) => s.isSecurityWorkspaceOpen);
+  const isStreamingWorkspaceOpen = useExecutionStore((s) => s.isStreamingWorkspaceOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
     s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
@@ -563,6 +565,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Security Request Flow, Auth & WAF Drawer */}
       {isSecurityWorkspaceOpen && <SecurityExecutionWorkspace />}
+
+      {/* Event Streaming, Kafka Partitions & Consumer Groups Drawer */}
+      {isStreamingWorkspaceOpen && <StreamingExecutionWorkspace />}
     </div>
   );
 }
