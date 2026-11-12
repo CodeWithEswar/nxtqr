@@ -8,6 +8,7 @@ import type { DatabaseExecutionEvent } from "../database/database-events";
 import type { CacheExecutionEvent } from "../cache/cache-events";
 import type { SecurityExecutionEvent } from "../security/security-events";
 import type { StreamingExecutionEvent } from "../streaming/streaming-events";
+import type { KubernetesExecutionEvent } from "../kubernetes/kubernetes-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -263,4 +264,5 @@ export type ExecutionEvent =
   | DatabaseExecutionEvent
   | CacheExecutionEvent
   | SecurityExecutionEvent
-  | StreamingExecutionEvent;
+  | StreamingExecutionEvent
+  | KubernetesExecutionEvent;

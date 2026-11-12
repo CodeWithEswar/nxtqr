@@ -82,6 +82,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isStreamingWorkspaceOpen = useExecutionStore((s) => s.isStreamingWorkspaceOpen);
   const toggleStreamingWorkspace = useExecutionStore((s) => s.toggleStreamingWorkspace);
   const activeStreamingScenario = useExecutionStore((s) => s.activeStreamingScenario);
+  const isKubernetesWorkspaceOpen = useExecutionStore((s) => s.isKubernetesWorkspaceOpen);
+  const toggleKubernetesWorkspace = useExecutionStore((s) => s.toggleKubernetesWorkspace);
+  const activeKubernetesScenario = useExecutionStore((s) => s.activeKubernetesScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -448,6 +451,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <CpuIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Streams</span>
+      </Button>
+
+      {/* Kubernetes Orchestration & Scheduling Workspace Button */}
+      <Button
+        variant={isKubernetesWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleKubernetesWorkspace()}
+        title="Toggle Kubernetes Scheduling, Container Orchestration & Deployment Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isKubernetesWorkspaceOpen || activeKubernetesScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <LayersIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">K8s</span>
       </Button>
 
       {trafficComparison && (

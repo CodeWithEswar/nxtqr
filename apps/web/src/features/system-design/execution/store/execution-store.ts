@@ -47,6 +47,11 @@ import {
   STREAMING_PRESET_METADATA,
   createStreamingPresetScenario,
   StreamingExecutionEngine,
+  type KubernetesScenario,
+  type KubernetesScenarioPresetId,
+  KUBERNETES_PRESET_METADATA,
+  createKubernetesPresetScenario,
+  KubernetesExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -57,7 +62,8 @@ export type AllScenarioPresetId =
   | DatabaseScenarioPresetId
   | CacheScenarioPresetId
   | SecurityScenarioPresetId
-  | StreamingScenarioPresetId;
+  | StreamingScenarioPresetId
+  | KubernetesScenarioPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -78,6 +84,7 @@ export interface ExecutionStoreState {
   isCacheWorkspaceOpen: boolean;
   isSecurityWorkspaceOpen: boolean;
   isStreamingWorkspaceOpen: boolean;
+  isKubernetesWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -89,6 +96,7 @@ export interface ExecutionStoreState {
   activeCacheScenario: CacheScenario | null;
   activeSecurityScenario: SecurityScenario | null;
   activeStreamingScenario: StreamingScenario | null;
+  activeKubernetesScenario: KubernetesScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -120,6 +128,7 @@ export interface ExecutionStoreState {
   toggleCacheWorkspace: (open?: boolean) => void;
   toggleSecurityWorkspace: (open?: boolean) => void;
   toggleStreamingWorkspace: (open?: boolean) => void;
+  toggleKubernetesWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -128,6 +137,7 @@ export interface ExecutionStoreState {
   setCacheScenario: (scenario: CacheScenario | null) => void;
   setSecurityScenario: (scenario: SecurityScenario | null) => void;
   setStreamingScenario: (scenario: StreamingScenario | null) => void;
+  setKubernetesScenario: (scenario: KubernetesScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -159,6 +169,7 @@ export interface ExecutionStoreState {
   runCacheSimulation: (scenario: CacheScenario) => boolean;
   runSecuritySimulation: (scenario: SecurityScenario) => boolean;
   runStreamingSimulation: (scenario: StreamingScenario) => boolean;
+  runKubernetesSimulation: (scenario: KubernetesScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -242,6 +253,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isCacheWorkspaceOpen: false,
     isSecurityWorkspaceOpen: false,
     isStreamingWorkspaceOpen: false,
+    isKubernetesWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -251,6 +263,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeCacheScenario: null,
     activeSecurityScenario: null,
     activeStreamingScenario: null,
+    activeKubernetesScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -281,6 +294,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isCacheWorkspaceOpen: false,
           isSecurityWorkspaceOpen: false,
           isStreamingWorkspaceOpen: false,
+          isKubernetesWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -393,6 +407,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleKubernetesWorkspace: (open) => {
+      set({
+        isKubernetesWorkspaceOpen:
+          open !== undefined ? open : !get().isKubernetesWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -426,7 +447,33 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeStreamingScenario: scenario });
     },
 
+    setKubernetesScenario: (scenario) => {
+      set({ activeKubernetesScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (KUBERNETES_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const k8sScenario = createKubernetesPresetScenario(presetId as KubernetesScenarioPresetId);
+        set((state) => ({
+          activePresetId: presetId,
+          activeKubernetesScenario: k8sScenario,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isKubernetesWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runKubernetesSimulation(k8sScenario);
+        return;
+      }
+
       if (presetId in STREAMING_PRESET_METADATA) {
         const streamScenario = createStreamingPresetScenario(presetId as StreamingScenarioPresetId);
         set((state) => ({
@@ -1035,6 +1082,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeStreamingScenario: scenario,
         isTimelineOpen: true,
         isStreamingWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runKubernetesSimulation: (scenario) => {
+      const trace = KubernetesExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_k8s_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeKubernetesScenario: scenario,
+        isTimelineOpen: true,
+        isKubernetesWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

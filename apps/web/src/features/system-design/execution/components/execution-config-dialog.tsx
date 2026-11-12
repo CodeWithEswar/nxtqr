@@ -14,7 +14,10 @@ import {
 import { CloseIcon, SlidersIcon, PlayIcon } from "@nxtqr/icons";
 import { useExecutionStore, type AllScenarioPresetId } from "../store/execution-store";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
-import type { HttpMethod } from "@nxtqr/architecture-execution";
+import {
+  KUBERNETES_PRESET_METADATA,
+  type HttpMethod,
+} from "@nxtqr/architecture-execution";
 
 export interface ExecutionConfigDialogProps {
   onClose?: () => void;
@@ -398,6 +401,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
     label: "Streaming: Idempotent Producer Duplicate Suppression",
     description: "Producer retries network glitch with duplicate sequence ID; broker identifies sequence number and suppresses duplicate.",
   },
+  ...KUBERNETES_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `K8s: ${p.label}`,
+    description: p.description,
+  })),
   {
     id: "custom",
     label: "Custom Flow",

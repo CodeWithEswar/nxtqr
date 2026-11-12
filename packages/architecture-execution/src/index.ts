@@ -125,5 +125,15 @@ export * from "./streaming/replication/replication-engine";
 export * from "./streaming/streaming-presets";
 export * from "./streaming/streaming-execution-engine";
 
+// Phase 05.4.10: Interactive Kubernetes Scheduling, Container Orchestration & Deployment Lifecycle Engine
+export * from "./kubernetes/kubernetes-schemas";
+export * from "./kubernetes/kubernetes-events";
+export * from "./kubernetes/scheduler/pod-scheduler";
+export * from "./kubernetes/rollout/rolling-update-engine";
+export * from "./kubernetes/autoscaling/hpa-engine";
+export * from "./kubernetes/runtime/probe-simulator";
+export * from "./kubernetes/kubernetes-presets";
+export * from "./kubernetes/kubernetes-execution-engine";
+
 
 

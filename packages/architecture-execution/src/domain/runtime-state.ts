@@ -26,6 +26,7 @@ import type { ModeledDatabaseRuntimeState } from "../database/database-schemas";
 import type { ModeledCacheRuntimeState, CacheEntry } from "../cache/cache-schemas";
 import type { ModeledSecurityRuntimeState } from "../security/security-schemas";
 import type { ModeledStreamingRuntimeState } from "../streaming/streaming-schemas";
+import type { ModeledKubernetesRuntimeState } from "../kubernetes/kubernetes-schemas";
 
 export type { CacheEntry };
 
@@ -113,6 +114,9 @@ export interface ModeledRuntimeState {
 
   // Event Streaming, Kafka Partitions & Consumer Groups (Phase 05.4.9)
   streamingState?: ModeledStreamingRuntimeState;
+
+  // Kubernetes Scheduling, Orchestration & Deployment Lifecycle (Phase 05.4.10)
+  kubernetesState?: ModeledKubernetesRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -277,6 +281,9 @@ export class RuntimeStateHelper {
         : undefined,
       streamingState: state.streamingState
         ? JSON.parse(JSON.stringify(state.streamingState))
+        : undefined,
+      kubernetesState: state.kubernetesState
+        ? JSON.parse(JSON.stringify(state.kubernetesState))
         : undefined,
     };
   }
