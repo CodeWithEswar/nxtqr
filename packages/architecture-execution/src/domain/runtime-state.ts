@@ -32,6 +32,7 @@ import type { ModeledServiceMeshRuntimeState } from "../service-mesh/service-mes
 import type { ModeledRaftRuntimeState } from "../raft/raft-schemas";
 import type { ModeledDistributedTransactionRuntimeState } from "../distributed-transactions/transaction-schemas";
 import type { ModeledDistributedStorageRuntimeState } from "../distributed-storage/storage-schemas";
+import type { ModeledTrafficControlRuntimeState } from "../traffic-control/traffic-control-schemas";
 
 export type { CacheEntry };
 
@@ -137,6 +138,9 @@ export interface ModeledRuntimeState {
 
   // Distributed Storage, Sharding, Replication & Rebalancing (Phase 05.4.15)
   distributedStorageState?: ModeledDistributedStorageRuntimeState;
+
+  // Distributed Rate Limiting, Backpressure, Queueing & Load Shedding (Phase 05.4.16)
+  trafficControlState?: ModeledTrafficControlRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -319,6 +323,9 @@ export class RuntimeStateHelper {
         : undefined,
       distributedStorageState: state.distributedStorageState
         ? JSON.parse(JSON.stringify(state.distributedStorageState))
+        : undefined,
+      trafficControlState: state.trafficControlState
+        ? JSON.parse(JSON.stringify(state.trafficControlState))
         : undefined,
     };
   }

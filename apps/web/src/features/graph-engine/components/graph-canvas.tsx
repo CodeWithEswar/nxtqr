@@ -48,6 +48,7 @@ import {
   RaftWorkspace,
   DistributedTransactionWorkspace,
   DistributedStorageWorkspace,
+  TrafficControlWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -88,6 +89,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isDistributedTxWorkspaceOpen = useExecutionStore((s) => s.isDistributedTxWorkspaceOpen);
   const isDistributedStorageWorkspaceOpen = useExecutionStore(
     (s) => s.isDistributedStorageWorkspaceOpen
+  );
+  const isTrafficControlWorkspaceOpen = useExecutionStore(
+    (s) => s.isTrafficControlWorkspaceOpen
   );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -600,6 +604,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Distributed Storage, Sharding, Replication & Rebalancing Drawer */}
       {isDistributedStorageWorkspaceOpen && <DistributedStorageWorkspace />}
+
+      {/* Rate Limiting, Backpressure, Queueing & Load Shedding Drawer */}
+      {isTrafficControlWorkspaceOpen && <TrafficControlWorkspace />}
     </div>
   );
 }

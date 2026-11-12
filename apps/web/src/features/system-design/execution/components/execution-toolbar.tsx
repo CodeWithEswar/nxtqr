@@ -106,6 +106,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const activeDistributedStorageScenario = useExecutionStore(
     (s) => s.activeDistributedStorageScenario
   );
+  const isTrafficControlWorkspaceOpen = useExecutionStore(
+    (s) => s.isTrafficControlWorkspaceOpen
+  );
+  const toggleTrafficControlWorkspace = useExecutionStore(
+    (s) => s.toggleTrafficControlWorkspace
+  );
+  const activeTrafficControlScenario = useExecutionStore(
+    (s) => s.activeTrafficControlScenario
+  );
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -574,6 +583,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <CpuIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Storage</span>
+      </Button>
+
+      {/* Traffic Control, Rate Limiting & Load Shedding Workspace Button */}
+      <Button
+        variant={isTrafficControlWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleTrafficControlWorkspace()}
+        title="Toggle Rate Limiting, Backpressure & Load Shedding Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isTrafficControlWorkspaceOpen || activeTrafficControlScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ActivityIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Rate/Shed</span>
       </Button>
 
       {trafficComparison && (

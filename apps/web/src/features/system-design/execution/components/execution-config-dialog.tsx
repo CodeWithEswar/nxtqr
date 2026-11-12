@@ -21,6 +21,7 @@ import {
   RAFT_PRESET_METADATA,
   DISTRIBUTED_TRANSACTION_PRESET_METADATA,
   DISTRIBUTED_STORAGE_PRESET_METADATA,
+  TRAFFIC_CONTROL_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -434,6 +435,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...DISTRIBUTED_STORAGE_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `Storage: ${p.label}`,
+    description: p.description,
+  })),
+  ...TRAFFIC_CONTROL_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `Traffic Control: ${p.label}`,
     description: p.description,
   })),
   {

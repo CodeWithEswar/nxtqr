@@ -180,5 +180,17 @@ export * from "./distributed-storage/invariants/storage-invariants";
 export * from "./distributed-storage/storage-presets";
 export * from "./distributed-storage/storage-execution-engine";
 
+// Phase 05.4.16: Interactive Distributed Rate Limiting, Backpressure, Queueing & Load Shedding Engine
+export * from "./traffic-control/traffic-control-schemas";
+export * from "./traffic-control/traffic-control-events";
+export * from "./traffic-control/algorithms/rate-limit-algorithms";
+export * from "./traffic-control/distributed/distributed-limiter";
+export * from "./traffic-control/queueing/queue-scheduler";
+export * from "./traffic-control/overload/overload-controller";
+export * from "./traffic-control/invariants/traffic-control-invariants";
+export * from "./traffic-control/traffic-control-presets";
+export * from "./traffic-control/traffic-control-comparisons";
+export * from "./traffic-control/traffic-control-execution-engine";
+
 
 

@@ -14,6 +14,7 @@ import type { ServiceMeshExecutionEvent } from "../service-mesh/service-mesh-eve
 import type { RaftExecutionEvent } from "../raft/raft-events";
 import type { DistributedTransactionEvent } from "../distributed-transactions/transaction-events";
 import type { DistributedStorageEvent } from "../distributed-storage/storage-events";
+import type { TrafficControlEvent } from "../traffic-control/traffic-control-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -275,4 +276,5 @@ export type ExecutionEvent =
   | ServiceMeshExecutionEvent
   | RaftExecutionEvent
   | DistributedTransactionEvent
-  | DistributedStorageEvent;
+  | DistributedStorageEvent
+  | TrafficControlEvent;

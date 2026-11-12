@@ -77,6 +77,11 @@ import {
   DISTRIBUTED_STORAGE_PRESET_METADATA,
   createDistributedStoragePresetScenario,
   DistributedStorageExecutionEngine,
+  type TrafficControlScenario,
+  type TrafficControlPresetId,
+  TRAFFIC_CONTROL_PRESET_METADATA,
+  createTrafficControlPresetScenario,
+  TrafficControlExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -93,7 +98,8 @@ export type AllScenarioPresetId =
   | ServiceMeshPresetId
   | RaftPresetId
   | DistributedTransactionPresetId
-  | DistributedStoragePresetId;
+  | DistributedStoragePresetId
+  | TrafficControlPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -120,6 +126,7 @@ export interface ExecutionStoreState {
   isRaftWorkspaceOpen: boolean;
   isDistributedTxWorkspaceOpen: boolean;
   isDistributedStorageWorkspaceOpen: boolean;
+  isTrafficControlWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -137,6 +144,7 @@ export interface ExecutionStoreState {
   activeRaftScenario: RaftScenario | null;
   activeDistributedTxScenario: DistributedTransactionScenario | null;
   activeDistributedStorageScenario: StorageScenario | null;
+  activeTrafficControlScenario: TrafficControlScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -174,6 +182,7 @@ export interface ExecutionStoreState {
   toggleRaftWorkspace: (open?: boolean) => void;
   toggleDistributedTxWorkspace: (open?: boolean) => void;
   toggleDistributedStorageWorkspace: (open?: boolean) => void;
+  toggleTrafficControlWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -188,6 +197,7 @@ export interface ExecutionStoreState {
   setRaftScenario: (scenario: RaftScenario | null) => void;
   setDistributedTxScenario: (scenario: DistributedTransactionScenario | null) => void;
   setDistributedStorageScenario: (scenario: StorageScenario | null) => void;
+  setTrafficControlScenario: (scenario: TrafficControlScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -225,6 +235,7 @@ export interface ExecutionStoreState {
   runRaftSimulation: (scenario: RaftScenario) => boolean;
   runDistributedTxSimulation: (scenario: DistributedTransactionScenario) => boolean;
   runDistributedStorageSimulation: (scenario: StorageScenario) => boolean;
+  runTrafficControlSimulation: (scenario: TrafficControlScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -314,6 +325,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isRaftWorkspaceOpen: false,
     isDistributedTxWorkspaceOpen: false,
     isDistributedStorageWorkspaceOpen: false,
+    isTrafficControlWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -329,6 +341,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeRaftScenario: null,
     activeDistributedTxScenario: null,
     activeDistributedStorageScenario: null,
+    activeTrafficControlScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -365,6 +378,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isRaftWorkspaceOpen: false,
           isDistributedTxWorkspaceOpen: false,
           isDistributedStorageWorkspaceOpen: false,
+          isTrafficControlWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -519,6 +533,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleTrafficControlWorkspace: (open) => {
+      set({
+        isTrafficControlWorkspaceOpen:
+          open !== undefined ? open : !get().isTrafficControlWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -576,7 +597,41 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeDistributedStorageScenario: scenario });
     },
 
+    setTrafficControlScenario: (scenario) => {
+      set({ activeTrafficControlScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (TRAFFIC_CONTROL_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const tcScenario = createTrafficControlPresetScenario(
+          presetId as TrafficControlPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeTrafficControlScenario: tcScenario,
+          activeDistributedStorageScenario: null,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isTrafficControlWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runTrafficControlSimulation(tcScenario);
+        return;
+      }
+
       if (DISTRIBUTED_STORAGE_PRESET_METADATA.some((p) => p.id === presetId)) {
         const storageScenario = createDistributedStoragePresetScenario(
           presetId as DistributedStoragePresetId
@@ -584,6 +639,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         set((state) => ({
           activePresetId: presetId,
           activeDistributedStorageScenario: storageScenario,
+          activeTrafficControlScenario: null,
           activeDistributedTxScenario: null,
           activeRaftScenario: null,
           activeServiceMeshScenario: null,
@@ -1515,6 +1571,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeDistributedStorageScenario: scenario,
         isTimelineOpen: true,
         isDistributedStorageWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runTrafficControlSimulation: (scenario) => {
+      const trace = TrafficControlExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_traffic_control_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeTrafficControlScenario: scenario,
+        isTimelineOpen: true,
+        isTrafficControlWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 
