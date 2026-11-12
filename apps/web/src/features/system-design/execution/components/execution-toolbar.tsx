@@ -94,6 +94,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isRaftWorkspaceOpen = useExecutionStore((s) => s.isRaftWorkspaceOpen);
   const toggleRaftWorkspace = useExecutionStore((s) => s.toggleRaftWorkspace);
   const activeRaftScenario = useExecutionStore((s) => s.activeRaftScenario);
+  const isDistributedTxWorkspaceOpen = useExecutionStore((s) => s.isDistributedTxWorkspaceOpen);
+  const toggleDistributedTxWorkspace = useExecutionStore((s) => s.toggleDistributedTxWorkspace);
+  const activeDistributedTxScenario = useExecutionStore((s) => s.activeDistributedTxScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -528,6 +531,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <LayersIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Raft</span>
+      </Button>
+
+      {/* Distributed Transactions (2PC & Sagas) Workspace Button */}
+      <Button
+        variant={isDistributedTxWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleDistributedTxWorkspace()}
+        title="Toggle Distributed Transactions (2PC, Sagas & Recovery) Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isDistributedTxWorkspaceOpen || activeDistributedTxScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <DatabaseIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">2PC/Saga</span>
       </Button>
 
       {trafficComparison && (

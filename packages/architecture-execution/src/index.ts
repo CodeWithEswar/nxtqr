@@ -163,5 +163,13 @@ export * from "./raft/invariants/raft-invariants";
 export * from "./raft/raft-presets";
 export * from "./raft/raft-execution-engine";
 
+// Phase 05.4.14: Interactive Distributed Transactions, Two-Phase Commit, Saga Orchestration & Failure Recovery Engine
+export * from "./distributed-transactions/transaction-schemas";
+export * from "./distributed-transactions/transaction-events";
+export * from "./distributed-transactions/local-data-engine";
+export * from "./distributed-transactions/invariants/transaction-invariants";
+export * from "./distributed-transactions/transaction-presets";
+export * from "./distributed-transactions/transaction-execution-engine";
+
 
 

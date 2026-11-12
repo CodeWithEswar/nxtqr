@@ -30,6 +30,7 @@ import type { ModeledKubernetesRuntimeState } from "../kubernetes/kubernetes-sch
 import type { ModeledGlobalNetworkRuntimeState } from "../global-network/global-network-schemas";
 import type { ModeledServiceMeshRuntimeState } from "../service-mesh/service-mesh-schemas";
 import type { ModeledRaftRuntimeState } from "../raft/raft-schemas";
+import type { ModeledDistributedTransactionRuntimeState } from "../distributed-transactions/transaction-schemas";
 
 export type { CacheEntry };
 
@@ -129,6 +130,9 @@ export interface ModeledRuntimeState {
 
   // Distributed Consensus, Leader Election & Raft Protocol (Phase 05.4.13)
   raftState?: ModeledRaftRuntimeState;
+
+  // Distributed Transactions, 2PC & Sagas (Phase 05.4.14)
+  distributedTransactionState?: ModeledDistributedTransactionRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -305,6 +309,9 @@ export class RuntimeStateHelper {
         : undefined,
       raftState: state.raftState
         ? JSON.parse(JSON.stringify(state.raftState))
+        : undefined,
+      distributedTransactionState: state.distributedTransactionState
+        ? JSON.parse(JSON.stringify(state.distributedTransactionState))
         : undefined,
     };
   }

@@ -12,6 +12,7 @@ import type { KubernetesExecutionEvent } from "../kubernetes/kubernetes-events";
 import type { GlobalNetworkExecutionEvent } from "../global-network/global-network-events";
 import type { ServiceMeshExecutionEvent } from "../service-mesh/service-mesh-events";
 import type { RaftExecutionEvent } from "../raft/raft-events";
+import type { DistributedTransactionEvent } from "../distributed-transactions/transaction-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -271,4 +272,5 @@ export type ExecutionEvent =
   | KubernetesExecutionEvent
   | GlobalNetworkExecutionEvent
   | ServiceMeshExecutionEvent
-  | RaftExecutionEvent;
+  | RaftExecutionEvent
+  | DistributedTransactionEvent;

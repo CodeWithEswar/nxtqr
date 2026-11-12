@@ -67,6 +67,11 @@ import {
   RAFT_PRESET_METADATA,
   createRaftPresetScenario,
   RaftExecutionEngine,
+  type DistributedTransactionScenario,
+  type DistributedTransactionPresetId,
+  DISTRIBUTED_TRANSACTION_PRESET_METADATA,
+  createDistributedTransactionPresetScenario,
+  DistributedTransactionExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -81,7 +86,8 @@ export type AllScenarioPresetId =
   | KubernetesScenarioPresetId
   | GlobalNetworkPresetId
   | ServiceMeshPresetId
-  | RaftPresetId;
+  | RaftPresetId
+  | DistributedTransactionPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -106,6 +112,7 @@ export interface ExecutionStoreState {
   isGlobalNetworkWorkspaceOpen: boolean;
   isServiceMeshWorkspaceOpen: boolean;
   isRaftWorkspaceOpen: boolean;
+  isDistributedTxWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -121,6 +128,7 @@ export interface ExecutionStoreState {
   activeGlobalNetworkScenario: GlobalNetworkScenario | null;
   activeServiceMeshScenario: ServiceMeshScenario | null;
   activeRaftScenario: RaftScenario | null;
+  activeDistributedTxScenario: DistributedTransactionScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -156,6 +164,7 @@ export interface ExecutionStoreState {
   toggleGlobalNetworkWorkspace: (open?: boolean) => void;
   toggleServiceMeshWorkspace: (open?: boolean) => void;
   toggleRaftWorkspace: (open?: boolean) => void;
+  toggleDistributedTxWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -168,6 +177,7 @@ export interface ExecutionStoreState {
   setGlobalNetworkScenario: (scenario: GlobalNetworkScenario | null) => void;
   setServiceMeshScenario: (scenario: ServiceMeshScenario | null) => void;
   setRaftScenario: (scenario: RaftScenario | null) => void;
+  setDistributedTxScenario: (scenario: DistributedTransactionScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -203,6 +213,7 @@ export interface ExecutionStoreState {
   runGlobalNetworkSimulation: (scenario: GlobalNetworkScenario) => boolean;
   runServiceMeshSimulation: (scenario: ServiceMeshScenario) => boolean;
   runRaftSimulation: (scenario: RaftScenario) => boolean;
+  runDistributedTxSimulation: (scenario: DistributedTransactionScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -290,6 +301,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isGlobalNetworkWorkspaceOpen: false,
     isServiceMeshWorkspaceOpen: false,
     isRaftWorkspaceOpen: false,
+    isDistributedTxWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -303,6 +315,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeGlobalNetworkScenario: null,
     activeServiceMeshScenario: null,
     activeRaftScenario: null,
+    activeDistributedTxScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -337,6 +350,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isGlobalNetworkWorkspaceOpen: false,
           isServiceMeshWorkspaceOpen: false,
           isRaftWorkspaceOpen: false,
+          isDistributedTxWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -477,6 +491,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleDistributedTxWorkspace: (open) => {
+      set({
+        isDistributedTxWorkspaceOpen:
+          open !== undefined ? open : !get().isDistributedTxWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -526,7 +547,39 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeRaftScenario: scenario });
     },
 
+    setDistributedTxScenario: (scenario) => {
+      set({ activeDistributedTxScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (DISTRIBUTED_TRANSACTION_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const txScenario = createDistributedTransactionPresetScenario(
+          presetId as DistributedTransactionPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeDistributedTxScenario: txScenario,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isDistributedTxWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runDistributedTxSimulation(txScenario);
+        return;
+      }
+
       if (RAFT_PRESET_METADATA.some((p) => p.id === presetId)) {
         const raftScenario = createRaftPresetScenario(presetId as RaftPresetId);
         set((state) => ({
@@ -1349,6 +1402,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeRaftScenario: scenario,
         isTimelineOpen: true,
         isRaftWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runDistributedTxSimulation: (scenario) => {
+      const trace = DistributedTransactionExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_distributed_tx_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeDistributedTxScenario: scenario,
+        isTimelineOpen: true,
+        isDistributedTxWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 
