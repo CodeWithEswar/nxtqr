@@ -235,5 +235,15 @@ export * from "./disaster-recovery/disaster-recovery-presets";
 export * from "./disaster-recovery/disaster-recovery-comparisons";
 export * from "./disaster-recovery/disaster-recovery-execution-engine";
 
+// Phase 05.4.21: Interactive Distributed Capacity Planning, Autoscaling, Queueing Theory & Cost Optimization Engine
+export * from "./capacity/capacity-schemas";
+export * from "./capacity/capacity-events";
+export * from "./capacity/queueing/queueing-theory-engine";
+export * from "./capacity/autoscaling/capacity-scaling-cost-engine";
+export * from "./capacity/invariants/capacity-invariants";
+export * from "./capacity/capacity-presets";
+export * from "./capacity/capacity-comparisons";
+export * from "./capacity/capacity-execution-engine";
+
 
 

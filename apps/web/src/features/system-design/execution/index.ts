@@ -30,5 +30,6 @@ export * from "./components/observability-workspace";
 export * from "./components/zero-trust-workspace";
 export * from "./components/deployment-workspace";
 export * from "./components/disaster-recovery-workspace";
+export * from "./components/capacity-workspace";
 export * from "./hooks/use-execution-playback";
 

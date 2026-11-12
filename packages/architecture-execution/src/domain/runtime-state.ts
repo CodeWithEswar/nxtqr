@@ -37,6 +37,7 @@ import type { ModeledObservabilityRuntimeState } from "../observability/observab
 import type { ModeledZeroTrustRuntimeState } from "../zero-trust/zero-trust-schemas";
 import type { ModeledDeploymentRuntimeState } from "../deployments/deployment-schemas";
 import type { ModeledDisasterRecoveryRuntimeState } from "../disaster-recovery/disaster-recovery-schemas";
+import type { ModeledCapacityRuntimeState } from "../capacity/capacity-schemas";
 
 export type { CacheEntry };
 
@@ -155,6 +156,9 @@ export interface ModeledRuntimeState {
   // Distributed Deployment, Blue-Green, Canary & Progressive Delivery (Phase 05.4.19)
   deploymentState?: ModeledDeploymentRuntimeState;
   disasterRecoveryState?: ModeledDisasterRecoveryRuntimeState;
+
+  // Distributed Capacity Planning, Autoscaling, Queueing Theory & Cost Optimization (Phase 05.4.21)
+  capacityState?: ModeledCapacityRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -352,6 +356,9 @@ export class RuntimeStateHelper {
         : undefined,
       disasterRecoveryState: state.disasterRecoveryState
         ? JSON.parse(JSON.stringify(state.disasterRecoveryState))
+        : undefined,
+      capacityState: state.capacityState
+        ? JSON.parse(JSON.stringify(state.capacityState))
         : undefined,
     };
   }

@@ -19,6 +19,7 @@ import type { ObservabilityExecutionEvent } from "../observability/observability
 import type { ZeroTrustExecutionEvent } from "../zero-trust/zero-trust-events";
 import type { DeploymentExecutionEvent } from "../deployments/deployment-events";
 import type { DisasterRecoveryExecutionEvent } from "../disaster-recovery/disaster-recovery-events";
+import type { CapacityExecutionEvent } from "../capacity/capacity-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -285,4 +286,5 @@ export type ExecutionEvent =
   | ObservabilityExecutionEvent
   | ZeroTrustExecutionEvent
   | DeploymentExecutionEvent
-  | DisasterRecoveryExecutionEvent;
+  | DisasterRecoveryExecutionEvent
+  | CapacityExecutionEvent;

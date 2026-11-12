@@ -102,6 +102,11 @@ import {
   DISASTER_RECOVERY_PRESET_METADATA,
   createDisasterRecoveryPresetScenario,
   DisasterRecoveryExecutionEngine,
+  type CapacityScenario,
+  type CapacityPresetId,
+  CAPACITY_PRESET_METADATA,
+  buildCapacityPresetScenario,
+  CapacityExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -123,7 +128,8 @@ export type AllScenarioPresetId =
   | ObservabilityPresetId
   | ZeroTrustPresetId
   | DeploymentPresetId
-  | DisasterRecoveryPresetId;
+  | DisasterRecoveryPresetId
+  | CapacityPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -155,6 +161,7 @@ export interface ExecutionStoreState {
   isZeroTrustWorkspaceOpen: boolean;
   isDeploymentWorkspaceOpen: boolean;
   isDisasterRecoveryWorkspaceOpen: boolean;
+  isCapacityWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -177,6 +184,7 @@ export interface ExecutionStoreState {
   activeZeroTrustScenario: ZeroTrustScenario | null;
   activeDeploymentScenario: DeploymentScenario | null;
   activeDisasterRecoveryScenario: DisasterRecoveryScenario | null;
+  activeCapacityScenario: CapacityScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -219,6 +227,7 @@ export interface ExecutionStoreState {
   toggleZeroTrustWorkspace: (open?: boolean) => void;
   toggleDeploymentWorkspace: (open?: boolean) => void;
   toggleDisasterRecoveryWorkspace: (open?: boolean) => void;
+  toggleCapacityWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -238,6 +247,7 @@ export interface ExecutionStoreState {
   setZeroTrustScenario: (scenario: ZeroTrustScenario | null) => void;
   setDeploymentScenario: (scenario: DeploymentScenario | null) => void;
   setDisasterRecoveryScenario: (scenario: DisasterRecoveryScenario | null) => void;
+  setCapacityScenario: (scenario: CapacityScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -280,6 +290,7 @@ export interface ExecutionStoreState {
   runZeroTrustSimulation: (scenario: ZeroTrustScenario) => boolean;
   runDeploymentSimulation: (scenario: DeploymentScenario) => boolean;
   runDisasterRecoverySimulation: (scenario: DisasterRecoveryScenario) => boolean;
+  runCapacitySimulation: (scenario: CapacityScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -374,6 +385,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isZeroTrustWorkspaceOpen: false,
     isDeploymentWorkspaceOpen: false,
     isDisasterRecoveryWorkspaceOpen: false,
+    isCapacityWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -394,6 +406,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeZeroTrustScenario: null,
     activeDeploymentScenario: null,
     activeDisasterRecoveryScenario: null,
+    activeCapacityScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -435,6 +448,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isZeroTrustWorkspaceOpen: false,
           isDeploymentWorkspaceOpen: false,
           isDisasterRecoveryWorkspaceOpen: false,
+          isCapacityWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -624,6 +638,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleCapacityWorkspace: (open) => {
+      set({
+        isCapacityWorkspaceOpen:
+          open !== undefined ? open : !get().isCapacityWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -701,7 +722,46 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeDisasterRecoveryScenario: scenario });
     },
 
+    setCapacityScenario: (scenario) => {
+      set({ activeCapacityScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (CAPACITY_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const capScenario = buildCapacityPresetScenario(
+          presetId as CapacityPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeCapacityScenario: capScenario,
+          activeDisasterRecoveryScenario: null,
+          activeDeploymentScenario: null,
+          activeZeroTrustScenario: null,
+          activeObservabilityScenario: null,
+          activeTrafficControlScenario: null,
+          activeDistributedStorageScenario: null,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isCapacityWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runCapacitySimulation(capScenario);
+        return;
+      }
+
       if (DISASTER_RECOVERY_PRESET_METADATA.some((p) => p.id === presetId)) {
         const drScenario = createDisasterRecoveryPresetScenario(
           presetId as DisasterRecoveryPresetId
@@ -1946,6 +2006,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeDisasterRecoveryScenario: scenario,
         isTimelineOpen: true,
         isDisasterRecoveryWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runCapacitySimulation: (scenario) => {
+      const { trace } = CapacityExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_capacity_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeCapacityScenario: scenario,
+        isTimelineOpen: true,
+        isCapacityWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

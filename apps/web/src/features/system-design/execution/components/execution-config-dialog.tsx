@@ -26,6 +26,7 @@ import {
   ZERO_TRUST_PRESET_METADATA,
   DEPLOYMENT_PRESET_METADATA,
   DISASTER_RECOVERY_PRESET_METADATA,
+  CAPACITY_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -464,6 +465,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...DISASTER_RECOVERY_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `DR/BCP: ${p.label}`,
+    description: p.description,
+  })),
+  ...CAPACITY_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `Cap: ${p.label}`,
     description: p.description,
   })),
   {

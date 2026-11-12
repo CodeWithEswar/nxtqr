@@ -151,6 +151,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const activeDisasterRecoveryScenario = useExecutionStore(
     (s) => s.activeDisasterRecoveryScenario
   );
+  const isCapacityWorkspaceOpen = useExecutionStore(
+    (s) => s.isCapacityWorkspaceOpen
+  );
+  const toggleCapacityWorkspace = useExecutionStore(
+    (s) => s.toggleCapacityWorkspace
+  );
+  const activeCapacityScenario = useExecutionStore(
+    (s) => s.activeCapacityScenario
+  );
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -704,6 +713,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <DatabaseIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">DR/BCP</span>
+      </Button>
+
+      {/* Distributed Capacity Planning, Autoscaling, Queueing Theory & Cost Optimization Workspace Button */}
+      <Button
+        variant={isCapacityWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleCapacityWorkspace()}
+        title="Toggle Distributed Capacity Planning, Autoscaling, Queueing Theory & Cost Optimization Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isCapacityWorkspaceOpen || activeCapacityScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ActivityIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Cap/Cost</span>
       </Button>
 
       {trafficComparison && (
