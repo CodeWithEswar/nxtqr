@@ -133,6 +133,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const activeZeroTrustScenario = useExecutionStore(
     (s) => s.activeZeroTrustScenario
   );
+  const isDeploymentWorkspaceOpen = useExecutionStore(
+    (s) => s.isDeploymentWorkspaceOpen
+  );
+  const toggleDeploymentWorkspace = useExecutionStore(
+    (s) => s.toggleDeploymentWorkspace
+  );
+  const activeDeploymentScenario = useExecutionStore(
+    (s) => s.activeDeploymentScenario
+  );
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -652,6 +661,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <ShieldIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">ZeroTrust</span>
+      </Button>
+
+      {/* Distributed Deployment, Blue-Green, Canary & Progressive Delivery Workspace Button */}
+      <Button
+        variant={isDeploymentWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleDeploymentWorkspace()}
+        title="Toggle Distributed Deployment, Blue-Green, Canary & Progressive Delivery Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isDeploymentWorkspaceOpen || activeDeploymentScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <LayersIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Deploy</span>
       </Button>
 
       {trafficComparison && (

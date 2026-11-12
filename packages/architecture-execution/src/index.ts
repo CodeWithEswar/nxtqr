@@ -214,5 +214,15 @@ export * from "./zero-trust/zero-trust-presets";
 export * from "./zero-trust/zero-trust-comparisons";
 export * from "./zero-trust/zero-trust-execution-engine";
 
+// Phase 05.4.19: Interactive Distributed Deployment, Blue-Green, Canary, Rolling Updates & Progressive Delivery Engine
+export * from "./deployments/deployment-schemas";
+export * from "./deployments/deployment-events";
+export * from "./deployments/lifecycle/probe-replica-lifecycle";
+export * from "./deployments/progressive/gates-rollback-engine";
+export * from "./deployments/invariants/deployment-invariants";
+export * from "./deployments/deployment-presets";
+export * from "./deployments/deployment-comparisons";
+export * from "./deployments/deployment-execution-engine";
+
 
 

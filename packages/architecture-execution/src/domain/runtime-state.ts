@@ -35,6 +35,7 @@ import type { ModeledDistributedStorageRuntimeState } from "../distributed-stora
 import type { ModeledTrafficControlRuntimeState } from "../traffic-control/traffic-control-schemas";
 import type { ModeledObservabilityRuntimeState } from "../observability/observability-schemas";
 import type { ModeledZeroTrustRuntimeState } from "../zero-trust/zero-trust-schemas";
+import type { ModeledDeploymentRuntimeState } from "../deployments/deployment-schemas";
 
 export type { CacheEntry };
 
@@ -149,6 +150,9 @@ export interface ModeledRuntimeState {
 
   // Distributed Zero Trust Security, Policy Evaluation & Threat Modeling (Phase 05.4.18)
   zeroTrustState?: ModeledZeroTrustRuntimeState;
+
+  // Distributed Deployment, Blue-Green, Canary & Progressive Delivery (Phase 05.4.19)
+  deploymentState?: ModeledDeploymentRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -340,6 +344,9 @@ export class RuntimeStateHelper {
         : undefined,
       zeroTrustState: state.zeroTrustState
         ? JSON.parse(JSON.stringify(state.zeroTrustState))
+        : undefined,
+      deploymentState: state.deploymentState
+        ? JSON.parse(JSON.stringify(state.deploymentState))
         : undefined,
     };
   }

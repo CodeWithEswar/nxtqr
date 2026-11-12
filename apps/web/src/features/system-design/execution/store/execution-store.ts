@@ -92,6 +92,11 @@ import {
   ZERO_TRUST_PRESET_METADATA,
   createZeroTrustPresetScenario,
   ZeroTrustExecutionEngine,
+  type DeploymentScenario,
+  type DeploymentPresetId,
+  DEPLOYMENT_PRESET_METADATA,
+  createDeploymentPresetScenario,
+  DeploymentExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -111,7 +116,8 @@ export type AllScenarioPresetId =
   | DistributedStoragePresetId
   | TrafficControlPresetId
   | ObservabilityPresetId
-  | ZeroTrustPresetId;
+  | ZeroTrustPresetId
+  | DeploymentPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -141,6 +147,7 @@ export interface ExecutionStoreState {
   isTrafficControlWorkspaceOpen: boolean;
   isObservabilityWorkspaceOpen: boolean;
   isZeroTrustWorkspaceOpen: boolean;
+  isDeploymentWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -161,6 +168,7 @@ export interface ExecutionStoreState {
   activeTrafficControlScenario: TrafficControlScenario | null;
   activeObservabilityScenario: ObservabilityScenario | null;
   activeZeroTrustScenario: ZeroTrustScenario | null;
+  activeDeploymentScenario: DeploymentScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -201,6 +209,7 @@ export interface ExecutionStoreState {
   toggleTrafficControlWorkspace: (open?: boolean) => void;
   toggleObservabilityWorkspace: (open?: boolean) => void;
   toggleZeroTrustWorkspace: (open?: boolean) => void;
+  toggleDeploymentWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -218,6 +227,7 @@ export interface ExecutionStoreState {
   setTrafficControlScenario: (scenario: TrafficControlScenario | null) => void;
   setObservabilityScenario: (scenario: ObservabilityScenario | null) => void;
   setZeroTrustScenario: (scenario: ZeroTrustScenario | null) => void;
+  setDeploymentScenario: (scenario: DeploymentScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -258,6 +268,7 @@ export interface ExecutionStoreState {
   runTrafficControlSimulation: (scenario: TrafficControlScenario) => boolean;
   runObservabilitySimulation: (scenario: ObservabilityScenario) => boolean;
   runZeroTrustSimulation: (scenario: ZeroTrustScenario) => boolean;
+  runDeploymentSimulation: (scenario: DeploymentScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -350,6 +361,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isTrafficControlWorkspaceOpen: false,
     isObservabilityWorkspaceOpen: false,
     isZeroTrustWorkspaceOpen: false,
+    isDeploymentWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -368,6 +380,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeTrafficControlScenario: null,
     activeObservabilityScenario: null,
     activeZeroTrustScenario: null,
+    activeDeploymentScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -407,6 +420,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isTrafficControlWorkspaceOpen: false,
           isObservabilityWorkspaceOpen: false,
           isZeroTrustWorkspaceOpen: false,
+          isDeploymentWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -582,6 +596,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleDeploymentWorkspace: (open) => {
+      set({
+        isDeploymentWorkspaceOpen:
+          open !== undefined ? open : !get().isDeploymentWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -651,7 +672,44 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeZeroTrustScenario: scenario });
     },
 
+    setDeploymentScenario: (scenario) => {
+      set({ activeDeploymentScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (DEPLOYMENT_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const depScenario = createDeploymentPresetScenario(
+          presetId as DeploymentPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeDeploymentScenario: depScenario,
+          activeZeroTrustScenario: null,
+          activeObservabilityScenario: null,
+          activeTrafficControlScenario: null,
+          activeDistributedStorageScenario: null,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isDeploymentWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runDeploymentSimulation(depScenario);
+        return;
+      }
+
       if (ZERO_TRUST_PRESET_METADATA.some((p) => p.id === presetId)) {
         const ztScenario = createZeroTrustPresetScenario(
           presetId as ZeroTrustPresetId
@@ -1771,6 +1829,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeZeroTrustScenario: scenario,
         isTimelineOpen: true,
         isZeroTrustWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runDeploymentSimulation: (scenario) => {
+      const trace = DeploymentExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_deployment_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeDeploymentScenario: scenario,
+        isTimelineOpen: true,
+        isDeploymentWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

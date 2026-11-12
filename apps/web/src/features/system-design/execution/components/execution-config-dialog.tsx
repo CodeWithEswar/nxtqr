@@ -24,6 +24,7 @@ import {
   TRAFFIC_CONTROL_PRESET_METADATA,
   OBS_PRESET_METADATA,
   ZERO_TRUST_PRESET_METADATA,
+  DEPLOYMENT_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -452,6 +453,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...ZERO_TRUST_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `Zero Trust: ${p.label}`,
+    description: p.description,
+  })),
+  ...DEPLOYMENT_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `Deploy: ${p.label}`,
     description: p.description,
   })),
   {

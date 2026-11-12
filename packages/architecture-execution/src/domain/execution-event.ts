@@ -17,6 +17,7 @@ import type { DistributedStorageEvent } from "../distributed-storage/storage-eve
 import type { TrafficControlEvent } from "../traffic-control/traffic-control-events";
 import type { ObservabilityExecutionEvent } from "../observability/observability-events";
 import type { ZeroTrustExecutionEvent } from "../zero-trust/zero-trust-events";
+import type { DeploymentExecutionEvent } from "../deployments/deployment-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -281,4 +282,5 @@ export type ExecutionEvent =
   | DistributedStorageEvent
   | TrafficControlEvent
   | ObservabilityExecutionEvent
-  | ZeroTrustExecutionEvent;
+  | ZeroTrustExecutionEvent
+  | DeploymentExecutionEvent;

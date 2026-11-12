@@ -51,6 +51,7 @@ import {
   TrafficControlWorkspace,
   ObservabilityWorkspace,
   ZeroTrustWorkspace,
+  DeploymentWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -100,6 +101,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   );
   const isZeroTrustWorkspaceOpen = useExecutionStore(
     (s) => s.isZeroTrustWorkspaceOpen
+  );
+  const isDeploymentWorkspaceOpen = useExecutionStore(
+    (s) => s.isDeploymentWorkspaceOpen
   );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -621,6 +625,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Distributed Security, Zero Trust, Trust Boundaries & Threat Modeling Drawer */}
       {isZeroTrustWorkspaceOpen && <ZeroTrustWorkspace />}
+
+      {/* Distributed Deployment, Blue-Green, Canary & Progressive Delivery Drawer */}
+      {isDeploymentWorkspaceOpen && <DeploymentWorkspace />}
     </div>
   );
 }
