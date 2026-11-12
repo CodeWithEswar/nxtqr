@@ -88,6 +88,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isGlobalNetworkWorkspaceOpen = useExecutionStore((s) => s.isGlobalNetworkWorkspaceOpen);
   const toggleGlobalNetworkWorkspace = useExecutionStore((s) => s.toggleGlobalNetworkWorkspace);
   const activeGlobalNetworkScenario = useExecutionStore((s) => s.activeGlobalNetworkScenario);
+  const isServiceMeshWorkspaceOpen = useExecutionStore((s) => s.isServiceMeshWorkspaceOpen);
+  const toggleServiceMeshWorkspace = useExecutionStore((s) => s.toggleServiceMeshWorkspace);
+  const activeServiceMeshScenario = useExecutionStore((s) => s.activeServiceMeshScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -488,6 +491,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <ActivityIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Global</span>
+      </Button>
+
+      {/* Microservices, Service Mesh & Resilience Workspace Button */}
+      <Button
+        variant={isServiceMeshWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleServiceMeshWorkspace()}
+        title="Toggle Microservices Communication, Service Mesh & Resilience Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isServiceMeshWorkspaceOpen || activeServiceMeshScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ShieldIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Mesh</span>
       </Button>
 
       {trafficComparison && (

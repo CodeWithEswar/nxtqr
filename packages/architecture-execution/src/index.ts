@@ -144,5 +144,16 @@ export * from "./global-network/cdn/edge-cache-engine";
 export * from "./global-network/global-network-presets";
 export * from "./global-network/global-network-execution-engine";
 
+// Phase 05.4.12: Interactive Microservices Communication, Service Mesh & Distributed Resilience Engine
+export * from "./service-mesh/service-mesh-schemas";
+export * from "./service-mesh/service-mesh-events";
+export * from "./service-mesh/discovery/service-discovery-engine";
+export * from "./service-mesh/security/mesh-security-engine";
+export * from "./service-mesh/routing/mesh-routing-engine";
+export * from "./service-mesh/routing/canary-controller";
+export * from "./service-mesh/resilience/mesh-resilience-engine";
+export * from "./service-mesh/service-mesh-presets";
+export * from "./service-mesh/service-mesh-execution-engine";
+
 
 

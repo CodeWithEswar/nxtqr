@@ -337,3 +337,4 @@ export interface ModeledGlobalNetworkRuntimeState {
   metrics: GlobalNetworkMetrics;
   virtualTimeMs: number;
 }
+

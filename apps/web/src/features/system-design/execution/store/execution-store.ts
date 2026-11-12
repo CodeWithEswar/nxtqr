@@ -57,6 +57,11 @@ import {
   GLOBAL_NETWORK_PRESET_METADATA,
   createGlobalNetworkPresetScenario,
   GlobalNetworkExecutionEngine,
+  type ServiceMeshScenario,
+  type ServiceMeshPresetId,
+  SERVICE_MESH_PRESET_METADATA,
+  createServiceMeshPresetScenario,
+  ServiceMeshExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -69,7 +74,8 @@ export type AllScenarioPresetId =
   | SecurityScenarioPresetId
   | StreamingScenarioPresetId
   | KubernetesScenarioPresetId
-  | GlobalNetworkPresetId;
+  | GlobalNetworkPresetId
+  | ServiceMeshPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -92,6 +98,7 @@ export interface ExecutionStoreState {
   isStreamingWorkspaceOpen: boolean;
   isKubernetesWorkspaceOpen: boolean;
   isGlobalNetworkWorkspaceOpen: boolean;
+  isServiceMeshWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -105,6 +112,7 @@ export interface ExecutionStoreState {
   activeStreamingScenario: StreamingScenario | null;
   activeKubernetesScenario: KubernetesScenario | null;
   activeGlobalNetworkScenario: GlobalNetworkScenario | null;
+  activeServiceMeshScenario: ServiceMeshScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -138,6 +146,7 @@ export interface ExecutionStoreState {
   toggleStreamingWorkspace: (open?: boolean) => void;
   toggleKubernetesWorkspace: (open?: boolean) => void;
   toggleGlobalNetworkWorkspace: (open?: boolean) => void;
+  toggleServiceMeshWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -148,6 +157,7 @@ export interface ExecutionStoreState {
   setStreamingScenario: (scenario: StreamingScenario | null) => void;
   setKubernetesScenario: (scenario: KubernetesScenario | null) => void;
   setGlobalNetworkScenario: (scenario: GlobalNetworkScenario | null) => void;
+  setServiceMeshScenario: (scenario: ServiceMeshScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -181,6 +191,7 @@ export interface ExecutionStoreState {
   runStreamingSimulation: (scenario: StreamingScenario) => boolean;
   runKubernetesSimulation: (scenario: KubernetesScenario) => boolean;
   runGlobalNetworkSimulation: (scenario: GlobalNetworkScenario) => boolean;
+  runServiceMeshSimulation: (scenario: ServiceMeshScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -266,6 +277,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isStreamingWorkspaceOpen: false,
     isKubernetesWorkspaceOpen: false,
     isGlobalNetworkWorkspaceOpen: false,
+    isServiceMeshWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -277,6 +289,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeStreamingScenario: null,
     activeKubernetesScenario: null,
     activeGlobalNetworkScenario: null,
+    activeServiceMeshScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -309,6 +322,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isStreamingWorkspaceOpen: false,
           isKubernetesWorkspaceOpen: false,
           isGlobalNetworkWorkspaceOpen: false,
+          isServiceMeshWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -435,6 +449,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleServiceMeshWorkspace: (open) => {
+      set({
+        isServiceMeshWorkspaceOpen:
+          open !== undefined ? open : !get().isServiceMeshWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -476,7 +497,37 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeGlobalNetworkScenario: scenario });
     },
 
+    setServiceMeshScenario: (scenario) => {
+      set({ activeServiceMeshScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (SERVICE_MESH_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const meshScenario = createServiceMeshPresetScenario(
+          presetId as ServiceMeshPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeServiceMeshScenario: meshScenario,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isServiceMeshWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runServiceMeshSimulation(meshScenario);
+        return;
+      }
+
       if (GLOBAL_NETWORK_PRESET_METADATA.some((p) => p.id === presetId)) {
         const globalScenario = createGlobalNetworkPresetScenario(
           presetId as GlobalNetworkPresetId
@@ -1190,6 +1241,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeGlobalNetworkScenario: scenario,
         isTimelineOpen: true,
         isGlobalNetworkWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runServiceMeshSimulation: (scenario) => {
+      const trace = ServiceMeshExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_service_mesh_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeServiceMeshScenario: scenario,
+        isTimelineOpen: true,
+        isServiceMeshWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

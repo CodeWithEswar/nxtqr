@@ -21,5 +21,6 @@ export * from "./components/security-execution-workspace";
 export * from "./components/streaming-execution-workspace";
 export * from "./components/kubernetes-execution-workspace";
 export * from "./components/global-network-workspace";
+export * from "./components/service-mesh-workspace";
 export * from "./hooks/use-execution-playback";
 

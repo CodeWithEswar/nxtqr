@@ -328,3 +328,4 @@ export type GlobalNetworkExecutionEvent =
   | CdnOriginFetchCompletedEvent
   | CdnOriginFetchFailedEvent
   | GlobalFaultAppliedEvent;
+
