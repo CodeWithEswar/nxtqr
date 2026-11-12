@@ -121,6 +121,49 @@ export function ExecutionOverlay() {
           );
         })}
 
+      {/* 1c. Traffic Worker Pool Occupancy & Queue Depth Badges */}
+      {currentFrame.runtimeState?.trafficInstances &&
+        Object.entries(currentFrame.runtimeState.trafficInstances).map(([nodeId, instances]) => {
+          const node = getNode(nodeId);
+          if (!node || instances.length === 0) return null;
+
+          const totalWorkers = instances.reduce((sum, i) => sum + i.workerCount, 0);
+          const busyWorkers = instances.reduce((sum, i) => sum + i.busyWorkers, 0);
+          const q = currentFrame.runtimeState?.trafficQueues?.[nodeId];
+          const queueDepth = q ? q.waitingCount : 0;
+          const isSaturated = totalWorkers > 0 && busyWorkers >= totalWorkers;
+
+          return (
+            <div
+              key={`traffic_pool_${nodeId}`}
+              style={{
+                transform: `translate(${node.position.x}px, ${node.position.y}px)`,
+              }}
+              className="absolute top-0 left-0 pointer-events-none z-20"
+            >
+              <div className="absolute -bottom-3 left-2 flex items-center gap-1.5 font-mono text-[9px]">
+                <span
+                  className={cn(
+                    "px-1.5 py-0.2 rounded shadow-level-1 border bg-surface-03",
+                    isSaturated
+                      ? "border-border-strong text-foreground font-semibold"
+                      : "border-border-default text-text-secondary"
+                  )}
+                >
+                  W: {busyWorkers}/{totalWorkers}
+                  {instances.length > 1 ? ` (${instances.length} inst)` : ""}
+                </span>
+
+                {queueDepth > 0 && (
+                  <span className="px-1.5 py-0.2 rounded bg-surface-04 border border-border-strong text-text-secondary font-semibold shadow-level-1">
+                    Q: {queueDepth}
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
       {/* 2. Traveling Request / Response / Message Packets along Edges */}
       {packets.map((pkt, idx) => (
         <TravelingPacketMarker

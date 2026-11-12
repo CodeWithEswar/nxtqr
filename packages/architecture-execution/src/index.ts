@@ -60,4 +60,17 @@ export * from "./resilience/blast-radius-analyzer";
 export * from "./resilience/scenario-presets";
 export * from "./resilience/resilience-simulation-engine";
 
+// Phase 05.4.5: Live Traffic Simulation, Load Distribution & Real-Time Performance Engine
+export * from "./traffic/traffic-schemas";
+export * from "./traffic/traffic-events";
+export * from "./traffic/workload-generator";
+export * from "./traffic/worker-pool";
+export * from "./traffic/request-queue";
+export * from "./traffic/load-distribution";
+export * from "./traffic/rate-limiter";
+export * from "./traffic/autoscaling-engine";
+export * from "./traffic/metric-aggregator";
+export * from "./traffic/traffic-presets";
+export * from "./traffic/traffic-simulation-engine";
+
 

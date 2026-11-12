@@ -3,6 +3,7 @@ import type { ModeledHttpRequest, ModeledHttpResponse } from "../schemas/behavio
 import type { ModeledRuntimeState } from "./runtime-state";
 import type { CausalExecutionEvent } from "./causal-event";
 import type { ResilienceEvent } from "../resilience/fault-events";
+import type { TrafficExecutionEvent } from "../traffic/traffic-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -253,4 +254,5 @@ export type ExecutionEvent =
   | ComponentProcessingStartedEvent
   | ComponentProcessingCompletedEvent
   | CausalExecutionEvent
-  | ResilienceEvent;
+  | ResilienceEvent
+  | TrafficExecutionEvent;

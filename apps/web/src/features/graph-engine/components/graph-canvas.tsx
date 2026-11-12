@@ -35,6 +35,9 @@ import {
   ExecutionConfigDialog,
   FaultScenarioDialog,
   ScenarioComparisonView,
+  PerformanceWorkspace,
+  TrafficScenarioDialog,
+  TrafficComparisonView,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -61,6 +64,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isConfigDialogOpen = useExecutionStore((s) => s.isConfigDialogOpen);
   const isFaultScenarioDialogOpen = useExecutionStore((s) => s.isFaultScenarioDialogOpen);
   const isScenarioComparisonOpen = useExecutionStore((s) => s.isScenarioComparisonOpen);
+  const isTrafficWorkspaceOpen = useExecutionStore((s) => s.isTrafficWorkspaceOpen);
+  const isTrafficScenarioDialogOpen = useExecutionStore((s) => s.isTrafficScenarioDialogOpen);
+  const isTrafficComparisonOpen = useExecutionStore((s) => s.isTrafficComparisonOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
     s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
@@ -533,6 +539,15 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Scenario Comparison & Resilience Delta Modal */}
       {isScenarioComparisonOpen && <ScenarioComparisonView />}
+
+      {/* Live Traffic Simulation & Capacity Configuration Modal */}
+      {isTrafficScenarioDialogOpen && <TrafficScenarioDialog />}
+
+      {/* Traffic Performance Delta Comparison Modal */}
+      {isTrafficComparisonOpen && <TrafficComparisonView />}
+
+      {/* Performance & Live Traffic Dashboard Drawer */}
+      {isTrafficWorkspaceOpen && <PerformanceWorkspace />}
     </div>
   );
 }

@@ -14,6 +14,14 @@ import type {
   ComponentHealthStatus,
   ResilienceMetrics,
 } from "../resilience/fault-schemas";
+import type {
+  ServiceInstance,
+  ModeledTrafficQueue,
+  ModeledRateLimiterState,
+  AutoscalingState,
+  PerformanceSample,
+  PerformanceSummary,
+} from "../traffic/traffic-schemas";
 
 export interface CacheEntry {
   key: string;
@@ -86,6 +94,14 @@ export interface ModeledRuntimeState {
   retryCounters: Record<string, number>;
   activeDeadlines: Record<string, number>;
   resilienceMetrics?: ResilienceMetrics;
+
+  // Live Traffic Simulation & Real-Time Performance (Phase 05.4.5)
+  trafficInstances: Record<string, ServiceInstance[]>;
+  trafficQueues: Record<string, ModeledTrafficQueue>;
+  trafficRateLimiters: Record<string, ModeledRateLimiterState>;
+  trafficAutoscaling: Record<string, AutoscalingState>;
+  trafficCurrentSample?: PerformanceSample;
+  trafficSummary?: PerformanceSummary;
 }
 
 export class RuntimeStateHelper {
@@ -132,6 +148,10 @@ export class RuntimeStateHelper {
       networkConditions: {},
       retryCounters: {},
       activeDeadlines: {},
+      trafficInstances: {},
+      trafficQueues: {},
+      trafficRateLimiters: {},
+      trafficAutoscaling: {},
     };
   }
 
@@ -180,6 +200,29 @@ export class RuntimeStateHelper {
       clonedNetworkConditions[netId] = { ...net };
     }
 
+    const clonedInstances: Record<string, ServiceInstance[]> = {};
+    for (const [nodeId, list] of Object.entries(state.trafficInstances || {})) {
+      clonedInstances[nodeId] = list.map((inst) => ({ ...inst }));
+    }
+
+    const clonedTrafficQueues: Record<string, ModeledTrafficQueue> = {};
+    for (const [nodeId, q] of Object.entries(state.trafficQueues || {})) {
+      clonedTrafficQueues[nodeId] = { ...q };
+    }
+
+    const clonedRateLimiters: Record<string, ModeledRateLimiterState> = {};
+    for (const [nodeId, rl] of Object.entries(state.trafficRateLimiters || {})) {
+      clonedRateLimiters[nodeId] = { ...rl };
+    }
+
+    const clonedAutoscaling: Record<string, AutoscalingState> = {};
+    for (const [nodeId, as] of Object.entries(state.trafficAutoscaling || {})) {
+      clonedAutoscaling[nodeId] = {
+        ...as,
+        pendingProvisionings: as.pendingProvisionings.map((p) => ({ ...p })),
+      };
+    }
+
     return {
       cache: clonedCache,
       database: clonedDb,
@@ -201,6 +244,12 @@ export class RuntimeStateHelper {
       retryCounters: { ...(state.retryCounters || {}) },
       activeDeadlines: { ...(state.activeDeadlines || {}) },
       resilienceMetrics: state.resilienceMetrics ? { ...state.resilienceMetrics } : undefined,
+      trafficInstances: clonedInstances,
+      trafficQueues: clonedTrafficQueues,
+      trafficRateLimiters: clonedRateLimiters,
+      trafficAutoscaling: clonedAutoscaling,
+      trafficCurrentSample: state.trafficCurrentSample ? { ...state.trafficCurrentSample } : undefined,
+      trafficSummary: state.trafficSummary ? { ...state.trafficSummary } : undefined,
     };
   }
 

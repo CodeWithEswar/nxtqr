@@ -3,6 +3,7 @@ import type { ExecutionEvent } from "./execution-event";
 import type { ModeledRuntimeState } from "./runtime-state";
 import type { ModeledHttpRequest, ModeledHttpResponse } from "../schemas/behavior.schemas";
 import type { TraceSpan, ExecutionBranch } from "../schemas/distributed.schemas";
+import type { PerformanceSample, PerformanceSummary, TrafficScenario } from "../traffic/traffic-schemas";
 
 export interface TravelingMarkerData {
   id?: string;
@@ -52,6 +53,9 @@ export interface ExecutionTrace {
   frames: VisualizationFrame[];
   spans?: TraceSpan[];
   criticalPathSpanIds?: string[];
+  trafficScenario?: TrafficScenario;
+  performanceSamples?: PerformanceSample[];
+  performanceSummary?: PerformanceSummary;
   createdAt: string;
 }
 

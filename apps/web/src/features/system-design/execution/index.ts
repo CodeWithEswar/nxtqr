@@ -12,5 +12,8 @@ export * from "./components/message-inspector";
 export * from "./components/fault-scenario-dialog";
 export * from "./components/scenario-comparison-view";
 export * from "./components/fault-inspector";
+export * from "./components/performance-workspace";
+export * from "./components/traffic-scenario-dialog";
+export * from "./components/traffic-comparison-view";
 export * from "./hooks/use-execution-playback";
 

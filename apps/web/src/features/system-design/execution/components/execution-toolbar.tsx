@@ -61,6 +61,13 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isScenarioComparisonOpen = useExecutionStore((s) => s.isScenarioComparisonOpen);
   const activeFailureScenario = useExecutionStore((s) => s.activeFailureScenario);
   const scenarioComparison = useExecutionStore((s) => s.scenarioComparison);
+  const toggleTrafficScenarioDialog = useExecutionStore((s) => s.toggleTrafficScenarioDialog);
+  const toggleTrafficWorkspace = useExecutionStore((s) => s.toggleTrafficWorkspace);
+  const toggleTrafficComparison = useExecutionStore((s) => s.toggleTrafficComparison);
+  const isTrafficWorkspaceOpen = useExecutionStore((s) => s.isTrafficWorkspaceOpen);
+  const isTrafficScenarioDialogOpen = useExecutionStore((s) => s.isTrafficScenarioDialogOpen);
+  const activeTrafficScenario = useExecutionStore((s) => s.activeTrafficScenario);
+  const trafficComparison = useExecutionStore((s) => s.trafficComparison);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -324,6 +331,55 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
           {activeFailureScenario ? `Faults (${activeFailureScenario.faults.length})` : "Faults"}
         </span>
       </Button>
+
+      {/* Traffic Sim Button */}
+      <Button
+        variant={isTrafficScenarioDialogOpen || activeTrafficScenario ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleTrafficScenarioDialog()}
+        title="Configure Live Traffic Simulation & Load Distributions"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          activeTrafficScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ActivityIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">
+          {activeTrafficScenario ? "Traffic Sim" : "Traffic"}
+        </span>
+      </Button>
+
+      {/* Performance Workspace Button */}
+      <Button
+        variant={isTrafficWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleTrafficWorkspace()}
+        title="Toggle Performance & Traffic Dashboard Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isTrafficWorkspaceOpen
+            ? "bg-surface-04 border border-border-strong text-foreground shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ActivityIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden lg:inline">Perf</span>
+      </Button>
+
+      {trafficComparison && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => toggleTrafficComparison()}
+          title="Compare Baseline vs Scaled Traffic Run"
+          className="h-7 px-2 text-[10px] font-mono rounded-md gap-1 text-text-secondary hover:text-foreground hover:bg-surface-03 border border-border-subtle"
+        >
+          <ActivityIcon className="w-3 h-3 text-text-secondary" />
+          <span className="hidden lg:inline">Traffic Delta</span>
+        </Button>
+      )}
 
       {scenarioComparison && (
         <Button

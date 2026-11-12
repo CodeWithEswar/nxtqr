@@ -13,6 +13,9 @@ import {
   type FailureScenario,
   type ResiliencePresetId,
   type ScenarioComparison,
+  type TrafficScenario,
+  type TrafficPresetId,
+  type SimulationComparison,
   ExecutionSnapshotManager,
   ExecutionPlanner,
   PlaybackController,
@@ -21,12 +24,16 @@ import {
   ResiliencePresetFactory,
   ResilienceSimulationEngine,
   RESILIENCE_PRESET_DEFINITIONS,
+  TrafficPresetFactory,
+  TrafficSimulationEngine,
+  TRAFFIC_PRESET_DEFINITIONS,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
   | ScenarioPresetId
   | DistributedScenarioPresetId
-  | ResiliencePresetId;
+  | ResiliencePresetId
+  | TrafficPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -40,12 +47,16 @@ export interface ExecutionStoreState {
   isFaultScenarioDialogOpen: boolean;
   isScenarioComparisonOpen: boolean;
   isFaultInspectorOpen: boolean;
+  isTrafficWorkspaceOpen: boolean;
+  isTrafficScenarioDialogOpen: boolean;
+  isTrafficComparisonOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
   scenario: BehaviorScenario;
   distributedScenario: DistributedScenarioConfig | null;
   activeFailureScenario: FailureScenario | null;
+  activeTrafficScenario: TrafficScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -53,6 +64,7 @@ export interface ExecutionStoreState {
   trace: ExecutionTrace | null;
   baselineTrace: ExecutionTrace | null;
   scenarioComparison: ScenarioComparison | null;
+  trafficComparison: SimulationComparison | null;
 
   // Playback state
   playbackState: PlaybackState;
@@ -69,9 +81,13 @@ export interface ExecutionStoreState {
   toggleFaultScenarioDialog: (open?: boolean) => void;
   toggleScenarioComparison: (open?: boolean) => void;
   toggleFaultInspector: (open?: boolean) => void;
+  toggleTrafficWorkspace: (open?: boolean) => void;
+  toggleTrafficScenarioDialog: (open?: boolean) => void;
+  toggleTrafficComparison: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
+  setTrafficScenario: (scenario: TrafficScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -88,6 +104,13 @@ export interface ExecutionStoreState {
     nodes: BaseNode[],
     edges: BaseEdge[],
     scenario: FailureScenario,
+    architectureId?: string,
+    revisionId?: string
+  ) => boolean;
+  runTrafficSimulation: (
+    nodes: BaseNode[],
+    edges: BaseEdge[],
+    scenario: TrafficScenario,
     architectureId?: string,
     revisionId?: string
   ) => boolean;
@@ -167,15 +190,20 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isFaultScenarioDialogOpen: false,
     isScenarioComparisonOpen: false,
     isFaultInspectorOpen: false,
+    isTrafficWorkspaceOpen: false,
+    isTrafficScenarioDialogOpen: false,
+    isTrafficComparisonOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
     activeFailureScenario: null,
+    activeTrafficScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
     baselineTrace: null,
     scenarioComparison: null,
+    trafficComparison: null,
     playbackState: initialPlaybackState,
     selectedEventId: null,
 
@@ -193,6 +221,9 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isFaultScenarioDialogOpen: false,
           isScenarioComparisonOpen: false,
           isFaultInspectorOpen: false,
+          isTrafficWorkspaceOpen: false,
+          isTrafficScenarioDialogOpen: false,
+          isTrafficComparisonOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -256,6 +287,27 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleTrafficWorkspace: (open) => {
+      set({
+        isTrafficWorkspaceOpen:
+          open !== undefined ? open : !get().isTrafficWorkspaceOpen,
+      });
+    },
+
+    toggleTrafficScenarioDialog: (open) => {
+      set({
+        isTrafficScenarioDialogOpen:
+          open !== undefined ? open : !get().isTrafficScenarioDialogOpen,
+      });
+    },
+
+    toggleTrafficComparison: (open) => {
+      set({
+        isTrafficComparisonOpen:
+          open !== undefined ? open : !get().isTrafficComparisonOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -269,7 +321,31 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeFailureScenario: scenario });
     },
 
+    setTrafficScenario: (scenario) => {
+      set({ activeTrafficScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      const isTraffic = TRAFFIC_PRESET_DEFINITIONS.some((p) => p.id === presetId);
+      if (isTraffic) {
+        const trafficScenario = TrafficPresetFactory.createPreset(
+          presetId as TrafficPresetId,
+          nodes,
+          edges
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeTrafficScenario: trafficScenario,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        return;
+      }
+
       const isResilience = RESILIENCE_PRESET_DEFINITIONS.some((p) => p.id === presetId);
       if (isResilience) {
         const failureScenario = ResiliencePresetFactory.createScenario(
@@ -280,6 +356,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         set((state) => ({
           activePresetId: presetId,
           activeFailureScenario: failureScenario,
+          activeTrafficScenario: null,
           distributedScenario: null,
           configuration: {
             ...state.configuration,
@@ -424,6 +501,17 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeConfig
       );
 
+      // If a traffic scenario is active, route through traffic simulation engine
+      if (get().activeTrafficScenario) {
+        return get().runTrafficSimulation(
+          nodes,
+          edges,
+          get().activeTrafficScenario!,
+          architectureId,
+          revisionId
+        );
+      }
+
       // If a failure scenario is active, route through resilience simulation engine
       if (get().activeFailureScenario) {
         return get().runResilienceSimulation(
@@ -542,6 +630,106 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         baselineTrace,
         scenarioComparison,
         activeFailureScenario: scenario,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runTrafficSimulation: (nodes, edges, scenario, architectureId = "arch_canvas", revisionId = "rev_v1") => {
+      const { configuration } = get();
+
+      let activeEntryNodeId = scenario.entryNodeId || configuration.entryNodeId;
+      if (!activeEntryNodeId || !nodes.some((n) => n.id === activeEntryNodeId)) {
+        const inputNode = nodes.find((n) => n.type === "input" || n.type === "client" || n.type === "gateway");
+        activeEntryNodeId = inputNode ? inputNode.id : nodes[0]?.id || "";
+        set((state) => ({
+          configuration: {
+            ...state.configuration,
+            entryNodeId: activeEntryNodeId,
+          },
+        }));
+      }
+
+      if (!activeEntryNodeId) return false;
+
+      const activeConfig: ExecutionConfiguration = {
+        ...configuration,
+        entryNodeId: activeEntryNodeId,
+      };
+
+      const activeScenario: TrafficScenario = {
+        ...scenario,
+        entryNodeId: activeEntryNodeId,
+      };
+
+      // 1. Snapshot
+      const snapshot = ExecutionSnapshotManager.createSnapshot(
+        architectureId,
+        revisionId,
+        "Active Canvas Architecture",
+        nodes,
+        edges,
+        activeConfig
+      );
+
+      // 2. Baseline run (single instance, no autoscaling) for comparative insight
+      const baselineScenario: TrafficScenario = {
+        ...activeScenario,
+        id: `traffic_baseline_${Date.now()}`,
+        name: "Baseline (Single Instance)",
+        capacities: Object.fromEntries(
+          Object.entries(activeScenario.capacities).map(([k, v]) => [
+            k,
+            { ...v, initialInstances: 1, queueCapacity: Math.min(v.queueCapacity, 50) },
+          ])
+        ),
+        autoscaling: {},
+      };
+      const baselineTrace = TrafficSimulationEngine.runTrafficSimulation(
+        snapshot,
+        baselineScenario,
+        activeConfig
+      );
+
+      // 3. Target traffic run
+      const trafficTrace = TrafficSimulationEngine.runTrafficSimulation(
+        snapshot,
+        activeScenario,
+        activeConfig
+      );
+
+      // 4. Comparison report
+      const trafficComparison = TrafficSimulationEngine.compareScenarios(
+        baselineTrace,
+        trafficTrace,
+        baselineScenario,
+        activeScenario
+      );
+
+      const run: ExecutionRun = {
+        id: trafficTrace.runId,
+        architectureId,
+        architectureRevisionId: revisionId,
+        snapshotHash: snapshot.snapshotHash,
+        configuration: activeConfig,
+        trace: trafficTrace,
+        createdAt: new Date().toISOString(),
+      };
+
+      const controller = ensureController();
+      controller.loadTrace(trafficTrace);
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace: trafficTrace,
+        baselineTrace,
+        trafficComparison,
+        activeTrafficScenario: activeScenario,
+        isTimelineOpen: true,
+        isTrafficWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 
