@@ -73,4 +73,22 @@ export * from "./traffic/metric-aggregator";
 export * from "./traffic/traffic-presets";
 export * from "./traffic/traffic-simulation-engine";
 
+// Phase 05.4.6: Interactive Database Query Execution, Transactions & Data Flow Engine
+export * from "./database/database-schemas";
+export * from "./database/database-events";
+export * from "./database/sql-parser";
+export * from "./database/ast-validator";
+export * from "./database/planner/cost-model";
+export * from "./database/planner/logical-planner";
+export * from "./database/planner/physical-planner";
+export * from "./database/operators/operators-engine";
+export * from "./database/transactions/lock-manager";
+export * from "./database/transactions/deadlock-detector";
+export * from "./database/transactions/transaction-manager";
+export * from "./database/replication/replication-engine";
+export * from "./database/capacity/connection-pool";
+export * from "./database/database-presets";
+export * from "./database/database-execution-engine";
+
+
 

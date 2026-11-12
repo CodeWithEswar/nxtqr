@@ -22,6 +22,7 @@ import type {
   PerformanceSample,
   PerformanceSummary,
 } from "../traffic/traffic-schemas";
+import type { ModeledDatabaseRuntimeState } from "../database/database-schemas";
 
 export interface CacheEntry {
   key: string;
@@ -102,6 +103,9 @@ export interface ModeledRuntimeState {
   trafficAutoscaling: Record<string, AutoscalingState>;
   trafficCurrentSample?: PerformanceSample;
   trafficSummary?: PerformanceSummary;
+
+  // Database Query Execution & Concurrency (Phase 05.4.6)
+  databaseState?: ModeledDatabaseRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -250,6 +254,9 @@ export class RuntimeStateHelper {
       trafficAutoscaling: clonedAutoscaling,
       trafficCurrentSample: state.trafficCurrentSample ? { ...state.trafficCurrentSample } : undefined,
       trafficSummary: state.trafficSummary ? { ...state.trafficSummary } : undefined,
+      databaseState: state.databaseState
+        ? JSON.parse(JSON.stringify(state.databaseState))
+        : undefined,
     };
   }
 

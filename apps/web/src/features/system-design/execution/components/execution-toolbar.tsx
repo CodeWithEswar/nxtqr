@@ -68,6 +68,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isTrafficScenarioDialogOpen = useExecutionStore((s) => s.isTrafficScenarioDialogOpen);
   const activeTrafficScenario = useExecutionStore((s) => s.activeTrafficScenario);
   const trafficComparison = useExecutionStore((s) => s.trafficComparison);
+  const isDatabaseWorkspaceOpen = useExecutionStore((s) => s.isDatabaseWorkspaceOpen);
+  const toggleDatabaseWorkspace = useExecutionStore((s) => s.toggleDatabaseWorkspace);
+  const activeDatabaseScenario = useExecutionStore((s) => s.activeDatabaseScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -366,6 +369,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <ActivityIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden lg:inline">Perf</span>
+      </Button>
+
+      {/* Database Execution Workspace Button */}
+      <Button
+        variant={isDatabaseWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleDatabaseWorkspace()}
+        title="Toggle Database Query Execution, Plan & Concurrency Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isDatabaseWorkspaceOpen || activeDatabaseScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <LayersIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">DB Exec</span>
       </Button>
 
       {trafficComparison && (

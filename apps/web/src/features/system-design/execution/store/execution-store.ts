@@ -27,13 +27,19 @@ import {
   TrafficPresetFactory,
   TrafficSimulationEngine,
   TRAFFIC_PRESET_DEFINITIONS,
+  type DatabaseScenario,
+  type DatabaseScenarioPresetId,
+  DATABASE_PRESET_METADATA,
+  createDatabasePresetScenario,
+  DatabaseExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
   | ScenarioPresetId
   | DistributedScenarioPresetId
   | ResiliencePresetId
-  | TrafficPresetId;
+  | TrafficPresetId
+  | DatabaseScenarioPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -50,6 +56,7 @@ export interface ExecutionStoreState {
   isTrafficWorkspaceOpen: boolean;
   isTrafficScenarioDialogOpen: boolean;
   isTrafficComparisonOpen: boolean;
+  isDatabaseWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -57,6 +64,7 @@ export interface ExecutionStoreState {
   distributedScenario: DistributedScenarioConfig | null;
   activeFailureScenario: FailureScenario | null;
   activeTrafficScenario: TrafficScenario | null;
+  activeDatabaseScenario: DatabaseScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -84,10 +92,12 @@ export interface ExecutionStoreState {
   toggleTrafficWorkspace: (open?: boolean) => void;
   toggleTrafficScenarioDialog: (open?: boolean) => void;
   toggleTrafficComparison: (open?: boolean) => void;
+  toggleDatabaseWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
   setTrafficScenario: (scenario: TrafficScenario | null) => void;
+  setDatabaseScenario: (scenario: DatabaseScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -114,6 +124,8 @@ export interface ExecutionStoreState {
     architectureId?: string,
     revisionId?: string
   ) => boolean;
+  runDatabaseSimulation: (scenario: DatabaseScenario) => boolean;
+  executeCustomDatabaseQuery: (sql: string) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -193,11 +205,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isTrafficWorkspaceOpen: false,
     isTrafficScenarioDialogOpen: false,
     isTrafficComparisonOpen: false,
+    isDatabaseWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
     activeFailureScenario: null,
     activeTrafficScenario: null,
+    activeDatabaseScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -224,6 +238,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isTrafficWorkspaceOpen: false,
           isTrafficScenarioDialogOpen: false,
           isTrafficComparisonOpen: false,
+          isDatabaseWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -308,6 +323,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleDatabaseWorkspace: (open) => {
+      set({
+        isDatabaseWorkspaceOpen:
+          open !== undefined ? open : !get().isDatabaseWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -325,7 +347,29 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeTrafficScenario: scenario });
     },
 
+    setDatabaseScenario: (scenario) => {
+      set({ activeDatabaseScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (presetId in DATABASE_PRESET_METADATA) {
+        const dbScenario = createDatabasePresetScenario(presetId as DatabaseScenarioPresetId);
+        set((state) => ({
+          activePresetId: presetId,
+          activeDatabaseScenario: dbScenario,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isDatabaseWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runDatabaseSimulation(dbScenario);
+        return;
+      }
+
       const isTraffic = TRAFFIC_PRESET_DEFINITIONS.some((p) => p.id === presetId);
       if (isTraffic) {
         const trafficScenario = TrafficPresetFactory.createPreset(
@@ -735,6 +779,45 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
 
       controller.play();
       return true;
+    },
+
+    runDatabaseSimulation: (scenario) => {
+      const trace = DatabaseExecutionEngine.executeScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_db_sim",
+        architectureRevisionId: "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeDatabaseScenario: scenario,
+        isTimelineOpen: true,
+        isDatabaseWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    executeCustomDatabaseQuery: (sql) => {
+      const { activeDatabaseScenario } = get();
+      const base = activeDatabaseScenario || createDatabasePresetScenario("primary_key_lookup");
+      const updated: DatabaseScenario = {
+        ...base,
+        primaryQuery: sql,
+      };
+      return get().runDatabaseSimulation(updated);
     },
 
     play: () => {

@@ -104,6 +104,66 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
     description: "Unstable network link drops packets deterministically, driving retry retransmissions.",
   },
   {
+    id: "primary_key_lookup",
+    label: "Database: B-Tree PK Lookup",
+    description: "Evaluates exact primary key index seek, skipping sequential table scan with O(log N) lookup.",
+  },
+  {
+    id: "sequential_scan",
+    label: "Database: Full Table Seq Scan",
+    description: "Scans every row sequentially because no index exists on the status column.",
+  },
+  {
+    id: "indexed_lookup",
+    label: "Database: Secondary Index Scan",
+    description: "Probes idx_orders_customer_id to retrieve matching order pointers without scanning entire table.",
+  },
+  {
+    id: "nested_loop_join",
+    label: "Database: Nested Loop Join",
+    description: "Iterates outer users table and matches correlated orders via user_id.",
+  },
+  {
+    id: "hash_join",
+    label: "Database: In-Memory Hash Join",
+    description: "Builds in-memory hash table on customers and probes orders in a single pass.",
+  },
+  {
+    id: "transaction_commit",
+    label: "Database: ACID Transaction Commit",
+    description: "Atomic balance transfer across accounts, persisting MVCC row versions upon COMMIT.",
+  },
+  {
+    id: "transaction_rollback",
+    label: "Database: Transaction Rollback",
+    description: "Aborts uncommitted inventory deduction, restoring row state seamlessly.",
+  },
+  {
+    id: "lock_contention",
+    label: "Database: Row Lock Contention",
+    description: "Tx1 holds Exclusive lock on account 1; Tx2 is blocked into wait state until Tx1 commits.",
+  },
+  {
+    id: "deadlock",
+    label: "Database: Deadlock Cycle Resolution",
+    description: "Cross-holding lock cycle between Tx1 and Tx2. Wait-for graph detects cycle and aborts victim.",
+  },
+  {
+    id: "replica_lag",
+    label: "Database: Primary-Replica Lag",
+    description: "Primary generates replication WAL entries while replica lags by 200ms virtual time.",
+  },
+  {
+    id: "stale_read",
+    label: "Database: Asynchronous Stale Read",
+    description: "Primary commits price change; read directed to lagging replica returns stale price.",
+  },
+  {
+    id: "connection_pool_saturation",
+    label: "Database: Connection Pool Saturation",
+    description: "Pool size limited to 2 connections with queued requests exceeding capacity.",
+  },
+  {
     id: "custom",
     label: "Custom Flow",
     description: "Manual path, method, and branch configuration.",
