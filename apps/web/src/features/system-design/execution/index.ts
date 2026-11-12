@@ -32,5 +32,6 @@ export * from "./components/deployment-workspace";
 export * from "./components/disaster-recovery-workspace";
 export * from "./components/capacity-workspace";
 export * from "./components/analysis-workspace";
+export * from "./components/practice-workspace";
 export * from "./hooks/use-execution-playback";
 

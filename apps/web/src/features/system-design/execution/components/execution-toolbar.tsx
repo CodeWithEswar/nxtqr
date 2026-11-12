@@ -15,6 +15,7 @@ import {
   ShieldIcon,
   DatabaseIcon,
   CpuIcon,
+  BookOpenIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
@@ -168,6 +169,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   );
   const activeAnalysisExperiment = useExecutionStore(
     (s) => s.activeAnalysisExperiment
+  );
+  const isPracticeWorkspaceOpen = useExecutionStore(
+    (s) => s.isPracticeWorkspaceOpen
+  );
+  const togglePracticeWorkspace = useExecutionStore(
+    (s) => s.togglePracticeWorkspace
+  );
+  const activePracticeScenario = useExecutionStore(
+    (s) => s.activePracticeScenario
   );
 
   const isPlaying = status === "playing";
@@ -756,6 +766,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <LayersIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Trade-Offs</span>
+      </Button>
+
+      {/* System Design Interview Simulator, Challenges, Rubrics & Guided Engineering Labs Button */}
+      <Button
+        variant={isPracticeWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => togglePracticeWorkspace()}
+        title="Toggle Interactive System Design Interview Simulator, Challenges, Evaluation Rubrics & Guided Engineering Labs"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isPracticeWorkspaceOpen || activePracticeScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <BookOpenIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Interview</span>
       </Button>
 
       {trafficComparison && (

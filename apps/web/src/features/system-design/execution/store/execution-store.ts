@@ -112,6 +112,12 @@ import {
   ANALYSIS_PRESET_METADATA,
   createAnalysisPresetExperiment,
   ArchitectureAnalysisExecutionEngine,
+  type PracticeScenario,
+  type PracticePresetId,
+  type ChallengeAttempt,
+  PRACTICE_PRESET_METADATA,
+  createPracticePresetScenario,
+  PracticeExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -135,7 +141,8 @@ export type AllScenarioPresetId =
   | DeploymentPresetId
   | DisasterRecoveryPresetId
   | CapacityPresetId
-  | AnalysisPresetId;
+  | AnalysisPresetId
+  | PracticePresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -169,6 +176,7 @@ export interface ExecutionStoreState {
   isDisasterRecoveryWorkspaceOpen: boolean;
   isCapacityWorkspaceOpen: boolean;
   isAnalysisWorkspaceOpen: boolean;
+  isPracticeWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -193,6 +201,8 @@ export interface ExecutionStoreState {
   activeDisasterRecoveryScenario: DisasterRecoveryScenario | null;
   activeCapacityScenario: CapacityScenario | null;
   activeAnalysisExperiment: AnalysisExperiment | null;
+  activePracticeScenario: PracticeScenario | null;
+  practiceAttempts: ChallengeAttempt[];
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -237,6 +247,7 @@ export interface ExecutionStoreState {
   toggleDisasterRecoveryWorkspace: (open?: boolean) => void;
   toggleCapacityWorkspace: (open?: boolean) => void;
   toggleAnalysisWorkspace: (open?: boolean) => void;
+  togglePracticeWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -258,6 +269,7 @@ export interface ExecutionStoreState {
   setDisasterRecoveryScenario: (scenario: DisasterRecoveryScenario | null) => void;
   setCapacityScenario: (scenario: CapacityScenario | null) => void;
   setAnalysisExperiment: (experiment: AnalysisExperiment | null) => void;
+  setPracticeScenario: (scenario: PracticeScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -302,6 +314,7 @@ export interface ExecutionStoreState {
   runDisasterRecoverySimulation: (scenario: DisasterRecoveryScenario) => boolean;
   runCapacitySimulation: (scenario: CapacityScenario) => boolean;
   runAnalysisExperiment: (experiment: AnalysisExperiment) => boolean;
+  runPracticeScenario: (scenario: PracticeScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -398,6 +411,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isDisasterRecoveryWorkspaceOpen: false,
     isCapacityWorkspaceOpen: false,
     isAnalysisWorkspaceOpen: false,
+    isPracticeWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -420,6 +434,8 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeDisasterRecoveryScenario: null,
     activeCapacityScenario: null,
     activeAnalysisExperiment: null,
+    activePracticeScenario: null,
+    practiceAttempts: [],
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -463,6 +479,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isDisasterRecoveryWorkspaceOpen: false,
           isCapacityWorkspaceOpen: false,
           isAnalysisWorkspaceOpen: false,
+          isPracticeWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -666,6 +683,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    togglePracticeWorkspace: (open) => {
+      set({
+        isPracticeWorkspaceOpen:
+          open !== undefined ? open : !get().isPracticeWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -751,7 +775,48 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeAnalysisExperiment: experiment });
     },
 
+    setPracticeScenario: (scenario) => {
+      set({ activePracticeScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (PRACTICE_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const scenario = createPracticePresetScenario(
+          presetId as PracticePresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activePracticeScenario: scenario,
+          activeAnalysisExperiment: null,
+          activeCapacityScenario: null,
+          activeDisasterRecoveryScenario: null,
+          activeDeploymentScenario: null,
+          activeZeroTrustScenario: null,
+          activeObservabilityScenario: null,
+          activeTrafficControlScenario: null,
+          activeDistributedStorageScenario: null,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isPracticeWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runPracticeScenario(scenario);
+        return;
+      }
+
       if (ANALYSIS_PRESET_METADATA.some((p) => p.id === presetId)) {
         const exp = createAnalysisPresetExperiment(
           presetId as AnalysisPresetId
@@ -759,6 +824,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         set((state) => ({
           activePresetId: presetId,
           activeAnalysisExperiment: exp,
+          activePracticeScenario: null,
           activeCapacityScenario: null,
           activeDisasterRecoveryScenario: null,
           activeDeploymentScenario: null,
@@ -2126,6 +2192,56 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeAnalysisExperiment: experiment,
         isTimelineOpen: true,
         isAnalysisWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runPracticeScenario: (scenario) => {
+      const existingAttempts = get().practiceAttempts;
+      const mergedScenario: PracticeScenario = {
+        ...scenario,
+        previousAttempts:
+          scenario.previousAttempts && scenario.previousAttempts.length > 0
+            ? scenario.previousAttempts
+            : existingAttempts,
+      };
+      const { trace, state: practiceState } =
+        PracticeExecutionEngine.runScenario(mergedScenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const nextAttempts = existingAttempts.some(
+        (a) => a.id === practiceState.attemptRecord.id
+      )
+        ? existingAttempts.map((a) =>
+            a.id === practiceState.attemptRecord.id
+              ? practiceState.attemptRecord
+              : a
+          )
+        : [...existingAttempts, practiceState.attemptRecord];
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_practice_sim",
+        architectureRevisionId:
+          scenario.architectureRevisionId || "rev_practice_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activePracticeScenario: mergedScenario,
+        practiceAttempts: nextAttempts,
+        isTimelineOpen: true,
+        isPracticeWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

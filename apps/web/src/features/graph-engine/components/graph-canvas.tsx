@@ -55,6 +55,7 @@ import {
   DisasterRecoveryWorkspace,
   CapacityWorkspace,
   AnalysisWorkspace,
+  PracticeWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -116,6 +117,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   );
   const isAnalysisWorkspaceOpen = useExecutionStore(
     (s) => s.isAnalysisWorkspaceOpen
+  );
+  const isPracticeWorkspaceOpen = useExecutionStore(
+    (s) => s.isPracticeWorkspaceOpen
   );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -649,6 +653,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Distributed Architecture Trade-Offs, Bottleneck Diagnosis, Reliability & Design Decision Explorer Drawer */}
       {isAnalysisWorkspaceOpen && <AnalysisWorkspace />}
+
+      {/* Interactive System Design Interview Simulator, Challenges, Evaluation Rubrics & Guided Engineering Labs Drawer */}
+      {isPracticeWorkspaceOpen && <PracticeWorkspace />}
     </div>
   );
 }

@@ -256,5 +256,19 @@ export * from "./analysis/invariants/analysis-invariants";
 export * from "./analysis/analysis-presets";
 export * from "./analysis/analysis-execution-engine";
 
+// Phase 05.4.23: Interactive System Design Interview Simulator, Challenges, Rubrics & Guided Engineering Labs
+export * from "./practice/practice-schemas";
+export * from "./practice/practice-events";
+export * from "./practice/challenges/challenge-library";
+export * from "./practice/challenges/challenge-registry";
+export * from "./practice/sessions/session-state-machine";
+export * from "./practice/requirements/requirements-estimation-engine";
+export * from "./practice/interview/interview-orchestrator";
+export * from "./practice/labs/engineering-labs";
+export * from "./practice/evaluation/rubric-evaluator";
+export * from "./practice/invariants/practice-invariants";
+export * from "./practice/practice-presets";
+export * from "./practice/practice-execution-engine";
+
 
 

@@ -39,6 +39,7 @@ import type { ModeledDeploymentRuntimeState } from "../deployments/deployment-sc
 import type { ModeledDisasterRecoveryRuntimeState } from "../disaster-recovery/disaster-recovery-schemas";
 import type { ModeledCapacityRuntimeState } from "../capacity/capacity-schemas";
 import type { ModeledAnalysisRuntimeState } from "../analysis/analysis-schemas";
+import type { ModeledPracticeRuntimeState } from "../practice/practice-schemas";
 
 export type { CacheEntry };
 
@@ -163,6 +164,9 @@ export interface ModeledRuntimeState {
 
   // Distributed Architecture Trade-Offs, Bottleneck Diagnosis & Decision Explorer (Phase 05.4.22)
   analysisState?: ModeledAnalysisRuntimeState;
+
+  // Interactive System Design Interview Simulator, Challenges & Guided Labs (Phase 05.4.23)
+  practiceState?: ModeledPracticeRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -366,6 +370,9 @@ export class RuntimeStateHelper {
         : undefined,
       analysisState: state.analysisState
         ? JSON.parse(JSON.stringify(state.analysisState))
+        : undefined,
+      practiceState: state.practiceState
+        ? JSON.parse(JSON.stringify(state.practiceState))
         : undefined,
     };
   }
