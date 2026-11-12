@@ -155,5 +155,13 @@ export * from "./service-mesh/resilience/mesh-resilience-engine";
 export * from "./service-mesh/service-mesh-presets";
 export * from "./service-mesh/service-mesh-execution-engine";
 
+// Phase 05.4.13: Interactive Distributed Consensus, Leader Election & Raft Protocol Engine
+export * from "./raft/raft-schemas";
+export * from "./raft/raft-events";
+export * from "./raft/raft-state-machine";
+export * from "./raft/invariants/raft-invariants";
+export * from "./raft/raft-presets";
+export * from "./raft/raft-execution-engine";
+
 
 

@@ -62,6 +62,11 @@ import {
   SERVICE_MESH_PRESET_METADATA,
   createServiceMeshPresetScenario,
   ServiceMeshExecutionEngine,
+  type RaftScenario,
+  type RaftPresetId,
+  RAFT_PRESET_METADATA,
+  createRaftPresetScenario,
+  RaftExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -75,7 +80,8 @@ export type AllScenarioPresetId =
   | StreamingScenarioPresetId
   | KubernetesScenarioPresetId
   | GlobalNetworkPresetId
-  | ServiceMeshPresetId;
+  | ServiceMeshPresetId
+  | RaftPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -99,6 +105,7 @@ export interface ExecutionStoreState {
   isKubernetesWorkspaceOpen: boolean;
   isGlobalNetworkWorkspaceOpen: boolean;
   isServiceMeshWorkspaceOpen: boolean;
+  isRaftWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -113,6 +120,7 @@ export interface ExecutionStoreState {
   activeKubernetesScenario: KubernetesScenario | null;
   activeGlobalNetworkScenario: GlobalNetworkScenario | null;
   activeServiceMeshScenario: ServiceMeshScenario | null;
+  activeRaftScenario: RaftScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -147,6 +155,7 @@ export interface ExecutionStoreState {
   toggleKubernetesWorkspace: (open?: boolean) => void;
   toggleGlobalNetworkWorkspace: (open?: boolean) => void;
   toggleServiceMeshWorkspace: (open?: boolean) => void;
+  toggleRaftWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -158,6 +167,7 @@ export interface ExecutionStoreState {
   setKubernetesScenario: (scenario: KubernetesScenario | null) => void;
   setGlobalNetworkScenario: (scenario: GlobalNetworkScenario | null) => void;
   setServiceMeshScenario: (scenario: ServiceMeshScenario | null) => void;
+  setRaftScenario: (scenario: RaftScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -192,6 +202,7 @@ export interface ExecutionStoreState {
   runKubernetesSimulation: (scenario: KubernetesScenario) => boolean;
   runGlobalNetworkSimulation: (scenario: GlobalNetworkScenario) => boolean;
   runServiceMeshSimulation: (scenario: ServiceMeshScenario) => boolean;
+  runRaftSimulation: (scenario: RaftScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -278,6 +289,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isKubernetesWorkspaceOpen: false,
     isGlobalNetworkWorkspaceOpen: false,
     isServiceMeshWorkspaceOpen: false,
+    isRaftWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -290,6 +302,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeKubernetesScenario: null,
     activeGlobalNetworkScenario: null,
     activeServiceMeshScenario: null,
+    activeRaftScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -323,6 +336,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isKubernetesWorkspaceOpen: false,
           isGlobalNetworkWorkspaceOpen: false,
           isServiceMeshWorkspaceOpen: false,
+          isRaftWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -456,6 +470,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleRaftWorkspace: (open) => {
+      set({
+        isRaftWorkspaceOpen:
+          open !== undefined ? open : !get().isRaftWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -501,7 +522,36 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeServiceMeshScenario: scenario });
     },
 
+    setRaftScenario: (scenario) => {
+      set({ activeRaftScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (RAFT_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const raftScenario = createRaftPresetScenario(presetId as RaftPresetId);
+        set((state) => ({
+          activePresetId: presetId,
+          activeRaftScenario: raftScenario,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isRaftWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runRaftSimulation(raftScenario);
+        return;
+      }
+
       if (SERVICE_MESH_PRESET_METADATA.some((p) => p.id === presetId)) {
         const meshScenario = createServiceMeshPresetScenario(
           presetId as ServiceMeshPresetId
@@ -1270,6 +1320,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeServiceMeshScenario: scenario,
         isTimelineOpen: true,
         isServiceMeshWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runRaftSimulation: (scenario) => {
+      const trace = RaftExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_raft_consensus_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeRaftScenario: scenario,
+        isTimelineOpen: true,
+        isRaftWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

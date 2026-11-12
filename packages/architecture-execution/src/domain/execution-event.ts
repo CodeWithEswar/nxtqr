@@ -11,6 +11,7 @@ import type { StreamingExecutionEvent } from "../streaming/streaming-events";
 import type { KubernetesExecutionEvent } from "../kubernetes/kubernetes-events";
 import type { GlobalNetworkExecutionEvent } from "../global-network/global-network-events";
 import type { ServiceMeshExecutionEvent } from "../service-mesh/service-mesh-events";
+import type { RaftExecutionEvent } from "../raft/raft-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -269,4 +270,5 @@ export type ExecutionEvent =
   | StreamingExecutionEvent
   | KubernetesExecutionEvent
   | GlobalNetworkExecutionEvent
-  | ServiceMeshExecutionEvent;
+  | ServiceMeshExecutionEvent
+  | RaftExecutionEvent;

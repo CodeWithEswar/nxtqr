@@ -18,6 +18,7 @@ import {
   KUBERNETES_PRESET_METADATA,
   GLOBAL_NETWORK_PRESET_METADATA,
   SERVICE_MESH_PRESET_METADATA,
+  RAFT_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -416,6 +417,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...SERVICE_MESH_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `Mesh: ${p.label}`,
+    description: p.description,
+  })),
+  ...RAFT_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `Raft: ${p.label}`,
     description: p.description,
   })),
   {

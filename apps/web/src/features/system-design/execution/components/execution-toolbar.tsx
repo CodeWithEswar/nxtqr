@@ -91,6 +91,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isServiceMeshWorkspaceOpen = useExecutionStore((s) => s.isServiceMeshWorkspaceOpen);
   const toggleServiceMeshWorkspace = useExecutionStore((s) => s.toggleServiceMeshWorkspace);
   const activeServiceMeshScenario = useExecutionStore((s) => s.activeServiceMeshScenario);
+  const isRaftWorkspaceOpen = useExecutionStore((s) => s.isRaftWorkspaceOpen);
+  const toggleRaftWorkspace = useExecutionStore((s) => s.toggleRaftWorkspace);
+  const activeRaftScenario = useExecutionStore((s) => s.activeRaftScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -508,6 +511,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <ShieldIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Mesh</span>
+      </Button>
+
+      {/* Raft Consensus & Leader Election Workspace Button */}
+      <Button
+        variant={isRaftWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleRaftWorkspace()}
+        title="Toggle Distributed Consensus & Raft Protocol Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isRaftWorkspaceOpen || activeRaftScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <LayersIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Raft</span>
       </Button>
 
       {trafficComparison && (

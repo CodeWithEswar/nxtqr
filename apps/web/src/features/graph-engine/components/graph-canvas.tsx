@@ -45,6 +45,7 @@ import {
   KubernetesExecutionWorkspace,
   GlobalNetworkWorkspace,
   ServiceMeshWorkspace,
+  RaftWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -81,6 +82,7 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isKubernetesWorkspaceOpen = useExecutionStore((s) => s.isKubernetesWorkspaceOpen);
   const isGlobalNetworkWorkspaceOpen = useExecutionStore((s) => s.isGlobalNetworkWorkspaceOpen);
   const isServiceMeshWorkspaceOpen = useExecutionStore((s) => s.isServiceMeshWorkspaceOpen);
+  const isRaftWorkspaceOpen = useExecutionStore((s) => s.isRaftWorkspaceOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
     s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
@@ -583,6 +585,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Microservices Communication, Service Mesh & Resilience Drawer */}
       {isServiceMeshWorkspaceOpen && <ServiceMeshWorkspace />}
+
+      {/* Distributed Consensus & Raft Protocol Drawer */}
+      {isRaftWorkspaceOpen && <RaftWorkspace />}
     </div>
   );
 }
