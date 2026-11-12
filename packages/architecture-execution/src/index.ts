@@ -270,5 +270,19 @@ export * from "./practice/invariants/practice-invariants";
 export * from "./practice/practice-presets";
 export * from "./practice/practice-execution-engine";
 
+// Phase 05.4.24: Architecture Templates, Reference Designs & Interactive Scenario Library
+export * from "./templates/template-schemas";
+export * from "./templates/template-events";
+export * from "./templates/template-validation";
+export * from "./templates/template-instantiation";
+export * from "./templates/template-scenarios";
+export * from "./templates/template-walkthroughs";
+export * from "./templates/template-import-export";
+export * from "./templates/template-builders";
+export * from "./templates/template-catalog-data";
+export * from "./templates/template-registry";
+export * from "./templates/template-presets";
+export * from "./templates/template-execution-engine";
+
 
 

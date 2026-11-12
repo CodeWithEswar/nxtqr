@@ -56,6 +56,7 @@ import {
   CapacityWorkspace,
   AnalysisWorkspace,
   PracticeWorkspace,
+  TemplatesWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -120,6 +121,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   );
   const isPracticeWorkspaceOpen = useExecutionStore(
     (s) => s.isPracticeWorkspaceOpen
+  );
+  const isTemplatesWorkspaceOpen = useExecutionStore(
+    (s) => s.isTemplatesWorkspaceOpen
   );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -656,6 +660,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Interactive System Design Interview Simulator, Challenges, Evaluation Rubrics & Guided Engineering Labs Drawer */}
       {isPracticeWorkspaceOpen && <PracticeWorkspace />}
+
+      {/* Architecture Templates, Reference Designs & Interactive Scenario Library Drawer */}
+      {isTemplatesWorkspaceOpen && <TemplatesWorkspace />}
     </div>
   );
 }

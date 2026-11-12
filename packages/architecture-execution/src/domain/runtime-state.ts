@@ -40,6 +40,7 @@ import type { ModeledDisasterRecoveryRuntimeState } from "../disaster-recovery/d
 import type { ModeledCapacityRuntimeState } from "../capacity/capacity-schemas";
 import type { ModeledAnalysisRuntimeState } from "../analysis/analysis-schemas";
 import type { ModeledPracticeRuntimeState } from "../practice/practice-schemas";
+import type { ModeledTemplateRuntimeState } from "../templates/template-schemas";
 
 export type { CacheEntry };
 
@@ -167,6 +168,9 @@ export interface ModeledRuntimeState {
 
   // Interactive System Design Interview Simulator, Challenges & Guided Labs (Phase 05.4.23)
   practiceState?: ModeledPracticeRuntimeState;
+
+  // Architecture Templates, Reference Designs & Interactive Scenario Library (Phase 05.4.24)
+  templateState?: ModeledTemplateRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -373,6 +377,9 @@ export class RuntimeStateHelper {
         : undefined,
       practiceState: state.practiceState
         ? JSON.parse(JSON.stringify(state.practiceState))
+        : undefined,
+      templateState: state.templateState
+        ? JSON.parse(JSON.stringify(state.templateState))
         : undefined,
     };
   }

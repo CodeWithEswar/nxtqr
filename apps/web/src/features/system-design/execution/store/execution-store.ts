@@ -118,6 +118,14 @@ import {
   PRACTICE_PRESET_METADATA,
   createPracticePresetScenario,
   PracticeExecutionEngine,
+  type ArchitectureTemplate,
+  type TemplateScenarioRunInput,
+  type TemplatePresetId,
+  type TemplateVariant,
+  TEMPLATE_PRESET_METADATA,
+  createTemplatePresetScenario,
+  TemplateExecutionEngine,
+  templateRegistry,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -142,7 +150,8 @@ export type AllScenarioPresetId =
   | DisasterRecoveryPresetId
   | CapacityPresetId
   | AnalysisPresetId
-  | PracticePresetId;
+  | PracticePresetId
+  | TemplatePresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -177,6 +186,7 @@ export interface ExecutionStoreState {
   isCapacityWorkspaceOpen: boolean;
   isAnalysisWorkspaceOpen: boolean;
   isPracticeWorkspaceOpen: boolean;
+  isTemplatesWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -203,6 +213,13 @@ export interface ExecutionStoreState {
   activeAnalysisExperiment: AnalysisExperiment | null;
   activePracticeScenario: PracticeScenario | null;
   practiceAttempts: ChallengeAttempt[];
+  activeTemplateScenario: TemplateScenarioRunInput | null;
+  selectedTemplateId: string;
+  favoriteTemplateIds: string[];
+  recentTemplateIds: string[];
+  personalTemplates: ArchitectureTemplate[];
+  savedTemplateVariants: TemplateVariant[];
+  completedTemplateIds: string[];
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -315,6 +332,17 @@ export interface ExecutionStoreState {
   runCapacitySimulation: (scenario: CapacityScenario) => boolean;
   runAnalysisExperiment: (experiment: AnalysisExperiment) => boolean;
   runPracticeScenario: (scenario: PracticeScenario) => boolean;
+  toggleTemplatesWorkspace: (open?: boolean) => void;
+  setSelectedTemplateId: (templateId: string) => void;
+  setTemplateScenario: (scenario: TemplateScenarioRunInput | null) => void;
+  runTemplateScenario: (
+    scenario: TemplateScenarioRunInput,
+    customTemplate?: ArchitectureTemplate
+  ) => boolean;
+  toggleFavoriteTemplate: (templateId: string) => void;
+  markTemplateCompleted: (templateId: string) => void;
+  savePersonalTemplate: (template: ArchitectureTemplate) => void;
+  saveTemplateVariant: (variant: TemplateVariant) => void;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -412,6 +440,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isCapacityWorkspaceOpen: false,
     isAnalysisWorkspaceOpen: false,
     isPracticeWorkspaceOpen: false,
+    isTemplatesWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -436,6 +465,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeAnalysisExperiment: null,
     activePracticeScenario: null,
     practiceAttempts: [],
+    activeTemplateScenario: null,
+    selectedTemplateId: "tpl_001_client_server",
+    favoriteTemplateIds: [],
+    recentTemplateIds: ["tpl_001_client_server"],
+    personalTemplates: [],
+    savedTemplateVariants: [],
+    completedTemplateIds: [],
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -480,6 +516,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isCapacityWorkspaceOpen: false,
           isAnalysisWorkspaceOpen: false,
           isPracticeWorkspaceOpen: false,
+          isTemplatesWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -690,6 +727,65 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleTemplatesWorkspace: (open) => {
+      set({
+        isTemplatesWorkspaceOpen:
+          open !== undefined ? open : !get().isTemplatesWorkspaceOpen,
+      });
+    },
+
+    setSelectedTemplateId: (templateId) => {
+      const recent = [
+        templateId,
+        ...get().recentTemplateIds.filter((id) => id !== templateId),
+      ].slice(0, 12);
+      set({
+        selectedTemplateId: templateId,
+        recentTemplateIds: recent,
+      });
+      templateRegistry.recordUsage(templateId, "opensCount");
+    },
+
+    toggleFavoriteTemplate: (templateId) => {
+      const current = get().favoriteTemplateIds;
+      const next = current.includes(templateId)
+        ? current.filter((id) => id !== templateId)
+        : [...current, templateId];
+      set({ favoriteTemplateIds: next });
+    },
+
+    markTemplateCompleted: (templateId) => {
+      const current = get().completedTemplateIds;
+      if (!current.includes(templateId)) {
+        set({ completedTemplateIds: [...current, templateId] });
+      }
+      templateRegistry.recordUsage(templateId, "walkthroughCompletionsCount");
+    },
+
+    savePersonalTemplate: (template) => {
+      templateRegistry.register(template);
+      const current = get().personalTemplates;
+      const next = current.some((t) => t.manifest.id === template.manifest.id)
+        ? current.map((t) =>
+            t.manifest.id === template.manifest.id ? template : t
+          )
+        : [template, ...current];
+      set({
+        personalTemplates: next,
+        selectedTemplateId: template.manifest.id,
+      });
+    },
+
+    saveTemplateVariant: (variant) => {
+      const current = get().savedTemplateVariants;
+      const next = current.some((v) => v.variantId === variant.variantId)
+        ? current.map((v) =>
+            v.variantId === variant.variantId ? variant : v
+          )
+        : [variant, ...current];
+      set({ savedTemplateVariants: next });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -779,7 +875,55 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activePracticeScenario: scenario });
     },
 
+    setTemplateScenario: (scenario) => {
+      set({ activeTemplateScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (TEMPLATE_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const scenario = createTemplatePresetScenario(
+          presetId as TemplatePresetId
+        );
+        const recent = [
+          scenario.templateId,
+          ...get().recentTemplateIds.filter((id) => id !== scenario.templateId),
+        ].slice(0, 12);
+        set((state) => ({
+          activePresetId: presetId,
+          activeTemplateScenario: scenario,
+          selectedTemplateId: scenario.templateId,
+          recentTemplateIds: recent,
+          activePracticeScenario: null,
+          activeAnalysisExperiment: null,
+          activeCapacityScenario: null,
+          activeDisasterRecoveryScenario: null,
+          activeDeploymentScenario: null,
+          activeZeroTrustScenario: null,
+          activeObservabilityScenario: null,
+          activeTrafficControlScenario: null,
+          activeDistributedStorageScenario: null,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isTemplatesWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runTemplateScenario(scenario);
+        return;
+      }
+
       if (PRACTICE_PRESET_METADATA.some((p) => p.id === presetId)) {
         const scenario = createPracticePresetScenario(
           presetId as PracticePresetId
@@ -2242,6 +2386,46 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         practiceAttempts: nextAttempts,
         isTimelineOpen: true,
         isPracticeWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runTemplateScenario: (scenario, customTemplate) => {
+      const { trace, state: templateState } = TemplateExecutionEngine.runScenario(
+        scenario,
+        customTemplate
+      );
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const recent = [
+        scenario.templateId,
+        ...get().recentTemplateIds.filter((id) => id !== scenario.templateId),
+      ].slice(0, 12);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: `arch_tpl_${scenario.templateId}`,
+        architectureRevisionId:
+          templateState.template.manifest.architectureRevisionId || "rev_tpl_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeTemplateScenario: scenario,
+        selectedTemplateId: scenario.templateId,
+        recentTemplateIds: recent,
+        isTimelineOpen: true,
+        isTemplatesWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

@@ -16,6 +16,7 @@ import {
   DatabaseIcon,
   CpuIcon,
   BookOpenIcon,
+  FolderIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
@@ -178,6 +179,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   );
   const activePracticeScenario = useExecutionStore(
     (s) => s.activePracticeScenario
+  );
+  const isTemplatesWorkspaceOpen = useExecutionStore(
+    (s) => s.isTemplatesWorkspaceOpen
+  );
+  const toggleTemplatesWorkspace = useExecutionStore(
+    (s) => s.toggleTemplatesWorkspace
+  );
+  const activeTemplateScenario = useExecutionStore(
+    (s) => s.activeTemplateScenario
   );
 
   const isPlaying = status === "playing";
@@ -783,6 +793,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <BookOpenIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Interview</span>
+      </Button>
+
+      {/* Architecture Templates & Scenario Library Button */}
+      <Button
+        variant={isTemplatesWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleTemplatesWorkspace()}
+        title="Toggle Architecture Templates, Reference Designs & Interactive Scenario Library"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isTemplatesWorkspaceOpen || activeTemplateScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <FolderIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Templates</span>
       </Button>
 
       {trafficComparison && (

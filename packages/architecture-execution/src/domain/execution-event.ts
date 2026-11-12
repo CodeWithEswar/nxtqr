@@ -22,6 +22,7 @@ import type { DisasterRecoveryExecutionEvent } from "../disaster-recovery/disast
 import type { CapacityExecutionEvent } from "../capacity/capacity-events";
 import type { AnalysisExecutionEvent } from "../analysis/analysis-events";
 import type { PracticeExecutionEvent } from "../practice/practice-events";
+import type { TemplateExecutionEvent } from "../templates/template-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -291,4 +292,5 @@ export type ExecutionEvent =
   | DisasterRecoveryExecutionEvent
   | CapacityExecutionEvent
   | AnalysisExecutionEvent
-  | PracticeExecutionEvent;
+  | PracticeExecutionEvent
+  | TemplateExecutionEvent;

@@ -29,6 +29,7 @@ import {
   CAPACITY_PRESET_METADATA,
   ANALYSIS_PRESET_METADATA,
   PRACTICE_PRESET_METADATA,
+  TEMPLATE_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -482,6 +483,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...PRACTICE_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `Practice: ${p.label}`,
+    description: p.description,
+  })),
+  ...TEMPLATE_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: p.label,
     description: p.description,
   })),
   {
