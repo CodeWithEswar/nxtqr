@@ -11,16 +11,41 @@ export interface ExecutionTimelineProps {
   onClose?: () => void;
 }
 
+type TimelineFilter = "all" | "request" | "response" | "cache" | "database" | "routing";
+
 const EVENT_TYPE_BADGES: Record<
   string,
   { label: string; className: string }
 > = {
+  // Phase 05.4.1 base events
   "run.started": { label: "START", className: "text-text-secondary border-border-default bg-surface-03" },
   "node.entered": { label: "IN", className: "text-foreground border-border-default bg-surface-04" },
   "route.selected": { label: "BRANCH", className: "text-text-secondary border-border-strong bg-surface-03" },
   "node.exited": { label: "OUT", className: "text-text-muted border-border-subtle bg-surface-01" },
   "edge.traversed": { label: "TRANSIT", className: "text-text-secondary border-border-default bg-surface-03" },
   "run.completed": { label: "DONE", className: "text-emerald-400 border-border-strong bg-surface-04" },
+
+  // Phase 05.4.2 lifecycle events
+  "request.created": { label: "REQ INIT", className: "text-blue-400 border-border-default bg-blue-950/20" },
+  "request.dispatched": { label: "REQ SEND", className: "text-blue-400 border-border-default bg-blue-950/20" },
+  "request.received": { label: "REQ IN", className: "text-cyan-400 border-border-default bg-cyan-950/20" },
+  "request.forwarded": { label: "REQ FWD", className: "text-text-secondary border-border-default bg-surface-03" },
+  "response.created": { label: "RES GEN", className: "text-emerald-400 border-border-default bg-emerald-950/20" },
+  "response.dispatched": { label: "RES SEND", className: "text-emerald-400 border-border-default bg-emerald-950/20" },
+  "response.received": { label: "RES RECV", className: "text-emerald-400 border-border-default bg-emerald-950/20" },
+  "route.match.selected": { label: "ROUTE MATCH", className: "text-purple-400 border-border-default bg-purple-950/20" },
+  "route.match.failed": { label: "404 NOT FOUND", className: "text-rose-400 border-border-default bg-rose-950/20" },
+  "route.upstream.selected": { label: "LB ROUTE", className: "text-purple-400 border-border-default bg-purple-950/20" },
+  "cache.lookup.started": { label: "CACHE QUERY", className: "text-amber-400 border-border-default bg-amber-950/20" },
+  "cache.hit": { label: "CACHE HIT", className: "text-emerald-400 border-border-default bg-emerald-950/20" },
+  "cache.miss": { label: "CACHE MISS", className: "text-amber-400 border-border-default bg-amber-950/20" },
+  "cache.write": { label: "CACHE SET", className: "text-amber-400 border-border-default bg-amber-950/20" },
+  "database.read.started": { label: "DB READ", className: "text-blue-400 border-border-default bg-blue-950/20" },
+  "database.read.completed": { label: "DB OK", className: "text-emerald-400 border-border-default bg-emerald-950/20" },
+  "database.write.completed": { label: "DB WRITE", className: "text-emerald-400 border-border-default bg-emerald-950/20" },
+  "database.operation.failed": { label: "DB FAIL", className: "text-rose-400 border-border-default bg-rose-950/20" },
+  "component.processing.started": { label: "PROC START", className: "text-text-secondary border-border-default bg-surface-03" },
+  "component.processing.completed": { label: "PROC OK", className: "text-text-secondary border-border-default bg-surface-03" },
 };
 
 export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps) {
@@ -30,6 +55,7 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
   const toggleTimeline = useExecutionStore((s) => s.toggleTimeline);
   const selectedEventId = useExecutionStore((s) => s.selectedEventId);
 
+  const [filter, setFilter] = React.useState<TimelineFilter>("all");
   const listRef = React.useRef<HTMLDivElement>(null);
 
   // Auto-scroll to active event row
@@ -52,11 +78,24 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
         <ActivityIcon className="w-6 h-6 text-text-disabled mb-2" />
         <h4 className="text-xs font-semibold text-foreground">No Active Execution Trace</h4>
         <p className="text-[11px] text-text-muted mt-1 max-w-xs">
-          Click "Run Flow" on the execution toolbar to start modeled request propagation.
+          Click &quot;Run Flow&quot; on the execution toolbar to start modeled request propagation.
         </p>
       </div>
     );
   }
+
+  // Filter events by domain category
+  const filteredEvents = trace.events
+    .map((evt, originalIdx) => ({ evt, originalIdx }))
+    .filter(({ evt }) => {
+      if (filter === "all") return true;
+      if (filter === "request") return evt.type.startsWith("request.") || evt.type === "node.entered";
+      if (filter === "response") return evt.type.startsWith("response.");
+      if (filter === "cache") return evt.type.startsWith("cache.");
+      if (filter === "database") return evt.type.startsWith("database.");
+      if (filter === "routing") return evt.type.startsWith("route.");
+      return true;
+    });
 
   return (
     <div
@@ -90,6 +129,37 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
         </div>
       </div>
 
+      {/* Filter Bar */}
+      <div className="flex items-center gap-1 px-2.5 py-1.5 bg-surface-01/60 border-b border-border-subtle font-mono text-[9px] overflow-x-auto shrink-0">
+        {(
+          [
+            { id: "all", label: "All" },
+            { id: "request", label: "Requests" },
+            { id: "response", label: "Responses" },
+            { id: "cache", label: "Cache" },
+            { id: "database", label: "Database" },
+            { id: "routing", label: "Routing" },
+          ] as const
+        ).map((tab) => {
+          const isSelected = filter === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setFilter(tab.id)}
+              className={cn(
+                "px-2 py-0.5 rounded transition-colors uppercase border",
+                isSelected
+                  ? "bg-surface-04 border-border-strong text-foreground font-semibold shadow-level-3"
+                  : "bg-surface-02 border-border-subtle text-text-muted hover:text-foreground"
+              )}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Events List */}
       <div
         ref={listRef}
@@ -97,21 +167,21 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
         aria-label="Ordered Execution Events"
         className="flex-1 overflow-y-auto min-h-0 divide-y divide-border-subtle/60 p-1"
       >
-        {trace.events.map((evt, idx) => {
-          const isActive = idx === activeIndex;
+        {filteredEvents.map(({ evt, originalIdx }) => {
+          const isActive = originalIdx === activeIndex;
           const isSelected = selectedEventId === evt.id;
           const badge = EVENT_TYPE_BADGES[evt.type] || { label: evt.type, className: "text-text-muted" };
 
           return (
             <div
               key={evt.id}
-              data-step-index={idx}
-              onClick={() => seekToStep(idx)}
+              data-step-index={originalIdx}
+              onClick={() => seekToStep(originalIdx)}
               role="article"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
-                  seekToStep(idx);
+                  seekToStep(originalIdx);
                 }
               }}
               className={cn(
@@ -146,12 +216,12 @@ export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps
 
                   <span className="font-mono text-[11px] font-semibold text-foreground truncate">
                     {"nodeLabel" in evt
-                      ? evt.nodeLabel
+                      ? (evt as any).nodeLabel
                       : "edgeLabel" in evt
-                        ? evt.edgeLabel
+                        ? (evt as any).edgeLabel
                         : "entryNodeId" in evt
-                          ? evt.entryNodeId
-                          : "Execution Finished"}
+                          ? (evt as any).entryNodeId
+                          : "Execution Event"}
                   </span>
                 </div>
 

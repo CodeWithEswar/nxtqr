@@ -3,7 +3,14 @@
 import * as React from "react";
 import { cn } from "@nxtqr/utils";
 import { Button, Badge } from "@nxtqr/ui";
-import { CloseIcon, SlidersIcon, CheckCircleIcon } from "@nxtqr/icons";
+import {
+  CloseIcon,
+  SlidersIcon,
+  CheckCircleIcon,
+  DatabaseIcon,
+  LayersIcon,
+  ActivityIcon,
+} from "@nxtqr/icons";
 import { useExecutionStore } from "../store/execution-store";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
 
@@ -12,11 +19,15 @@ export interface ExecutionInspectorProps {
   onClose?: () => void;
 }
 
+type InspectorTab = "overview" | "payloads" | "state";
+
 export function ExecutionInspector({ className, onClose }: ExecutionInspectorProps) {
   const currentFrame = useExecutionStore((s) => s.playbackState.currentFrame);
   const configuration = useExecutionStore((s) => s.configuration);
   const toggleExecutionInspector = useExecutionStore((s) => s.toggleExecutionInspector);
   const nodes = useGraphEditorStore((s) => s.nodes);
+
+  const [activeTab, setActiveTab] = React.useState<InspectorTab>("overview");
 
   const activeEvent = currentFrame?.activeEvent;
 
@@ -38,9 +49,33 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
   }
 
   // Find target node if applicable
-  const targetNodeId = "nodeId" in activeEvent ? activeEvent.nodeId : "entryNodeId" in activeEvent ? activeEvent.entryNodeId : undefined;
+  const targetNodeId =
+    "nodeId" in activeEvent
+      ? (activeEvent as any).nodeId
+      : "entryNodeId" in activeEvent
+        ? (activeEvent as any).entryNodeId
+        : undefined;
   const targetNode = targetNodeId ? nodes.find((n) => n.id === targetNodeId) : null;
   const rawNodeData = (targetNode?.data || {}) as Record<string, unknown>;
+
+  const req = currentFrame?.activeRequest || {
+    method: configuration.request.method,
+    path: configuration.request.path,
+    headers: configuration.request.headers || {},
+    body: configuration.request.body,
+  };
+
+  const res = currentFrame?.activeResponse;
+  const runtimeState = currentFrame?.runtimeState;
+
+  // Determine HTTP status badge styling
+  const statusColor = res?.status
+    ? res.status >= 500
+      ? "text-rose-400 border-border-default bg-rose-950/20"
+      : res.status >= 400
+        ? "text-amber-400 border-border-default bg-amber-950/20"
+        : "text-emerald-400 border-border-default bg-emerald-950/20"
+    : "text-text-muted border-border-default bg-surface-03";
 
   return (
     <div
@@ -54,11 +89,11 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
         <div className="flex items-center gap-2">
           <SlidersIcon className="w-3.5 h-3.5 text-text-secondary" />
           <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-foreground">
-            Execution Step #{activeEvent.sequence}
+            Step #{activeEvent.sequence}
           </span>
           <Badge
             variant="outline"
-            className="text-[9px] font-mono px-1 py-0 h-4 border-border-default bg-surface-03 text-text-secondary uppercase"
+            className="text-[9px] font-mono px-1.5 py-0 h-4 border-border-default bg-surface-03 text-text-secondary uppercase"
           >
             {activeEvent.type}
           </Badge>
@@ -75,119 +110,334 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
         </Button>
       </div>
 
+      {/* Tabs */}
+      <div className="flex items-center border-b border-border-subtle bg-surface-01/50 px-2 shrink-0">
+        <button
+          type="button"
+          onClick={() => setActiveTab("overview")}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px",
+            activeTab === "overview"
+              ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
+              : "border-transparent text-text-muted hover:text-text-secondary"
+          )}
+        >
+          <ActivityIcon className="w-3 h-3" />
+          <span>Overview</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("payloads")}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px",
+            activeTab === "payloads"
+              ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
+              : "border-transparent text-text-muted hover:text-text-secondary"
+          )}
+        >
+          <LayersIcon className="w-3 h-3" />
+          <span>Payloads {res ? "(2)" : "(1)"}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("state")}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px",
+            activeTab === "state"
+              ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
+              : "border-transparent text-text-muted hover:text-text-secondary"
+          )}
+        >
+          <DatabaseIcon className="w-3 h-3" />
+          <span>State & Fixtures</span>
+        </button>
+      </div>
+
       {/* Body Content */}
-      <div className="flex-1 overflow-y-auto min-h-0 p-3 space-y-3.5">
-        {/* 1. Step Overview */}
-        <div className="space-y-1">
-          <h4 className="text-xs font-semibold text-foreground leading-snug">
-            {currentFrame?.stepTitle || activeEvent.type}
-          </h4>
-          <p className="font-sans text-[11px] text-text-secondary leading-relaxed">
-            {activeEvent.explanation}
-          </p>
-        </div>
-
-        {/* 2. Modeled Timing Metadata */}
-        <div className="p-2.5 rounded bg-surface-01 border border-border-subtle grid grid-cols-2 gap-2 text-[10px] font-mono">
-          <div>
-            <span className="text-text-muted block">Simulated Timestamp</span>
-            <span className="text-foreground font-semibold">+{activeEvent.atMs} ms</span>
-          </div>
-          <div>
-            <span className="text-text-muted block">Step Duration</span>
-            <span className="text-foreground font-semibold">{activeEvent.durationMs} ms</span>
-          </div>
-        </div>
-
-        {/* 3. Component Details if node event */}
-        {targetNode && (
-          <div className="space-y-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold block">
-              Component Context
-            </span>
-            <div className="p-2 rounded bg-surface-03 border border-border-subtle space-y-1 text-xs">
-              <div className="flex items-center justify-between font-mono text-[11px]">
-                <span className="font-semibold text-foreground">{targetNode.label || targetNode.id}</span>
-                <span className="text-text-disabled">#{targetNode.id.slice(-6)}</span>
-              </div>
-              <div className="flex items-center gap-2 text-[10px] font-mono text-text-muted">
-                <span>Type: {String(rawNodeData.componentType || targetNode.type || "service")}</span>
-                {rawNodeData.concurrency !== undefined && (
-                  <span>· Concurrency: {String(rawNodeData.concurrency)}</span>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 4. Request Metadata */}
-        <div className="space-y-1.5">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold block">
-            Modeled Request
-          </span>
-          <div className="p-2.5 rounded bg-surface-01 border border-border-subtle font-mono text-[10px] space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="px-1.5 py-0.5 rounded bg-surface-04 border border-border-strong text-foreground font-semibold">
-                {configuration.request.method}
-              </span>
-              <span className="text-text-secondary truncate">{configuration.request.path}</span>
+      <div className="flex-1 overflow-y-auto min-h-0 p-3 space-y-3">
+        {/* TAB 1: OVERVIEW */}
+        {activeTab === "overview" && (
+          <div className="space-y-3">
+            {/* 1. Step Overview */}
+            <div className="space-y-1">
+              <h4 className="text-xs font-semibold text-foreground leading-snug">
+                {currentFrame?.stepTitle || activeEvent.type}
+              </h4>
+              <p className="font-sans text-[11px] text-text-secondary leading-relaxed">
+                {activeEvent.explanation}
+              </p>
             </div>
 
-            {/* Redacted Headers */}
-            <div className="space-y-1 border-t border-border-subtle/60 pt-1.5">
-              <span className="text-text-disabled block text-[9px] uppercase tracking-wider">Headers</span>
-              {Object.entries(configuration.request.headers || {}).map(([key, val]) => (
-                <div key={key} className="flex items-center justify-between text-text-muted truncate">
-                  <span>{key}:</span>
-                  <span className="text-text-secondary truncate max-w-[140px]">{String(val)}</span>
+            {/* 2. Modeled Timing Metadata */}
+            <div className="p-2.5 rounded bg-surface-01 border border-border-subtle grid grid-cols-2 gap-2 text-[10px] font-mono">
+              <div>
+                <span className="text-text-muted block">Simulated Timestamp</span>
+                <span className="text-foreground font-semibold">+{activeEvent.atMs} ms</span>
+              </div>
+              <div>
+                <span className="text-text-muted block">Step Duration</span>
+                <span className="text-foreground font-semibold">{activeEvent.durationMs} ms</span>
+              </div>
+            </div>
+
+            {/* 3. Component Details if node event */}
+            {targetNode && (
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold block">
+                  Component Context
+                </span>
+                <div className="p-2.5 rounded bg-surface-03 border border-border-subtle space-y-1 text-xs">
+                  <div className="flex items-center justify-between font-mono text-[11px]">
+                    <span className="font-semibold text-foreground">{targetNode.label || targetNode.id}</span>
+                    <span className="text-text-disabled">#{targetNode.id.slice(-6)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-text-muted">
+                    <span>Type: {String(rawNodeData.componentType || targetNode.type || "service")}</span>
+                    {rawNodeData.concurrency !== undefined && (
+                      <span>· Concurrency: {String(rawNodeData.concurrency)}</span>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
 
-            {/* Body */}
-            {Boolean(configuration.request.body) && (
-              <div className="space-y-1 border-t border-border-subtle/60 pt-1.5">
-                <span className="text-text-disabled block text-[9px] uppercase tracking-wider">Payload Body</span>
-                <pre className="p-1.5 rounded bg-surface-02 border border-border-subtle text-[9px] text-text-secondary overflow-x-auto">
-                  {JSON.stringify(configuration.request.body, null, 2)}
-                </pre>
+            {/* 4. Route Selection Rationale if routing event */}
+            {"decisionReason" in activeEvent && (
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold block">
+                  Routing Decision
+                </span>
+                <div className="p-2 rounded bg-surface-03 border border-border-strong space-y-1 text-[11px] font-mono">
+                  <div className="text-foreground font-semibold">
+                    Wire: {(activeEvent as any).selectedEdgeId || (activeEvent as any).upstreamNodeId}
+                  </div>
+                  <div className="text-text-secondary text-[10px]">
+                    Reason: {(activeEvent as any).decisionReason || (activeEvent as any).matchType}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 5. Terminal Outcomes */}
+            {activeEvent.type === "run.completed" && (
+              <div className="p-2.5 rounded bg-surface-03 border border-border-strong space-y-1">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="font-mono text-xs font-semibold text-foreground uppercase">
+                    {(activeEvent as any).outcome}
+                  </span>
+                </div>
+                <p className="text-[11px] font-sans text-text-secondary">
+                  {(activeEvent as any).terminalReason}
+                </p>
               </div>
             )}
           </div>
-        </div>
+        )}
 
-        {/* 5. Route Selection Rationale if branching event */}
-        {activeEvent.type === "route.selected" && (
-          <div className="space-y-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold block">
-              Routing Decision
-            </span>
-            <div className="p-2 rounded bg-surface-03 border border-border-strong space-y-1 text-[11px] font-mono">
-              <div className="text-foreground font-semibold">
-                Dispatched to wire: {activeEvent.selectedEdgeId}
+        {/* TAB 2: PAYLOADS (REQUEST & RESPONSE) */}
+        {activeTab === "payloads" && (
+          <div className="space-y-3">
+            {/* Modeled Request */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold">
+                  Modeled HTTP Request
+                </span>
+                <Badge variant="outline" className="text-[9px] font-mono border-border-default text-text-secondary">
+                  Direction: {currentFrame?.direction || "request"}
+                </Badge>
               </div>
-              <div className="text-text-secondary text-[10px]">
-                Reason: {activeEvent.decisionReason}
+
+              <div className="p-2.5 rounded bg-surface-01 border border-border-subtle font-mono text-[10px] space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="px-1.5 py-0.5 rounded bg-surface-04 border border-border-strong text-foreground font-semibold">
+                    {req.method}
+                  </span>
+                  <span className="text-text-secondary truncate">{req.path}</span>
+                </div>
+
+                {/* Headers */}
+                <div className="space-y-1 border-t border-border-subtle/60 pt-1.5">
+                  <span className="text-text-disabled block text-[9px] uppercase tracking-wider">Headers</span>
+                  {Object.entries(req.headers || {}).map(([key, val]) => (
+                    <div key={key} className="flex items-center justify-between text-text-muted truncate">
+                      <span>{key}:</span>
+                      <span className="text-text-secondary truncate max-w-[140px]">{String(val)}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Body */}
+                {Boolean(req.body) && (
+                  <div className="space-y-1 border-t border-border-subtle/60 pt-1.5">
+                    <span className="text-text-disabled block text-[9px] uppercase tracking-wider">Request Payload</span>
+                    <pre className="p-1.5 rounded bg-surface-02 border border-border-subtle text-[9px] text-text-secondary overflow-x-auto max-h-24">
+                      {typeof req.body === "object" ? JSON.stringify(req.body, null, 2) : String(req.body)}
+                    </pre>
+                  </div>
+                )}
               </div>
-              <div className="text-text-disabled text-[9px]">
-                Considered branches: {activeEvent.availableEdgeIds.join(", ")}
+            </div>
+
+            {/* Modeled Response */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-semibold">
+                  Modeled HTTP Response
+                </span>
+                {res ? (
+                  <Badge variant="outline" className={cn("text-[9px] font-mono px-1.5 py-0.5 rounded", statusColor)}>
+                    HTTP {res.status}
+                  </Badge>
+                ) : (
+                  <span className="text-[9px] font-mono text-text-disabled">Pending / In-Flight</span>
+                )}
               </div>
+
+              {res ? (
+                <div className="p-2.5 rounded bg-surface-01 border border-border-subtle font-mono text-[10px] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-text-secondary">Latency</span>
+                    <span className="text-foreground font-semibold">{res.latencyMs} ms</span>
+                  </div>
+
+                  {/* Headers */}
+                  <div className="space-y-1 border-t border-border-subtle/60 pt-1.5">
+                    <span className="text-text-disabled block text-[9px] uppercase tracking-wider">Response Headers</span>
+                    {Object.entries(res.headers || {}).map(([key, val]) => (
+                      <div key={key} className="flex items-center justify-between text-text-muted truncate">
+                        <span>{key}:</span>
+                        <span className="text-text-secondary truncate max-w-[140px] font-semibold">{String(val)}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Response Body */}
+                  {res.body !== undefined && (
+                    <div className="space-y-1 border-t border-border-subtle/60 pt-1.5">
+                      <span className="text-text-disabled block text-[9px] uppercase tracking-wider">Response Payload</span>
+                      <pre className="p-1.5 rounded bg-surface-02 border border-border-subtle text-[9px] text-emerald-400 overflow-x-auto max-h-32">
+                        {typeof res.body === "object" ? JSON.stringify(res.body, null, 2) : String(res.body)}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-3 rounded bg-surface-01 border border-border-subtle text-center text-[10px] font-mono text-text-muted">
+                  No response emitted at this step. Response generates once target service or handler processes the request.
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* 6. Execution Limit & Terminal Outcomes */}
-        {activeEvent.type === "run.completed" && (
-          <div className="p-2.5 rounded bg-surface-03 border border-border-strong space-y-1">
-            <div className="flex items-center gap-1.5">
-              <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="font-mono text-xs font-semibold text-foreground uppercase">
-                {activeEvent.outcome}
-              </span>
+        {/* TAB 3: RUNTIME STATE & FIXTURES */}
+        {activeTab === "state" && (
+          <div className="space-y-3 font-mono text-[10px]">
+            {/* Cache Fixtures (Redis) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="uppercase tracking-wider text-text-muted font-semibold">
+                  Modeled Cache State (Redis)
+                </span>
+                <span className="text-[9px] text-text-disabled">
+                  {runtimeState?.cache ? Object.keys(runtimeState.cache).length : 0} keys
+                </span>
+              </div>
+
+              {!runtimeState || Object.keys(runtimeState.cache).length === 0 ? (
+                <div className="p-2.5 rounded bg-surface-01 border border-border-subtle text-text-muted text-center">
+                  Cache is currently empty (Cold Cache).
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {Object.entries(runtimeState.cache).map(([key, fixture]) => (
+                    <div key={key} className="p-2 rounded bg-surface-01 border border-border-subtle space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-foreground font-semibold">{key}</span>
+                        <span className="text-text-secondary text-[9px]">
+                          TTL: {Math.max(0, Math.round((fixture.expiresAtMs - (currentFrame?.virtualTimeMs || 0)) / 1000))}s
+                        </span>
+                      </div>
+                      <pre className="text-[9px] text-text-secondary truncate bg-surface-02 p-1 rounded border border-border-subtle">
+                        {JSON.stringify(fixture.value)}
+                      </pre>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <p className="text-[11px] font-sans text-text-secondary">
-              {activeEvent.terminalReason}
-            </p>
+
+            {/* Database Fixtures (PostgreSQL) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="uppercase tracking-wider text-text-muted font-semibold">
+                  Modeled Database Fixtures (PostgreSQL)
+                </span>
+                <span className="text-[9px] text-text-disabled">
+                  {runtimeState?.database ? Object.keys(runtimeState.database).length : 0} tables
+                </span>
+              </div>
+
+              {!runtimeState || Object.keys(runtimeState.database).length === 0 ? (
+                <div className="p-2.5 rounded bg-surface-01 border border-border-subtle text-text-muted text-center">
+                  No database tables registered in modeled state.
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {Object.entries(runtimeState.database).map(([table, rows]) => (
+                    <div key={table} className="p-2 rounded bg-surface-01 border border-border-subtle space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-foreground font-semibold">{table}</span>
+                        <span className="text-text-disabled text-[9px]">{Object.keys(rows).length} rows</span>
+                      </div>
+                      <div className="space-y-1">
+                        {Object.entries(rows).slice(0, 3).map(([pk, row]) => (
+                          <div key={pk} className="flex items-center justify-between text-[9px] bg-surface-02 p-1 rounded border border-border-subtle text-text-secondary">
+                            <span className="font-semibold text-text-muted">PK {pk}:</span>
+                            <span className="truncate max-w-[160px]">{JSON.stringify(row)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Call Stack */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="uppercase tracking-wider text-text-muted font-semibold">
+                  Modeled Call Stack Frames
+                </span>
+                <span className="text-[9px] text-text-disabled">
+                  {runtimeState?.callStack.length || 0} frames
+                </span>
+              </div>
+
+              {!runtimeState || runtimeState.callStack.length === 0 ? (
+                <div className="p-2.5 rounded bg-surface-01 border border-border-subtle text-text-muted text-center">
+                  Call stack is empty (Idle / Completed).
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {runtimeState.callStack.map((frame, idx) => (
+                    <div key={idx} className="p-1.5 rounded bg-surface-01 border border-border-subtle flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-text-disabled text-[9px]">#{idx + 1}</span>
+                        <span className="text-foreground font-semibold">{frame.calleeNodeId || frame.callerNodeId}</span>
+                        <span className="text-text-muted">({frame.operation})</span>
+                      </div>
+                      <span className="text-text-secondary text-[9px]">+{frame.atMs}ms</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

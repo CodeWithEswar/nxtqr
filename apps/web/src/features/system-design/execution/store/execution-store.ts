@@ -6,9 +6,12 @@ import {
   type ExecutionTrace,
   type PlaybackSpeed,
   type PlaybackState,
+  type BehaviorScenario,
+  type ScenarioPresetId,
   ExecutionSnapshotManager,
   ExecutionPlanner,
   PlaybackController,
+  getScenarioPreset,
 } from "@nxtqr/architecture-execution";
 
 export interface ExecutionStoreState {
@@ -18,8 +21,10 @@ export interface ExecutionStoreState {
   isConfigDialogOpen: boolean;
   isExecutionInspectorOpen: boolean;
 
-  // Active configuration
+  // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
+  scenario: BehaviorScenario;
+  activePresetId: ScenarioPresetId;
 
   // Active run & trace
   activeRun: ExecutionRun | null;
@@ -35,6 +40,8 @@ export interface ExecutionStoreState {
   toggleConfigDialog: (open?: boolean) => void;
   toggleExecutionInspector: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
+  setScenarioPreset: (presetId: ScenarioPresetId) => void;
+  updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
   selectEvent: (eventId: string | null) => void;
@@ -117,6 +124,8 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isConfigDialogOpen: false,
     isExecutionInspectorOpen: false,
     configuration: defaultConfiguration,
+    scenario: getScenarioPreset("cache-miss"),
+    activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
     playbackState: initialPlaybackState,
@@ -155,6 +164,38 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         configuration: {
           ...state.configuration,
           entryNodeId: nodeId,
+        },
+      }));
+    },
+
+    setScenarioPreset: (presetId) => {
+      const preset = getScenarioPreset(presetId);
+      set((state) => ({
+        activePresetId: presetId,
+        scenario: preset,
+        configuration: {
+          ...state.configuration,
+          presetId,
+          scenario: preset,
+          request: {
+            ...state.configuration.request,
+            path:
+              presetId === "cache-miss" || presetId === "cache-hit"
+                ? "/api/products/42"
+                : presetId === "database-write"
+                  ? "/api/orders"
+                  : state.configuration.request.path,
+            method: presetId === "database-write" ? "POST" : "GET",
+          },
+        },
+      }));
+    },
+
+    updateScenario: (partial) => {
+      set((state) => ({
+        scenario: {
+          ...state.scenario,
+          ...partial,
         },
       }));
     },
@@ -216,6 +257,8 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       const activeConfig: ExecutionConfiguration = {
         ...configuration,
         entryNodeId: activeEntryNodeId,
+        scenario: get().scenario,
+        presetId: get().activePresetId,
       };
 
       // 1. Snapshot creation & validation

@@ -69,12 +69,13 @@ export function ExecutionOverlay() {
         );
       })}
 
-      {/* 2. Traveling Request Packet along Edge */}
+      {/* 2. Traveling Request / Response Packet along Edge */}
       {traveling && (
         <TravelingPacketMarker
           edgeId={traveling.edgeId}
           sourceNodeId={traveling.sourceNodeId}
           targetNodeId={traveling.targetNodeId}
+          direction={traveling.direction || "request"}
           prefersReducedMotion={prefersReducedMotion}
         />
       )}
@@ -86,6 +87,7 @@ interface TravelingPacketMarkerProps {
   edgeId: string;
   sourceNodeId: string;
   targetNodeId: string;
+  direction: "request" | "response";
   prefersReducedMotion: boolean;
 }
 
@@ -93,6 +95,7 @@ function TravelingPacketMarker({
   edgeId,
   sourceNodeId,
   targetNodeId,
+  direction,
   prefersReducedMotion,
 }: TravelingPacketMarkerProps) {
   const { getNode } = useReactFlow();
@@ -112,8 +115,14 @@ function TravelingPacketMarker({
         try {
           const totalLength = edgeEl.getTotalLength();
           if (totalLength > 0) {
-            // Position at halfway or terminal if reduced motion
-            const pos = prefersReducedMotion ? totalLength * 0.9 : totalLength * 0.5;
+            // If direction is response, reverse percentage position along path
+            let ratio = 0.5;
+            if (prefersReducedMotion) {
+              ratio = direction === "response" ? 0.1 : 0.9;
+            } else {
+              ratio = direction === "response" ? 0.45 : 0.55;
+            }
+            const pos = totalLength * ratio;
             const pt = edgeEl.getPointAtLength(pos);
             setCoords({ x: pt.x, y: pt.y });
             return;
@@ -137,20 +146,34 @@ function TravelingPacketMarker({
     updateMarker();
     animId = requestAnimationFrame(updateMarker);
     return () => cancelAnimationFrame(animId);
-  }, [edgeId, sourceNodeId, targetNodeId, getNode, prefersReducedMotion]);
+  }, [edgeId, sourceNodeId, targetNodeId, direction, getNode, prefersReducedMotion]);
 
   if (!coords) return null;
+
+  const isResponse = direction === "response";
 
   return (
     <div
       style={{
-        transform: `translate(${coords.x - 14}px, ${coords.y - 10}px)`,
+        transform: `translate(${coords.x - 18}px, ${coords.y - 10}px)`,
       }}
       className="absolute top-0 left-0 transition-transform duration-100 ease-linear pointer-events-none z-30"
     >
-      <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-foreground text-background font-mono text-[9px] font-bold shadow-level-3">
-        <span className="w-1.5 h-1.5 rounded-full bg-background animate-ping shrink-0" />
-        <span>REQ</span>
+      <div
+        className={cn(
+          "flex items-center gap-1 px-1.5 py-0.5 rounded-full font-mono text-[9px] font-bold shadow-level-3 border",
+          isResponse
+            ? "bg-surface-04 border-border-strong text-emerald-400"
+            : "bg-foreground text-background border-border-strong"
+        )}
+      >
+        <span
+          className={cn(
+            "w-1.5 h-1.5 rounded-full shrink-0",
+            isResponse ? "bg-emerald-400 animate-ping" : "bg-background animate-ping"
+          )}
+        />
+        <span>{isResponse ? "RES ◀" : "REQ ▶"}</span>
       </div>
     </div>
   );

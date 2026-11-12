@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { BehaviorScenario } from "./behavior.schemas";
 
 export const HttpMethodSchema = z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]);
 export type HttpMethod = z.infer<typeof HttpMethodSchema>;
@@ -48,8 +49,13 @@ export const ExecutionConfigurationSchema = z.object({
     nodeDurationMs: 250,
     edgeDurationMs: 400,
   }),
+  scenario: z.unknown().optional(),
+  presetId: z.string().optional(),
 });
-export type ExecutionConfiguration = z.infer<typeof ExecutionConfigurationSchema>;
+export type ExecutionConfiguration = z.infer<typeof ExecutionConfigurationSchema> & {
+  scenario?: BehaviorScenario;
+  presetId?: string;
+};
 
 export const ExecutionOutcomeSchema = z.enum([
   "success",

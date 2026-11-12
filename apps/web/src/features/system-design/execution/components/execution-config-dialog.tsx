@@ -4,6 +4,7 @@ import * as React from "react";
 import { cn } from "@nxtqr/utils";
 import {
   Button,
+  Badge,
   Select,
   SelectTrigger,
   SelectValue,
@@ -13,7 +14,7 @@ import {
 import { CloseIcon, SlidersIcon, PlayIcon } from "@nxtqr/icons";
 import { useExecutionStore } from "../store/execution-store";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
-import type { HttpMethod } from "@nxtqr/architecture-execution";
+import type { HttpMethod, ScenarioPresetId } from "@nxtqr/architecture-execution";
 
 export interface ExecutionConfigDialogProps {
   onClose?: () => void;
@@ -21,11 +22,51 @@ export interface ExecutionConfigDialogProps {
 
 const METHODS: HttpMethod[] = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
+const PRESET_OPTIONS: { id: ScenarioPresetId; label: string; description: string }[] = [
+  {
+    id: "cache-miss",
+    label: "Cache Miss → DB Read & Repopulate",
+    description: "Evaluates Redis miss, fetches persistent row from PostgreSQL, stores in cache, and returns 200.",
+  },
+  {
+    id: "cache-hit",
+    label: "Cache Hit (DB Bypassed)",
+    description: "Evaluates unexpired key in Redis and returns cached payload immediately, skipping database I/O.",
+  },
+  {
+    id: "load-balancer",
+    label: "Round-Robin Load Balancing",
+    description: "Deterministically balances incoming traffic across downstream service instances.",
+  },
+  {
+    id: "database-write",
+    label: "Database Mutation (POST Write)",
+    description: "Performs HTTP POST insert into database fixture table and returns 201 Created.",
+  },
+  {
+    id: "external-error",
+    label: "External Outage (HTTP 503)",
+    description: "Simulates upstream third-party failure and propagates modeled error response.",
+  },
+  {
+    id: "gateway-404",
+    label: "Gateway Route Not Found (404)",
+    description: "Path fails route table matching and returns HTTP 404 Not Found.",
+  },
+  {
+    id: "custom",
+    label: "Custom Flow",
+    description: "Manual path, method, and branch configuration.",
+  },
+];
+
 export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
   const nodes = useGraphEditorStore((s) => s.nodes);
   const edges = useGraphEditorStore((s) => s.edges);
 
   const configuration = useExecutionStore((s) => s.configuration);
+  const activePresetId = useExecutionStore((s) => s.activePresetId);
+  const setScenarioPreset = useExecutionStore((s) => s.setScenarioPreset);
   const updateConfiguration = useExecutionStore((s) => s.updateConfiguration);
   const setEntryNodeId = useExecutionStore((s) => s.setEntryNodeId);
   const setSelectedBranch = useExecutionStore((s) => s.setSelectedBranch);
@@ -39,6 +80,21 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
   );
 
   const selectedEntryNodeId = configuration.entryNodeId || nodes[0]?.id || "";
+
+  const handlePresetChange = (presetId: ScenarioPresetId) => {
+    setScenarioPreset(presetId);
+    if (presetId === "cache-miss" || presetId === "cache-hit") {
+      setActiveMethod("GET");
+      setActivePath("/api/products/42");
+    } else if (presetId === "database-write") {
+      setActiveMethod("POST");
+      setActivePath("/api/orders");
+      setBodyText(JSON.stringify({ item: "Enterprise NVMe Server", quantity: 2 }, null, 2));
+    } else if (presetId === "gateway-404") {
+      setActiveMethod("GET");
+      setActivePath("/api/v2/secure-only");
+    }
+  };
 
   React.useEffect(() => {
     if (!configuration.entryNodeId && nodes.length > 0) {
@@ -114,7 +170,37 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
 
         {/* Form Body */}
         <div className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
-          {/* 1. Starting Component */}
+          {/* 1. Scenario Preset */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-mono text-text-muted font-semibold uppercase tracking-wider block">
+                Execution Scenario Preset
+              </label>
+              <Badge variant="outline" className="text-[9px] font-mono border-border-default text-text-secondary">
+                Modeled Behavior
+              </Badge>
+            </div>
+            <Select
+              value={activePresetId}
+              onValueChange={(val) => handlePresetChange(val as ScenarioPresetId)}
+            >
+              <SelectTrigger className="h-8 w-full font-mono text-xs bg-surface-01 border-border-default hover:border-border-hover text-foreground">
+                <SelectValue placeholder="Select scenario preset..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2 z-[60]">
+                {PRESET_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.id} value={opt.id}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-[10px] font-sans text-text-muted">
+              {PRESET_OPTIONS.find((p) => p.id === activePresetId)?.description}
+            </p>
+          </div>
+
+          {/* 2. Starting Component */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-mono text-text-muted font-semibold uppercase tracking-wider block">
               Starting Component (Entry Point)
@@ -136,7 +222,7 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
             </Select>
           </div>
 
-          {/* 2. Request Details */}
+          {/* 3. Request Details */}
           <div className="space-y-2">
             <label className="text-[11px] font-mono text-text-muted font-semibold uppercase tracking-wider block">
               Simulated Request

@@ -9,12 +9,17 @@ import { RouteResolver } from "./route-resolver";
 import { ExecutionLimitsGuard } from "./execution-limits";
 import { componentAdapterRegistry } from "../adapters/adapter-registry";
 import { ExecutionSnapshotManager } from "../domain/execution-snapshot";
+import { RequestLifecyclePlanner } from "./request-lifecycle-planner";
 
 export class ExecutionPlanner {
   public static planExecution(
     snapshot: ExecutionSnapshot,
     configuration: ExecutionConfiguration
   ): ExecutionTrace {
+    if (configuration.presetId || configuration.scenario) {
+      return RequestLifecyclePlanner.planLifecycle(snapshot, configuration);
+    }
+
     const runId = `run_${snapshot.snapshotHash.slice(5, 11)}_${Date.now()}`;
     const validation = ExecutionSnapshotManager.validateSnapshot(snapshot);
 
