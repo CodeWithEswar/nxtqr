@@ -24,6 +24,7 @@ import type {
 } from "../traffic/traffic-schemas";
 import type { ModeledDatabaseRuntimeState } from "../database/database-schemas";
 import type { ModeledCacheRuntimeState, CacheEntry } from "../cache/cache-schemas";
+import type { ModeledSecurityRuntimeState } from "../security/security-schemas";
 
 export type { CacheEntry };
 
@@ -105,6 +106,9 @@ export interface ModeledRuntimeState {
 
   // Cache Execution, Eviction & Distributed Consistency (Phase 05.4.7)
   cacheState?: ModeledCacheRuntimeState;
+
+  // Security & API Gateway Execution (Phase 05.4.8)
+  securityState?: ModeledSecurityRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -263,6 +267,9 @@ export class RuntimeStateHelper {
         : undefined,
       cacheState: state.cacheState
         ? JSON.parse(JSON.stringify(state.cacheState))
+        : undefined,
+      securityState: state.securityState
+        ? JSON.parse(JSON.stringify(state.securityState))
         : undefined,
     };
   }

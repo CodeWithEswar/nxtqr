@@ -118,3 +118,4 @@ export class StaleWhileRevalidateChecker {
     return timeSinceExpiry <= staleWindowMs;
   }
 }
+

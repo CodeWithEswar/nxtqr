@@ -37,6 +37,11 @@ import {
   CACHE_PRESET_METADATA,
   createCachePresetScenario,
   CacheExecutionEngine,
+  type SecurityScenario,
+  type SecurityScenarioPresetId,
+  SECURITY_PRESET_METADATA,
+  createSecurityPresetScenario,
+  SecurityExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -45,7 +50,8 @@ export type AllScenarioPresetId =
   | ResiliencePresetId
   | TrafficPresetId
   | DatabaseScenarioPresetId
-  | CacheScenarioPresetId;
+  | CacheScenarioPresetId
+  | SecurityScenarioPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -64,6 +70,7 @@ export interface ExecutionStoreState {
   isTrafficComparisonOpen: boolean;
   isDatabaseWorkspaceOpen: boolean;
   isCacheWorkspaceOpen: boolean;
+  isSecurityWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -73,6 +80,7 @@ export interface ExecutionStoreState {
   activeTrafficScenario: TrafficScenario | null;
   activeDatabaseScenario: DatabaseScenario | null;
   activeCacheScenario: CacheScenario | null;
+  activeSecurityScenario: SecurityScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -102,12 +110,14 @@ export interface ExecutionStoreState {
   toggleTrafficComparison: (open?: boolean) => void;
   toggleDatabaseWorkspace: (open?: boolean) => void;
   toggleCacheWorkspace: (open?: boolean) => void;
+  toggleSecurityWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
   setTrafficScenario: (scenario: TrafficScenario | null) => void;
   setDatabaseScenario: (scenario: DatabaseScenario | null) => void;
   setCacheScenario: (scenario: CacheScenario | null) => void;
+  setSecurityScenario: (scenario: SecurityScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -137,6 +147,7 @@ export interface ExecutionStoreState {
   runDatabaseSimulation: (scenario: DatabaseScenario) => boolean;
   executeCustomDatabaseQuery: (sql: string) => boolean;
   runCacheSimulation: (scenario: CacheScenario) => boolean;
+  runSecuritySimulation: (scenario: SecurityScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -218,6 +229,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isTrafficComparisonOpen: false,
     isDatabaseWorkspaceOpen: false,
     isCacheWorkspaceOpen: false,
+    isSecurityWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -225,6 +237,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeTrafficScenario: null,
     activeDatabaseScenario: null,
     activeCacheScenario: null,
+    activeSecurityScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -253,6 +266,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isTrafficComparisonOpen: false,
           isDatabaseWorkspaceOpen: false,
           isCacheWorkspaceOpen: false,
+          isSecurityWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -351,6 +365,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleSecurityWorkspace: (open) => {
+      set({
+        isSecurityWorkspaceOpen:
+          open !== undefined ? open : !get().isSecurityWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -376,7 +397,31 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeCacheScenario: scenario });
     },
 
+    setSecurityScenario: (scenario) => {
+      set({ activeSecurityScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (presetId in SECURITY_PRESET_METADATA) {
+        const securityScenario = createSecurityPresetScenario(presetId as SecurityScenarioPresetId);
+        set((state) => ({
+          activePresetId: presetId,
+          activeSecurityScenario: securityScenario,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isSecurityWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runSecuritySimulation(securityScenario);
+        return;
+      }
+
       if (presetId in CACHE_PRESET_METADATA) {
         const cacheScenario = createCachePresetScenario(presetId as CacheScenarioPresetId);
         set((state) => ({
@@ -886,6 +931,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeCacheScenario: scenario,
         isTimelineOpen: true,
         isCacheWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runSecuritySimulation: (scenario) => {
+      const trace = SecurityExecutionEngine.executeScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_sec_sim",
+        architectureRevisionId: "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeSecurityScenario: scenario,
+        isTimelineOpen: true,
+        isSecurityWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

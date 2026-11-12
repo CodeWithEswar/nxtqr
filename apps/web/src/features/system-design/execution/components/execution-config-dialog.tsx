@@ -239,6 +239,86 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
     description: "Slow read attempts to populate cache after a concurrent write already updated the database.",
   },
   {
+    id: "public_endpoint",
+    label: "Security: Public Endpoint (Unauthenticated)",
+    description: "Evaluates public route (GET /health) without authentication requirements; reaches backend seamlessly.",
+  },
+  {
+    id: "protected_valid_jwt",
+    label: "Security: Protected Endpoint (Valid JWT)",
+    description: "Evaluates 10-step JWT claims and modeled signature verification; principal authenticated and authorized.",
+  },
+  {
+    id: "expired_jwt",
+    label: "Security: Expired JWT Token",
+    description: "Token expired at virtual time 100ms (clock at 150ms). Gateway rejects with HTTP 401 Unauthorized.",
+  },
+  {
+    id: "invalid_jwt_signature",
+    label: "Security: Invalid JWT Signature (Tampered)",
+    description: "Signature mismatch against IdP JWKS public key. Authentication fails with 401 before reaching backend.",
+  },
+  {
+    id: "wrong_jwt_audience",
+    label: "Security: Wrong Token Audience (aud Mismatch)",
+    description: "JWT audience is issued for another service, preventing cross-service token replay attacks.",
+  },
+  {
+    id: "missing_api_key",
+    label: "Security: Missing API Key",
+    description: "Protected route requires 'x-api-key' header; request arrives without credentials and fails fast with 401.",
+  },
+  {
+    id: "rbac_denial",
+    label: "Security: RBAC Permission Denial (Viewer DELETE)",
+    description: "Principal has 'viewer' role; attempts DELETE /api/documents/42. RBAC policy denies action with HTTP 403.",
+  },
+  {
+    id: "abac_denial",
+    label: "Security: ABAC Attribute Restriction Denial",
+    description: "ABAC policy requires department == 'engineering'; principal has 'marketing'. Request denied with 403.",
+  },
+  {
+    id: "tenant_isolation_denial",
+    label: "Security: Cross-Tenant Access Boundary Violation",
+    description: "Principal belongs to tenant_alpha; attempts access to tenant_beta document. Tenant isolation boundary denies.",
+  },
+  {
+    id: "waf_sql_injection_block",
+    label: "Security: WAF SQL Injection Block",
+    description: "Request body contains '' OR '1'='1' payload. High-priority WAF rule triggers immediate 403 block.",
+  },
+  {
+    id: "rate_limit_rejection",
+    label: "Security: Rate Limit Quota Exhaustion (HTTP 429)",
+    description: "Token bucket capacity exhausted (0 tokens). Gateway returns 429 with Retry-After header; backend spared.",
+  },
+  {
+    id: "oauth_pkce_flow",
+    label: "Security: OAuth 2.0 Authorization Code + PKCE",
+    description: "Visualizes full browser redirect, PKCE code challenge, authorization code exchange, and token validation.",
+  },
+  {
+    id: "oauth_client_credentials",
+    label: "Security: OAuth 2.0 Client Credentials (M2M)",
+    description: "Service-to-service machine authentication directly obtaining access token to query protected backend.",
+  },
+  {
+    id: "cors_preflight_denial",
+    label: "Security: CORS Origin Preflight Denial",
+    description: "Origin 'https://malicious-site.com' not permitted by CORS allowlist; preflight rejected with 403.",
+  },
+  {
+    id: "mtls_handshake_success",
+    label: "Security: Mutual TLS (mTLS) Handshake Success",
+    description: "Client X.509 certificate verified against trusted root CA and authorized SPIFFE mesh identity.",
+  },
+  {
+    id: "mtls_cert_expired",
+    label: "Security: mTLS Expired Client Certificate Failure",
+    description: "Client presents expired certificate. Handshake aborted immediately before application payload processing.",
+  },
+  {
     id: "custom",
     label: "Custom Flow",
     description: "Manual path, method, and branch configuration.",

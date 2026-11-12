@@ -75,6 +75,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isCacheWorkspaceOpen = useExecutionStore((s) => s.isCacheWorkspaceOpen);
   const toggleCacheWorkspace = useExecutionStore((s) => s.toggleCacheWorkspace);
   const activeCacheScenario = useExecutionStore((s) => s.activeCacheScenario);
+  const isSecurityWorkspaceOpen = useExecutionStore((s) => s.isSecurityWorkspaceOpen);
+  const toggleSecurityWorkspace = useExecutionStore((s) => s.toggleSecurityWorkspace);
+  const activeSecurityScenario = useExecutionStore((s) => s.activeSecurityScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -407,6 +410,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <DatabaseIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Cache</span>
+      </Button>
+
+      {/* Security Request Flow Workspace Button */}
+      <Button
+        variant={isSecurityWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleSecurityWorkspace()}
+        title="Toggle API Gateway, Authentication, Authorization & Security Request Flow Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isSecurityWorkspaceOpen || activeSecurityScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ShieldIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Security</span>
       </Button>
 
       {trafficComparison && (

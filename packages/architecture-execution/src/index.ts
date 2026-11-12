@@ -100,5 +100,19 @@ export * from "./cache/distributed/cache-distributed";
 export * from "./cache/cache-presets";
 export * from "./cache/cache-execution-engine";
 
+// Phase 05.4.8: Interactive API Gateway, Authentication, Authorization & Security Engine
+export * from "./security/security-schemas";
+export * from "./security/security-events";
+export * from "./security/gateway/route-resolver";
+export * from "./security/authentication/jwt-simulator";
+export * from "./security/authentication/api-key-simulator";
+export * from "./security/authentication/oauth-simulator";
+export * from "./security/authorization/policy-engine";
+export * from "./security/protection/waf-engine";
+export * from "./security/protection/cors-simulator";
+export * from "./security/service-security/mtls-simulator";
+export * from "./security/security-presets";
+export * from "./security/security-execution-engine";
+
 
 
