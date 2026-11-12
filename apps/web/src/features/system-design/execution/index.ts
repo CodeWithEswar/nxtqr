@@ -27,5 +27,6 @@ export * from "./components/distributed-transaction-workspace";
 export * from "./components/distributed-storage-workspace";
 export * from "./components/traffic-control-workspace";
 export * from "./components/observability-workspace";
+export * from "./components/zero-trust-workspace";
 export * from "./hooks/use-execution-playback";
 

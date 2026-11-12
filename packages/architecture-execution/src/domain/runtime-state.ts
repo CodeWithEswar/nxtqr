@@ -34,6 +34,7 @@ import type { ModeledDistributedTransactionRuntimeState } from "../distributed-t
 import type { ModeledDistributedStorageRuntimeState } from "../distributed-storage/storage-schemas";
 import type { ModeledTrafficControlRuntimeState } from "../traffic-control/traffic-control-schemas";
 import type { ModeledObservabilityRuntimeState } from "../observability/observability-schemas";
+import type { ModeledZeroTrustRuntimeState } from "../zero-trust/zero-trust-schemas";
 
 export type { CacheEntry };
 
@@ -145,6 +146,9 @@ export interface ModeledRuntimeState {
 
   // Distributed Observability, Metrics, Logs, Traces & Root-Cause Analysis (Phase 05.4.17)
   observabilityState?: ModeledObservabilityRuntimeState;
+
+  // Distributed Zero Trust Security, Policy Evaluation & Threat Modeling (Phase 05.4.18)
+  zeroTrustState?: ModeledZeroTrustRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -333,6 +337,9 @@ export class RuntimeStateHelper {
         : undefined,
       observabilityState: state.observabilityState
         ? JSON.parse(JSON.stringify(state.observabilityState))
+        : undefined,
+      zeroTrustState: state.zeroTrustState
+        ? JSON.parse(JSON.stringify(state.zeroTrustState))
         : undefined,
     };
   }

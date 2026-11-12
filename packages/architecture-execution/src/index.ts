@@ -203,5 +203,16 @@ export * from "./observability/observability-presets";
 export * from "./observability/observability-comparisons";
 export * from "./observability/observability-execution-engine";
 
+// Phase 05.4.18: Interactive Distributed Security, Zero Trust, Threat Modeling & Attack-Path Engine
+export * from "./zero-trust/zero-trust-schemas";
+export * from "./zero-trust/zero-trust-events";
+export * from "./zero-trust/authentication/identity-auth-engine";
+export * from "./zero-trust/authorization/zero-trust-policy-engine";
+export * from "./zero-trust/threats/threat-attack-engine";
+export * from "./zero-trust/invariants/zero-trust-invariants";
+export * from "./zero-trust/zero-trust-presets";
+export * from "./zero-trust/zero-trust-comparisons";
+export * from "./zero-trust/zero-trust-execution-engine";
+
 
 

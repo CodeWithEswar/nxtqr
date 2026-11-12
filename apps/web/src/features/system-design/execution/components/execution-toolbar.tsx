@@ -124,6 +124,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const activeObservabilityScenario = useExecutionStore(
     (s) => s.activeObservabilityScenario
   );
+  const isZeroTrustWorkspaceOpen = useExecutionStore(
+    (s) => s.isZeroTrustWorkspaceOpen
+  );
+  const toggleZeroTrustWorkspace = useExecutionStore(
+    (s) => s.toggleZeroTrustWorkspace
+  );
+  const activeZeroTrustScenario = useExecutionStore(
+    (s) => s.activeZeroTrustScenario
+  );
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -626,6 +635,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <TerminalIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Obs/RCA</span>
+      </Button>
+
+      {/* Zero Trust Security & Threat Modeling Workspace Button */}
+      <Button
+        variant={isZeroTrustWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleZeroTrustWorkspace()}
+        title="Toggle Distributed Zero Trust, Trust Boundaries & Threat Modeling Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isZeroTrustWorkspaceOpen || activeZeroTrustScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ShieldIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">ZeroTrust</span>
       </Button>
 
       {trafficComparison && (

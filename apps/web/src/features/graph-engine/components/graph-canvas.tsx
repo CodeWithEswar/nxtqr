@@ -50,6 +50,7 @@ import {
   DistributedStorageWorkspace,
   TrafficControlWorkspace,
   ObservabilityWorkspace,
+  ZeroTrustWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -96,6 +97,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   );
   const isObservabilityWorkspaceOpen = useExecutionStore(
     (s) => s.isObservabilityWorkspaceOpen
+  );
+  const isZeroTrustWorkspaceOpen = useExecutionStore(
+    (s) => s.isZeroTrustWorkspaceOpen
   );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -614,6 +618,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Distributed Observability, Traces, Logs, SLOs & Incident RCA Drawer */}
       {isObservabilityWorkspaceOpen && <ObservabilityWorkspace />}
+
+      {/* Distributed Security, Zero Trust, Trust Boundaries & Threat Modeling Drawer */}
+      {isZeroTrustWorkspaceOpen && <ZeroTrustWorkspace />}
     </div>
   );
 }
