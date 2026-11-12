@@ -54,6 +54,7 @@ import {
   DeploymentWorkspace,
   DisasterRecoveryWorkspace,
   CapacityWorkspace,
+  AnalysisWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -112,6 +113,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   );
   const isCapacityWorkspaceOpen = useExecutionStore(
     (s) => s.isCapacityWorkspaceOpen
+  );
+  const isAnalysisWorkspaceOpen = useExecutionStore(
+    (s) => s.isAnalysisWorkspaceOpen
   );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -642,6 +646,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Distributed Capacity Planning, Autoscaling, Queueing Theory & Cost Optimization Drawer */}
       {isCapacityWorkspaceOpen && <CapacityWorkspace />}
+
+      {/* Distributed Architecture Trade-Offs, Bottleneck Diagnosis, Reliability & Design Decision Explorer Drawer */}
+      {isAnalysisWorkspaceOpen && <AnalysisWorkspace />}
     </div>
   );
 }

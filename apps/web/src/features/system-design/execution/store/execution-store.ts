@@ -107,6 +107,11 @@ import {
   CAPACITY_PRESET_METADATA,
   buildCapacityPresetScenario,
   CapacityExecutionEngine,
+  type AnalysisExperiment,
+  type AnalysisPresetId,
+  ANALYSIS_PRESET_METADATA,
+  createAnalysisPresetExperiment,
+  ArchitectureAnalysisExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -129,7 +134,8 @@ export type AllScenarioPresetId =
   | ZeroTrustPresetId
   | DeploymentPresetId
   | DisasterRecoveryPresetId
-  | CapacityPresetId;
+  | CapacityPresetId
+  | AnalysisPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -162,6 +168,7 @@ export interface ExecutionStoreState {
   isDeploymentWorkspaceOpen: boolean;
   isDisasterRecoveryWorkspaceOpen: boolean;
   isCapacityWorkspaceOpen: boolean;
+  isAnalysisWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -185,6 +192,7 @@ export interface ExecutionStoreState {
   activeDeploymentScenario: DeploymentScenario | null;
   activeDisasterRecoveryScenario: DisasterRecoveryScenario | null;
   activeCapacityScenario: CapacityScenario | null;
+  activeAnalysisExperiment: AnalysisExperiment | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -228,6 +236,7 @@ export interface ExecutionStoreState {
   toggleDeploymentWorkspace: (open?: boolean) => void;
   toggleDisasterRecoveryWorkspace: (open?: boolean) => void;
   toggleCapacityWorkspace: (open?: boolean) => void;
+  toggleAnalysisWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -248,6 +257,7 @@ export interface ExecutionStoreState {
   setDeploymentScenario: (scenario: DeploymentScenario | null) => void;
   setDisasterRecoveryScenario: (scenario: DisasterRecoveryScenario | null) => void;
   setCapacityScenario: (scenario: CapacityScenario | null) => void;
+  setAnalysisExperiment: (experiment: AnalysisExperiment | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -291,6 +301,7 @@ export interface ExecutionStoreState {
   runDeploymentSimulation: (scenario: DeploymentScenario) => boolean;
   runDisasterRecoverySimulation: (scenario: DisasterRecoveryScenario) => boolean;
   runCapacitySimulation: (scenario: CapacityScenario) => boolean;
+  runAnalysisExperiment: (experiment: AnalysisExperiment) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -386,6 +397,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isDeploymentWorkspaceOpen: false,
     isDisasterRecoveryWorkspaceOpen: false,
     isCapacityWorkspaceOpen: false,
+    isAnalysisWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -407,6 +419,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeDeploymentScenario: null,
     activeDisasterRecoveryScenario: null,
     activeCapacityScenario: null,
+    activeAnalysisExperiment: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -449,6 +462,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isDeploymentWorkspaceOpen: false,
           isDisasterRecoveryWorkspaceOpen: false,
           isCapacityWorkspaceOpen: false,
+          isAnalysisWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -645,6 +659,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleAnalysisWorkspace: (open) => {
+      set({
+        isAnalysisWorkspaceOpen:
+          open !== undefined ? open : !get().isAnalysisWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -726,7 +747,47 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeCapacityScenario: scenario });
     },
 
+    setAnalysisExperiment: (experiment) => {
+      set({ activeAnalysisExperiment: experiment });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (ANALYSIS_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const exp = createAnalysisPresetExperiment(
+          presetId as AnalysisPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeAnalysisExperiment: exp,
+          activeCapacityScenario: null,
+          activeDisasterRecoveryScenario: null,
+          activeDeploymentScenario: null,
+          activeZeroTrustScenario: null,
+          activeObservabilityScenario: null,
+          activeTrafficControlScenario: null,
+          activeDistributedStorageScenario: null,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isAnalysisWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runAnalysisExperiment(exp);
+        return;
+      }
+
       if (CAPACITY_PRESET_METADATA.some((p) => p.id === presetId)) {
         const capScenario = buildCapacityPresetScenario(
           presetId as CapacityPresetId
@@ -2035,6 +2096,36 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeCapacityScenario: scenario,
         isTimelineOpen: true,
         isCapacityWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runAnalysisExperiment: (experiment) => {
+      const { trace } =
+        ArchitectureAnalysisExecutionEngine.runExperiment(experiment);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_analysis_sim",
+        architectureRevisionId: experiment.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeAnalysisExperiment: experiment,
+        isTimelineOpen: true,
+        isAnalysisWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

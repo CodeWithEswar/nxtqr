@@ -245,5 +245,16 @@ export * from "./capacity/capacity-presets";
 export * from "./capacity/capacity-comparisons";
 export * from "./capacity/capacity-execution-engine";
 
+// Phase 05.4.22: Interactive Distributed Architecture Trade-Offs, Bottleneck Diagnosis, Reliability Modeling & Design Decision Explorer
+export * from "./analysis/analysis-schemas";
+export * from "./analysis/analysis-events";
+export * from "./analysis/revisions/revision-diff-engine";
+export * from "./analysis/adapters/capability-registry";
+export * from "./analysis/reliability/reliability-spof-engine";
+export * from "./analysis/comparisons/tradeoff-decision-engine";
+export * from "./analysis/invariants/analysis-invariants";
+export * from "./analysis/analysis-presets";
+export * from "./analysis/analysis-execution-engine";
+
 
 

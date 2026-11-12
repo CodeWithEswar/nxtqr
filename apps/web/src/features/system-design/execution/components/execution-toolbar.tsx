@@ -160,6 +160,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const activeCapacityScenario = useExecutionStore(
     (s) => s.activeCapacityScenario
   );
+  const isAnalysisWorkspaceOpen = useExecutionStore(
+    (s) => s.isAnalysisWorkspaceOpen
+  );
+  const toggleAnalysisWorkspace = useExecutionStore(
+    (s) => s.toggleAnalysisWorkspace
+  );
+  const activeAnalysisExperiment = useExecutionStore(
+    (s) => s.activeAnalysisExperiment
+  );
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -730,6 +739,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <ActivityIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Cap/Cost</span>
+      </Button>
+
+      {/* Architecture Trade-Offs, Bottleneck Diagnosis, Reliability Modeling & Decision Explorer Button */}
+      <Button
+        variant={isAnalysisWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleAnalysisWorkspace()}
+        title="Toggle Distributed Architecture Trade-Offs, Bottleneck Diagnosis, Reliability & Design Decision Explorer"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isAnalysisWorkspaceOpen || activeAnalysisExperiment
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <LayersIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Trade-Offs</span>
       </Button>
 
       {trafficComparison && (

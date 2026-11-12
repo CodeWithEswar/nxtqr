@@ -38,6 +38,7 @@ import type { ModeledZeroTrustRuntimeState } from "../zero-trust/zero-trust-sche
 import type { ModeledDeploymentRuntimeState } from "../deployments/deployment-schemas";
 import type { ModeledDisasterRecoveryRuntimeState } from "../disaster-recovery/disaster-recovery-schemas";
 import type { ModeledCapacityRuntimeState } from "../capacity/capacity-schemas";
+import type { ModeledAnalysisRuntimeState } from "../analysis/analysis-schemas";
 
 export type { CacheEntry };
 
@@ -159,6 +160,9 @@ export interface ModeledRuntimeState {
 
   // Distributed Capacity Planning, Autoscaling, Queueing Theory & Cost Optimization (Phase 05.4.21)
   capacityState?: ModeledCapacityRuntimeState;
+
+  // Distributed Architecture Trade-Offs, Bottleneck Diagnosis & Decision Explorer (Phase 05.4.22)
+  analysisState?: ModeledAnalysisRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -359,6 +363,9 @@ export class RuntimeStateHelper {
         : undefined,
       capacityState: state.capacityState
         ? JSON.parse(JSON.stringify(state.capacityState))
+        : undefined,
+      analysisState: state.analysisState
+        ? JSON.parse(JSON.stringify(state.analysisState))
         : undefined,
     };
   }
