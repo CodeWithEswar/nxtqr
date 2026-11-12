@@ -97,6 +97,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isDistributedTxWorkspaceOpen = useExecutionStore((s) => s.isDistributedTxWorkspaceOpen);
   const toggleDistributedTxWorkspace = useExecutionStore((s) => s.toggleDistributedTxWorkspace);
   const activeDistributedTxScenario = useExecutionStore((s) => s.activeDistributedTxScenario);
+  const isDistributedStorageWorkspaceOpen = useExecutionStore(
+    (s) => s.isDistributedStorageWorkspaceOpen
+  );
+  const toggleDistributedStorageWorkspace = useExecutionStore(
+    (s) => s.toggleDistributedStorageWorkspace
+  );
+  const activeDistributedStorageScenario = useExecutionStore(
+    (s) => s.activeDistributedStorageScenario
+  );
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -548,6 +557,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <DatabaseIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">2PC/Saga</span>
+      </Button>
+
+      {/* Distributed Storage, Sharding & Rebalancing Workspace Button */}
+      <Button
+        variant={isDistributedStorageWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleDistributedStorageWorkspace()}
+        title="Toggle Distributed Storage, Sharding & Rebalancing Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isDistributedStorageWorkspaceOpen || activeDistributedStorageScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <CpuIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Storage</span>
       </Button>
 
       {trafficComparison && (

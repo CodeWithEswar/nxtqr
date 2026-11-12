@@ -24,5 +24,6 @@ export * from "./components/global-network-workspace";
 export * from "./components/service-mesh-workspace";
 export * from "./components/raft-workspace";
 export * from "./components/distributed-transaction-workspace";
+export * from "./components/distributed-storage-workspace";
 export * from "./hooks/use-execution-playback";
 

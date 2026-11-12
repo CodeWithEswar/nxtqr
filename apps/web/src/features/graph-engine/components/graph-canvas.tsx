@@ -47,6 +47,7 @@ import {
   ServiceMeshWorkspace,
   RaftWorkspace,
   DistributedTransactionWorkspace,
+  DistributedStorageWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -85,6 +86,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isServiceMeshWorkspaceOpen = useExecutionStore((s) => s.isServiceMeshWorkspaceOpen);
   const isRaftWorkspaceOpen = useExecutionStore((s) => s.isRaftWorkspaceOpen);
   const isDistributedTxWorkspaceOpen = useExecutionStore((s) => s.isDistributedTxWorkspaceOpen);
+  const isDistributedStorageWorkspaceOpen = useExecutionStore(
+    (s) => s.isDistributedStorageWorkspaceOpen
+  );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
     s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
@@ -593,6 +597,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Distributed Transactions (2PC, Sagas & Recovery) Drawer */}
       {isDistributedTxWorkspaceOpen && <DistributedTransactionWorkspace />}
+
+      {/* Distributed Storage, Sharding, Replication & Rebalancing Drawer */}
+      {isDistributedStorageWorkspaceOpen && <DistributedStorageWorkspace />}
     </div>
   );
 }

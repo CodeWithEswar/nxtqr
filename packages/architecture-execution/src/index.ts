@@ -171,5 +171,14 @@ export * from "./distributed-transactions/invariants/transaction-invariants";
 export * from "./distributed-transactions/transaction-presets";
 export * from "./distributed-transactions/transaction-execution-engine";
 
+// Phase 05.4.15: Interactive Distributed Storage, Sharding, Replication & Data Rebalancing Engine
+export * from "./distributed-storage/storage-schemas";
+export * from "./distributed-storage/storage-events";
+export * from "./distributed-storage/partitioning/partitioning-engine";
+export * from "./distributed-storage/placement/placement-engine";
+export * from "./distributed-storage/invariants/storage-invariants";
+export * from "./distributed-storage/storage-presets";
+export * from "./distributed-storage/storage-execution-engine";
+
 
 

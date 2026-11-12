@@ -72,6 +72,11 @@ import {
   DISTRIBUTED_TRANSACTION_PRESET_METADATA,
   createDistributedTransactionPresetScenario,
   DistributedTransactionExecutionEngine,
+  type StorageScenario,
+  type DistributedStoragePresetId,
+  DISTRIBUTED_STORAGE_PRESET_METADATA,
+  createDistributedStoragePresetScenario,
+  DistributedStorageExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -87,7 +92,8 @@ export type AllScenarioPresetId =
   | GlobalNetworkPresetId
   | ServiceMeshPresetId
   | RaftPresetId
-  | DistributedTransactionPresetId;
+  | DistributedTransactionPresetId
+  | DistributedStoragePresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -113,6 +119,7 @@ export interface ExecutionStoreState {
   isServiceMeshWorkspaceOpen: boolean;
   isRaftWorkspaceOpen: boolean;
   isDistributedTxWorkspaceOpen: boolean;
+  isDistributedStorageWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -129,6 +136,7 @@ export interface ExecutionStoreState {
   activeServiceMeshScenario: ServiceMeshScenario | null;
   activeRaftScenario: RaftScenario | null;
   activeDistributedTxScenario: DistributedTransactionScenario | null;
+  activeDistributedStorageScenario: StorageScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -165,6 +173,7 @@ export interface ExecutionStoreState {
   toggleServiceMeshWorkspace: (open?: boolean) => void;
   toggleRaftWorkspace: (open?: boolean) => void;
   toggleDistributedTxWorkspace: (open?: boolean) => void;
+  toggleDistributedStorageWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -178,6 +187,7 @@ export interface ExecutionStoreState {
   setServiceMeshScenario: (scenario: ServiceMeshScenario | null) => void;
   setRaftScenario: (scenario: RaftScenario | null) => void;
   setDistributedTxScenario: (scenario: DistributedTransactionScenario | null) => void;
+  setDistributedStorageScenario: (scenario: StorageScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -214,6 +224,7 @@ export interface ExecutionStoreState {
   runServiceMeshSimulation: (scenario: ServiceMeshScenario) => boolean;
   runRaftSimulation: (scenario: RaftScenario) => boolean;
   runDistributedTxSimulation: (scenario: DistributedTransactionScenario) => boolean;
+  runDistributedStorageSimulation: (scenario: StorageScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -302,6 +313,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isServiceMeshWorkspaceOpen: false,
     isRaftWorkspaceOpen: false,
     isDistributedTxWorkspaceOpen: false,
+    isDistributedStorageWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -316,6 +328,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeServiceMeshScenario: null,
     activeRaftScenario: null,
     activeDistributedTxScenario: null,
+    activeDistributedStorageScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -351,6 +364,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isServiceMeshWorkspaceOpen: false,
           isRaftWorkspaceOpen: false,
           isDistributedTxWorkspaceOpen: false,
+          isDistributedStorageWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -498,6 +512,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleDistributedStorageWorkspace: (open) => {
+      set({
+        isDistributedStorageWorkspaceOpen:
+          open !== undefined ? open : !get().isDistributedStorageWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -551,7 +572,40 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeDistributedTxScenario: scenario });
     },
 
+    setDistributedStorageScenario: (scenario) => {
+      set({ activeDistributedStorageScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (DISTRIBUTED_STORAGE_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const storageScenario = createDistributedStoragePresetScenario(
+          presetId as DistributedStoragePresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeDistributedStorageScenario: storageScenario,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isDistributedStorageWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runDistributedStorageSimulation(storageScenario);
+        return;
+      }
+
       if (DISTRIBUTED_TRANSACTION_PRESET_METADATA.some((p) => p.id === presetId)) {
         const txScenario = createDistributedTransactionPresetScenario(
           presetId as DistributedTransactionPresetId
@@ -559,6 +613,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         set((state) => ({
           activePresetId: presetId,
           activeDistributedTxScenario: txScenario,
+          activeDistributedStorageScenario: null,
           activeRaftScenario: null,
           activeServiceMeshScenario: null,
           activeGlobalNetworkScenario: null,
@@ -1431,6 +1486,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeDistributedTxScenario: scenario,
         isTimelineOpen: true,
         isDistributedTxWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runDistributedStorageSimulation: (scenario) => {
+      const trace = DistributedStorageExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_distributed_storage_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeDistributedStorageScenario: scenario,
+        isTimelineOpen: true,
+        isDistributedStorageWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

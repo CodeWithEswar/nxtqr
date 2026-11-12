@@ -13,6 +13,7 @@ import type { GlobalNetworkExecutionEvent } from "../global-network/global-netwo
 import type { ServiceMeshExecutionEvent } from "../service-mesh/service-mesh-events";
 import type { RaftExecutionEvent } from "../raft/raft-events";
 import type { DistributedTransactionEvent } from "../distributed-transactions/transaction-events";
+import type { DistributedStorageEvent } from "../distributed-storage/storage-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -273,4 +274,5 @@ export type ExecutionEvent =
   | GlobalNetworkExecutionEvent
   | ServiceMeshExecutionEvent
   | RaftExecutionEvent
-  | DistributedTransactionEvent;
+  | DistributedTransactionEvent
+  | DistributedStorageEvent;

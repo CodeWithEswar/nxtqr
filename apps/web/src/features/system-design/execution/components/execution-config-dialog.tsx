@@ -20,6 +20,7 @@ import {
   SERVICE_MESH_PRESET_METADATA,
   RAFT_PRESET_METADATA,
   DISTRIBUTED_TRANSACTION_PRESET_METADATA,
+  DISTRIBUTED_STORAGE_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -428,6 +429,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...DISTRIBUTED_TRANSACTION_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `Tx: ${p.label}`,
+    description: p.description,
+  })),
+  ...DISTRIBUTED_STORAGE_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `Storage: ${p.label}`,
     description: p.description,
   })),
   {

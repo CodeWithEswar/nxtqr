@@ -31,6 +31,7 @@ import type { ModeledGlobalNetworkRuntimeState } from "../global-network/global-
 import type { ModeledServiceMeshRuntimeState } from "../service-mesh/service-mesh-schemas";
 import type { ModeledRaftRuntimeState } from "../raft/raft-schemas";
 import type { ModeledDistributedTransactionRuntimeState } from "../distributed-transactions/transaction-schemas";
+import type { ModeledDistributedStorageRuntimeState } from "../distributed-storage/storage-schemas";
 
 export type { CacheEntry };
 
@@ -133,6 +134,9 @@ export interface ModeledRuntimeState {
 
   // Distributed Transactions, 2PC & Sagas (Phase 05.4.14)
   distributedTransactionState?: ModeledDistributedTransactionRuntimeState;
+
+  // Distributed Storage, Sharding, Replication & Rebalancing (Phase 05.4.15)
+  distributedStorageState?: ModeledDistributedStorageRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -312,6 +316,9 @@ export class RuntimeStateHelper {
         : undefined,
       distributedTransactionState: state.distributedTransactionState
         ? JSON.parse(JSON.stringify(state.distributedTransactionState))
+        : undefined,
+      distributedStorageState: state.distributedStorageState
+        ? JSON.parse(JSON.stringify(state.distributedStorageState))
         : undefined,
     };
   }
