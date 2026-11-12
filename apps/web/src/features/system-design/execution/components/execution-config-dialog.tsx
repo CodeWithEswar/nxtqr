@@ -25,6 +25,7 @@ import {
   OBS_PRESET_METADATA,
   ZERO_TRUST_PRESET_METADATA,
   DEPLOYMENT_PRESET_METADATA,
+  DISASTER_RECOVERY_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -458,6 +459,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...DEPLOYMENT_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `Deploy: ${p.label}`,
+    description: p.description,
+  })),
+  ...DISASTER_RECOVERY_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `DR/BCP: ${p.label}`,
     description: p.description,
   })),
   {

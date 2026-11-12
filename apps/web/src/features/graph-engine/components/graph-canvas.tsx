@@ -52,6 +52,7 @@ import {
   ObservabilityWorkspace,
   ZeroTrustWorkspace,
   DeploymentWorkspace,
+  DisasterRecoveryWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -104,6 +105,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   );
   const isDeploymentWorkspaceOpen = useExecutionStore(
     (s) => s.isDeploymentWorkspaceOpen
+  );
+  const isDisasterRecoveryWorkspaceOpen = useExecutionStore(
+    (s) => s.isDisasterRecoveryWorkspaceOpen
   );
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
@@ -628,6 +632,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Distributed Deployment, Blue-Green, Canary & Progressive Delivery Drawer */}
       {isDeploymentWorkspaceOpen && <DeploymentWorkspace />}
+
+      {/* Distributed Disaster Recovery, Multi-Region Failover & Business Continuity Drawer */}
+      {isDisasterRecoveryWorkspaceOpen && <DisasterRecoveryWorkspace />}
     </div>
   );
 }

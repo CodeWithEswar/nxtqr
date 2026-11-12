@@ -224,5 +224,16 @@ export * from "./deployments/deployment-presets";
 export * from "./deployments/deployment-comparisons";
 export * from "./deployments/deployment-execution-engine";
 
+// Phase 05.4.20: Interactive Distributed Disaster Recovery, Multi-Region Failover, Backup Restoration & Business Continuity Engine
+export * from "./disaster-recovery/disaster-recovery-schemas";
+export * from "./disaster-recovery/disaster-recovery-events";
+export * from "./disaster-recovery/replication/replication-rpo-engine";
+export * from "./disaster-recovery/backups/backup-restore-engine";
+export * from "./disaster-recovery/continuity/failover-routing-continuity";
+export * from "./disaster-recovery/invariants/dr-invariants";
+export * from "./disaster-recovery/disaster-recovery-presets";
+export * from "./disaster-recovery/disaster-recovery-comparisons";
+export * from "./disaster-recovery/disaster-recovery-execution-engine";
+
 
 

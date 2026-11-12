@@ -97,6 +97,11 @@ import {
   DEPLOYMENT_PRESET_METADATA,
   createDeploymentPresetScenario,
   DeploymentExecutionEngine,
+  type DisasterRecoveryScenario,
+  type DisasterRecoveryPresetId,
+  DISASTER_RECOVERY_PRESET_METADATA,
+  createDisasterRecoveryPresetScenario,
+  DisasterRecoveryExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -117,7 +122,8 @@ export type AllScenarioPresetId =
   | TrafficControlPresetId
   | ObservabilityPresetId
   | ZeroTrustPresetId
-  | DeploymentPresetId;
+  | DeploymentPresetId
+  | DisasterRecoveryPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -148,6 +154,7 @@ export interface ExecutionStoreState {
   isObservabilityWorkspaceOpen: boolean;
   isZeroTrustWorkspaceOpen: boolean;
   isDeploymentWorkspaceOpen: boolean;
+  isDisasterRecoveryWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -169,6 +176,7 @@ export interface ExecutionStoreState {
   activeObservabilityScenario: ObservabilityScenario | null;
   activeZeroTrustScenario: ZeroTrustScenario | null;
   activeDeploymentScenario: DeploymentScenario | null;
+  activeDisasterRecoveryScenario: DisasterRecoveryScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -210,6 +218,7 @@ export interface ExecutionStoreState {
   toggleObservabilityWorkspace: (open?: boolean) => void;
   toggleZeroTrustWorkspace: (open?: boolean) => void;
   toggleDeploymentWorkspace: (open?: boolean) => void;
+  toggleDisasterRecoveryWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -228,6 +237,7 @@ export interface ExecutionStoreState {
   setObservabilityScenario: (scenario: ObservabilityScenario | null) => void;
   setZeroTrustScenario: (scenario: ZeroTrustScenario | null) => void;
   setDeploymentScenario: (scenario: DeploymentScenario | null) => void;
+  setDisasterRecoveryScenario: (scenario: DisasterRecoveryScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -269,6 +279,7 @@ export interface ExecutionStoreState {
   runObservabilitySimulation: (scenario: ObservabilityScenario) => boolean;
   runZeroTrustSimulation: (scenario: ZeroTrustScenario) => boolean;
   runDeploymentSimulation: (scenario: DeploymentScenario) => boolean;
+  runDisasterRecoverySimulation: (scenario: DisasterRecoveryScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -362,6 +373,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isObservabilityWorkspaceOpen: false,
     isZeroTrustWorkspaceOpen: false,
     isDeploymentWorkspaceOpen: false,
+    isDisasterRecoveryWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -381,6 +393,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeObservabilityScenario: null,
     activeZeroTrustScenario: null,
     activeDeploymentScenario: null,
+    activeDisasterRecoveryScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -421,6 +434,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isObservabilityWorkspaceOpen: false,
           isZeroTrustWorkspaceOpen: false,
           isDeploymentWorkspaceOpen: false,
+          isDisasterRecoveryWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -603,6 +617,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleDisasterRecoveryWorkspace: (open) => {
+      set({
+        isDisasterRecoveryWorkspaceOpen:
+          open !== undefined ? open : !get().isDisasterRecoveryWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -676,7 +697,45 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeDeploymentScenario: scenario });
     },
 
+    setDisasterRecoveryScenario: (scenario) => {
+      set({ activeDisasterRecoveryScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (DISASTER_RECOVERY_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const drScenario = createDisasterRecoveryPresetScenario(
+          presetId as DisasterRecoveryPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeDisasterRecoveryScenario: drScenario,
+          activeDeploymentScenario: null,
+          activeZeroTrustScenario: null,
+          activeObservabilityScenario: null,
+          activeTrafficControlScenario: null,
+          activeDistributedStorageScenario: null,
+          activeDistributedTxScenario: null,
+          activeRaftScenario: null,
+          activeServiceMeshScenario: null,
+          activeGlobalNetworkScenario: null,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isDisasterRecoveryWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runDisasterRecoverySimulation(drScenario);
+        return;
+      }
+
       if (DEPLOYMENT_PRESET_METADATA.some((p) => p.id === presetId)) {
         const depScenario = createDeploymentPresetScenario(
           presetId as DeploymentPresetId
@@ -1858,6 +1917,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeDeploymentScenario: scenario,
         isTimelineOpen: true,
         isDeploymentWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runDisasterRecoverySimulation: (scenario) => {
+      const trace = DisasterRecoveryExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_disaster_recovery_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeDisasterRecoveryScenario: scenario,
+        isTimelineOpen: true,
+        isDisasterRecoveryWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

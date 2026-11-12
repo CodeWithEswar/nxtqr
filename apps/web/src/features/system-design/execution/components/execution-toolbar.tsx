@@ -142,6 +142,15 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const activeDeploymentScenario = useExecutionStore(
     (s) => s.activeDeploymentScenario
   );
+  const isDisasterRecoveryWorkspaceOpen = useExecutionStore(
+    (s) => s.isDisasterRecoveryWorkspaceOpen
+  );
+  const toggleDisasterRecoveryWorkspace = useExecutionStore(
+    (s) => s.toggleDisasterRecoveryWorkspace
+  );
+  const activeDisasterRecoveryScenario = useExecutionStore(
+    (s) => s.activeDisasterRecoveryScenario
+  );
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -678,6 +687,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <LayersIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">Deploy</span>
+      </Button>
+
+      {/* Disaster Recovery, Multi-Region Failover & Business Continuity Workspace Button */}
+      <Button
+        variant={isDisasterRecoveryWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleDisasterRecoveryWorkspace()}
+        title="Toggle Distributed Disaster Recovery, Multi-Region Failover & Business Continuity Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isDisasterRecoveryWorkspaceOpen || activeDisasterRecoveryScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <DatabaseIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">DR/BCP</span>
       </Button>
 
       {trafficComparison && (

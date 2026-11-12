@@ -18,6 +18,7 @@ import type { TrafficControlEvent } from "../traffic-control/traffic-control-eve
 import type { ObservabilityExecutionEvent } from "../observability/observability-events";
 import type { ZeroTrustExecutionEvent } from "../zero-trust/zero-trust-events";
 import type { DeploymentExecutionEvent } from "../deployments/deployment-events";
+import type { DisasterRecoveryExecutionEvent } from "../disaster-recovery/disaster-recovery-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -283,4 +284,5 @@ export type ExecutionEvent =
   | TrafficControlEvent
   | ObservabilityExecutionEvent
   | ZeroTrustExecutionEvent
-  | DeploymentExecutionEvent;
+  | DeploymentExecutionEvent
+  | DisasterRecoveryExecutionEvent;
