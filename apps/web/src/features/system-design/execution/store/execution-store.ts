@@ -10,14 +10,23 @@ import {
   type ScenarioPresetId,
   type DistributedScenarioConfig,
   type DistributedScenarioPresetId,
+  type FailureScenario,
+  type ResiliencePresetId,
+  type ScenarioComparison,
   ExecutionSnapshotManager,
   ExecutionPlanner,
   PlaybackController,
   getScenarioPreset,
   getDistributedScenarioPreset,
+  ResiliencePresetFactory,
+  ResilienceSimulationEngine,
+  RESILIENCE_PRESET_DEFINITIONS,
 } from "@nxtqr/architecture-execution";
 
-export type AllScenarioPresetId = ScenarioPresetId | DistributedScenarioPresetId;
+export type AllScenarioPresetId =
+  | ScenarioPresetId
+  | DistributedScenarioPresetId
+  | ResiliencePresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -28,16 +37,22 @@ export interface ExecutionStoreState {
   isSequenceViewOpen: boolean;
   isConfigDialogOpen: boolean;
   isExecutionInspectorOpen: boolean;
+  isFaultScenarioDialogOpen: boolean;
+  isScenarioComparisonOpen: boolean;
+  isFaultInspectorOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
   scenario: BehaviorScenario;
   distributedScenario: DistributedScenarioConfig | null;
+  activeFailureScenario: FailureScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
   activeRun: ExecutionRun | null;
   trace: ExecutionTrace | null;
+  baselineTrace: ExecutionTrace | null;
+  scenarioComparison: ScenarioComparison | null;
 
   // Playback state
   playbackState: PlaybackState;
@@ -51,8 +66,12 @@ export interface ExecutionStoreState {
   toggleSequenceView: (open?: boolean) => void;
   toggleConfigDialog: (open?: boolean) => void;
   toggleExecutionInspector: (open?: boolean) => void;
+  toggleFaultScenarioDialog: (open?: boolean) => void;
+  toggleScenarioComparison: (open?: boolean) => void;
+  toggleFaultInspector: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
-  setScenarioPreset: (presetId: AllScenarioPresetId) => void;
+  setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
+  setFailureScenario: (scenario: FailureScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -62,6 +81,13 @@ export interface ExecutionStoreState {
   runExecution: (
     nodes: BaseNode[],
     edges: BaseEdge[],
+    architectureId?: string,
+    revisionId?: string
+  ) => boolean;
+  runResilienceSimulation: (
+    nodes: BaseNode[],
+    edges: BaseEdge[],
+    scenario: FailureScenario,
     architectureId?: string,
     revisionId?: string
   ) => boolean;
@@ -138,12 +164,18 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isSequenceViewOpen: false,
     isConfigDialogOpen: false,
     isExecutionInspectorOpen: false,
+    isFaultScenarioDialogOpen: false,
+    isScenarioComparisonOpen: false,
+    isFaultInspectorOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
+    activeFailureScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
+    baselineTrace: null,
+    scenarioComparison: null,
     playbackState: initialPlaybackState,
     selectedEventId: null,
 
@@ -158,6 +190,9 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isTraceWaterfallOpen: false,
           isSequenceViewOpen: false,
           isExecutionInspectorOpen: false,
+          isFaultScenarioDialogOpen: false,
+          isScenarioComparisonOpen: false,
+          isFaultInspectorOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -200,6 +235,27 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleFaultScenarioDialog: (open) => {
+      set({
+        isFaultScenarioDialogOpen:
+          open !== undefined ? open : !get().isFaultScenarioDialogOpen,
+      });
+    },
+
+    toggleScenarioComparison: (open) => {
+      set({
+        isScenarioComparisonOpen:
+          open !== undefined ? open : !get().isScenarioComparisonOpen,
+      });
+    },
+
+    toggleFaultInspector: (open) => {
+      set({
+        isFaultInspectorOpen:
+          open !== undefined ? open : !get().isFaultInspectorOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -209,7 +265,30 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       }));
     },
 
-    setScenarioPreset: (presetId) => {
+    setFailureScenario: (scenario) => {
+      set({ activeFailureScenario: scenario });
+    },
+
+    setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      const isResilience = RESILIENCE_PRESET_DEFINITIONS.some((p) => p.id === presetId);
+      if (isResilience) {
+        const failureScenario = ResiliencePresetFactory.createScenario(
+          presetId as ResiliencePresetId,
+          nodes,
+          edges
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeFailureScenario: failureScenario,
+          distributedScenario: null,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        return;
+      }
+
       const isDistributed =
         presetId === "parallel-fanout" ||
         presetId === "async-queue-workers" ||
@@ -222,6 +301,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         set((state) => ({
           activePresetId: presetId,
           distributedScenario: distPreset,
+          activeFailureScenario: null,
           configuration: {
             ...state.configuration,
             presetId,
@@ -243,6 +323,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activePresetId: presetId,
         scenario: preset,
         distributedScenario: null,
+        activeFailureScenario: null,
         configuration: {
           ...state.configuration,
           presetId,
@@ -343,6 +424,17 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeConfig
       );
 
+      // If a failure scenario is active, route through resilience simulation engine
+      if (get().activeFailureScenario) {
+        return get().runResilienceSimulation(
+          nodes,
+          edges,
+          get().activeFailureScenario!,
+          architectureId,
+          revisionId
+        );
+      }
+
       // 2. Deterministic execution trace planning
       const trace = ExecutionPlanner.planExecution(snapshot, activeConfig);
 
@@ -368,6 +460,91 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
 
       // Automatically play trace
+      controller.play();
+      return true;
+    },
+
+    runResilienceSimulation: (nodes, edges, scenario, architectureId = "arch_canvas", revisionId = "rev_v1") => {
+      const { configuration } = get();
+
+      let activeEntryNodeId = configuration.entryNodeId;
+      if (!activeEntryNodeId || !nodes.some((n) => n.id === activeEntryNodeId)) {
+        const inputNode = nodes.find((n) => n.type === "input" || n.type === "client");
+        activeEntryNodeId = inputNode ? inputNode.id : nodes[0]?.id || "";
+        set((state) => ({
+          configuration: {
+            ...state.configuration,
+            entryNodeId: activeEntryNodeId,
+          },
+        }));
+      }
+
+      if (!activeEntryNodeId) return false;
+
+      const activeConfig: ExecutionConfiguration = {
+        ...configuration,
+        entryNodeId: activeEntryNodeId,
+      };
+
+      // 1. Snapshot
+      const snapshot = ExecutionSnapshotManager.createSnapshot(
+        architectureId,
+        revisionId,
+        "Active Canvas Architecture",
+        nodes,
+        edges,
+        activeConfig
+      );
+
+      // 2. Baseline run without faults
+      const cleanScenario: FailureScenario = {
+        ...scenario,
+        faults: [],
+      };
+      const baselineTrace = ResilienceSimulationEngine.planResilienceExecution(
+        snapshot,
+        cleanScenario,
+        activeConfig
+      );
+
+      // 3. Failure run with faults & policies
+      const failureTrace = ResilienceSimulationEngine.planResilienceExecution(
+        snapshot,
+        scenario,
+        activeConfig
+      );
+
+      // 4. Comparison report
+      const scenarioComparison = ResilienceSimulationEngine.compareScenarios(
+        baselineTrace,
+        failureTrace,
+        cleanScenario,
+        scenario
+      );
+
+      const run: ExecutionRun = {
+        id: failureTrace.runId,
+        architectureId,
+        architectureRevisionId: revisionId,
+        snapshotHash: snapshot.snapshotHash,
+        configuration: activeConfig,
+        trace: failureTrace,
+        createdAt: new Date().toISOString(),
+      };
+
+      const controller = ensureController();
+      controller.loadTrace(failureTrace);
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace: failureTrace,
+        baselineTrace,
+        scenarioComparison,
+        activeFailureScenario: scenario,
+        playbackState: controller.getState(),
+      });
+
       controller.play();
       return true;
     },

@@ -49,3 +49,15 @@ export * from "./tracing/trace-tree";
 export * from "./playback/playback-machine";
 export * from "./playback/playback-controller";
 
+// Phase 05.4.4: Interactive Failure Injection & Resilience Simulation Engine
+export * from "./resilience/fault-schemas";
+export * from "./resilience/fault-events";
+export * from "./resilience/deterministic-random";
+export * from "./resilience/circuit-breaker-engine";
+export * from "./resilience/retry-engine";
+export * from "./resilience/failover-engine";
+export * from "./resilience/blast-radius-analyzer";
+export * from "./resilience/scenario-presets";
+export * from "./resilience/resilience-simulation-engine";
+
+

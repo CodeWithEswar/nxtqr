@@ -12,6 +12,7 @@ import {
   ActivityIcon,
   LayersIcon,
   TerminalIcon,
+  ShieldIcon,
 } from "@nxtqr/icons";
 import { Button } from "@nxtqr/ui";
 import { cn } from "@nxtqr/utils";
@@ -54,6 +55,12 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const toggleSequenceView = useExecutionStore((s) => s.toggleSequenceView);
   const toggleConfigDialog = useExecutionStore((s) => s.toggleConfigDialog);
   const toggleExecutionInspector = useExecutionStore((s) => s.toggleExecutionInspector);
+  const toggleFaultScenarioDialog = useExecutionStore((s) => s.toggleFaultScenarioDialog);
+  const toggleScenarioComparison = useExecutionStore((s) => s.toggleScenarioComparison);
+  const isFaultScenarioDialogOpen = useExecutionStore((s) => s.isFaultScenarioDialogOpen);
+  const isScenarioComparisonOpen = useExecutionStore((s) => s.isScenarioComparisonOpen);
+  const activeFailureScenario = useExecutionStore((s) => s.activeFailureScenario);
+  const scenarioComparison = useExecutionStore((s) => s.scenarioComparison);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -288,7 +295,7 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
         </>
       )}
 
-      {/* 7. Request Config Dialog Trigger */}
+      {/* 7. Request Config & Fault Scenario Dialog Triggers */}
       <Button
         variant="ghost"
         size="sm"
@@ -299,6 +306,42 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
         <SlidersIcon className="w-3 h-3" />
         <span className="hidden md:inline">Config</span>
       </Button>
+
+      <Button
+        variant={isFaultScenarioDialogOpen || activeFailureScenario ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleFaultScenarioDialog()}
+        title="Configure Failure Injection & Resilience Policies"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          activeFailureScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ShieldIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">
+          {activeFailureScenario ? `Faults (${activeFailureScenario.faults.length})` : "Faults"}
+        </span>
+      </Button>
+
+      {scenarioComparison && (
+        <Button
+          variant={isScenarioComparisonOpen ? "secondary" : "ghost"}
+          size="sm"
+          onClick={() => toggleScenarioComparison()}
+          title="View Baseline vs Failure Resilience Delta"
+          className={cn(
+            "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+            isScenarioComparisonOpen
+              ? "bg-surface-04 border border-border-strong text-foreground shadow-level-3"
+              : "text-text-muted hover:text-foreground hover:bg-surface-03"
+          )}
+        >
+          <ActivityIcon className="w-3 h-3 text-text-secondary" />
+          <span className="hidden lg:inline">Compare</span>
+        </Button>
+      )}
     </div>
   );
 }

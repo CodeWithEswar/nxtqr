@@ -11,22 +11,25 @@ import {
   LayersIcon,
   ActivityIcon,
   CpuIcon,
+  ShieldIcon,
 } from "@nxtqr/icons";
 import { useExecutionStore } from "../store/execution-store";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
 import { QueueInspector } from "./queue-inspector";
 import { MessageInspector } from "./message-inspector";
+import { FaultInspector } from "./fault-inspector";
 
 export interface ExecutionInspectorProps {
   className?: string;
   onClose?: () => void;
 }
 
-type InspectorTab = "overview" | "payloads" | "state" | "spans" | "queues";
+type InspectorTab = "overview" | "payloads" | "state" | "spans" | "queues" | "resilience";
 
 export function ExecutionInspector({ className, onClose }: ExecutionInspectorProps) {
   const currentFrame = useExecutionStore((s) => s.playbackState.currentFrame);
   const configuration = useExecutionStore((s) => s.configuration);
+  const activeFailureScenario = useExecutionStore((s) => s.activeFailureScenario);
   const toggleExecutionInspector = useExecutionStore((s) => s.toggleExecutionInspector);
   const nodes = useGraphEditorStore((s) => s.nodes);
 
@@ -186,6 +189,22 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
           <LayersIcon className="w-3 h-3" />
           <span>Queues & Msgs</span>
         </button>
+
+        {activeFailureScenario && (
+          <button
+            type="button"
+            onClick={() => setActiveTab("resilience")}
+            className={cn(
+              "flex items-center gap-1.5 px-2 py-1.5 text-[10px] font-mono font-medium transition-colors border-b-2 -mb-px shrink-0",
+              activeTab === "resilience"
+                ? "border-text-secondary text-foreground bg-surface-02 font-semibold"
+                : "border-transparent text-text-muted hover:text-text-secondary"
+            )}
+          >
+            <ShieldIcon className="w-3 h-3 text-text-secondary" />
+            <span>Resilience</span>
+          </button>
+        )}
       </div>
 
       {/* Body Content */}
@@ -532,6 +551,11 @@ export function ExecutionInspector({ className, onClose }: ExecutionInspectorPro
               <MessageInspector />
             </div>
           </div>
+        )}
+
+        {/* TAB 6: RESILIENCE & FAULTS */}
+        {activeTab === "resilience" && (
+          <FaultInspector selectedNodeId={targetNodeId} />
         )}
       </div>
     </div>

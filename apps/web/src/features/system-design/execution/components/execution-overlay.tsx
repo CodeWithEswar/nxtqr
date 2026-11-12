@@ -74,6 +74,53 @@ export function ExecutionOverlay() {
         );
       })}
 
+      {/* 1b. Fault & Circuit Breaker Indicators on All Impacted Nodes */}
+      {currentFrame.runtimeState?.componentHealth &&
+        Object.entries(currentFrame.runtimeState.componentHealth).map(([nodeId, health]) => {
+          if (health === "healthy") return null;
+          const node = getNode(nodeId);
+          if (!node) return null;
+
+          const isUnavailable = health === "unavailable";
+          const cb = currentFrame.runtimeState?.circuitBreakers?.[nodeId];
+
+          return (
+            <div
+              key={`fault_node_${nodeId}`}
+              style={{
+                transform: `translate(${node.position.x}px, ${node.position.y}px)`,
+              }}
+              className="absolute top-0 left-0 pointer-events-none z-20"
+            >
+              <div className="absolute -top-3.5 left-2 flex items-center gap-1">
+                <span
+                  className={cn(
+                    "px-1.5 py-0.2 rounded font-mono text-[9px] uppercase font-bold tracking-wider shadow-level-2 border",
+                    isUnavailable
+                      ? "bg-red-950 text-red-300 border-red-800"
+                      : "bg-amber-950 text-amber-300 border-amber-800"
+                  )}
+                >
+                  {isUnavailable ? "⚠ OUTAGE" : "⚡ DEGRADED"}
+                </span>
+
+                {cb && cb.state !== "closed" && (
+                  <span
+                    className={cn(
+                      "px-1.5 py-0.2 rounded font-mono text-[9px] uppercase font-bold shadow-level-2 border",
+                      cb.state === "open"
+                        ? "bg-surface-04 text-red-400 border-red-800"
+                        : "bg-surface-04 text-amber-300 border-amber-800"
+                    )}
+                  >
+                    CB: {cb.state.toUpperCase()}
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
       {/* 2. Traveling Request / Response / Message Packets along Edges */}
       {packets.map((pkt, idx) => (
         <TravelingPacketMarker

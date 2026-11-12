@@ -309,4 +309,30 @@ describe("Architecture Execution Store & Canvas Integration", () => {
     expect(dlq).toBeDefined();
     expect(dlq?.deadLetteredMessageIds.length).toBeGreaterThanOrEqual(1);
   });
+
+  it("should execute resilience failure simulation and generate delta comparison", () => {
+    const store = useExecutionStore.getState();
+    store.setScenarioPreset("service_crash", mockNodes, mockEdges);
+
+    const activeFailureScenario = useExecutionStore.getState().activeFailureScenario;
+    expect(activeFailureScenario).toBeDefined();
+
+    const success = store.runResilienceSimulation(
+      mockNodes,
+      mockEdges,
+      activeFailureScenario!
+    );
+
+    expect(success).toBe(true);
+
+    const state = useExecutionStore.getState();
+    expect(state.isExecutionModeActive).toBe(true);
+    expect(state.scenarioComparison).toBeDefined();
+    expect(state.scenarioComparison?.baselineMetrics).toBeDefined();
+    expect(state.scenarioComparison?.failureMetrics).toBeDefined();
+
+    // Verify fault activation event
+    const events = state.trace?.events || [];
+    expect(events.some((e) => e.type === "fault.activated")).toBe(true);
+  });
 });

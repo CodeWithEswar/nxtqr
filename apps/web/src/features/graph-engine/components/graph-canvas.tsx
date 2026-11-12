@@ -33,6 +33,8 @@ import {
   SequenceView,
   ExecutionInspector,
   ExecutionConfigDialog,
+  FaultScenarioDialog,
+  ScenarioComparisonView,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -57,6 +59,8 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isTraceWaterfallOpen = useExecutionStore((s) => s.isTraceWaterfallOpen);
   const isSequenceViewOpen = useExecutionStore((s) => s.isSequenceViewOpen);
   const isConfigDialogOpen = useExecutionStore((s) => s.isConfigDialogOpen);
+  const isFaultScenarioDialogOpen = useExecutionStore((s) => s.isFaultScenarioDialogOpen);
+  const isScenarioComparisonOpen = useExecutionStore((s) => s.isScenarioComparisonOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
     s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
@@ -523,6 +527,12 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Execution Run Configuration Modal */}
       {isConfigDialogOpen && <ExecutionConfigDialog />}
+
+      {/* Fault Scenario & Resilience Configuration Modal */}
+      {isFaultScenarioDialogOpen && <FaultScenarioDialog />}
+
+      {/* Scenario Comparison & Resilience Delta Modal */}
+      {isScenarioComparisonOpen && <ScenarioComparisonView />}
     </div>
   );
 }

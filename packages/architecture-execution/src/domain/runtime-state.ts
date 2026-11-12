@@ -10,6 +10,10 @@ import type {
   ModeledMessage,
   FanInBarrier,
 } from "../schemas/distributed.schemas";
+import type {
+  ComponentHealthStatus,
+  ResilienceMetrics,
+} from "../resilience/fault-schemas";
 
 export interface CacheEntry {
   key: string;
@@ -54,6 +58,34 @@ export interface ModeledRuntimeState {
   activeMessages: ModeledMessage[];
   fanInBarriers: Record<string, FanInBarrier>;
   criticalPathSpanIds: string[];
+
+  // Resilience & Failure Simulation (Phase 05.4.4)
+  componentHealth: Record<string, ComponentHealthStatus>;
+  activeFaultIds: string[];
+  circuitBreakers: Record<
+    string,
+    {
+      state: "closed" | "open" | "half-open";
+      failureCount: number;
+      consecutiveSuccesses: number;
+      lastStateChangeMs: number;
+      nextAllowedProbeMs: number;
+      tripCount: number;
+      totalFastFailures: number;
+    }
+  >;
+  networkConditions: Record<
+    string,
+    {
+      disconnected: boolean;
+      additionalLatencyMs: number;
+      packetLossRate: number;
+      totalDroppedPackets: number;
+    }
+  >;
+  retryCounters: Record<string, number>;
+  activeDeadlines: Record<string, number>;
+  resilienceMetrics?: ResilienceMetrics;
 }
 
 export class RuntimeStateHelper {
@@ -94,6 +126,12 @@ export class RuntimeStateHelper {
       activeMessages: [],
       fanInBarriers: {},
       criticalPathSpanIds: [],
+      componentHealth: {},
+      activeFaultIds: [],
+      circuitBreakers: {},
+      networkConditions: {},
+      retryCounters: {},
+      activeDeadlines: {},
     };
   }
 
@@ -132,6 +170,16 @@ export class RuntimeStateHelper {
       };
     }
 
+    const clonedCircuitBreakers: Record<string, (typeof state.circuitBreakers)[string]> = {};
+    for (const [cbId, cb] of Object.entries(state.circuitBreakers || {})) {
+      clonedCircuitBreakers[cbId] = { ...cb };
+    }
+
+    const clonedNetworkConditions: Record<string, (typeof state.networkConditions)[string]> = {};
+    for (const [netId, net] of Object.entries(state.networkConditions || {})) {
+      clonedNetworkConditions[netId] = { ...net };
+    }
+
     return {
       cache: clonedCache,
       database: clonedDb,
@@ -146,6 +194,13 @@ export class RuntimeStateHelper {
       activeMessages: (state.activeMessages || []).map((m) => ({ ...m, traceContext: { ...m.traceContext } })),
       fanInBarriers: clonedBarriers,
       criticalPathSpanIds: [...(state.criticalPathSpanIds || [])],
+      componentHealth: { ...(state.componentHealth || {}) },
+      activeFaultIds: [...(state.activeFaultIds || [])],
+      circuitBreakers: clonedCircuitBreakers,
+      networkConditions: clonedNetworkConditions,
+      retryCounters: { ...(state.retryCounters || {}) },
+      activeDeadlines: { ...(state.activeDeadlines || {}) },
+      resilienceMetrics: state.resilienceMetrics ? { ...state.resilienceMetrics } : undefined,
     };
   }
 

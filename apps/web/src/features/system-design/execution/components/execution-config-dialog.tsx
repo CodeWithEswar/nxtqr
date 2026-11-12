@@ -74,6 +74,36 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
     description: "Path fails route table matching and returns HTTP 404 Not Found.",
   },
   {
+    id: "database_outage",
+    label: "Resilience: Database Outage",
+    description: "Injected PostgreSQL hard outage; callers fail fast or timeout, testing database failure resilience.",
+  },
+  {
+    id: "service_crash",
+    label: "Resilience: Service Crash (Retried)",
+    description: "Downstream service crashes; caller triggers exponential backoff retries with jitter.",
+  },
+  {
+    id: "latency_spike",
+    label: "Resilience: +800ms Latency Spike",
+    description: "Cross-AZ network transit latency spike causes upstream SLA deadline timeout.",
+  },
+  {
+    id: "circuit_breaker",
+    label: "Resilience: 3-State Circuit Breaker",
+    description: "Repeated failures trip circuit to OPEN, fast-failing subsequent requests until HALF-OPEN probe succeeds.",
+  },
+  {
+    id: "failover",
+    label: "Resilience: Standby Failover",
+    description: "Primary service fails; traffic dynamically reroutes to healthy secondary replica.",
+  },
+  {
+    id: "packet_loss",
+    label: "Resilience: 50% Packet Loss",
+    description: "Unstable network link drops packets deterministically, driving retry retransmissions.",
+  },
+  {
     id: "custom",
     label: "Custom Flow",
     description: "Manual path, method, and branch configuration.",
@@ -102,7 +132,7 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
   const selectedEntryNodeId = configuration.entryNodeId || nodes[0]?.id || "";
 
   const handlePresetChange = (presetId: AllScenarioPresetId) => {
-    setScenarioPreset(presetId);
+    setScenarioPreset(presetId, nodes, edges);
     if (presetId === "cache-miss" || presetId === "cache-hit") {
       setActiveMethod("GET");
       setActivePath("/api/products/42");

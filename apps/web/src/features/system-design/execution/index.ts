@@ -9,5 +9,8 @@ export * from "./components/trace-waterfall";
 export * from "./components/sequence-view";
 export * from "./components/queue-inspector";
 export * from "./components/message-inspector";
+export * from "./components/fault-scenario-dialog";
+export * from "./components/scenario-comparison-view";
+export * from "./components/fault-inspector";
 export * from "./hooks/use-execution-playback";
 

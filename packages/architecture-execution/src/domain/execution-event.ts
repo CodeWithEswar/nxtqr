@@ -2,6 +2,7 @@ import type { ExecutionOutcome, ExecutionRequest } from "../schemas/execution.sc
 import type { ModeledHttpRequest, ModeledHttpResponse } from "../schemas/behavior.schemas";
 import type { ModeledRuntimeState } from "./runtime-state";
 import type { CausalExecutionEvent } from "./causal-event";
+import type { ResilienceEvent } from "../resilience/fault-events";
 
 export interface BaseExecutionEvent {
   id: string;
@@ -251,4 +252,5 @@ export type ExecutionEvent =
   | DatabaseOperationFailedEvent
   | ComponentProcessingStartedEvent
   | ComponentProcessingCompletedEvent
-  | CausalExecutionEvent;
+  | CausalExecutionEvent
+  | ResilienceEvent;
