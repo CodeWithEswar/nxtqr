@@ -25,12 +25,11 @@ const EVENT_TYPE_BADGES: Record<
 
 export function ExecutionTimeline({ className, onClose }: ExecutionTimelineProps) {
   const trace = useExecutionStore((s) => s.trace);
-  const playbackState = useExecutionStore((s) => s.playbackState);
+  const activeIndex = useExecutionStore((s) => s.playbackState.currentStepIndex);
   const seekToStep = useExecutionStore((s) => s.seekToStep);
   const toggleTimeline = useExecutionStore((s) => s.toggleTimeline);
   const selectedEventId = useExecutionStore((s) => s.selectedEventId);
 
-  const activeIndex = playbackState.currentStepIndex;
   const listRef = React.useRef<HTMLDivElement>(null);
 
   // Auto-scroll to active event row

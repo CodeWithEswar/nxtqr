@@ -5,7 +5,7 @@ import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-
 export function useExecutionPlayback() {
   const isExecutionModeActive = useExecutionStore((s) => s.isExecutionModeActive);
   const isConfigDialogOpen = useExecutionStore((s) => s.isConfigDialogOpen);
-  const playbackState = useExecutionStore((s) => s.playbackState);
+  const playbackStatus = useExecutionStore((s) => s.playbackState.status);
   const play = useExecutionStore((s) => s.play);
   const pause = useExecutionStore((s) => s.pause);
   const resume = useExecutionStore((s) => s.resume);
@@ -32,9 +32,9 @@ export function useExecutionPlayback() {
 
       if (e.code === "Space") {
         e.preventDefault();
-        if (!isExecutionModeActive || playbackState.status === "idle" || playbackState.status === "stopped") {
+        if (!isExecutionModeActive || playbackStatus === "idle" || playbackStatus === "stopped") {
           runExecution(nodes, edges);
-        } else if (playbackState.status === "playing") {
+        } else if (playbackStatus === "playing") {
           pause();
         } else {
           resume();
@@ -72,7 +72,7 @@ export function useExecutionPlayback() {
   }, [
     isExecutionModeActive,
     isConfigDialogOpen,
-    playbackState.status,
+    playbackStatus,
     nodes,
     edges,
     runExecution,
@@ -85,3 +85,4 @@ export function useExecutionPlayback() {
     toggleConfigDialog,
   ]);
 }
+

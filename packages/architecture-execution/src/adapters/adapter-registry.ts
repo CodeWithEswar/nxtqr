@@ -211,3 +211,4 @@ export class ComponentAdapterRegistry {
 }
 
 export const componentAdapterRegistry = new ComponentAdapterRegistry();
+

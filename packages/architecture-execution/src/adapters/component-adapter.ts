@@ -25,3 +25,4 @@ export interface ComponentExecutionAdapter {
   readonly componentType: string;
   plan(context: ComponentExecutionContext): ComponentExecutionResult;
 }
+

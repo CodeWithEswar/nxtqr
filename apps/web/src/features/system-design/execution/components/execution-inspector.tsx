@@ -13,12 +13,11 @@ export interface ExecutionInspectorProps {
 }
 
 export function ExecutionInspector({ className, onClose }: ExecutionInspectorProps) {
-  const playbackState = useExecutionStore((s) => s.playbackState);
+  const currentFrame = useExecutionStore((s) => s.playbackState.currentFrame);
   const configuration = useExecutionStore((s) => s.configuration);
   const toggleExecutionInspector = useExecutionStore((s) => s.toggleExecutionInspector);
   const nodes = useGraphEditorStore((s) => s.nodes);
 
-  const currentFrame = playbackState.currentFrame;
   const activeEvent = currentFrame?.activeEvent;
 
   if (!activeEvent) {

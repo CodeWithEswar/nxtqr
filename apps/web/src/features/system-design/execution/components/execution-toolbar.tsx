@@ -30,7 +30,10 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isExecutionModeActive = useExecutionStore((s) => s.isExecutionModeActive);
   const isTimelineOpen = useExecutionStore((s) => s.isTimelineOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
-  const playbackState = useExecutionStore((s) => s.playbackState);
+  const status = useExecutionStore((s) => s.playbackState.status);
+  const currentStepIndex = useExecutionStore((s) => s.playbackState.currentStepIndex);
+  const totalStepsRaw = useExecutionStore((s) => s.playbackState.totalSteps);
+  const speed = useExecutionStore((s) => s.playbackState.speed);
   const runExecution = useExecutionStore((s) => s.runExecution);
   const pause = useExecutionStore((s) => s.pause);
   const resume = useExecutionStore((s) => s.resume);
@@ -44,13 +47,13 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const toggleConfigDialog = useExecutionStore((s) => s.toggleConfigDialog);
   const toggleExecutionInspector = useExecutionStore((s) => s.toggleExecutionInspector);
 
-  const isPlaying = playbackState.status === "playing";
-  const isCompleted = playbackState.status === "completed";
-  const currentStep = playbackState.currentStepIndex + 1;
-  const totalSteps = playbackState.totalSteps || 1;
+  const isPlaying = status === "playing";
+  const isCompleted = status === "completed";
+  const currentStep = currentStepIndex + 1;
+  const totalSteps = totalStepsRaw || 1;
 
   const handleRunOrTogglePlay = () => {
-    if (!isExecutionModeActive || playbackState.status === "idle" || playbackState.status === "stopped") {
+    if (!isExecutionModeActive || status === "idle" || status === "stopped") {
       runExecution(nodes, edges);
     } else if (isPlaying) {
       pause();
@@ -127,7 +130,7 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
               variant="ghost"
               size="sm"
               onClick={previousStep}
-              disabled={playbackState.currentStepIndex <= 0}
+              disabled={currentStepIndex <= 0}
               title="Previous Execution Step (← Left Arrow)"
               className="h-7 w-7 p-0 text-text-secondary hover:text-foreground hover:bg-surface-03 rounded-md disabled:opacity-40"
             >
@@ -138,7 +141,7 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
               variant="ghost"
               size="sm"
               onClick={nextStep}
-              disabled={playbackState.currentStepIndex >= totalSteps - 1}
+              disabled={currentStepIndex >= totalSteps - 1}
               title="Next Execution Step (→ Right Arrow)"
               className="h-7 w-7 p-0 text-text-secondary hover:text-foreground hover:bg-surface-03 rounded-md disabled:opacity-40"
             >
@@ -165,7 +168,7 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
               type="range"
               min={0}
               max={Math.max(0, totalSteps - 1)}
-              value={playbackState.currentStepIndex}
+              value={currentStepIndex}
               onChange={(e) => seekToStep(Number(e.target.value))}
               aria-label="Seek Execution Step"
               className="w-20 h-1 bg-surface-04 rounded appearance-none cursor-pointer accent-foreground"
@@ -182,7 +185,7 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
                 title={`Playback speed ${spd}x`}
                 className={cn(
                   "px-1.5 py-0.5 rounded text-[10px] font-mono transition-colors",
-                  playbackState.speed === spd
+                  speed === spd
                     ? "bg-surface-04 text-foreground font-semibold border border-border-strong shadow-level-3"
                     : "text-text-muted hover:text-text-secondary hover:bg-surface-03"
                 )}

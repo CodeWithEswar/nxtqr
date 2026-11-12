@@ -39,6 +39,8 @@ export interface GraphCanvasProps {
   fitViewOnMount?: boolean;
 }
 
+const EMPTY_STRING_ARRAY: string[] = [];
+
 function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   // Bind global keyboard shortcuts (Undo, Redo, Copy, Paste, Delete, Select All)
   useGraphShortcuts();
@@ -50,11 +52,15 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isTimelineOpen = useExecutionStore((s) => s.isTimelineOpen);
   const isConfigDialogOpen = useExecutionStore((s) => s.isConfigDialogOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
-  const activeNodeIds = useExecutionStore(
-    (s) => s.playbackState.currentFrame?.activeNodeIds || []
+  const activeNodeIds = useExecutionStore((s) =>
+    s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
+      ? s.playbackState.currentFrame.activeNodeIds
+      : EMPTY_STRING_ARRAY
   );
-  const activeEdgeIds = useExecutionStore(
-    (s) => s.playbackState.currentFrame?.activeEdgeIds || []
+  const activeEdgeIds = useExecutionStore((s) =>
+    s.isExecutionModeActive && s.playbackState.currentFrame?.activeEdgeIds
+      ? s.playbackState.currentFrame.activeEdgeIds
+      : EMPTY_STRING_ARRAY
   );
 
   const nodes = useGraphEditorStore((s) => s.nodes);

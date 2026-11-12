@@ -18,3 +18,4 @@ export class VirtualClock {
     this.currentTimeMs = toMs;
   }
 }
+

@@ -5,9 +5,11 @@ import { useReactFlow } from "@xyflow/react";
 import { cn } from "@nxtqr/utils";
 import { useExecutionStore } from "../store/execution-store";
 
+const EMPTY_STRING_ARRAY: string[] = [];
+
 export function ExecutionOverlay() {
   const isExecutionModeActive = useExecutionStore((s) => s.isExecutionModeActive);
-  const playbackState = useExecutionStore((s) => s.playbackState);
+  const currentFrame = useExecutionStore((s) => s.playbackState.currentFrame);
   const { getNode } = useReactFlow();
 
   const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
@@ -21,13 +23,12 @@ export function ExecutionOverlay() {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  if (!isExecutionModeActive || !playbackState.currentFrame) {
+  if (!isExecutionModeActive || !currentFrame) {
     return null;
   }
 
-  const frame = playbackState.currentFrame;
-  const activeNodeIds = frame.activeNodeIds || [];
-  const traveling = frame.travelingRequest;
+  const activeNodeIds = currentFrame.activeNodeIds ?? EMPTY_STRING_ARRAY;
+  const traveling = currentFrame.travelingRequest;
 
   return (
     <div
