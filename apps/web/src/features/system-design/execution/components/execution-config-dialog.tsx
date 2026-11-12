@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import { cn } from "@nxtqr/utils";
-import { Button } from "@nxtqr/ui";
+import {
+  Button,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@nxtqr/ui";
 import { CloseIcon, SlidersIcon, PlayIcon } from "@nxtqr/icons";
 import { useExecutionStore } from "../store/execution-store";
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
@@ -30,6 +37,14 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
   const [bodyText, setBodyText] = React.useState<string>(
     configuration.request.body ? JSON.stringify(configuration.request.body, null, 2) : ""
   );
+
+  const selectedEntryNodeId = configuration.entryNodeId || nodes[0]?.id || "";
+
+  React.useEffect(() => {
+    if (!configuration.entryNodeId && nodes.length > 0) {
+      setEntryNodeId(nodes[0].id);
+    }
+  }, [configuration.entryNodeId, nodes, setEntryNodeId]);
 
   // Identify components with multiple outgoing connections
   const branchingNodes = React.useMemo(() => {
@@ -104,17 +119,21 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
             <label className="text-[11px] font-mono text-text-muted font-semibold uppercase tracking-wider block">
               Starting Component (Entry Point)
             </label>
-            <select
-              value={configuration.entryNodeId}
-              onChange={(e) => setEntryNodeId(e.target.value)}
-              className="w-full h-8 px-2.5 rounded-md bg-surface-01 border border-border-default text-xs font-mono text-foreground focus:outline-none focus:border-border-strong"
+            <Select
+              value={selectedEntryNodeId || undefined}
+              onValueChange={(val) => setEntryNodeId(val)}
             >
-              {nodes.map((node) => (
-                <option key={node.id} value={node.id}>
-                  {node.label || node.id} ({String((node.data as any)?.componentType || node.type || "service")})
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="h-8 w-full font-mono text-xs bg-surface-01 border-border-default hover:border-border-hover text-foreground">
+                <SelectValue placeholder="Select starting component..." />
+              </SelectTrigger>
+              <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2 z-[60]">
+                {nodes.map((node) => (
+                  <SelectItem key={node.id} value={node.id}>
+                    {node.label || node.id} ({String((node.data as any)?.componentType || node.type || "service")})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* 2. Request Details */}
@@ -179,20 +198,24 @@ export function ExecutionConfigDialog({ onClose }: ExecutionConfigDialogProps) {
                     <span className="text-xs font-mono font-semibold text-foreground block">
                       {node.label || node.id}
                     </span>
-                    <select
-                      value={configuration.routing.selectedBranches?.[node.id] || outEdges[0]?.id || ""}
-                      onChange={(e) => setSelectedBranch(node.id, e.target.value)}
-                      className="w-full h-7 px-2 rounded bg-surface-02 border border-border-default text-[11px] font-mono text-foreground focus:outline-none"
+                    <Select
+                      value={configuration.routing.selectedBranches?.[node.id] || outEdges[0]?.id || undefined}
+                      onValueChange={(val) => setSelectedBranch(node.id, val)}
                     >
-                      {outEdges.map((e) => {
-                        const targetNode = nodes.find((n) => n.id === e.target);
-                        return (
-                          <option key={e.id} value={e.id}>
-                            Route along "{e.label || e.id}" → {targetNode?.label || e.target}
-                          </option>
-                        );
-                      })}
-                    </select>
+                      <SelectTrigger className="h-7 w-full px-2 font-mono text-[11px] bg-surface-02 border-border-default hover:border-border-hover text-foreground">
+                        <SelectValue placeholder="Select outgoing route..." />
+                      </SelectTrigger>
+                      <SelectContent className="bg-surface-02 border-border-strong text-xs font-mono text-foreground shadow-level-2 z-[60]">
+                        {outEdges.map((e) => {
+                          const targetNode = nodes.find((n) => n.id === e.target);
+                          return (
+                            <SelectItem key={e.id} value={e.id}>
+                              Route along &quot;{e.label || e.id}&quot; → {targetNode?.label || e.target}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </div>
                 ))}
               </div>
