@@ -85,6 +85,9 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
   const isKubernetesWorkspaceOpen = useExecutionStore((s) => s.isKubernetesWorkspaceOpen);
   const toggleKubernetesWorkspace = useExecutionStore((s) => s.toggleKubernetesWorkspace);
   const activeKubernetesScenario = useExecutionStore((s) => s.activeKubernetesScenario);
+  const isGlobalNetworkWorkspaceOpen = useExecutionStore((s) => s.isGlobalNetworkWorkspaceOpen);
+  const toggleGlobalNetworkWorkspace = useExecutionStore((s) => s.toggleGlobalNetworkWorkspace);
+  const activeGlobalNetworkScenario = useExecutionStore((s) => s.activeGlobalNetworkScenario);
 
   const isPlaying = status === "playing";
   const isCompleted = status === "completed";
@@ -468,6 +471,23 @@ export function ExecutionToolbar({ className }: ExecutionToolbarProps) {
       >
         <LayersIcon className="w-3 h-3 text-text-secondary" />
         <span className="hidden md:inline">K8s</span>
+      </Button>
+
+      {/* Global DNS, CDN & Traffic Distribution Workspace Button */}
+      <Button
+        variant={isGlobalNetworkWorkspaceOpen ? "secondary" : "ghost"}
+        size="sm"
+        onClick={() => toggleGlobalNetworkWorkspace()}
+        title="Toggle DNS Resolution, CDN Edge Routing & Global Network Workspace"
+        className={cn(
+          "h-7 px-2 text-[10px] font-mono rounded-md gap-1 transition-colors",
+          isGlobalNetworkWorkspaceOpen || activeGlobalNetworkScenario
+            ? "bg-surface-04 border border-border-strong text-foreground font-semibold shadow-level-3"
+            : "text-text-muted hover:text-foreground hover:bg-surface-03"
+        )}
+      >
+        <ActivityIcon className="w-3 h-3 text-text-secondary" />
+        <span className="hidden md:inline">Global</span>
       </Button>
 
       {trafficComparison && (

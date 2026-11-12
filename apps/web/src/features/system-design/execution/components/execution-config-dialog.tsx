@@ -16,6 +16,7 @@ import { useExecutionStore, type AllScenarioPresetId } from "../store/execution-
 import { useGraphEditorStore } from "@/features/graph-engine/store/graph-editor-store";
 import {
   KUBERNETES_PRESET_METADATA,
+  GLOBAL_NETWORK_PRESET_METADATA,
   type HttpMethod,
 } from "@nxtqr/architecture-execution";
 
@@ -404,6 +405,11 @@ const PRESET_OPTIONS: { id: AllScenarioPresetId; label: string; description: str
   ...KUBERNETES_PRESET_METADATA.map((p) => ({
     id: p.id as AllScenarioPresetId,
     label: `K8s: ${p.label}`,
+    description: p.description,
+  })),
+  ...GLOBAL_NETWORK_PRESET_METADATA.map((p) => ({
+    id: p.id as AllScenarioPresetId,
+    label: `Global: ${p.label}`,
     description: p.description,
   })),
   {

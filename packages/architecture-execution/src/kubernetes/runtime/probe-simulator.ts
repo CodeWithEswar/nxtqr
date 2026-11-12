@@ -23,3 +23,4 @@ export class ProbeSimulator {
     return Math.min(2000, 150 * Math.pow(2, Math.max(0, restartCount - 1)));
   }
 }
+

@@ -52,6 +52,11 @@ import {
   KUBERNETES_PRESET_METADATA,
   createKubernetesPresetScenario,
   KubernetesExecutionEngine,
+  type GlobalNetworkScenario,
+  type GlobalNetworkPresetId,
+  GLOBAL_NETWORK_PRESET_METADATA,
+  createGlobalNetworkPresetScenario,
+  GlobalNetworkExecutionEngine,
 } from "@nxtqr/architecture-execution";
 
 export type AllScenarioPresetId =
@@ -63,7 +68,8 @@ export type AllScenarioPresetId =
   | CacheScenarioPresetId
   | SecurityScenarioPresetId
   | StreamingScenarioPresetId
-  | KubernetesScenarioPresetId;
+  | KubernetesScenarioPresetId
+  | GlobalNetworkPresetId;
 
 export interface ExecutionStoreState {
   // Mode toggles
@@ -85,6 +91,7 @@ export interface ExecutionStoreState {
   isSecurityWorkspaceOpen: boolean;
   isStreamingWorkspaceOpen: boolean;
   isKubernetesWorkspaceOpen: boolean;
+  isGlobalNetworkWorkspaceOpen: boolean;
 
   // Active configuration & behavioral scenario
   configuration: ExecutionConfiguration;
@@ -97,6 +104,7 @@ export interface ExecutionStoreState {
   activeSecurityScenario: SecurityScenario | null;
   activeStreamingScenario: StreamingScenario | null;
   activeKubernetesScenario: KubernetesScenario | null;
+  activeGlobalNetworkScenario: GlobalNetworkScenario | null;
   activePresetId: AllScenarioPresetId;
 
   // Active run & trace
@@ -129,6 +137,7 @@ export interface ExecutionStoreState {
   toggleSecurityWorkspace: (open?: boolean) => void;
   toggleStreamingWorkspace: (open?: boolean) => void;
   toggleKubernetesWorkspace: (open?: boolean) => void;
+  toggleGlobalNetworkWorkspace: (open?: boolean) => void;
   setEntryNodeId: (nodeId: string) => void;
   setScenarioPreset: (presetId: AllScenarioPresetId, nodes?: BaseNode[], edges?: BaseEdge[]) => void;
   setFailureScenario: (scenario: FailureScenario | null) => void;
@@ -138,6 +147,7 @@ export interface ExecutionStoreState {
   setSecurityScenario: (scenario: SecurityScenario | null) => void;
   setStreamingScenario: (scenario: StreamingScenario | null) => void;
   setKubernetesScenario: (scenario: KubernetesScenario | null) => void;
+  setGlobalNetworkScenario: (scenario: GlobalNetworkScenario | null) => void;
   updateScenario: (partial: Partial<BehaviorScenario>) => void;
   updateConfiguration: (partial: Partial<ExecutionConfiguration>) => void;
   setSelectedBranch: (nodeId: string, edgeOrTargetId: string) => void;
@@ -170,6 +180,7 @@ export interface ExecutionStoreState {
   runSecuritySimulation: (scenario: SecurityScenario) => boolean;
   runStreamingSimulation: (scenario: StreamingScenario) => boolean;
   runKubernetesSimulation: (scenario: KubernetesScenario) => boolean;
+  runGlobalNetworkSimulation: (scenario: GlobalNetworkScenario) => boolean;
   play: () => void;
   pause: () => void;
   resume: () => void;
@@ -254,6 +265,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     isSecurityWorkspaceOpen: false,
     isStreamingWorkspaceOpen: false,
     isKubernetesWorkspaceOpen: false,
+    isGlobalNetworkWorkspaceOpen: false,
     configuration: defaultConfiguration,
     scenario: getScenarioPreset("cache-miss"),
     distributedScenario: null,
@@ -264,6 +276,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
     activeSecurityScenario: null,
     activeStreamingScenario: null,
     activeKubernetesScenario: null,
+    activeGlobalNetworkScenario: null,
     activePresetId: "cache-miss",
     activeRun: null,
     trace: null,
@@ -295,6 +308,7 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
           isSecurityWorkspaceOpen: false,
           isStreamingWorkspaceOpen: false,
           isKubernetesWorkspaceOpen: false,
+          isGlobalNetworkWorkspaceOpen: false,
         });
       } else {
         set({ isExecutionModeActive: true });
@@ -414,6 +428,13 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       });
     },
 
+    toggleGlobalNetworkWorkspace: (open) => {
+      set({
+        isGlobalNetworkWorkspaceOpen:
+          open !== undefined ? open : !get().isGlobalNetworkWorkspaceOpen,
+      });
+    },
+
     setEntryNodeId: (nodeId: string) => {
       set((state) => ({
         configuration: {
@@ -451,7 +472,36 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
       set({ activeKubernetesScenario: scenario });
     },
 
+    setGlobalNetworkScenario: (scenario) => {
+      set({ activeGlobalNetworkScenario: scenario });
+    },
+
     setScenarioPreset: (presetId, nodes = [], edges = []) => {
+      if (GLOBAL_NETWORK_PRESET_METADATA.some((p) => p.id === presetId)) {
+        const globalScenario = createGlobalNetworkPresetScenario(
+          presetId as GlobalNetworkPresetId
+        );
+        set((state) => ({
+          activePresetId: presetId,
+          activeGlobalNetworkScenario: globalScenario,
+          activeKubernetesScenario: null,
+          activeStreamingScenario: null,
+          activeSecurityScenario: null,
+          activeCacheScenario: null,
+          activeDatabaseScenario: null,
+          activeTrafficScenario: null,
+          activeFailureScenario: null,
+          distributedScenario: null,
+          isGlobalNetworkWorkspaceOpen: true,
+          configuration: {
+            ...state.configuration,
+            presetId,
+          },
+        }));
+        get().runGlobalNetworkSimulation(globalScenario);
+        return;
+      }
+
       if (KUBERNETES_PRESET_METADATA.some((p) => p.id === presetId)) {
         const k8sScenario = createKubernetesPresetScenario(presetId as KubernetesScenarioPresetId);
         set((state) => ({
@@ -1111,6 +1161,35 @@ export const useExecutionStore = create<ExecutionStoreState>((set, get) => {
         activeKubernetesScenario: scenario,
         isTimelineOpen: true,
         isKubernetesWorkspaceOpen: true,
+        playbackState: controller.getState(),
+      });
+
+      controller.play();
+      return true;
+    },
+
+    runGlobalNetworkSimulation: (scenario) => {
+      const trace = GlobalNetworkExecutionEngine.runScenario(scenario);
+      const controller = ensureController();
+      controller.loadTrace(trace);
+
+      const run: ExecutionRun = {
+        id: trace.runId,
+        architectureId: "arch_global_network_sim",
+        architectureRevisionId: scenario.architectureRevisionId || "rev_001",
+        snapshotHash: trace.snapshotHash,
+        configuration: trace.configuration,
+        trace,
+        createdAt: new Date().toISOString(),
+      };
+
+      set({
+        isExecutionModeActive: true,
+        activeRun: run,
+        trace,
+        activeGlobalNetworkScenario: scenario,
+        isTimelineOpen: true,
+        isGlobalNetworkWorkspaceOpen: true,
         playbackState: controller.getState(),
       });
 

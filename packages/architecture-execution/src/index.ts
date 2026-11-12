@@ -135,5 +135,14 @@ export * from "./kubernetes/runtime/probe-simulator";
 export * from "./kubernetes/kubernetes-presets";
 export * from "./kubernetes/kubernetes-execution-engine";
 
+// Phase 05.4.11: Interactive DNS Resolution, CDN Edge Routing & Global Network Engine
+export * from "./global-network/global-network-schemas";
+export * from "./global-network/global-network-events";
+export * from "./global-network/dns/dns-resolution-engine";
+export * from "./global-network/cdn/edge-selection-engine";
+export * from "./global-network/cdn/edge-cache-engine";
+export * from "./global-network/global-network-presets";
+export * from "./global-network/global-network-execution-engine";
+
 
 

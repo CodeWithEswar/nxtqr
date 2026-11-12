@@ -43,6 +43,7 @@ import {
   SecurityExecutionWorkspace,
   StreamingExecutionWorkspace,
   KubernetesExecutionWorkspace,
+  GlobalNetworkWorkspace,
   useExecutionPlayback,
   useExecutionStore,
 } from "@/features/system-design/execution";
@@ -77,6 +78,7 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
   const isSecurityWorkspaceOpen = useExecutionStore((s) => s.isSecurityWorkspaceOpen);
   const isStreamingWorkspaceOpen = useExecutionStore((s) => s.isStreamingWorkspaceOpen);
   const isKubernetesWorkspaceOpen = useExecutionStore((s) => s.isKubernetesWorkspaceOpen);
+  const isGlobalNetworkWorkspaceOpen = useExecutionStore((s) => s.isGlobalNetworkWorkspaceOpen);
   const isExecutionInspectorOpen = useExecutionStore((s) => s.isExecutionInspectorOpen);
   const activeNodeIds = useExecutionStore((s) =>
     s.isExecutionModeActive && s.playbackState.currentFrame?.activeNodeIds
@@ -573,6 +575,9 @@ function InnerGraphCanvas({ className, fitViewOnMount }: GraphCanvasProps) {
 
       {/* Kubernetes Scheduling, Container Orchestration & Deployment Drawer */}
       {isKubernetesWorkspaceOpen && <KubernetesExecutionWorkspace />}
+
+      {/* DNS Resolution, CDN Edge Routing & Global Network Drawer */}
+      {isGlobalNetworkWorkspaceOpen && <GlobalNetworkWorkspace />}
     </div>
   );
 }

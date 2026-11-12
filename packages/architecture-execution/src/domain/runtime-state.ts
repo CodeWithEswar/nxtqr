@@ -27,6 +27,7 @@ import type { ModeledCacheRuntimeState, CacheEntry } from "../cache/cache-schema
 import type { ModeledSecurityRuntimeState } from "../security/security-schemas";
 import type { ModeledStreamingRuntimeState } from "../streaming/streaming-schemas";
 import type { ModeledKubernetesRuntimeState } from "../kubernetes/kubernetes-schemas";
+import type { ModeledGlobalNetworkRuntimeState } from "../global-network/global-network-schemas";
 
 export type { CacheEntry };
 
@@ -117,6 +118,9 @@ export interface ModeledRuntimeState {
 
   // Kubernetes Scheduling, Orchestration & Deployment Lifecycle (Phase 05.4.10)
   kubernetesState?: ModeledKubernetesRuntimeState;
+
+  // DNS Resolution, CDN Edge Routing & Global Network Distribution (Phase 05.4.11)
+  globalNetworkState?: ModeledGlobalNetworkRuntimeState;
 }
 
 export class RuntimeStateHelper {
@@ -284,6 +288,9 @@ export class RuntimeStateHelper {
         : undefined,
       kubernetesState: state.kubernetesState
         ? JSON.parse(JSON.stringify(state.kubernetesState))
+        : undefined,
+      globalNetworkState: state.globalNetworkState
+        ? JSON.parse(JSON.stringify(state.globalNetworkState))
         : undefined,
     };
   }
